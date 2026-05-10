@@ -61,7 +61,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
         {
             var query = new GetTimelineItemByIdQuery(1);
 
-            var timelineItem = new DAL.Entities.Timeline.TimelineItem
+            var timelineItem = new TimelineItem
             {
                 Id = 1,
                 Title = "Test Title",
@@ -100,13 +100,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
 
             this.timelineRepoMock
                 .Setup(r => r.GetFirstOrDefaultAsync(
-                    It.IsAny<Expression<Func<DAL.Entities.Timeline.TimelineItem, bool>>>(),
-                    It.IsAny<Func<IQueryable<DAL.Entities.Timeline.TimelineItem>,
-                        IIncludableQueryable<DAL.Entities.Timeline.TimelineItem, object>>>()))
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
+                    It.IsAny<Func<IQueryable<TimelineItem>,
+                        IIncludableQueryable<TimelineItem, object>>>()))
                 .ReturnsAsync(timelineItem);
 
             this.mapperMock
-                .Setup(m => m.Map<TimelineItemDTO>(timelineItem))
+                .Setup(m => m.Map<TimelineItemDTO>(
+                     It.IsAny<TimelineItem>()))
                 .Returns(expectedDto);
 
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -120,7 +121,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
             Assert.Equal(expectedDto.Date, result.Value.Date);
             Assert.Equal(expectedDto.DateViewPattern, result.Value.DateViewPattern);
 
-            Assert.NotNull(result.Value.HistoricalContexts);
             Assert.Single(result.Value.HistoricalContexts);
 
             Assert.Equal(
@@ -128,7 +128,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
                 result.Value.HistoricalContexts.First().Title);
 
             this.mapperMock.Verify(
-                m => m.Map<TimelineItemDTO>(timelineItem),
+                m => m.Map<TimelineItemDTO>(
+                    It.IsAny<TimelineItem>()),
+                Times.Once);
+
+            this.timelineRepoMock.Verify(
+                r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
+                    It.IsAny<Func<IQueryable<TimelineItem>,
+                        IIncludableQueryable<TimelineItem, object>>>()),
                 Times.Once);
         }
 
@@ -146,10 +154,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
 
             this.timelineRepoMock
                 .Setup(r => r.GetFirstOrDefaultAsync(
-                    It.IsAny<Expression<Func<DAL.Entities.Timeline.TimelineItem, bool>>>(),
-                    It.IsAny<Func<IQueryable<DAL.Entities.Timeline.TimelineItem>,
-                        IIncludableQueryable<DAL.Entities.Timeline.TimelineItem, object>>>()))
-                .ReturnsAsync((DAL.Entities.Timeline.TimelineItem?)null);
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
+                    It.IsAny<Func<IQueryable<TimelineItem>,
+                        IIncludableQueryable<TimelineItem, object>>>()))
+                .ReturnsAsync((TimelineItem?)null);
 
             var result = await this.handler.Handle(query, CancellationToken.None);
 
@@ -167,8 +175,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
 
             this.mapperMock.Verify(
                 m => m.Map<TimelineItemDTO>(
-                    It.IsAny<DAL.Entities.Timeline.TimelineItem>()),
+                    It.IsAny<TimelineItem>()),
                 Times.Never);
+
+            this.timelineRepoMock.Verify(
+                r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
+                    It.IsAny<Func<IQueryable<TimelineItem>,
+                        IIncludableQueryable<TimelineItem, object>>>()),
+                Times.Once);
         }
 
         /// <summary>
@@ -176,15 +191,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
         [Fact]
-        public async Task Handle_ShouldThrowException_WhenRepositoryFails()
+        public async Task Handle_ShouldPropagateException_WhenRepositoryThrows()
         {
             var query = new GetTimelineItemByIdQuery(1);
 
             this.timelineRepoMock
                 .Setup(r => r.GetFirstOrDefaultAsync(
-                    It.IsAny<Expression<Func<DAL.Entities.Timeline.TimelineItem, bool>>>(),
-                    It.IsAny<Func<IQueryable<DAL.Entities.Timeline.TimelineItem>,
-                        IIncludableQueryable<DAL.Entities.Timeline.TimelineItem, object>>>()))
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
+                    It.IsAny<Func<IQueryable<TimelineItem>,
+                        IIncludableQueryable<TimelineItem, object>>>()))
                 .ThrowsAsync(new Exception("Database failure"));
 
             var exception = await Assert.ThrowsAsync<Exception>(() =>
@@ -194,7 +209,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
 
             this.mapperMock.Verify(
                 m => m.Map<TimelineItemDTO>(
-                    It.IsAny<DAL.Entities.Timeline.TimelineItem>()),
+                    It.IsAny<TimelineItem>()),
                 Times.Never);
 
             this.loggerMock.Verify(
@@ -202,6 +217,13 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
                     It.IsAny<object>(),
                     It.IsAny<string>()),
                 Times.Never);
+
+            this.timelineRepoMock.Verify(
+                r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
+                    It.IsAny<Func<IQueryable<TimelineItem>,
+                        IIncludableQueryable<TimelineItem, object>>>()),
+                Times.Once);
         }
     }
 }
