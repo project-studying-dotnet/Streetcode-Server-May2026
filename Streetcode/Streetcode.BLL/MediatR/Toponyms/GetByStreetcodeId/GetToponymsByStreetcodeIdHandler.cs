@@ -37,7 +37,9 @@ public class GetToponymsByStreetcodeIdHandler : IRequestHandler<GetToponymsByStr
             return Result.Fail(new Error(errorMsg));
         }
 
-        IEnumerable<ToponymDTO> toponym_dto = toponyms.GroupBy(x => x.StreetName).Select(Enumerable.First).Select(_mapper.Map<ToponymDTO>);
+        var toponymDtos = toponyms
+    .DistinctBy(x => x.StreetName)
+    .Select(_mapper.Map<ToponymDTO>);
         return Result.Ok(toponym_dto);
     }
 }
