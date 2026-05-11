@@ -52,7 +52,7 @@
         public async Task Handle_ShouldReturnToponyms_WhenFound()
         {
             // Arrange
-            List<Toponym> toponyms = new()
+            IQueryable<Toponym> toponyms = new List<Toponym>()
             {
                 new()
                 {
@@ -71,18 +71,17 @@
                         },
                     },
                 },
-            };
+            }.AsQueryable();
             List<ToponymDTO> expected_toponyms = new()
             {
-                this.mapper.Map<ToponymDTO>(toponyms[0]),
+                this.mapper.Map<ToponymDTO>(toponyms.First()),
             };
             GetToponymsByStreetcodeIdQuery query = new(1);
             this.toponymRepositoryMock.Setup(
-                r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Toponym, bool>>>(),
-                    It.IsAny<Func<IQueryable<Toponym>, IIncludableQueryable<Toponym, object>>>()
+                r => r.FindAll(
+                    It.IsAny<Expression<Func<Toponym, bool>>>()
                 )
-            ).ReturnsAsync(toponyms);
+            ).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -91,9 +90,8 @@
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(expected_toponyms);
             this.toponymRepositoryMock.Verify(
-                r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Toponym, bool>>>(),
-                    It.IsAny<Func<IQueryable<Toponym>, IIncludableQueryable<Toponym, object>>>()
+                r => r.FindAll(
+                    It.IsAny<Expression<Func<Toponym, bool>>>()
                 ),
                 Times.Once
             );
@@ -107,7 +105,7 @@
         public async Task Handle_ShouldReturnUniqueToponyms_WhenFound()
         {
             // Arrange
-            List<Toponym> toponyms = new()
+            IQueryable<Toponym> toponyms = new List<Toponym>()
             {
                 new()
                 {
@@ -143,18 +141,17 @@
                         },
                     },
                 },
-            };
+            }.AsQueryable();
             List<ToponymDTO> expected_toponyms = new()
             {
-                this.mapper.Map<ToponymDTO>(toponyms[0]),
+                this.mapper.Map<ToponymDTO>(toponyms.First()),
             };
             GetToponymsByStreetcodeIdQuery query = new(1);
             this.toponymRepositoryMock.Setup(
-                r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Toponym, bool>>>(),
-                    It.IsAny<Func<IQueryable<Toponym>, IIncludableQueryable<Toponym, object>>>()
+                r => r.FindAll(
+                    It.IsAny<Expression<Func<Toponym, bool>>>()
                 )
-            ).ReturnsAsync(toponyms);
+            ).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -163,9 +160,8 @@
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(expected_toponyms);
             this.toponymRepositoryMock.Verify(
-                r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Toponym, bool>>>(),
-                    It.IsAny<Func<IQueryable<Toponym>, IIncludableQueryable<Toponym, object>>>()
+                r => r.FindAll(
+                    It.IsAny<Expression<Func<Toponym, bool>>>()
                 ),
                 Times.Once
             );
@@ -181,11 +177,10 @@
             // Arrange
             GetToponymsByStreetcodeIdQuery query = new(3);
             this.toponymRepositoryMock.Setup(
-                r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Toponym, bool>>>(),
-                    It.IsAny<Func<IQueryable<Toponym>, IIncludableQueryable<Toponym, object>>>()
+                r => r.FindAll(
+                    It.IsAny<Expression<Func<Toponym, bool>>>()
                 )
-            ).ReturnsAsync(Enumerable.Empty<Toponym>());
+            ).Returns(Enumerable.Empty<Toponym>().AsQueryable());
             this.loggerMock.Setup(
                 l => l.LogError(query, It.IsAny<string>())
             );
@@ -197,9 +192,8 @@
             result.IsSuccess.Should().BeFalse();
             result.Errors.Should().NotBeEmpty();
             this.toponymRepositoryMock.Verify(
-                r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Toponym, bool>>>(),
-                    It.IsAny<Func<IQueryable<Toponym>, IIncludableQueryable<Toponym, object>>>()
+                r => r.FindAll(
+                    It.IsAny<Expression<Func<Toponym, bool>>>()
                 ),
                 Times.Once
             );
