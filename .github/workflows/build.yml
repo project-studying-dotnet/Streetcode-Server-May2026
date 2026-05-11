@@ -6,6 +6,7 @@ on:
       - master
       - develop
       - dev
+
   pull_request:
     branches:
       - master
@@ -39,7 +40,7 @@ jobs:
         run: dotnet tool update --global dotnet-sonarscanner
 
       - name: Restore Dependencies
-        run: dotnet restore ./Streetcode/Streetcode.sln
+        run: dotnet restore ./Streetcode/Streetcode.WebApi/Streetcode.WebApi.csproj
 
       - name: SonarScanner Begin
         run: >
@@ -49,9 +50,9 @@ jobs:
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
           /d:sonar.host.url="https://sonarcloud.io"
 
-      - name: Build
+      - name: Build WebApi
         run: >
-          dotnet build ./Streetcode/Streetcode.sln
+          dotnet build ./Streetcode/Streetcode.WebApi/Streetcode.WebApi.csproj
           --configuration Release
           --no-restore
           /p:TreatWarningsAsErrors=false
