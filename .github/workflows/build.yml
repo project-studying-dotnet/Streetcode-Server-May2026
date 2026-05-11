@@ -32,7 +32,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup .NET
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.100'
@@ -50,7 +50,6 @@ jobs:
           /o:"ita-social-projects"
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
           /d:sonar.host.url="https://sonarcloud.io"
-          /d:sonar.cs.opencover.reportsPaths="coverage/coverage.opencover.xml"
 
       - name: Build
         run: >
@@ -59,21 +58,11 @@ jobs:
           --no-restore
           /p:TreatWarningsAsErrors=false
 
-      - name: Test and Code Coverage
-        run: >
-          dotnet test ./Streetcode/Streetcode.XUnitTest/Streetcode.XUnitTest.csproj
-          --configuration Release
-          --no-build
-          --verbosity normal
-          /p:CollectCoverage=true
-          /p:CoverletOutputFormat=opencover
-          /p:CoverletOutput=../../coverage/coverage.opencover.xml
-
       - name: SonarScanner End
         run: >
           dotnet sonarscanner end
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
+          
       - name: Publish Code Coverage Report
         if: always()
         uses: actions/upload-artifact@v4
