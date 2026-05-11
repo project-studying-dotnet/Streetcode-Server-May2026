@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS base
 WORKDIR /app
 
 # adding curl and gpg for healthcheck
@@ -9,8 +9,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 EXPOSE 5000
 EXPOSE 5001
-EXPOSE 80
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+EXPOSE 8080
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble AS build
 ARG Configuration=debug
 
 #restoring dependencies
