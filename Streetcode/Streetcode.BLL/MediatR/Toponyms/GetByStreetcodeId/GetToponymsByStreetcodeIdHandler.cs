@@ -26,11 +26,12 @@ public class GetToponymsByStreetcodeIdHandler : IRequestHandler<GetToponymsByStr
 
     public async Task<Result<IEnumerable<ToponymDTO>>> Handle(GetToponymsByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
-        IEnumerable<ToponymDTO> toponyms = _repositoryWrapper.ToponymRepository.FindAll(
-            sc => sc.Streetcodes.Any(s => s.Id == request.StreetcodeId)
-        ).AsNoTracking().Include(sc => sc.Coordinate).DistinctBy(
-            x => x.StreetName
-        ).AsEnumerable().Select(_mapper.Map<ToponymDTO>);
+        var result = _repositoryWrapper.ToponymRepository.FindAll(
+        sc => sc.Streetcodes.Any(s => s.Id == request.StreetcodeId)
+    )
+    .GroupBy(x => x.StreetName)
+    .Select(g => g.OrderBy(x => x.Id).First())
+    .ProjectTo<ToponymDTO>(_mapper.ConfigurationProvider);
 
         if(toponyms.Any() is false)
         {
