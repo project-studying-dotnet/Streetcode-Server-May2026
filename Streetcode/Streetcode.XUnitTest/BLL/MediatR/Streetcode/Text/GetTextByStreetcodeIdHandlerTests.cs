@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
+using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Interfaces.Text;
 using Streetcode.BLL.MediatR.Streetcode.Text.GetByStreetcodeId;
@@ -115,4 +116,45 @@ public class GetTextByStreetcodeIdHandlerTests
             s => s.AddTermsTag(It.IsAny<string>()),
             Times.Never);
     }
+
+    [Fact]
+    public async Task Handle_UsesAddTermsTagResult_AsTextContent()
+    {
+        // Arrange
+        const string originalContent = "Text about streetcode";
+        const string taggedContent = "<Popover><Term>streetcode</Term><Desc>description</Desc></Popover>";
+        var query = new GetTextByStreetcodeIdQuery(StreetcodeId: 1);
+        var textEntity = new DAL.Entities.Streetcode.TextContent.Text
+        {
+            Id = 1,
+            StreetcodeId = 1,
+            TextContent = originalContent
+        };
+
+        this.textRepositoryMock
+            .Setup(repo => repo.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Text, bool>>>(),
+                It.IsAny<Func<IQueryable<DAL.Entities.Streetcode.TextContent.Text>, IIncludableQueryable<DAL.Entities.Streetcode.TextContent.Text, object>>?>()))
+            .ReturnsAsync(textEntity);
+
+        this.textServiceMock
+            .Setup(s => s.AddTermsTag(originalContent))
+            .ReturnsAsync(taggedContent);
+
+        DAL.Entities.Streetcode.TextContent.Text? capturedEntity = null;
+        this.mapperMock
+            .Setup(m => m.Map<TextDTO?>(It.IsAny<DAL.Entities.Streetcode.TextContent.Text>()))
+            .Callback<object>(obj => capturedEntity = obj as DAL.Entities.Streetcode.TextContent.Text)
+            .Returns(new TextDTO { TextContent = taggedContent });
+
+        // Act
+        var result = await this.handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        capturedEntity.Should().NotBeNull();
+        capturedEntity!.TextContent.Should().Be(taggedContent);
+        result.Value!.TextContent.Should().Be(taggedContent);
+    }
+
 }
