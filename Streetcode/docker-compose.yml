@@ -6,14 +6,14 @@ services:
     container_name: streetcode-db
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Admin@1234 # стандартний пароль
+      - MSSQL_SA_PASSWORD=Admin@1234 # Def pass
     ports:
       - "1434:1433"
 
   webapi:
     build:
-      context: .
-      dockerfile: Streetcode.WebApi/Dockerfile
+      context: ..
+      dockerfile: Dockerfile
     container_name: streetcode-api
     ports:
       - "5000:80"
