@@ -82,4 +82,37 @@ public class GetTextByStreetcodeIdHandlerTests
             s => s.AddTermsTag(It.IsAny<string>()),
             Times.Never);
     }
+
+    [Fact]
+    public async Task Handle_ReturnsError_WhenStreetcodeDoesNotExist()
+    {
+        // Arrange
+        var query = new GetTextByStreetcodeIdQuery(StreetcodeId: 1);
+
+        this.textRepositoryMock
+            .Setup(repo => repo.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Text, bool>>>(),
+                It.IsAny<Func<IQueryable<DAL.Entities.Streetcode.TextContent.Text>, IIncludableQueryable<DAL.Entities.Streetcode.TextContent.Text, object>>?>()))
+            .ReturnsAsync((DAL.Entities.Streetcode.TextContent.Text?)null);
+
+        this.streetcodeRepositoryMock
+            .Setup(repo => repo.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
+                It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>?>()))
+            .ReturnsAsync((StreetcodeContent?)null);
+
+        // Act
+        var result = await this.handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+
+        this.loggerMock.Verify(
+            l => l.LogError(query, It.Is<string>(msg => msg.Contains("1"))),
+            Times.Once);
+
+        this.textServiceMock.Verify(
+            s => s.AddTermsTag(It.IsAny<string>()),
+            Times.Never);
+    }
 }
