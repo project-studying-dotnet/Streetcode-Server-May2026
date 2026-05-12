@@ -29,16 +29,16 @@ namespace Streetcode.XUnitTest.BLL.Services.Text
         }
 
         [Fact]
-        public async Task AddTermsTag_ReturnsNull_WhenInputIsNull()
+        public async Task AddTermsTag_ThrowArgumentNullException_WhenInputIsNull()
         {
             // Arrange
             string? input = null;
 
             // Act
-            var result = await this.service.AddTermsTag(input!);
+            var result = async () => await this.service.AddTermsTag(input!);
 
             // Assert
-            result.Should().BeNull();
+            await result.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
