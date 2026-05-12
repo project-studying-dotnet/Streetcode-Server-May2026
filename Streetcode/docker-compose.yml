@@ -6,7 +6,7 @@ services:
     container_name: streetcode-db
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Admin@1234 # Def pass
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD} #  pass
     ports:
       - "1434:1433"
 
@@ -22,4 +22,4 @@ services:
       - db
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=db;Database=StreetcodeDb;User Id=sa;Password=Admin@1234;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ConnectionStrings__DefaultConnection=Server=db;Database=StreetcodeDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;MultipleActiveResultSets=true
