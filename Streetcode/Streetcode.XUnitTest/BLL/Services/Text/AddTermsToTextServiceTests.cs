@@ -60,5 +60,27 @@ namespace Streetcode.XUnitTest.BLL.Services.Text
             // Assert
             result.Should().Contain("<Popover><Term>hello</Term><Desc>test description</Desc></Popover>");
         }
+
+        [Fact]
+        public async Task AddTermsTag_WrapsFirstOccurrence_AndSkipsSubsequent()
+        {
+            // Arrange
+            const string input = "hello hello";
+            const string expectedTag = "<Popover><Term>hello</Term><Desc>test description</Desc></Popover>";
+            var term = new Term { Id = 1, Title = "hello", Description = "test description" };
+
+            this.termRepositoryMock
+                .Setup(repo => repo.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<Term, bool>>>(),
+                    It.IsAny<Func<IQueryable<Term>, IIncludableQueryable<Term, object>>?>()))
+                .ReturnsAsync(term);
+
+            // Act
+            var result = await this.service.AddTermsTag(input);
+
+            // Assert
+            result.Should().Contain(expectedTag);
+            result.Split("<Popover>").Should().HaveCount(2); // рівно одне входження
+        }
     }
 }
