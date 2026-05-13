@@ -7,12 +7,12 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Interfaces.Text;
 using Streetcode.BLL.MediatR.Streetcode.Text.GetByStreetcodeId;
 using Streetcode.DAL.Entities.Streetcode;
-using Streetcode.DAL.Entities.Streetcode.TextContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
 using System.Linq.Expressions;
 using Xunit;
+using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
 
 namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
 {
@@ -51,6 +51,59 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
         }
 
         [Fact]
+        public async Task Handle_ReturnsProcessedText_WhenTextExists()
+        {
+            // Arrange
+            const string originalContent = "Text about Maidan";
+            const string taggedContent = "<Popover><Term>Maidan</Term><Desc>Central square</Desc></Popover>";
+            var query = new GetTextByStreetcodeIdQuery(StreetcodeId: 1);
+
+            var textEntity = new TextEntity
+            {
+                Id = 1,
+                StreetcodeId = 1,
+                TextContent = originalContent
+            };
+
+            var textDto = new TextDTO
+            {
+                Id = 1,
+                StreetcodeId = 1,
+                TextContent = taggedContent
+            };
+
+            this.textRepositoryMock
+                .Setup(repo => repo.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                    It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
+                .ReturnsAsync(textEntity);
+
+            this.textServiceMock
+                .Setup(s => s.AddTermsTag(originalContent))
+                .ReturnsAsync(taggedContent);
+
+            this.mapperMock
+                .Setup(m => m.Map<TextDTO?>(It.IsAny<TextEntity>()))
+                .Returns(textDto);
+
+            // Act
+            var result = await this.handler.Handle(query, CancellationToken.None);
+
+            // Assert
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().NotBeNull();
+            result.Value!.TextContent.Should().Be(taggedContent);
+
+            this.textServiceMock.Verify(
+                s => s.AddTermsTag(originalContent),
+                Times.Once);
+
+            this.loggerMock.Verify(
+                l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
+                Times.Never);
+        }
+
+        [Fact]
         public async Task Handle_ReturnsNullResult_WhenTextNotFoundButStreetcodeExists()
         {
             // Arrange
@@ -58,9 +111,9 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
 
             this.textRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
-                    It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Text, bool>>>(),
-                    It.IsAny<Func<IQueryable<DAL.Entities.Streetcode.TextContent.Text>, IIncludableQueryable<DAL.Entities.Streetcode.TextContent.Text, object>>?>()))
-                .ReturnsAsync((DAL.Entities.Streetcode.TextContent.Text?)null);
+                    It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                    It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
+                .ReturnsAsync((TextEntity?)null);
 
             this.streetcodeRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
@@ -92,9 +145,9 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
 
             this.textRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
-                    It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Text, bool>>>(),
-                    It.IsAny<Func<IQueryable<DAL.Entities.Streetcode.TextContent.Text>, IIncludableQueryable<DAL.Entities.Streetcode.TextContent.Text, object>>?>()))
-                .ReturnsAsync((DAL.Entities.Streetcode.TextContent.Text?)null);
+                    It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                    It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
+                .ReturnsAsync((TextEntity?)null);
 
             this.streetcodeRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
@@ -124,7 +177,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
             const string originalContent = "Text about streetcode";
             const string taggedContent = "<Popover><Term>streetcode</Term><Desc>description</Desc></Popover>";
             var query = new GetTextByStreetcodeIdQuery(StreetcodeId: 1);
-            var textEntity = new DAL.Entities.Streetcode.TextContent.Text
+            var textEntity = new TextEntity
             {
                 Id = 1,
                 StreetcodeId = 1,
@@ -133,18 +186,18 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
 
             this.textRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
-                    It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Text, bool>>>(),
-                    It.IsAny<Func<IQueryable<DAL.Entities.Streetcode.TextContent.Text>, IIncludableQueryable<DAL.Entities.Streetcode.TextContent.Text, object>>?>()))
+                    It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                    It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
                 .ReturnsAsync(textEntity);
 
             this.textServiceMock
                 .Setup(s => s.AddTermsTag(originalContent))
                 .ReturnsAsync(taggedContent);
 
-            DAL.Entities.Streetcode.TextContent.Text? capturedEntity = null;
+            TextEntity? capturedEntity = null;
             this.mapperMock
-                .Setup(m => m.Map<TextDTO?>(It.IsAny<DAL.Entities.Streetcode.TextContent.Text>()))
-                .Callback<object>(obj => capturedEntity = obj as DAL.Entities.Streetcode.TextContent.Text)
+                .Setup(m => m.Map<TextDTO?>(It.IsAny<TextEntity>()))
+                .Callback<object>(obj => capturedEntity = obj as TextEntity)
                 .Returns(new TextDTO { TextContent = taggedContent });
 
             // Act
