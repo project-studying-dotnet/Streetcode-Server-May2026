@@ -10,7 +10,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Features.News.GetAll
+namespace Streetcode.XUnitTest.BLL.MediatR.News.GetAll
 {
     public class GetAllNewsHandlerTests
     {
@@ -40,9 +40,9 @@ namespace Streetcode.XUnitTest.Features.News.GetAll
             var request = new GetAllNewsQuery();
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetAllAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<Streetcode.DAL.Entities.News.News>, IIncludableQueryable<Streetcode.DAL.Entities.News.News, object>>>()))
-                .ReturnsAsync((IEnumerable<Streetcode.DAL.Entities.News.News>)null);
+                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
+                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
+                .ReturnsAsync((IEnumerable<DAL.Entities.News.News>)null);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -55,16 +55,16 @@ namespace Streetcode.XUnitTest.Features.News.GetAll
         public async Task Handle_ShouldReturnOk_WhenNewsHasNoImages()
         {
             var request = new GetAllNewsQuery();
-            var newsEntities = new List<Streetcode.DAL.Entities.News.News> { new Streetcode.DAL.Entities.News.News { Id = 1 } };
+            var newsEntities = new List<DAL.Entities.News.News> { new DAL.Entities.News.News { Id = 1 } };
 
             var newsDTOs = new List<NewsDTO> { new NewsDTO { Id = 1, Image = null } };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetAllAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<Streetcode.DAL.Entities.News.News>, IIncludableQueryable<Streetcode.DAL.Entities.News.News, object>>>()))
+                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
+                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
                 .ReturnsAsync(newsEntities);
 
-            _mapperMock.Setup(m => m.Map<IEnumerable<NewsDTO>>(It.IsAny<IEnumerable<Streetcode.DAL.Entities.News.News>>()))
+            _mapperMock.Setup(m => m.Map<IEnumerable<NewsDTO>>(It.IsAny<IEnumerable<DAL.Entities.News.News>>()))
                 .Returns(newsDTOs);
 
             var result = await _handler.Handle(request, CancellationToken.None);
@@ -79,25 +79,25 @@ namespace Streetcode.XUnitTest.Features.News.GetAll
         public async Task Handle_ShouldReturnOkAndFetchBase64_WhenNewsHasImages()
         {
             var request = new GetAllNewsQuery();
-            var newsEntities = new List<Streetcode.DAL.Entities.News.News> { new Streetcode.DAL.Entities.News.News { Id = 1 } };
+            var newsEntities = new List<DAL.Entities.News.News> { new DAL.Entities.News.News { Id = 1 } };
 
             var newsDTOs = new List<NewsDTO>
             {
                 new NewsDTO
                 {
                     Id = 1,
-                    Image = new ImageDTO { BlobName = "test-image.jpg" }
-                }
+                    Image = new ImageDTO { BlobName = "test-image.jpg" },
+                },
             };
 
             var expectedBase64 = "base64-encoded-string";
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetAllAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<Streetcode.DAL.Entities.News.News>, IIncludableQueryable<Streetcode.DAL.Entities.News.News, object>>>()))
+                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
+                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
                 .ReturnsAsync(newsEntities);
 
-            _mapperMock.Setup(m => m.Map<IEnumerable<NewsDTO>>(It.IsAny<IEnumerable<Streetcode.DAL.Entities.News.News>>()))
+            _mapperMock.Setup(m => m.Map<IEnumerable<NewsDTO>>(It.IsAny<IEnumerable<DAL.Entities.News.News>>()))
                 .Returns(newsDTOs);
 
             _blobServiceMock.Setup(b => b.FindFileInStorageAsBase64("test-image.jpg"))

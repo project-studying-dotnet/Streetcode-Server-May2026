@@ -3,14 +3,10 @@ using Moq;
 using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Newss.Create;
-using Streetcode.DAL.Entities.News;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Features.News.Create
+namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
 {
     public class CreateNewsHandlerTests
     {
@@ -37,8 +33,8 @@ namespace Streetcode.XUnitTest.Features.News.Create
         {
             var request = new CreateNewsCommand(new NewsDTO());
 
-            _mapperMock.Setup(m => m.Map<Streetcode.DAL.Entities.News.News>(It.IsAny<NewsDTO>()))
-                       .Returns((Streetcode.DAL.Entities.News.News)null);
+            _mapperMock.Setup(m => m.Map<DAL.Entities.News.News>(It.IsAny<NewsDTO>()))
+                       .Returns((DAL.Entities.News.News)null);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -53,14 +49,14 @@ namespace Streetcode.XUnitTest.Features.News.Create
         {
             var newsDto = new NewsDTO();
             var request = new CreateNewsCommand(newsDto);
-            var newsEntity = new Streetcode.DAL.Entities.News.News { ImageId = 1 };
+            var newsEntity = new DAL.Entities.News.News { ImageId = 1 };
 
-            _mapperMock.Setup(m => m.Map<Streetcode.DAL.Entities.News.News>(It.IsAny<NewsDTO>()))
+            _mapperMock.Setup(m => m.Map<DAL.Entities.News.News>(It.IsAny<NewsDTO>()))
                        .Returns(newsEntity);
-            _mapperMock.Setup(m => m.Map<NewsDTO>(It.IsAny<Streetcode.DAL.Entities.News.News>()))
+            _mapperMock.Setup(m => m.Map<NewsDTO>(It.IsAny<DAL.Entities.News.News>()))
                        .Returns(newsDto);
 
-            _repositoryWrapperMock.Setup(r => r.NewsRepository.Create(It.IsAny<Streetcode.DAL.Entities.News.News>()))
+            _repositoryWrapperMock.Setup(r => r.NewsRepository.Create(It.IsAny<DAL.Entities.News.News>()))
                                   .Returns(newsEntity);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
@@ -71,19 +67,19 @@ namespace Streetcode.XUnitTest.Features.News.Create
             Assert.True(result.IsSuccess);
             Assert.Equal(newsDto, result.Value);
 
-            _repositoryWrapperMock.Verify(r => r.NewsRepository.Create(It.IsAny<Streetcode.DAL.Entities.News.News>()), Times.Once);
+            _repositoryWrapperMock.Verify(r => r.NewsRepository.Create(It.IsAny<DAL.Entities.News.News>()), Times.Once);
         }
 
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenSaveChangesReturnsZero()
         {
             var request = new CreateNewsCommand(new NewsDTO());
-            var newsEntity = new Streetcode.DAL.Entities.News.News { ImageId = 0 };
+            var newsEntity = new DAL.Entities.News.News { ImageId = 0 };
 
-            _mapperMock.Setup(m => m.Map<Streetcode.DAL.Entities.News.News>(It.IsAny<NewsDTO>()))
+            _mapperMock.Setup(m => m.Map<DAL.Entities.News.News>(It.IsAny<NewsDTO>()))
                        .Returns(newsEntity);
 
-            _repositoryWrapperMock.Setup(r => r.NewsRepository.Create(It.IsAny<Streetcode.DAL.Entities.News.News>()))
+            _repositoryWrapperMock.Setup(r => r.NewsRepository.Create(It.IsAny<DAL.Entities.News.News>()))
                                   .Returns(newsEntity);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())

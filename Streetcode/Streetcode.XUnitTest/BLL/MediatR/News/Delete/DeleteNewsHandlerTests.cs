@@ -6,7 +6,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Features.News.Delete
+namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
 {
     public class DeleteNewsHandlerTests
     {
@@ -31,8 +31,8 @@ namespace Streetcode.XUnitTest.Features.News.Delete
             var request = new DeleteNewsCommand(1);
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.News.News, bool>>>(), null))
-                .ReturnsAsync((Streetcode.DAL.Entities.News.News)null);
+                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(), null))
+                .ReturnsAsync((DAL.Entities.News.News)null);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -45,14 +45,14 @@ namespace Streetcode.XUnitTest.Features.News.Delete
         public async Task Handle_ShouldDeleteNewsAndImage_WhenImageExists()
         {
             var request = new DeleteNewsCommand(1);
-            var newsEntity = new Streetcode.DAL.Entities.News.News
+            var newsEntity = new DAL.Entities.News.News
             {
                 Id = 1,
                 Image = new Image()
             };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.News.News, bool>>>(), null))
+                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(), null))
                 .ReturnsAsync(newsEntity);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
@@ -68,14 +68,14 @@ namespace Streetcode.XUnitTest.Features.News.Delete
         public async Task Handle_ShouldDeleteOnlyNews_WhenImageIsNull()
         {
             var request = new DeleteNewsCommand(1);
-            var newsEntity = new Streetcode.DAL.Entities.News.News
+            var newsEntity = new DAL.Entities.News.News
             {
                 Id = 1,
                 Image = null
             };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.News.News, bool>>>(), null))
+                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(), null))
                 .ReturnsAsync(newsEntity);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
@@ -91,10 +91,10 @@ namespace Streetcode.XUnitTest.Features.News.Delete
         public async Task Handle_ShouldReturnFail_WhenSaveChangesReturnsZero()
         {
             var request = new DeleteNewsCommand(1);
-            var newsEntity = new Streetcode.DAL.Entities.News.News { Id = 1 };
+            var newsEntity = new DAL.Entities.News.News { Id = 1 };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.News.News, bool>>>(), null))
+                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(), null))
                 .ReturnsAsync(newsEntity);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(0);
