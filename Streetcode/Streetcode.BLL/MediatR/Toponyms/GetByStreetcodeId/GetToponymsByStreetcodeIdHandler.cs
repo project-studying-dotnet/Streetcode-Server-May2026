@@ -27,19 +27,16 @@ public class GetToponymsByStreetcodeIdHandler : IRequestHandler<GetToponymsByStr
 
     public async Task<Result<IEnumerable<ToponymDTO>>> Handle(GetToponymsByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
-var toponyms = await _repositoryWrapper.ToponymRepository.FindAll(
-    sc => sc.Streetcodes.Any(s => s.Id == request.StreetcodeId)
-)
-.DistinctBy(t => t.StreetName)
-.ProjectTo<ToponymDTO>(_mapper.ConfigurationProvider)
-.ToListAsync(cancellationToken);
+        List<ToponymDTO> toponyms = await _repositoryWrapper.ToponymRepository.FindAll(
+            sc => sc.Streetcodes.Any(s => s.Id == request.StreetcodeId)
+        ).DistinctBy(t => t.StreetName).ProjectTo<ToponymDTO>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
 
-if(toponyms.Count == 0)
+        if(toponyms.Count == 0)
         {
             string errorMsg = $"Cannot find any toponym by the streetcode id: {request.StreetcodeId}";
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
-        return Result.Ok(toponyms.AsEnumerable());
+        return Result.Ok(toponyms);
     }
 }
