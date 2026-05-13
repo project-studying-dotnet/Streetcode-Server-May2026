@@ -37,6 +37,6 @@ public class GetToponymsByStreetcodeIdHandler : IRequestHandler<GetToponymsByStr
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
-        return Result.Ok(toponyms);
+        return Result.Ok(toponyms.AsEnumerable());
     }
 }
