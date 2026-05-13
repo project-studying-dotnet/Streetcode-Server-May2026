@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
-using Streetcode.BLL.DTO.Media.Images;
-using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Media.Images;
+using Streetcode.BLL.Mapping.Newss;
 using Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
@@ -14,7 +14,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
 {
     public class GetNewsAndLinksByUrlHandlerTests
     {
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly IMapper _mapper;
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
         private readonly Mock<IBlobService> _blobServiceMock;
         private readonly Mock<ILoggerService> _loggerMock;
@@ -23,13 +23,18 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
 
         public GetNewsAndLinksByUrlHandlerTests()
         {
-            _mapperMock = new Mock<IMapper>();
+            _mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<NewsProfile>();
+                cfg.AddProfile<ImageProfile>();
+            }).CreateMapper();
+
             _repositoryWrapperMock = new Mock<IRepositoryWrapper> { DefaultValue = DefaultValue.Mock };
             _blobServiceMock = new Mock<IBlobService>();
             _loggerMock = new Mock<ILoggerService>();
 
             _handler = new GetNewsAndLinksByUrlHandler(
-                _mapperMock.Object,
+                _mapper,
                 _repositoryWrapperMock.Object,
                 _blobServiceMock.Object,
                 _loggerMock.Object);
@@ -60,20 +65,18 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
 
             var newsEntities = new List<DAL.Entities.News.News>
             {
-                new DAL.Entities.News.News { Id = 1, URL = "url1", Title = "Title 1" },
+                new DAL.Entities.News.News
+                {
+                    Id = 1,
+                    URL = "url1",
+                    Title = "Title 1",
+                    Image = new DAL.Entities.Media.Images.Image { BlobName = "test.jpg" }
+                },
                 new DAL.Entities.News.News { Id = 2, URL = "url2", Title = "Title 2" },
                 new DAL.Entities.News.News { Id = 3, URL = "url3", Title = "Title 3" }
             };
 
-            var targetNewsDto = new NewsDTO
-            {
-                Id = 1,
-                URL = "url1",
-                Title = "Title 1",
-                Image = new ImageDTO { BlobName = "test.jpg" }
-            };
-
-            SetupMocks(newsEntities, newsEntities[0], targetNewsDto);
+            SetupMocks(newsEntities, newsEntities[0]);
             _blobServiceMock.Setup(b => b.FindFileInStorageAsBase64("test.jpg")).Returns("base64");
 
             var result = await _handler.Handle(request, CancellationToken.None);
@@ -99,9 +102,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
                 new DAL.Entities.News.News { Id = 4, URL = "url4", Title = "Title 4" },
             };
 
-            var targetNewsDto = new NewsDTO { Id = 4, URL = "url4", Title = "Title 4", Image = null };
-
-            SetupMocks(newsEntities, newsEntities[3], targetNewsDto);
+            SetupMocks(newsEntities, newsEntities[3]);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -126,9 +127,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
                 new DAL.Entities.News.News { Id = 5, URL = "url5", Title = "Title 5" },
             };
 
-            var targetNewsDto = new NewsDTO { Id = 1, URL = "url1", Title = "Title 1", Image = null };
-
-            SetupMocks(newsEntities, newsEntities[0], targetNewsDto);
+            SetupMocks(newsEntities, newsEntities[0]);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -138,8 +137,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
 
         private void SetupMocks(
             List<DAL.Entities.News.News> allNews,
-            DAL.Entities.News.News targetEntity,
-            NewsDTO targetDto)
+            DAL.Entities.News.News targetEntity)
         {
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
@@ -149,9 +147,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetAllAsync(
                 null, null))
                 .ReturnsAsync(allNews);
-
-            _mapperMock.Setup(m => m.Map<NewsDTO>(targetEntity))
-                .Returns(targetDto);
         }
     }
 }

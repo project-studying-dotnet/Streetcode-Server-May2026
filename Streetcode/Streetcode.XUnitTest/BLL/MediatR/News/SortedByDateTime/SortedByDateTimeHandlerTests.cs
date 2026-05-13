@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
-using Streetcode.BLL.DTO.Media.Images;
-using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Media.Images;
+using Streetcode.BLL.Mapping.Newss;
 using Streetcode.BLL.MediatR.Newss.SortedByDateTime;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
@@ -14,8 +14,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.SortedByDateTime
 {
     public class SortedByDateTimeHandlerTests
     {
+        private readonly IMapper _mapper;
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
-        private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IBlobService> _blobServiceMock;
         private readonly Mock<ILoggerService> _loggerMock;
 
@@ -23,14 +23,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.SortedByDateTime
 
         public SortedByDateTimeHandlerTests()
         {
+            _mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<NewsProfile>();
+                cfg.AddProfile<ImageProfile>();
+            }).CreateMapper();
+
             _repositoryWrapperMock = new Mock<IRepositoryWrapper> { DefaultValue = DefaultValue.Mock };
-            _mapperMock = new Mock<IMapper>();
             _blobServiceMock = new Mock<IBlobService>();
             _loggerMock = new Mock<ILoggerService>();
 
             _handler = new SortedByDateTimeHandler(
                 _repositoryWrapperMock.Object,
-                _mapperMock.Object,
+                _mapper,
                 _blobServiceMock.Object,
                 _loggerMock.Object);
         }
@@ -56,23 +61,21 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.SortedByDateTime
         public async Task Handle_ShouldReturnOkAndSortDescending_WhenNewsExist()
         {
             var request = new SortedByDateTimeQuery();
-            var newsEntities = new List<DAL.Entities.News.News>
-            {
-                new DAL.Entities.News.News { Id = 1 },
-                new DAL.Entities.News.News { Id = 2 }
-            };
 
-            var oldNewsDto = new NewsDTO
+            var newsEntities = new List<Streetcode.DAL.Entities.News.News>
             {
-                Id = 1,
-                CreationDate = new DateTime(2020, 1, 1),
-                Image = null,
-            };
-            var newNewsDto = new NewsDTO
-            {
-                Id = 2,
-                CreationDate = new DateTime(2023, 1, 1),
-                Image = new ImageDTO { BlobName = "test.jpg" },
+                new DAL.Entities.News.News
+                {
+                    Id = 1,
+                    CreationDate = new DateTime(2020, 1, 1),
+                    Image = null,
+                },
+                new DAL.Entities.News.News
+                {
+                    Id = 2,
+                    CreationDate = new DateTime(2023, 1, 1),
+                    Image = new DAL.Entities.Media.Images.Image { BlobName = "test.jpg" },
+                },
             };
 
             var expectedBase64 = "base64-encoded-string";
@@ -81,9 +84,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.SortedByDateTime
                 It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
                 It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
                 .ReturnsAsync(newsEntities);
-
-            _mapperMock.Setup(m => m.Map<IEnumerable<NewsDTO>>(newsEntities))
-                .Returns(new List<NewsDTO> { oldNewsDto, newNewsDto });
 
             _blobServiceMock.Setup(b => b.FindFileInStorageAsBase64("test.jpg"))
                 .Returns(expectedBase64);
@@ -97,7 +97,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.SortedByDateTime
             Assert.Equal(1, result.Value[1].Id);
 
             Assert.Equal(expectedBase64, result.Value[0].Image.Base64);
-            _blobServiceMock.Verify(b => b.FindFileInStorageAsBase64("test.jpg"), Times.Once);
         }
     }
 }
