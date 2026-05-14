@@ -4,11 +4,13 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.Toponyms;
+using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using AutoMapper.QueryableExtensions;
 
-#pragma warning disable SA1111
-#pragma warning disable SA1513
+#pragma warning disable SA1111 //Closing parenthesis should be on line of last parameter
+#pragma warning disable SA1513 //Closing brace should be followed by blank line
 
 namespace Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
 
