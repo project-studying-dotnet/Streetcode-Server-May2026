@@ -9,11 +9,16 @@ Front-end part: https://github.com/ita-social-projects/streetcode-client_Admin-F
 >### **Mission**
 >To fill the gaps in the historical memory of Ukrainians.
 
-[![Build Status](https://img.shields.io/travis/ita-social-projects/Streetcode-Admin/master?style=flat-square)](https://travis-ci.org/github/ita-social-projects/Streetcode-Admin)
+[![Build Status](https://img.shields.io/travis/ita-social-projects/Streetcode-Admin/master?style=flat-square)](https://travis-ci.org/github/ita-social-projects/Streetcode-Server-May2026)
 [![Coverage Status](https://img.shields.io/gitlab/coverage/ita-social-projects/Streetcode-Admin/master?style=flat-square)](https://coveralls.io)
-[![Github Issues](https://img.shields.io/github/issues/ita-social-projects/Streetcode-Admin?style=flat-square)](https://github.com/ita-social-projects/Streetcode-Admin/issues)
-[![Pending Pull-Requests](https://img.shields.io/github/issues-pr/ita-social-projects/Streetcode-Admin?style=flat-square)](https://github.com/ita-social-projects/Streetcode-Admin/pulls)
+[![Github Issues](https://img.shields.io/github/issues/ita-social-projects/Streetcode-Admin?style=flat-square)](https://github.com/project-studying-dotnet/Streetcode-Server-May2026/issues)
+[![Pending Pull-Requests](https://img.shields.io/github/issues-pr/ita-social-projects/Streetcode-Admin?style=flat-square)](https://github.com/project-studying-dotnet/Streetcode-Server-May2026/pulls)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=project-studying-dotnet/Streetcode-Server-May2026&metric=alert_status)](https://sonarcloud.io/project/overview?id=project-studying-dotnet_Streetcode-Server-May2026) 
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=project-studying-dotnet/Streetcode-Server-May2026&metric=coverage)](https://sonarcloud.io/dashboard?id=project-studying-dotnet_Streetcode-Server-May2026) 
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=project-studying-dotnet/Streetcode-Server-May2026&metric=bugs)](https://sonarcloud.io/dashboard?id=project-studying-dotnet_Streetcode-Server-May2026)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=project-studying-dotnet/Streetcode-Server-May2026&metric=code_smells)](https://sonarcloud.io/dashboard?id=project-studying-dotnet_Streetcode-Server-May2026) 
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=project-studying-dotnet/Streetcode-Server-May2026&metric=security_rating)](https://sonarcloud.io/dashboard?id=project-studying-dotnet_Streetcode-Server-May2026)
 ---
 
 ## Table of Contents 
