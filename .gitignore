@@ -345,5 +345,4 @@ healthchecksdb
 # BlobStorage
 BlobStorageFolder/
 BlobStorageTestFolder/
-/Streetcode/Streetcode.WebApi/appsettings.json
-/Streetcode/Streetcode.WebApi/appsettings.Local.json
+

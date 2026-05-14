@@ -1,22 +1,23 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore.Query;
-using Moq;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Repositories.Interfaces;
-using Streetcode.BLL.DTO.Media.Art;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.MediatR.Media.Art.GetById;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetById
+﻿namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetById
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Text;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Microsoft.EntityFrameworkCore.Query;
+    using Moq;
+    using Org.BouncyCastle.Asn1.Ocsp;
+    using Repositories.Interfaces;
+    using Streetcode.BLL.DTO.Media.Art;
+    using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.MediatR.Media.Art.GetById;
+    using Streetcode.DAL.Entities.Media.Images;
+    using Streetcode.DAL.Repositories.Interfaces.Base;
+    using Xunit;
+
     /// <summary>
     /// Checking class GetArtByIdHandler.
     /// </summary>
@@ -56,9 +57,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetById
         [Fact]
         public async Task Handle_ValidId_ReturnArt()
         {
+            // Arrange
             var query = new GetArtByIdQuery(1);
 
-            var art = new DAL.Entities.Media.Images.Art()
+            var art = new Art()
             {
                 Id = 1,
                 Description = "Description art 1",
@@ -76,19 +78,34 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetById
 
             this.mockArtRepository
                     .Setup(r => r.GetFirstOrDefaultAsync(
-                        It.IsAny<Expression<Func<DAL.Entities.Media.Images.Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<DAL.Entities.Media.Images.Art>,
-                            IIncludableQueryable<DAL.Entities.Media.Images.Art, object>>>()))
+                        It.IsAny<Expression<Func<Art, bool>>>(),
+                        It.IsAny<Func<IQueryable<Art>,
+                            IIncludableQueryable<Art, object>>>()))
                     .ReturnsAsync(art);
 
             this.mockMapper
                     .Setup(m => m.Map<ArtDTO>(
-                        It.IsAny<DAL.Entities.Media.Images.Art>()))
+                        It.IsAny<Art>()))
                     .Returns(artDTO);
 
+            // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
 
+            // Assert
+            Assert.True(result.IsSuccess);
+
+            Assert.NotNull(result.Value);
+
             Assert.Equal(artDTO.Id, result.Value.Id);
+
+            Assert.Equal(artDTO.Title, result.Value.Title);
+
+            this.mockArtRepository
+                    .Verify(r => r.GetFirstOrDefaultAsync(
+                        It.IsAny<Expression<Func<Art, bool>>>(),
+                        It.IsAny<Func<IQueryable<Art>,
+                            IIncludableQueryable<Art, object>>>()),
+                    Times.Once);
         }
 
         /// <summary>
@@ -98,20 +115,32 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetById
         [Fact]
         public async Task Handle_NotValidId_ReturnError()
         {
+            // Arrange
             var query = new GetArtByIdQuery(2);
 
             string expectedErrorMsg = $"Cannot find an art with corresponding id: {query.Id}";
 
             this.mockArtRepository
                     .Setup(r => r.GetFirstOrDefaultAsync(
-                        It.IsAny<Expression<Func<DAL.Entities.Media.Images.Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<DAL.Entities.Media.Images.Art>,
-                            IIncludableQueryable<DAL.Entities.Media.Images.Art, object>>>()))
-                    .ReturnsAsync((DAL.Entities.Media.Images.Art?)null);
+                        It.IsAny<Expression<Func<Art, bool>>>(),
+                        It.IsAny<Func<IQueryable<Art>,
+                            IIncludableQueryable<Art, object>>>()))
+                    .ReturnsAsync((Art?)null);
 
+            // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
 
+            // Assert
+            Assert.True(result.IsFailed);
+
             Assert.Equal(expectedErrorMsg, result.Errors.First().Message);
+
+            this.mockArtRepository
+                    .Verify(r => r.GetFirstOrDefaultAsync(
+                        It.IsAny<Expression<Func<Art, bool>>>(),
+                        It.IsAny<Func<IQueryable<Art>,
+                            IIncludableQueryable<Art, object>>>()),
+                    Times.Once);
         }
     }
 }

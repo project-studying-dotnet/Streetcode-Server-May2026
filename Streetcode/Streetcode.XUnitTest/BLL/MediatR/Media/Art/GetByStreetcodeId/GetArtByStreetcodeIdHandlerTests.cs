@@ -1,26 +1,26 @@
-﻿using AutoMapper;
-using Castle.Core.Logging;
-using Microsoft.EntityFrameworkCore.Query;
-using Moq;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Repositories.Interfaces;
-using Streetcode.BLL.DTO.Media.Art;
-using Streetcode.BLL.Interfaces.BlobStorage;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.MediatR.Media.Art.GetByStreetcodeId;
-using Streetcode.DAL.Entities.Media.Images;
-using Streetcode.DAL.Entities.Streetcode;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetByStreetcodeId
+﻿namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetByStreetcodeId
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Text;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Castle.Core.Logging;
+    using Microsoft.EntityFrameworkCore.Query;
+    using Moq;
+    using Org.BouncyCastle.Asn1.Ocsp;
+    using Repositories.Interfaces;
+    using Streetcode.BLL.DTO.Media.Art;
+    using Streetcode.BLL.Interfaces.BlobStorage;
+    using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.MediatR.Media.Art.GetByStreetcodeId;
+    using Streetcode.DAL.Entities.Media.Images;
+    using Streetcode.DAL.Entities.Streetcode;
+    using Streetcode.DAL.Repositories.Interfaces.Base;
+    using Xunit;
+
     /// <summary>
     /// Checking class GetArtByStreetcodeIdHandler.
     /// </summary>
@@ -70,11 +70,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetByStreetcodeId
         [Fact]
         public async Task Handle_ValidStreetcodeId_ReturnCorrectArts()
         {
+            // Arrange
             var query = new GetArtsByStreetcodeIdQuery(1);
 
             var expectedCount = 1;
 
-            var arts = new List<DAL.Entities.Media.Images.Art>()
+            string expectedTitle = "Title art 1";
+
+            var arts = new List<Art>()
             {
                 new DAL.Entities.Media.Images.Art()
                 {
@@ -95,14 +98,33 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetByStreetcodeId
 
             this.mockArtRepository
                     .Setup(r => r.GetAllAsync(
-                        It.IsAny<Expression<Func<DAL.Entities.Media.Images.Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<DAL.Entities.Media.Images.Art>,
-                            IIncludableQueryable<DAL.Entities.Media.Images.Art, object>>>()))
+                        It.IsAny<Expression<Func<Art, bool>>>(),
+                        It.IsAny<Func<IQueryable<Art>,
+                            IIncludableQueryable<Art, object>>>()))
                     .ReturnsAsync(arts);
 
+            // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
 
+            // Assert
+            Assert.True(result.IsSuccess);
+
+            Assert.NotNull(result.Value);
+
             Assert.Equal(expectedCount, result.Value.Count());
+
+            Assert.Equal(expectedTitle, result.Value.First().Title);
+
+            Assert.All(result.Value, item =>
+            {
+                Assert.IsType<ArtDTO>(item);
+            });
+
+            this.mockArtRepository.Verify(r => r.GetAllAsync(
+                    It.IsAny<Expression<Func<Art, bool>>>(),
+                    It.IsAny<Func<IQueryable<Art>,
+                        IIncludableQueryable<Art, object>>>()),
+                    Times.Once);
         }
 
         /// <summary>
@@ -112,20 +134,31 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetByStreetcodeId
         [Fact]
         public async Task Handle_ValidStretcodeIdWithEmptyArts_ReturnErrorMessage()
         {
+            // Arrange
             var query = new GetArtsByStreetcodeIdQuery(1);
 
             var expectedErrorMessage = $"Cannot find any art with corresponding streetcode id: {query.StreetcodeId}";
 
             this.mockArtRepository
                     .Setup(r => r.GetAllAsync(
-                        It.IsAny<Expression<Func<DAL.Entities.Media.Images.Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<DAL.Entities.Media.Images.Art>,
-                            IIncludableQueryable<DAL.Entities.Media.Images.Art, object>>>()))
-                    .ReturnsAsync((List<DAL.Entities.Media.Images.Art>?)null);
+                        It.IsAny<Expression<Func<Art, bool>>>(),
+                        It.IsAny<Func<IQueryable<Art>,
+                            IIncludableQueryable<Art, object>>>()))
+                    .ReturnsAsync((List<Art>?)null);
 
+            // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
 
+            // Assert
+            Assert.True(result.IsFailed);
+
             Assert.Equal(expectedErrorMessage, result.Errors.First().Message);
+
+            this.mockArtRepository.Verify(r => r.GetAllAsync(
+                    It.IsAny<Expression<Func<Art, bool>>>(),
+                    It.IsAny<Func<IQueryable<Art>,
+                        IIncludableQueryable<Art, object>>>()),
+                    Times.Once);
         }
     }
 }
