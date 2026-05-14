@@ -1,4 +1,4 @@
-﻿// <copyright file="GetAllTimelineItemsHandlerTests.cs" company="PlaceholderCompany">
+﻿// <copyright file="GetAllTimelineItemHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll
@@ -6,12 +6,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using AutoMapper;
+    using FluentAssertions;
     using Microsoft.EntityFrameworkCore.Query;
     using Moq;
     using Streetcode.BLL.DTO.Timeline;
     using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.Mapping.Timeline;
     using Streetcode.BLL.MediatR.Timeline.TimelineItem.GetAll;
     using Streetcode.DAL.Entities.Timeline;
     using Streetcode.DAL.Enums;
@@ -22,23 +25,29 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll
     /// <summary>
     /// Unit tests for GetAllTimelineItemsHandler.
     /// </summary>
-    public class GetAllTimelineItemsHandlerTests
+    public class GetAllTimelineItemHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> repoWrapperMock;
         private readonly Mock<ITimelineRepository> timelineRepoMock;
-        private readonly Mock<IMapper> mapperMock;
+        private readonly IMapper mapper;
         private readonly Mock<ILoggerService> loggerMock;
 
         private readonly GetAllTimelineItemsHandler handler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetAllTimelineItemsHandlerTests"/> class.
+        /// Initializes a new instance of the <see cref="GetAllTimelineItemHandlerTests"/> class.
         /// </summary>
-        public GetAllTimelineItemsHandlerTests()
+        public GetAllTimelineItemHandlerTests()
         {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<TimelineItemProfile>();
+            });
+
+            this.mapper = config.CreateMapper();
+
             this.repoWrapperMock = new Mock<IRepositoryWrapper>();
             this.timelineRepoMock = new Mock<ITimelineRepository>();
-            this.mapperMock = new Mock<IMapper>();
             this.loggerMock = new Mock<ILoggerService>();
 
             this.repoWrapperMock
@@ -47,7 +56,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll
 
             this.handler = new GetAllTimelineItemsHandler(
                 this.repoWrapperMock.Object,
-                this.mapperMock.Object,
+                this.mapper,
                 this.loggerMock.Object);
         }
 
@@ -83,59 +92,26 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll
                 },
             };
 
-            var expectedDtos = new List<TimelineItemDTO>
-            {
-                new TimelineItemDTO
-                {
-                    Id = 1,
-                    Title = "Test Title",
-                    Description = "Description",
-                    Date = new DateTime(2020, 01, 01),
-                    DateViewPattern = DateViewPattern.Year,
-                    HistoricalContexts = new List<HistoricalContextDTO>
-                    {
-                        new HistoricalContextDTO
-                        {
-                            Id = 1,
-                            Title = "Historical Context 1",
-                        },
-                    },
-                },
-            };
-
             this.timelineRepoMock
                 .Setup(r => r.GetAllAsync(
-                    null,
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
                     It.IsAny<Func<IQueryable<TimelineItem>, IIncludableQueryable<TimelineItem, object>>>()))
             .ReturnsAsync(timelineItems);
 
-            this.mapperMock
-                .Setup(m => m.Map<IEnumerable<TimelineItemDTO>>(It.IsAny<IEnumerable<TimelineItem>>()))
-                .Returns(expectedDtos);
-
             var result = await this.handler.Handle(query, CancellationToken.None);
 
-            Assert.True(result.IsSuccess);
-            Assert.NotNull(result.Value);
-            Assert.Single(result.Value);
+            var expectedDtos = this.mapper.Map<List<TimelineItemDTO>>(timelineItems);
 
-            var item = result.Value.First();
-
-            Assert.Equal("Test Title", item.Title);
-            Assert.Equal(1, item.Id);
-            Assert.Equal("Description", item.Description);
-
-            this.mapperMock.Verify(
-                m => m.Map<IEnumerable<TimelineItemDTO>>(
-                    It.IsAny<IEnumerable<TimelineItem>>()),
-                Times.Once);
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().NotBeNull();
+            result.Value.Should().BeEquivalentTo(expectedDtos);
 
             this.timelineRepoMock.Verify(
-               r => r.GetAllAsync(
-                   null,
-                   It.IsAny<Func<IQueryable<TimelineItem>,
-                       IIncludableQueryable<TimelineItem, object>>>()),
-               Times.Once);
+                r => r.GetAllAsync(
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
+                    It.IsAny<Func<IQueryable<TimelineItem>,
+                        IIncludableQueryable<TimelineItem, object>>>()),
+                Times.Once);
         }
 
         /// <summary>
@@ -149,20 +125,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll
 
             this.timelineRepoMock
                 .Setup(r => r.GetAllAsync(
-                    null,
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
                     It.IsAny<Func<IQueryable<TimelineItem>,
                         IIncludableQueryable<TimelineItem, object>>>()))
                 .ThrowsAsync(new Exception("Database failure"));
 
-            var exception = await Assert.ThrowsAsync<Exception>(() =>
-                this.handler.Handle(query, CancellationToken.None));
+            Func<Task> act = () => this.handler.Handle(query, CancellationToken.None);
 
-            Assert.Equal("Database failure", exception.Message);
-
-            this.mapperMock.Verify(
-               m => m.Map<IEnumerable<TimelineItemDTO>>(
-                   It.IsAny<IEnumerable<TimelineItem>>()),
-               Times.Never);
+            await act.Should().ThrowAsync<Exception>()
+                .WithMessage("Database failure");
 
             this.loggerMock.Verify(
                 l => l.LogError(
@@ -182,30 +153,20 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll
 
             this.timelineRepoMock
                 .Setup(r => r.GetAllAsync(
-                    null,
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
                     It.IsAny<Func<IQueryable<TimelineItem>,
                         IIncludableQueryable<TimelineItem, object>>>()))
                 .ReturnsAsync(new List<TimelineItem>());
 
-            this.mapperMock
-                .Setup(m => m.Map<IEnumerable<TimelineItemDTO>>(
-                    It.IsAny<IEnumerable<TimelineItem>>()))
-                .Returns(new List<TimelineItemDTO>());
-
             var result = await this.handler.Handle(query, CancellationToken.None);
 
-            Assert.True(result.IsSuccess);
-            Assert.NotNull(result.Value);
-            Assert.Empty(result.Value);
-
-            this.mapperMock.Verify(
-                m => m.Map<IEnumerable<TimelineItemDTO>>(
-                    It.IsAny<IEnumerable<TimelineItem>>()),
-                Times.Once);
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().NotBeNull();
+            result.Value.Should().BeEmpty();
 
             this.timelineRepoMock.Verify(
                 r => r.GetAllAsync(
-                    null,
+                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
                     It.IsAny<Func<IQueryable<TimelineItem>,
                         IIncludableQueryable<TimelineItem, object>>>()),
                 Times.Once);
