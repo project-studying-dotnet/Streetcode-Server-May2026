@@ -4,7 +4,6 @@
     using Moq;
     using Streetcode.BLL.DTO.Toponyms;
     using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.MediatR.Toponyms.GetById;
     using Streetcode.DAL.Entities.Toponyms;
     using Streetcode.DAL.Repositories.Interfaces.Base;
     using Streetcode.DAL.Repositories.Interfaces.Toponyms;
@@ -12,9 +11,12 @@
     using DAL.Entities.Streetcode;
     using Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
     using System.Linq.Expressions;
-    using Microsoft.EntityFrameworkCore.Query;
     using Streetcode.BLL.DTO.Streetcode;
     using FluentAssertions;
+    using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
+    using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
+    using Streetcode.DAL.Entities.AdditionalContent;
+    using Streetcode.BLL.DTO.AdditionalContent.Tag;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetToponymsByStreetcodeIdHandlerTests"/> class.
@@ -35,7 +37,9 @@
             this.mapper = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Toponym, ToponymDTO>();
+                cfg.CreateMap<ToponymCoordinate, ToponymCoordinateDTO>();
                 cfg.CreateMap<StreetcodeContent, StreetcodeDTO>();
+                cfg.CreateMap<Tag, StreetcodeTagDTO>();
             }).CreateMapper();
             this.loggerMock = new Mock<ILoggerService>();
             this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
