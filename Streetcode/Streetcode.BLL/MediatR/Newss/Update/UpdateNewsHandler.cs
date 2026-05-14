@@ -51,7 +51,7 @@ namespace Streetcode.BLL.MediatR.Newss.Update
             _repositoryWrapper.NewsRepository.Update(news);
             var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
 
-            if(resultIsSuccess)
+            if (resultIsSuccess)
             {
                 return Result.Ok(response);
             }
