@@ -1,37 +1,48 @@
-using AutoMapper;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore.Query;
-using Moq;
-using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.Interfaces.Text;
-using Streetcode.BLL.MediatR.Streetcode.Text.GetByStreetcodeId;
-using Streetcode.DAL.Entities.Streetcode;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Streetcode;
-using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-using System.Linq.Expressions;
-using Xunit;
-using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
+// <copyright file="GetTextByStreetcodeIdHandlerTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
+namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 {
+    using System.Linq.Expressions;
+    using AutoMapper;
+    using FluentAssertions;
+    using Microsoft.EntityFrameworkCore.Query;
+    using Moq;
+    using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
+    using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.Interfaces.Text;
+    using Streetcode.BLL.Mapping.Streetcode.TextContent;
+    using Streetcode.BLL.MediatR.Streetcode.Text.GetByStreetcodeId;
+    using Streetcode.DAL.Entities.Streetcode;
+    using Streetcode.DAL.Repositories.Interfaces.Base;
+    using Streetcode.DAL.Repositories.Interfaces.Streetcode;
+    using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+    using Xunit;
+    using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
+
+    /// <summary>
+    /// Unit tests for <see cref="GetTextByStreetcodeIdHandler"/>.
+    /// </summary>
     public class GetTextByStreetcodeIdHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
         private readonly Mock<ITextRepository> textRepositoryMock;
         private readonly Mock<IStreetcodeRepository> streetcodeRepositoryMock;
-        private readonly Mock<IMapper> mapperMock;
+        private readonly IMapper mapper;
         private readonly Mock<ITextService> textServiceMock;
         private readonly Mock<ILoggerService> loggerMock;
         private readonly GetTextByStreetcodeIdHandler handler;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetTextByStreetcodeIdHandlerTests"/> class.
+        /// </summary>
         public GetTextByStreetcodeIdHandlerTests()
         {
             this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             this.textRepositoryMock = new Mock<ITextRepository>();
             this.streetcodeRepositoryMock = new Mock<IStreetcodeRepository>();
-            this.mapperMock = new Mock<IMapper>();
+            this.mapper = new MapperConfiguration(cfg => cfg.AddProfile<TextProfile>()).CreateMapper();
             this.textServiceMock = new Mock<ITextService>();
             this.loggerMock = new Mock<ILoggerService>();
 
@@ -45,11 +56,15 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
 
             this.handler = new GetTextByStreetcodeIdHandler(
                 this.repositoryWrapperMock.Object,
-                this.mapperMock.Object,
+                this.mapper,
                 this.textServiceMock.Object,
                 this.loggerMock.Object);
         }
 
+        /// <summary>
+        /// Tests that the Handle method returns a TextDTO with processed text content when a text associated with the specified streetcode ID exists in the repository.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task Handle_ReturnsProcessedText_WhenTextExists()
         {
@@ -62,14 +77,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
             {
                 Id = 1,
                 StreetcodeId = 1,
-                TextContent = originalContent
-            };
-
-            var textDto = new TextDTO
-            {
-                Id = 1,
-                StreetcodeId = 1,
-                TextContent = taggedContent
+                TextContent = originalContent,
             };
 
             this.textRepositoryMock
@@ -81,10 +89,6 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
             this.textServiceMock
                 .Setup(s => s.AddTermsTag(originalContent))
                 .ReturnsAsync(taggedContent);
-
-            this.mapperMock
-                .Setup(m => m.Map<TextDTO?>(It.IsAny<TextEntity>()))
-                .Returns(textDto);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -103,6 +107,10 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
                 Times.Never);
         }
 
+        /// <summary>
+        /// Tests that the Handle method returns a successful result with a null value when no text is found for the specified streetcode ID, but the streetcode itself exists in the repository.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task Handle_ReturnsNullResult_WhenTextNotFoundButStreetcodeExists()
         {
@@ -137,6 +145,10 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
                 Times.Never);
         }
 
+        /// <summary>
+        /// Tests that the Handle method returns an error when no streetcode is found for the specified streetcode ID, regardless of whether a text exists or not.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task Handle_ReturnsError_WhenStreetcodeDoesNotExist()
         {
@@ -170,6 +182,10 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
                 Times.Never);
         }
 
+        /// <summary>
+        /// Tests that the Handle method processes the text content using the text service and updates the TextDTO with the processed content before returning it in the result when a text is found for the specified streetcode ID.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task Handle_UsesAddTermsTagResult_AsTextContent()
         {
@@ -181,7 +197,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
             {
                 Id = 1,
                 StreetcodeId = 1,
-                TextContent = originalContent
+                TextContent = originalContent,
             };
 
             this.textRepositoryMock
@@ -194,21 +210,12 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.Text.GetByStreetcodeId
                 .Setup(s => s.AddTermsTag(originalContent))
                 .ReturnsAsync(taggedContent);
 
-            TextEntity? capturedEntity = null;
-            this.mapperMock
-                .Setup(m => m.Map<TextDTO?>(It.IsAny<TextEntity>()))
-                .Callback<object>(obj => capturedEntity = obj as TextEntity)
-                .Returns(new TextDTO { TextContent = taggedContent });
-
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
-            capturedEntity.Should().NotBeNull();
-            capturedEntity!.TextContent.Should().Be(taggedContent);
             result.Value!.TextContent.Should().Be(taggedContent);
         }
-
     }
 }

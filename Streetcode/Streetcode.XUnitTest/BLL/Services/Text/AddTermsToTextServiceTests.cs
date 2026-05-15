@@ -1,21 +1,31 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore.Query;
-using Moq;
-using Streetcode.BLL.Services.Text;
-using Streetcode.DAL.Entities.Streetcode.TextContent;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-using System.Linq.Expressions;
-using Xunit;
+﻿// <copyright file="AddTermsToTextServiceTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Streetcode.XUnitTest.BLL.Services.Text
 {
+    using System.Linq.Expressions;
+    using FluentAssertions;
+    using Microsoft.EntityFrameworkCore.Query;
+    using Moq;
+    using Streetcode.BLL.Services.Text;
+    using Streetcode.DAL.Entities.Streetcode.TextContent;
+    using Streetcode.DAL.Repositories.Interfaces.Base;
+    using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+    using Xunit;
+
+    /// <summary>
+    /// Unit tests for <see cref="AddTermsToTextService"/>.
+    /// </summary>
     public class AddTermsToTextServiceTests
     {
         private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
         private readonly Mock<ITermRepository> termRepositoryMock;
         private readonly AddTermsToTextService service;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddTermsToTextServiceTests"/> class.
+        /// </summary>
         public AddTermsToTextServiceTests()
         {
             this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
@@ -28,6 +38,10 @@ namespace Streetcode.XUnitTest.BLL.Services.Text
             this.service = new AddTermsToTextService(this.repositoryWrapperMock.Object);
         }
 
+        /// <summary>
+        /// Tests that the AddTermsTag method throws an ArgumentNullException when the input string is null.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task AddTermsTag_ThrowArgumentNullException_WhenInputIsNull()
         {
@@ -41,6 +55,10 @@ namespace Streetcode.XUnitTest.BLL.Services.Text
             await result.Should().ThrowAsync<ArgumentNullException>();
         }
 
+        /// <summary>
+        /// Tests that the AddTermsTag method wraps a word with a Popover tag when a direct term match is found in the repository.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task AddTermsTag_WrapsWord_WhenDirectTermMatchFound()
         {
@@ -61,6 +79,10 @@ namespace Streetcode.XUnitTest.BLL.Services.Text
             result.Should().Contain("<Popover><Term>hello</Term><Desc>test description</Desc></Popover>");
         }
 
+        /// <summary>
+        /// Tests that the AddTermsTag method wraps only the first occurrence of a word with a Popover tag when multiple occurrences of the same word are present in the input string, and skips subsequent occurrences.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task AddTermsTag_WrapsFirstOccurrence_AndSkipsSubsequent()
         {
@@ -80,9 +102,13 @@ namespace Streetcode.XUnitTest.BLL.Services.Text
 
             // Assert
             result.Should().Contain(expectedTag);
-            result.Split("<Popover>").Should().HaveCount(2); // рівно одне входження
+            result.Split("<Popover>").Should().HaveCount(2);
         }
 
+        /// <summary>
+        /// Tests that the AddTermsTag method does not wrap words that are part of HTML tags and does not query the repository for terms that are HTML tags, ensuring that HTML tags are skipped when splitting words.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task AddTermsTag_SkipsHTMLTags_WhenSplittingWords()
         {

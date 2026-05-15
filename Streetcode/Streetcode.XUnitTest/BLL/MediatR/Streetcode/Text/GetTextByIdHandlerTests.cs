@@ -1,31 +1,42 @@
-﻿using AutoMapper;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore.Query;
-using Moq;
-using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.MediatR.Streetcode.Text.GetById;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-using System.Linq.Expressions;
-using Xunit;
-using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
+﻿// <copyright file="GetTextByIdHandlerTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Streetcode.Text
+namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 {
+    using System.Linq.Expressions;
+    using AutoMapper;
+    using FluentAssertions;
+    using Microsoft.EntityFrameworkCore.Query;
+    using Moq;
+    using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
+    using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.Mapping.Streetcode.TextContent;
+    using Streetcode.BLL.MediatR.Streetcode.Text.GetById;
+    using Streetcode.DAL.Repositories.Interfaces.Base;
+    using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+    using Xunit;
+    using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
+
+    /// <summary>
+    /// Unit tests for <see cref="GetTextByIdHandler"/>.
+    /// </summary>
     public class GetTextByIdHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
         private readonly Mock<ITextRepository> textRepositoryMock;
-        private readonly Mock<IMapper> mapperMock;
+        private readonly IMapper mapper;
         private readonly Mock<ILoggerService> loggerMock;
         private readonly GetTextByIdHandler handler;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetTextByIdHandlerTests"/> class.
+        /// </summary>
         public GetTextByIdHandlerTests()
         {
             this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             this.textRepositoryMock = new Mock<ITextRepository>();
-            this.mapperMock = new Mock<IMapper>();
+            this.mapper = new MapperConfiguration(cfg => cfg.AddProfile<TextProfile>()).CreateMapper();
             this.loggerMock = new Mock<ILoggerService>();
 
             this.repositoryWrapperMock
@@ -34,10 +45,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Streetcode.Text
 
             this.handler = new GetTextByIdHandler(
                 this.repositoryWrapperMock.Object,
-                this.mapperMock.Object,
+                this.mapper,
                 this.loggerMock.Object);
         }
 
+        /// <summary>
+        /// Tests that the Handle method returns a TextDTO when a text with the specified ID exists in the repository.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task Handle_ReturnsTextDTO_WhenTextExists()
         {
@@ -67,10 +82,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Streetcode.Text
                     It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
                 .ReturnsAsync(textEntity);
 
-            this.mapperMock
-                .Setup(m => m.Map<TextDTO>(textEntity))
-                .Returns(textDto);
-
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
 
@@ -83,6 +94,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Streetcode.Text
                 Times.Never);
         }
 
+        /// <summary>
+        /// Tests that the Handle method returns an error when no text with the specified ID exists in the repository.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
         public async Task Handle_ReturnsError_WhenTextNotFound()
         {
@@ -97,7 +112,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Streetcode.Text
                 .ReturnsAsync((TextEntity?)null);
 
             // Act
-            var result = await handler.Handle(query, CancellationToken.None);
+            var result = await this.handler.Handle(query, CancellationToken.None);
 
             // Assert
             result.IsFailed.Should().BeTrue();
@@ -106,10 +121,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Streetcode.Text
             this.loggerMock.Verify(
                 l => l.LogError(query, $"Cannot find any text with corresponding id: {textId}"),
                 Times.Once);
-
-            this.mapperMock.Verify(
-                m => m.Map<TextDTO>(It.IsAny<TextEntity>()),
-                Times.Never);
         }
     }
 }
