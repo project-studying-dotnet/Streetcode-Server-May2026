@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Media.Audio;
 
-namespace Streetcode.BLL.Validators.Media.Audio
+namespace Streetcode.BLL.Validators.Media.Audio.Create
 {
     /// <summary>
     /// Validator for CreateCoordinateCommand.

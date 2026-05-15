@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Media;
 
-namespace Streetcode.BLL.Validators.Media.Audio
+namespace Streetcode.BLL.Validators.Media
 {
     /// <summary>
     /// Validator for FileBaseCreateDTO.
@@ -14,20 +14,19 @@ namespace Streetcode.BLL.Validators.Media.Audio
         public FileBaseCreateDtoValidator()
         {
             RuleFor(x => x.Title)
-                .MaximumLength(200)
-                .WithMessage("Title must not exceed 200 characters");
+                .NotEmpty()
+                .MaximumLength(255);
 
             RuleFor(x => x.BaseFormat)
-                .MaximumLength(50)
-                .WithMessage("BaseFormat must not exceed 50 characters");
+                .NotEmpty();
 
             RuleFor(x => x.MimeType)
-                .MaximumLength(100)
-                .WithMessage("MimeType must not exceed 100 characters");
+                .NotEmpty()
+                .MaximumLength(100);
 
             RuleFor(x => x.Extension)
-                .MaximumLength(10)
-                .WithMessage("Extension must not exceed 10 characters");
+                .NotEmpty()
+                .MaximumLength(10);
         }
     }
 }
