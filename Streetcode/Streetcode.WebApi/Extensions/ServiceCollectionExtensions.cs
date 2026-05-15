@@ -37,6 +37,8 @@ public static class ServiceCollectionExtensions
         services.AddAutoMapper(currentAssemblies);
         services.AddMediatR(currentAssemblies);
 
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Streetcode.BLL.MediatR.Behaviors.ValidationBehavior<,>));
+
         services.AddScoped<IBlobService, BlobService>();
         services.AddScoped<ILoggerService, LoggerService>();
         services.AddScoped<IEmailService, EmailService>();

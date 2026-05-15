@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
-using FluentResults; // Добавь этот пакет
+using FluentResults;
 using MediatR;
 
 namespace Streetcode.BLL.MediatR.Behaviors;
 
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
-    where TResponse : ResultBase, new() // Ограничение: работаем только с Result
+    where TResponse : ResultBase, new()
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
