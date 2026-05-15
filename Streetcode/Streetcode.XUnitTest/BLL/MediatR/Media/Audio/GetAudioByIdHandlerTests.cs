@@ -13,6 +13,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
     using Streetcode.BLL.DTO.Media.Audio;
     using Streetcode.BLL.Interfaces.BlobStorage;
     using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.Mapping.Media;
     using Streetcode.BLL.MediatR.Media.Audio.GetById;
     using Streetcode.DAL.Repositories.Interfaces.Base;
     using Xunit;
@@ -28,7 +29,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         private const string Base64Value = "base64encodedcontent";
 
         private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly Mock<IMapper> mapperMock;
+        private readonly IMapper mapper;
         private readonly Mock<IBlobService> blobServiceMock;
         private readonly Mock<ILoggerService> loggerMock;
         private readonly Mock<IAudioRepository> audioRepositoryMock;
@@ -41,7 +42,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         {
             this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             this.audioRepositoryMock = new Mock<IAudioRepository>();
-            this.mapperMock = new Mock<IMapper>();
+            this.mapper = new MapperConfiguration(cfg => cfg.AddProfile<AudioProfile>()).CreateMapper();
             this.blobServiceMock = new Mock<IBlobService>();
             this.loggerMock = new Mock<ILoggerService>();
 
@@ -51,7 +52,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
 
             this.handler = new GetAudioByIdHandler(
                 this.repositoryWrapperMock.Object,
-                this.mapperMock.Object,
+                this.mapper,
                 this.blobServiceMock.Object,
                 this.loggerMock.Object);
         }
@@ -65,13 +66,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         {
             var query = new GetAudioByIdQuery(AudioId);
             var entity = new AudioEntity { Id = AudioId, BlobName = BlobName };
-            var dto = new AudioDTO { Id = AudioId, BlobName = BlobName };
+            var dto = new AudioDTO { Id = AudioId, BlobName = BlobName, Base64 = Base64Value };
 
             this.SetupGetFirstOrDefault(entity);
-
-            this.mapperMock
-                .Setup(m => m.Map<AudioDTO>(entity))
-                .Returns(dto);
 
             this.blobServiceMock
                 .Setup(b => b.FindFileInStorageAsBase64(BlobName))
@@ -92,13 +89,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         {
             var query = new GetAudioByIdQuery(AudioId);
             var entity = new AudioEntity { Id = AudioId, BlobName = BlobName };
-            var dto = new AudioDTO { Id = AudioId, BlobName = BlobName };
 
             this.SetupGetFirstOrDefault(entity);
-
-            this.mapperMock
-                .Setup(m => m.Map<AudioDTO>(entity))
-                .Returns(dto);
 
             this.blobServiceMock
                 .Setup(b => b.FindFileInStorageAsBase64(BlobName))

@@ -11,6 +11,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
     using Streetcode.BLL.DTO.Media.Audio;
     using Streetcode.BLL.Interfaces.BlobStorage;
     using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.Mapping.Media;
     using Streetcode.BLL.MediatR.Media.Audio.Create;
     using Streetcode.DAL.Repositories.Interfaces.Base;
     using Xunit;
@@ -27,7 +28,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         private const string Title = "test-audio";
 
         private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly Mock<IMapper> mapperMock;
+        private readonly IMapper mapper;
         private readonly Mock<IBlobService> blobServiceMock;
         private readonly Mock<ILoggerService> loggerMock;
         private readonly Mock<IAudioRepository> audioRepositoryMock;
@@ -40,7 +41,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         {
             this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             this.audioRepositoryMock = new Mock<IAudioRepository>();
-            this.mapperMock = new Mock<IMapper>();
+            this.mapper = new MapperConfiguration(cfg => cfg.AddProfile<AudioProfile>()).CreateMapper();
             this.blobServiceMock = new Mock<IBlobService>();
             this.loggerMock = new Mock<ILoggerService>();
 
@@ -51,7 +52,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
             this.handler = new CreateAudioHandler(
                 this.blobServiceMock.Object,
                 this.repositoryWrapperMock.Object,
-                this.mapperMock.Object,
+                this.mapper,
                 this.loggerMock.Object);
         }
 
@@ -62,16 +63,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         [Fact]
         public async Task Handle_WhenSaveSucceeds_ReturnsOkResultWithAudioDTO()
         {
-            var entity = new AudioEntity { Id = 1, Title = Title };
-            var audioDto = new AudioDTO { Id = 1, BlobName = $"{HashBlobName}.{Extension}" };
             var command = new CreateAudioCommand(CreateDto());
 
-            this.SetupSuccessScenario(entity, audioDto);
+            this.SetupSuccessScenario();
 
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
-            result.Value.Should().BeEquivalentTo(audioDto);
+            result.Value.BlobName.Should().Be($"{HashBlobName}.{Extension}");
+            result.Value.MimeType.Should().Be("audio/mpeg");
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         {
             var command = new CreateAudioCommand(CreateDto());
 
-            this.SetupSuccessScenario(new AudioEntity(), new AudioDTO());
+            this.SetupSuccessScenario();
 
             await this.handler.Handle(command, CancellationToken.None);
 
@@ -99,7 +99,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
         [Fact]
         public async Task Handle_WhenSaveSucceeds_SetsBlobNameCorrectly()
         {
-            var entity = new AudioEntity();
             var command = new CreateAudioCommand(CreateDto());
             AudioEntity? capturedEntity = null;
 
@@ -107,18 +106,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
                 .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
                 .Returns(HashBlobName);
 
-            this.mapperMock
-                .Setup(m => m.Map<AudioEntity>(It.IsAny<AudioFileBaseCreateDTO>()))
-                .Returns(entity);
-
             this.audioRepositoryMock
                 .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
                 .Callback<AudioEntity>(a => capturedEntity = a)
-                .ReturnsAsync(entity);
-
-            this.mapperMock
-                .Setup(m => m.Map<AudioDTO>(It.IsAny<AudioEntity>()))
-                .Returns(new AudioDTO());
+                .ReturnsAsync(new AudioEntity());
 
             this.repositoryWrapperMock
                 .Setup(w => w.SaveChangesAsync())
@@ -143,17 +134,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
                 .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
                 .Returns(HashBlobName);
 
-            this.mapperMock
-                .Setup(m => m.Map<AudioEntity>(It.IsAny<AudioFileBaseCreateDTO>()))
-                .Returns(new AudioEntity());
-
             this.audioRepositoryMock
                 .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
                 .ReturnsAsync(new AudioEntity());
-
-            this.mapperMock
-                .Setup(m => m.Map<AudioDTO>(It.IsAny<AudioEntity>()))
-                .Returns(new AudioDTO());
 
             this.repositoryWrapperMock
                 .Setup(w => w.SaveChangesAsync())
@@ -178,17 +161,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
                 .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
                 .Returns(HashBlobName);
 
-            this.mapperMock
-                .Setup(m => m.Map<AudioEntity>(It.IsAny<AudioFileBaseCreateDTO>()))
-                .Returns(new AudioEntity());
-
             this.audioRepositoryMock
                 .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
                 .ReturnsAsync(new AudioEntity());
-
-            this.mapperMock
-                .Setup(m => m.Map<AudioDTO>(It.IsAny<AudioEntity>()))
-                .Returns(new AudioDTO());
 
             this.repositoryWrapperMock
                 .Setup(w => w.SaveChangesAsync())
@@ -210,23 +185,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
             Description = "Test description",
         };
 
-        private void SetupSuccessScenario(AudioEntity entity, AudioDTO audioDto)
+        private void SetupSuccessScenario()
         {
             this.blobServiceMock
                 .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
                 .Returns(HashBlobName);
 
-            this.mapperMock
-                .Setup(m => m.Map<AudioEntity>(It.IsAny<AudioFileBaseCreateDTO>()))
-                .Returns(entity);
-
             this.audioRepositoryMock
                 .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
-                .ReturnsAsync(entity);
-
-            this.mapperMock
-                .Setup(m => m.Map<AudioDTO>(It.IsAny<AudioEntity>()))
-                .Returns(audioDto);
+                .ReturnsAsync(new AudioEntity());
 
             this.repositoryWrapperMock
                 .Setup(w => w.SaveChangesAsync())
