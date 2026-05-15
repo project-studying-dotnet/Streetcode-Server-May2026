@@ -3,8 +3,14 @@ using Streetcode.BLL.DTO.AdditionalContent.Coordinates;
 
 namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate
 {
+    /// <summary>
+    /// Validator for CoordinateDTO.
+    /// </summary>
     public class CoordinateDTOValidator : AbstractValidator<CoordinateDTO>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoordinateDTOValidator"/> class.
+        /// </summary>
         public CoordinateDTOValidator()
         {
             RuleFor(c => c.Latitude)
