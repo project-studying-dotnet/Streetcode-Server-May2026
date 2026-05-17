@@ -17,6 +17,7 @@
     using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
     using Streetcode.DAL.Entities.AdditionalContent;
     using Streetcode.BLL.DTO.AdditionalContent.Tag;
+    using MockQueryable.Moq;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetToponymsByStreetcodeIdHandlerTests"/> class.
@@ -56,7 +57,8 @@
         public async Task Handle_ShouldReturnToponyms_WhenFound()
         {
             // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>()
+
+            var toponyms = new List<Toponym>()
             {
                 new()
                 {
@@ -75,7 +77,7 @@
                         },
                     },
                 },
-            }.AsQueryable();
+            }.BuildMock();
             List<ToponymDTO> expected_toponyms = new()
             {
                 this.mapper.Map<ToponymDTO>(toponyms.First()),
@@ -109,7 +111,7 @@
         public async Task Handle_ShouldReturnUniqueToponyms_WhenFound()
         {
             // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>()
+            var toponyms = new List<Toponym>()
             {
                 new()
                 {
@@ -145,7 +147,7 @@
                         },
                     },
                 },
-            }.AsQueryable();
+            }.BuildMock();
             List<ToponymDTO> expected_toponyms = new()
             {
                 this.mapper.Map<ToponymDTO>(toponyms.First()),
@@ -184,7 +186,7 @@
                 r => r.FindAll(
                     It.IsAny<Expression<Func<Toponym, bool>>>()
                 )
-            ).Returns(Enumerable.Empty<Toponym>().AsQueryable());
+            ).Returns(Enumerable.Empty<Toponym>().BuildMock());
             this.loggerMock.Setup(
                 l => l.LogError(query, It.IsAny<string>())
             );

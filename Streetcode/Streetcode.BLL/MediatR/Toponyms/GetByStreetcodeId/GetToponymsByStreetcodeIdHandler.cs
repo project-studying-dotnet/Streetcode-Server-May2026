@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using AutoMapper.QueryableExtensions;
+using Streetcode.DAL.Entities.Toponyms;
 
 #pragma warning disable SA1111 //Closing parenthesis should be on line of last parameter
 #pragma warning disable SA1513 //Closing brace should be followed by blank line
@@ -29,16 +30,20 @@ public class GetToponymsByStreetcodeIdHandler : IRequestHandler<GetToponymsByStr
 
     public async Task<Result<IEnumerable<ToponymDTO>>> Handle(GetToponymsByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
-        List<ToponymDTO> toponyms = _repositoryWrapper.ToponymRepository.FindAll(
+        var toponyms = await _repositoryWrapper.ToponymRepository.FindAll(
             sc => sc.Streetcodes.Any(s => s.Id == request.StreetcodeId)
-        ).DistinctBy(t => t.StreetName).ProjectTo<ToponymDTO>(_mapper.ConfigurationProvider).ToList();
+        )
+        .DistinctBy(t => t.StreetName)
+        .ProjectTo<ToponymDTO>(_mapper.ConfigurationProvider)
+        .ToListAsync();
 
         if (toponyms.Count == 0)
         {
-            string errorMsg = $"Cannot find any toponym by the streetcode id: {request.StreetcodeId}";
+            var errorMsg = $"Cannot find any toponym by the streetcode id: {request.StreetcodeId}";
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
+
         return Result.Ok(toponyms.AsEnumerable());
     }
 }
