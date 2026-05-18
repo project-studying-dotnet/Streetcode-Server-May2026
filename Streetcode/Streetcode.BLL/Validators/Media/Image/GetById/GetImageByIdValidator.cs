@@ -5,8 +5,7 @@ namespace Streetcode.BLL.Validators.Media.Image.GetById
     /// <summary>
     /// Validator for GetImageByIdQuery.
     /// </summary>
-    internal class GetImageByIdValidator
-     : PositiveIdValidator<GetImageByIdQuery>
+    public class GetImageByIdValidator : PositiveIdValidator<GetImageByIdQuery>
     {
     }
 }

@@ -6,8 +6,7 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Tag.GetByStreetcodeId
     /// <summary>
     /// Validator for GetTagByStreetcodeIdValidator.
     /// </summary>
-    internal class GetTagByStreetcodeIdValidator
-     : PositiveStreetcodeIdValidator<GetTagByStreetcodeIdQuery>
+    public class GetTagByStreetcodeIdValidator : PositiveStreetcodeIdValidator<GetTagByStreetcodeIdQuery>
     {
     }
 }

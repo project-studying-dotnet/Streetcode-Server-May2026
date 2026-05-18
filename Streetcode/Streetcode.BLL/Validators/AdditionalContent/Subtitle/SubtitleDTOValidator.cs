@@ -15,9 +15,7 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Subtitle
         {
             RuleFor(x => x.SubtitleText)
                 .NotEmpty()
-                .WithMessage("Subtitle text is required.")
-                .MaximumLength(500)
-                .WithMessage("Subtitle text must not exceed 500 characters.");
+                .WithMessage("Subtitle text is required.");
 
             RuleFor(x => x.StreetcodeId)
                 .GreaterThan(0)

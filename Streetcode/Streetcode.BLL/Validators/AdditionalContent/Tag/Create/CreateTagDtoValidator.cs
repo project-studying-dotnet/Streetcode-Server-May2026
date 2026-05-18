@@ -14,13 +14,10 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Tag.Create
         public CreateTagDtoValidator()
         {
             RuleFor(x => x.Title)
-                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("Title is required")
                 .Must(title => !string.IsNullOrWhiteSpace(title))
-                .WithMessage("Title cannot contain only whitespace")
-                .MaximumLength(100)
-                .WithMessage("Title must not exceed 100 characters");
+                .WithMessage("Title cannot contain only whitespace");
         }
     }
 }
