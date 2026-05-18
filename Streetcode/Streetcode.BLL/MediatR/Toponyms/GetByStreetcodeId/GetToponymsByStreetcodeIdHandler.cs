@@ -29,7 +29,6 @@ public class GetToponymsByStreetcodeIdHandler : IRequestHandler<GetToponymsByStr
         List<ToponymDTO> toponyms = await _repositoryWrapper.ToponymRepository.FindAll(
             sc => sc.Streetcodes.Any(s => s.Id == request.StreetcodeId)
         ).DistinctBy(t => t.StreetName).ProjectTo<ToponymDTO>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
-        
         if(toponyms.Count == 0)
         {
             string errorMsg = $"Cannot find any toponym by the streetcode id: {request.StreetcodeId}";
