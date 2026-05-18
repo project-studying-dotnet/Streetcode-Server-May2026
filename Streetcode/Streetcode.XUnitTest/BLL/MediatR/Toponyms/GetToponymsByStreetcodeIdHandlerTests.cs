@@ -1,23 +1,23 @@
 ﻿namespace Streetcode.XUnitTest.BLL.MediatR.Toponyms
 {
+    using System.Linq.Expressions;
     using AutoMapper;
+    using Streetcode.DAL.Entities.Streetcode;
+    using FluentAssertions;
+    using MockQueryable.Moq;
     using Moq;
+    using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
+    using Streetcode.BLL.DTO.AdditionalContent.Tag;
+    using Streetcode.BLL.DTO.Streetcode;
     using Streetcode.BLL.DTO.Toponyms;
     using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
+    using Streetcode.DAL.Entities.AdditionalContent;
+    using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
     using Streetcode.DAL.Entities.Toponyms;
     using Streetcode.DAL.Repositories.Interfaces.Base;
     using Streetcode.DAL.Repositories.Interfaces.Toponyms;
     using Xunit;
-    using DAL.Entities.Streetcode;
-    using Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
-    using System.Linq.Expressions;
-    using Streetcode.BLL.DTO.Streetcode;
-    using FluentAssertions;
-    using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
-    using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
-    using Streetcode.DAL.Entities.AdditionalContent;
-    using Streetcode.BLL.DTO.AdditionalContent.Tag;
-    using MockQueryable.Moq;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetToponymsByStreetcodeIdHandlerTests"/> class.
@@ -57,8 +57,7 @@
         public async Task Handle_ShouldReturnToponyms_WhenFound()
         {
             // Arrange
-
-            var toponyms = new List<Toponym>()
+            IQueryable<Toponym> toponyms = new List<Toponym>()
             {
                 new()
                 {
@@ -111,7 +110,7 @@
         public async Task Handle_ShouldReturnUniqueToponyms_WhenFound()
         {
             // Arrange
-            var toponyms = new List<Toponym>()
+            IQueryable<Toponym> toponyms = new List<Toponym>()
             {
                 new()
                 {
