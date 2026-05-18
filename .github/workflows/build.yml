@@ -3,20 +3,16 @@ name: SonarCloud
 on:
   push:
     branches:
-      - master
-      - develop
+      - main
       - dev
-
   pull_request:
-    branches:
-      - master
-      - develop
-      - dev
-    types: [opened, synchronize, reopened]
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
-  sonarcloud_branch:
-    name: SonarCloud analysis
+  sonarcloud:
     runs-on: windows-latest
 
     steps:
@@ -28,13 +24,13 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.100'
+          dotnet-version: "10.0.100"
 
       - name: Install SonarScanner
         run: dotnet tool update --global dotnet-sonarscanner
@@ -53,7 +49,7 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io"
           /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\coverage\coverage.opencover.xml"
           /d:sonar.coverage.exclusions="**/Streetcode.DAL/Persistence/Configurations/**/*.cs,**/Streetcode.DAL/Persistence/StreetcodeDbContext.cs"
-          /d:sonar.exclusions="**/Streetcode/Streetcode.DAL/Persistence/Configurations/**/*.cs"
+          /d:sonar.exclusions=".github/**,**/*.yml,**/*.yaml"
 
       - name: Build Solution
         run: >
