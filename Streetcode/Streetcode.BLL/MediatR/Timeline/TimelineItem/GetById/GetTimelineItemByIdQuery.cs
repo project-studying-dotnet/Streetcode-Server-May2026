@@ -1,7 +1,8 @@
 ﻿using FluentResults;
 using MediatR;
 using Streetcode.BLL.DTO.Timeline;
+using Streetcode.BLL.MediatR.Interface;
 
 namespace Streetcode.BLL.MediatR.Timeline.TimelineItem.GetById;
 
-public record GetTimelineItemByIdQuery(int Id) : IRequest<Result<TimelineItemDTO>>;
+public record GetTimelineItemByIdQuery(int Id) : IRequest<Result<TimelineItemDTO>>, IHasId;

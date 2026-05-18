@@ -5,7 +5,7 @@ namespace Streetcode.BLL.Validators.Media.Audio.GetByStreetcodeId
     /// <summary>
     /// Validator for GetAudioByStreetcodeIdQuery.
     /// </summary>
-    public class GetImageByStreetcodeIdValidator
+    public class GetAudioByStreetcodeIdValidator
     : PositiveStreetcodeIdValidator<GetAudioByStreetcodeIdQuery>
     {
     }
