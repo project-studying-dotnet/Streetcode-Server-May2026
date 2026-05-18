@@ -29,7 +29,7 @@ namespace Streetcode.BLL.MediatR.Newss.GetById
             var newsDTO = _mapper.Map<NewsDTO>(await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
                 predicate: sc => sc.Id == id,
                 include: scl => scl
-                    .Include(sc => sc.Image)));
+                    .Include(sc => sc.Image!)));
             if (newsDTO is null)
             {
                 string errorMsg = $"No news by entered Id - {id}";
@@ -37,7 +37,7 @@ namespace Streetcode.BLL.MediatR.Newss.GetById
                 return Result.Fail(errorMsg);
             }
 
-            if (newsDTO.Image is not null)
+            if (newsDTO.Image is not null && !string.IsNullOrWhiteSpace(newsDTO.Image.BlobName))
             {
                 newsDTO.Image.Base64 = _blobService.FindFileInStorageAsBase64(newsDTO.Image.BlobName);
             }

@@ -261,5 +261,4 @@ Reach out to us at one of the following places!
 
 ## License
 - **[MIT license](http://opensource.org/licenses/mit-license.php)**
-- Copyright 2022 © <a href="https://softserve.academy/" target="_blank"> SoftServe IT Academy</a>.
-[test sonar 2]
+- Copyright 2026 © <a href="https://softserve.academy/" target="_blank"> SoftServe IT Academy</a>.
