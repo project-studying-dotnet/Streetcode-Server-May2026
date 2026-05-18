@@ -52,6 +52,8 @@ jobs:
           /d:sonar.token="$env:SONAR_TOKEN"
           /d:sonar.host.url="https://sonarcloud.io"
           /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\coverage\coverage.opencover.xml"
+          /d:sonar.coverage.exclusions="**/Streetcode.DAL/Persistence/Configurations/**/*.cs,**/Streetcode.DAL/Persistence/StreetcodeDbContext.cs"
+          /d:sonar.exclusions="**/Streetcode/Streetcode.DAL/Persistence/Configurations/**/*.cs"
 
       - name: Build Solution
         run: >
