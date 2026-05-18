@@ -1,22 +1,23 @@
 ﻿namespace Streetcode.XUnitTest.BLL.MediatR.Toponyms
 {
+    using System.Linq.Expressions;
     using AutoMapper;
+    using Streetcode.DAL.Entities.Streetcode;
+    using FluentAssertions;
+    using MockQueryable.Moq;
     using Moq;
+    using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
+    using Streetcode.BLL.DTO.AdditionalContent.Tag;
+    using Streetcode.BLL.DTO.Streetcode;
     using Streetcode.BLL.DTO.Toponyms;
     using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
+    using Streetcode.DAL.Entities.AdditionalContent;
+    using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
     using Streetcode.DAL.Entities.Toponyms;
     using Streetcode.DAL.Repositories.Interfaces.Base;
     using Streetcode.DAL.Repositories.Interfaces.Toponyms;
     using Xunit;
-    using DAL.Entities.Streetcode;
-    using Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
-    using System.Linq.Expressions;
-    using Streetcode.BLL.DTO.Streetcode;
-    using FluentAssertions;
-    using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
-    using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
-    using Streetcode.DAL.Entities.AdditionalContent;
-    using Streetcode.BLL.DTO.AdditionalContent.Tag;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetToponymsByStreetcodeIdHandlerTests"/> class.
@@ -75,7 +76,7 @@
                         },
                     },
                 },
-            }.AsQueryable();
+            }.BuildMock();
             List<ToponymDTO> expected_toponyms = new()
             {
                 this.mapper.Map<ToponymDTO>(toponyms.First()),
@@ -145,7 +146,7 @@
                         },
                     },
                 },
-            }.AsQueryable();
+            }.BuildMock();
             List<ToponymDTO> expected_toponyms = new()
             {
                 this.mapper.Map<ToponymDTO>(toponyms.First()),
@@ -184,7 +185,7 @@
                 r => r.FindAll(
                     It.IsAny<Expression<Func<Toponym, bool>>>()
                 )
-            ).Returns(Enumerable.Empty<Toponym>().AsQueryable());
+            ).Returns(Enumerable.Empty<Toponym>().BuildMock());
             this.loggerMock.Setup(
                 l => l.LogError(query, It.IsAny<string>())
             );
