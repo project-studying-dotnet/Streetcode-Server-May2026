@@ -1,0 +1,62 @@
+# NOTE: Requires **VS2019 16.3** or later
+
+# My Rules
+# Description: Description here.
+
+# Code files
+[*.{cs,vb}]
+
+
+dotnet_diagnostic.SA0001.severity = none
+
+dotnet_diagnostic.SA1000.severity = none
+
+dotnet_diagnostic.SA1027.severity = none
+
+dotnet_diagnostic.SA1101.severity = none
+
+dotnet_diagnostic.SA1109.severity = warning
+
+dotnet_diagnostic.SA1118.severity = none
+
+dotnet_diagnostic.SA1122.severity = none
+
+dotnet_diagnostic.SA1126.severity = warning
+
+dotnet_diagnostic.SA1200.severity = none
+
+dotnet_diagnostic.SA1204.severity = none
+
+dotnet_diagnostic.SA1210.severity = none
+
+dotnet_diagnostic.SA1309.severity = none
+
+dotnet_diagnostic.SA1313.severity = none
+
+dotnet_diagnostic.SA1409.severity = warning
+
+dotnet_diagnostic.SA1413.severity = none
+
+dotnet_diagnostic.SA1512.severity = none
+
+dotnet_diagnostic.SA1516.severity = none
+
+dotnet_diagnostic.SA1600.severity = none
+
+dotnet_diagnostic.SA1601.severity = none
+
+dotnet_diagnostic.SA1602.severity = none
+
+dotnet_diagnostic.SA1603.severity = warning
+
+dotnet_diagnostic.SA1609.severity = warning
+
+dotnet_diagnostic.SA1633.severity = none
+
+dotnet_diagnostic.SA1644.severity = warning
+
+dotnet_diagnostic.SA1652.severity = none
+
+dotnet_diagnostic.SX1101.severity = warning
+
+dotnet_diagnostic.SX1309.severity = warning
