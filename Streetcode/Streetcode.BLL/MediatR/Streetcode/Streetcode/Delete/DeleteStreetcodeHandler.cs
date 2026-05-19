@@ -40,7 +40,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Delete
 
                 try
                 {
-                    _repositoryWrapper.SaveChanges();
+                    await _repositoryWrapper.SaveChangesAsync();
                     return Result.Ok(_mapper.Map<StreetcodeDTO>(streetcode));
                 }
                 catch (Exception ex)

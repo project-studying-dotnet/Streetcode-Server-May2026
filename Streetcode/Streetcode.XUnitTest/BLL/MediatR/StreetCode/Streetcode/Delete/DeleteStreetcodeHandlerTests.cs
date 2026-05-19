@@ -105,7 +105,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Delete
                 Times.Once);
 
             this.repositoryWrapperMock.Verify(
-                repo => repo.SaveChanges(),
+                repo => repo.SaveChangesAsync(),
                 Times.Once);
         }
     }
