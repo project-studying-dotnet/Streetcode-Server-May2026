@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Streetcode.DAL.Entities.Team
+﻿namespace Streetcode.DAL.Entities.Team
 {
-    [Table("team_member_positions", Schema = "team")]
     public class TeamMemberPositions
     {
         public int TeamMemberId { get; set; }

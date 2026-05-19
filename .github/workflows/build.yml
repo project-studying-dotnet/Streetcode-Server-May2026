@@ -3,24 +3,25 @@ name: SonarCloud
 on:
   push:
     branches:
-      - master
-      - develop
+      - main
       - dev
 
   pull_request:
     branches:
-      - master
-      - develop
+      - main
       - dev
-    types: [opened, synchronize, reopened]
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
-  sonarcloud_branch:
+  sonarcloud:
     name: SonarCloud analysis
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -28,39 +29,41 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.100'
+          dotnet-version: "10.0.x"
 
       - name: Install SonarScanner
         run: dotnet tool update --global dotnet-sonarscanner
 
-      - name: Restore Dependencies
+      - name: Restore dependencies
         run: dotnet restore ./Streetcode/Streetcode.sln
 
-      - name: SonarScanner Begin
+      - name: Begin SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           dotnet sonarscanner begin
-          /k:"ita-social-projects_StreetCode"
-          /o:"ita-social-projects"
+          /k:"project-studying-dotnet_Streetcode-Server-May2026"
+          /o:"project-studying-dotnet"
           /d:sonar.token="$env:SONAR_TOKEN"
           /d:sonar.host.url="https://sonarcloud.io"
           /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\coverage\coverage.opencover.xml"
+          /d:sonar.coverage.exclusions="**/Program.cs,**/Streetcode.DAL/Persistence/Configurations/**/*.cs,**/Streetcode.DAL/Persistence/StreetcodeDbContext.cs"
+          /d:sonar.exclusions="**/.github/**,**/*.yml,**/*.yaml,**/Streetcode.DAL/Persistence/Configurations/**/*.cs"
 
-      - name: Build Solution
+      - name: Build solution
         run: >
           dotnet build ./Streetcode/Streetcode.sln
           --configuration Release
           --no-restore
           /p:TreatWarningsAsErrors=false
 
-      - name: Run Tests with Coverage
+      - name: Run tests with coverage
         run: >
           dotnet test ./Streetcode/Streetcode.XUnitTest/Streetcode.XUnitTest.csproj
           --configuration Release
@@ -69,14 +72,14 @@ jobs:
           /p:CoverletOutputFormat=opencover
           /p:CoverletOutput="${{ github.workspace }}\coverage\coverage.opencover.xml"
 
-      - name: SonarScanner End
+      - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           dotnet sonarscanner end
           /d:sonar.token="$env:SONAR_TOKEN"
 
-      - name: Upload Coverage Artifact
+      - name: Upload coverage artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
