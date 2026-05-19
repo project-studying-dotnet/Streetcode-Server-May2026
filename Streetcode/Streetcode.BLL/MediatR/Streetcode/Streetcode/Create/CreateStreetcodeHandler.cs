@@ -35,7 +35,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Create
                 return Result.Fail(errorMsg);
             }
 
-            var entity = _repositoryWrapper.StreetcodeRepository.Create(newStreetcode);
+            var entity = await _repositoryWrapper.StreetcodeRepository.CreateAsync(newStreetcode);
 
             var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
 

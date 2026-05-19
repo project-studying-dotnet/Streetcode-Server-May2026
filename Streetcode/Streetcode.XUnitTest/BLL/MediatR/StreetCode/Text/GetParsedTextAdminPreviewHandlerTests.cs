@@ -5,9 +5,9 @@
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 {
     using FluentAssertions;
-    using Moq;
     using global::Streetcode.BLL.Interfaces.Text;
     using global::Streetcode.BLL.MediatR.Streetcode.Text.GetParsed;
+    using Moq;
     using Xunit;
 
     /// <summary>

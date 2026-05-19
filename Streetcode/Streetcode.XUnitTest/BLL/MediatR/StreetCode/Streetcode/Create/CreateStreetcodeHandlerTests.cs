@@ -1,18 +1,22 @@
-﻿using AutoMapper;
-using Moq;
-using Streetcode.BLL.DTO.Streetcode;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.Mapping.Streetcode;
-using Streetcode.BLL.MediatR.Streetcode.Streetcode.Create;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Streetcode;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿// <copyright file="CreateStreetcodeHandlerTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using AutoMapper;
+    using global::Streetcode.BLL.DTO.Streetcode;
+    using global::Streetcode.BLL.Interfaces.Logging;
+    using global::Streetcode.BLL.Mapping.Streetcode;
+    using global::Streetcode.BLL.MediatR.Streetcode.Streetcode.Create;
+    using global::Streetcode.DAL.Repositories.Interfaces.Base;
+    using global::Streetcode.DAL.Repositories.Interfaces.Streetcode;
+    using Moq;
+    using Xunit;
+
     /// <summary>
     /// Tests for CreateStreetcodeHandler, which handles the creation of a new streetcode entity in the system.
     /// </summary>
@@ -57,8 +61,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 
             this.repositoryWrapperMock
                     .Setup(r => r.StreetcodeRepository
-                        .Create(It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()))
-                    .Returns((DAL.Entities.Streetcode.StreetcodeContent sc) => sc);
+                        .CreateAsync(It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()))
+                    .ReturnsAsync((DAL.Entities.Streetcode.StreetcodeContent sc) => sc);
 
             this.repositoryWrapperMock
                     .Setup(r => r.SaveChangesAsync())
@@ -73,7 +77,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
             Assert.Equal("Test Streetcode", result.Value.Title);
 
             this.repositoryWrapperMock.Verify(
-                    r => r.StreetcodeRepository.Create(
+                    r => r.StreetcodeRepository.CreateAsync(
                         It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()),
                     Times.Once);
 
@@ -98,8 +102,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 
             this.repositoryWrapperMock
                     .Setup(r => r.StreetcodeRepository
-                        .Create(It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()))
-                    .Returns((DAL.Entities.Streetcode.StreetcodeContent)null);
+                        .CreateAsync(It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()))
+                    .ReturnsAsync((DAL.Entities.Streetcode.StreetcodeContent)null);
 
             // Act
             var result = await this.handler.Handle(request, CancellationToken.None);
@@ -110,7 +114,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
             Assert.Equal(expectedErrorMessage, result.Errors[0].Message);
 
             this.repositoryWrapperMock.Verify(
-                    r => r.StreetcodeRepository.Create(
+                    r => r.StreetcodeRepository.CreateAsync(
                         It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()),
                     Times.Once);
 

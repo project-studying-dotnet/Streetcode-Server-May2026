@@ -1,18 +1,22 @@
-﻿using AutoMapper;
-using Moq;
-using Streetcode.BLL.DTO.Streetcode;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.Mapping.Streetcode;
-using Streetcode.BLL.MediatR.Streetcode.Streetcode.Update;
-using Streetcode.DAL.Entities.Streetcode;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿// <copyright file="UpdateStreetcodeHandlerTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using AutoMapper;
+    using global::Streetcode.BLL.DTO.Streetcode;
+    using global::Streetcode.BLL.Interfaces.Logging;
+    using global::Streetcode.BLL.Mapping.Streetcode;
+    using global::Streetcode.BLL.MediatR.Streetcode.Streetcode.Update;
+    using global::Streetcode.DAL.Entities.Streetcode;
+    using global::Streetcode.DAL.Repositories.Interfaces.Base;
+    using Moq;
+    using Xunit;
+
     /// <summary>
     /// Test for UpdateStreetcodeHandler, which handles the updating of an existing streetcode entity in the system.
     /// </summary>

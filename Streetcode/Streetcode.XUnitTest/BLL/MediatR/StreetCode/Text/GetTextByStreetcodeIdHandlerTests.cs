@@ -7,8 +7,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
     using System.Linq.Expressions;
     using AutoMapper;
     using FluentAssertions;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
     using global::Streetcode.BLL.DTO.Streetcode.TextContent.Text;
     using global::Streetcode.BLL.Interfaces.Logging;
     using global::Streetcode.BLL.Interfaces.Text;
@@ -18,6 +16,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
     using global::Streetcode.DAL.Repositories.Interfaces.Base;
     using global::Streetcode.DAL.Repositories.Interfaces.Streetcode;
     using global::Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+    using Microsoft.EntityFrameworkCore.Query;
+    using Moq;
     using Xunit;
     using TextEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Text;
 

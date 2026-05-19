@@ -1,18 +1,25 @@
-﻿using AutoMapper;
-using FluentAssertions;
-using Moq;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.MediatR.Streetcode.Streetcode.Delete;
-using Streetcode.DAL.Entities.Streetcode;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
-using Xunit;
+﻿// <copyright file="DeleteStreetcodeHandlerTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Delete
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+    using System.Text;
+    using AutoMapper;
+    using FluentAssertions;
+    using global::Streetcode.BLL.Interfaces.Logging;
+    using global::Streetcode.BLL.MediatR.Streetcode.Streetcode.Delete;
+    using global::Streetcode.DAL.Entities.Streetcode;
+    using global::Streetcode.DAL.Repositories.Interfaces.Base;
+    using Moq;
+    using Xunit;
+
+    /// <summary>
+    /// Unit tests for DeleteStreetcodeHandler verifying not-found and successful-deletion behavior.
+    /// </summary>
     public class DeleteStreetcodeHandlerTests
     {
         private readonly Mock<IMapper> mapperMock;
@@ -21,6 +28,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Delete
 
         private readonly DeleteStreetcodeHandler handler;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeleteStreetcodeHandlerTests"/> class.
+        /// </summary>
         public DeleteStreetcodeHandlerTests()
         {
             this.mapperMock = new Mock<IMapper>();
