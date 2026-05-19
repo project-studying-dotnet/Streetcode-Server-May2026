@@ -27,7 +27,7 @@ namespace Streetcode.BLL.MediatR.Newss.GetAll
         public async Task<Result<IEnumerable<NewsDTO>>> Handle(GetAllNewsQuery request, CancellationToken cancellationToken)
         {
             var news = await _repositoryWrapper.NewsRepository.GetAllAsync(
-                include: cat => cat.Include(img => img.Image));
+                include: cat => cat.Include(img => img.Image!));
             if (news == null)
             {
                 const string errorMsg = "There are no news in the database";
@@ -39,7 +39,7 @@ namespace Streetcode.BLL.MediatR.Newss.GetAll
 
             foreach (var dto in newsDTOs)
             {
-                if (dto.Image is not null)
+                if(dto.Image is not null && !string.IsNullOrWhiteSpace(dto.Image.BlobName))
                 {
                     dto.Image.Base64 = _blobService.FindFileInStorageAsBase64(dto.Image.BlobName);
                 }
