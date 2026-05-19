@@ -2,6 +2,7 @@
 <RuleSet Name="My Rules" Description="Description here." ToolsVersion="18.0">
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA0001" Action="None" />
+    <Rule Id="SA1000" Action="None" />
     <Rule Id="SA1008" Action="None" />
     <Rule Id="SA1009" Action="None" />
     <Rule Id="SA1010" Action="None" />
@@ -76,6 +77,5 @@
     <Rule Id="SA1644" Action="None" />
     <Rule Id="SA1649" Action="None" />
     <Rule Id="SA1652" Action="None" />
-    <Rule Id="SX1101" Action="Warning" />
   </Rules>
 </RuleSet>
