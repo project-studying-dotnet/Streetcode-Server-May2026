@@ -9,14 +9,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
     using FluentAssertions;
     using Microsoft.EntityFrameworkCore.Query;
     using Moq;
-    using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.Mapping.Streetcode.TextContent;
-    using Streetcode.BLL.MediatR.Streetcode.Text.GetById;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+    using global::Streetcode.BLL.DTO.Streetcode.TextContent.Text;
+    using global::Streetcode.BLL.Interfaces.Logging;
+    using global::Streetcode.BLL.Mapping.Streetcode.TextContent;
+    using global::Streetcode.BLL.MediatR.Streetcode.Text.GetById;
+    using global::Streetcode.DAL.Repositories.Interfaces.Base;
+    using global::Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
     using Xunit;
-    using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
+    using TextEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Text;
 
     /// <summary>
     /// Unit tests for <see cref="GetTextByIdHandler"/>.
