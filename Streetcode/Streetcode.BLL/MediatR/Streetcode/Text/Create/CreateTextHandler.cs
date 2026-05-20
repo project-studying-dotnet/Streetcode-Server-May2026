@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentResults;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
@@ -26,19 +27,21 @@ public class CreateTextHandler : IRequestHandler<CreateTextCommand, Result<TextD
         var streetcodeId = request.createTextRequest.StreetcodeId;
 
         var streetcodeExists = await _repositoryWrapper.StreetcodeRepository
-            .GetFirstOrDefaultAsync(s => s.Id == streetcodeId);
+            .FindAll()
+            .AnyAsync(s => s.Id == streetcodeId);
 
-        if (streetcodeExists == null)
+        if (!streetcodeExists)
         {
             string errorMsg = $"Streetcode with Id {streetcodeId} does not exist.";
             _logger.LogError(request, errorMsg);
             return Result.Fail<TextDTO>(errorMsg);
         }
 
-        var existingText = await _repositoryWrapper.TextRepository
-            .GetFirstOrDefaultAsync(t => t.StreetcodeId == streetcodeId);
+        bool textAlreadyExists = await _repositoryWrapper.TextRepository
+                .FindAll()
+                .AnyAsync(t => t.StreetcodeId == streetcodeId);
 
-        if (existingText != null)
+        if (textAlreadyExists)
         {
             string errorMsg = $"Text for Streetcode Id {streetcodeId} already exists. Cannot create a duplicate.";
             _logger.LogError(request, errorMsg);
