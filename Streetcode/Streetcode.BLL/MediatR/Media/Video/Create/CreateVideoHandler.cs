@@ -34,7 +34,18 @@ namespace Streetcode.BLL.MediatR.Media.Video.Create
             {
                 string errorMsg = $"Streetcode with Id {streetcodeId} does not exist.";
                 _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
+                return Result.Fail<VideoDTO>(errorMsg);
+            }
+
+            bool videoAlreadyExists = await _repositoryWrapper.VideoRepository
+                .FindAll()
+                .AnyAsync(v => v.StreetcodeId == streetcodeId);
+
+            if (videoAlreadyExists)
+            {
+                string errorMsg = $"Video for Streetcode Id {streetcodeId} already exists. Cannot create a duplicate.";
+                _logger.LogError(request, errorMsg);
+                return Result.Fail<VideoDTO>(errorMsg);
             }
 
             var videoEntity = _mapper.Map<T.Video>(request.createVideoRequest);
@@ -43,7 +54,7 @@ namespace Streetcode.BLL.MediatR.Media.Video.Create
             {
                 const string errorMsg = "Cannot map CreateVideoRequest to entity.";
                 _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
+                return Result.Fail<VideoDTO>(errorMsg);
             }
 
             await _repositoryWrapper.VideoRepository.CreateAsync(videoEntity);
@@ -56,7 +67,7 @@ namespace Streetcode.BLL.MediatR.Media.Video.Create
 
             const string failMsg = "Failed to save new Video.";
             _logger.LogError(request, failMsg);
-            return Result.Fail(new Error(failMsg));
+            return Result.Fail<VideoDTO>(failMsg);
         }
     }
 }
