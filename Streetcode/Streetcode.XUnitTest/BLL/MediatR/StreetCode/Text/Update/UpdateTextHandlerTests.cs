@@ -1,0 +1,291 @@
+﻿// <copyright file="UpdateTextHandlerTests.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Update
+{
+    using System;
+    using System.Linq.Expressions;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using FluentAssertions;
+    using Moq;
+    using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
+    using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.Mapping.Streetcode.TextContent;
+    using Streetcode.BLL.MediatR.Streetcode.Text.Update;
+    using Streetcode.DAL.Repositories.Interfaces.Base;
+    using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+    using Xunit;
+    using T = Streetcode.DAL.Entities.Streetcode.TextContent;
+
+    /// <summary>
+    /// Unit tests for UpdateTextHandler.
+    /// </summary>
+    public class UpdateTextHandlerTests
+    {
+        private readonly Mock<IRepositoryWrapper> repoWrapperMock;
+        private readonly Mock<ITextRepository> textRepoMock;
+        private readonly IMapper mapper;
+        private readonly Mock<ILoggerService> loggerMock;
+
+        private readonly UpdateTextHandler handler;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UpdateTextHandlerTests"/> class.
+        /// </summary>
+        public UpdateTextHandlerTests()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<TextProfile>();
+            });
+
+            this.mapper = config.CreateMapper();
+
+            this.repoWrapperMock = new Mock<IRepositoryWrapper>();
+            this.textRepoMock = new Mock<ITextRepository>();
+            this.loggerMock = new Mock<ILoggerService>();
+
+            this.repoWrapperMock
+                .Setup(x => x.TextRepository)
+                .Returns(this.textRepoMock.Object);
+
+            this.handler = new UpdateTextHandler(
+                this.repoWrapperMock.Object,
+                this.mapper,
+                this.loggerMock.Object);
+        }
+
+        /// <summary>
+        /// Should return successful Result with TextDTO when database update succeeds.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task Handle_ShouldReturnTextDto_WhenSaveSucceeds()
+        {
+            var requestDto = UpdateRequestDto();
+            var command = new UpdateTextCommand(requestDto);
+
+            var existingText = new T.Text
+            {
+                Id = requestDto.Id,
+                Title = "Old Title",
+                StreetcodeId = requestDto.StreetcodeId,
+            };
+
+            this.textRepoMock
+                .Setup(r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null))
+                .ReturnsAsync(existingText);
+
+            this.textRepoMock
+                .Setup(r => r.Update(It.IsAny<T.Text>()));
+
+            this.repoWrapperMock
+                .Setup(w => w.SaveChangesAsync())
+                .ReturnsAsync(1);
+
+            var result = await this.handler.Handle(command, CancellationToken.None);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().NotBeNull();
+            result.Value.Title.Should().Be(requestDto.Title);
+
+            this.textRepoMock.Verify(
+                r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null),
+                Times.Once);
+            this.textRepoMock.Verify(r => r.Update(It.IsAny<T.Text>()), Times.Once);
+            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Once);
+
+            this.loggerMock.Verify(
+                l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
+                Times.Never);
+        }
+
+        /// <summary>
+        /// Should return failed Result when attempting to change StreetcodeId.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task Handle_ShouldReturnFailResult_WhenStreetcodeIdDoesNotMatch()
+        {
+            var requestDto = UpdateRequestDto();
+            var command = new UpdateTextCommand(requestDto);
+            string expectedErrorMsg = "Changing StreetcodeId for an existing Text is not allowed.";
+
+            var existingText = new T.Text
+            {
+                Id = requestDto.Id,
+                StreetcodeId = 999,
+            };
+
+            this.textRepoMock
+                .Setup(r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null))
+                .ReturnsAsync(existingText);
+
+            var result = await this.handler.Handle(command, CancellationToken.None);
+
+            result.IsFailed.Should().BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which.Message
+                .Should()
+                .Be(expectedErrorMsg);
+
+            this.textRepoMock.Verify(
+                r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null),
+                Times.Once);
+
+            this.textRepoMock.Verify(r => r.Update(It.IsAny<T.Text>()), Times.Never);
+            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
+
+            this.loggerMock.Verify(
+                l => l.LogError(command, expectedErrorMsg),
+                Times.Once);
+        }
+
+        /// <summary>
+        /// Should return failed Result and log error when database save fails.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task Handle_ShouldReturnFailResult_WhenSaveFails()
+        {
+            var requestDto = UpdateRequestDto();
+            var command = new UpdateTextCommand(requestDto);
+
+            var existingText = new T.Text
+            {
+                Id = requestDto.Id,
+                StreetcodeId = requestDto.StreetcodeId,
+            };
+            string expectedErrorMsg = "Failed to update Text.";
+
+            this.textRepoMock
+                .Setup(r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null))
+                .ReturnsAsync(existingText);
+
+            this.textRepoMock
+                .Setup(r => r.Update(It.IsAny<T.Text>()));
+
+            this.repoWrapperMock
+                .Setup(w => w.SaveChangesAsync())
+                .ReturnsAsync(0);
+
+            var result = await this.handler.Handle(command, CancellationToken.None);
+
+            result.IsFailed.Should().BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which.Message
+                .Should()
+                .Be(expectedErrorMsg);
+
+            this.textRepoMock.Verify(
+                r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null),
+                Times.Once);
+            this.textRepoMock.Verify(r => r.Update(It.IsAny<T.Text>()), Times.Once);
+            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Once);
+
+            this.loggerMock.Verify(
+                l => l.LogError(It.IsAny<object>(), It.Is<string>(msg => msg.Contains("Failed"))),
+                Times.Once);
+        }
+
+        /// <summary>
+        /// Should return failed Result when entity with given Id does not exist in the database.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task Handle_ShouldReturnFail_WhenTextDoesNotExist()
+        {
+            var requestDto = UpdateRequestDto();
+            var command = new UpdateTextCommand(requestDto);
+            string expectedErrorMsg = $"Text with Id {requestDto.Id} not found.";
+
+            this.textRepoMock
+                .Setup(r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null))
+                .ReturnsAsync((T.Text?)null);
+
+            var result = await this.handler.Handle(command, CancellationToken.None);
+
+            result.IsFailed.Should().BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which.Message
+                .Should()
+                .Be(expectedErrorMsg);
+
+            this.textRepoMock.Verify(
+                r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null),
+                Times.Once);
+            this.textRepoMock.Verify(r => r.Update(It.IsAny<T.Text>()), Times.Never);
+            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
+
+            this.loggerMock.Verify(l => l.LogError(command, expectedErrorMsg), Times.Once);
+        }
+
+        /// <summary>
+        /// Should propagate exception when repository throws.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task Handle_ShouldPropagateException_WhenRepositoryThrows()
+        {
+            var command = new UpdateTextCommand(UpdateRequestDto());
+
+            this.textRepoMock
+                .Setup(r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null))
+                .Throws(new Exception("Database connection failure"));
+
+            Func<Task> act = () => this.handler.Handle(command, CancellationToken.None);
+
+            await act.Should().ThrowAsync<Exception>()
+                .WithMessage("Database connection failure");
+
+            this.textRepoMock.Verify(
+                r => r.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<T.Text, bool>>>(),
+                    null),
+                Times.Once);
+            this.textRepoMock.Verify(r => r.Update(It.IsAny<T.Text>()), Times.Never);
+            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
+            this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+        }
+
+        /// <summary>
+        /// Creates valid TextUpdateDTO test data.
+        /// </summary>
+        private static TextUpdateDTO UpdateRequestDto() =>
+           new TextUpdateDTO()
+           {
+               Id = 1,
+               Title = "Update Title",
+               TextContent = "Update Text Content",
+               StreetcodeId = 4,
+               AdditionalText = "Update Additional Text",
+           };
+    }
+}
