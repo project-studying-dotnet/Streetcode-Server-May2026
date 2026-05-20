@@ -12,6 +12,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
     using global::Streetcode.BLL.Interfaces.Logging;
     using global::Streetcode.BLL.Mapping.Streetcode;
     using global::Streetcode.BLL.MediatR.Streetcode.Streetcode.Create;
+    using global::Streetcode.DAL.Entities.Streetcode;
     using global::Streetcode.DAL.Repositories.Interfaces.Base;
     using global::Streetcode.DAL.Repositories.Interfaces.Streetcode;
     using Moq;
@@ -61,8 +62,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 
             this.repositoryWrapperMock
                     .Setup(r => r.StreetcodeRepository
-                        .CreateAsync(It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()))
-                    .ReturnsAsync((DAL.Entities.Streetcode.StreetcodeContent sc) => sc);
+                        .CreateAsync(It.IsAny<StreetcodeContent>()))
+                    .ReturnsAsync((StreetcodeContent sc) => sc);
 
             this.repositoryWrapperMock
                     .Setup(r => r.SaveChangesAsync())
@@ -78,7 +79,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 
             this.repositoryWrapperMock.Verify(
                     r => r.StreetcodeRepository.CreateAsync(
-                        It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()),
+                        It.IsAny<StreetcodeContent>()),
                     Times.Once);
 
             this.repositoryWrapperMock.Verify(
@@ -102,8 +103,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 
             this.repositoryWrapperMock
                     .Setup(r => r.StreetcodeRepository
-                        .CreateAsync(It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()))
-                    .ReturnsAsync((DAL.Entities.Streetcode.StreetcodeContent)null);
+                        .CreateAsync(It.IsAny<StreetcodeContent>()))
+                    .ReturnsAsync((StreetcodeContent)null!);
 
             // Act
             var result = await this.handler.Handle(request, CancellationToken.None);
@@ -115,7 +116,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 
             this.repositoryWrapperMock.Verify(
                     r => r.StreetcodeRepository.CreateAsync(
-                        It.IsAny<DAL.Entities.Streetcode.StreetcodeContent>()),
+                        It.IsAny<StreetcodeContent>()),
                     Times.Once);
 
             this.loggerMock.Verify(
@@ -131,7 +132,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
         public async Task Handler_WhenMapperReturnNull_ReturnFail()
         {
             // Arrange
-            var request = new CreateStreetcodeCommand(null);
+            var request = new CreateStreetcodeCommand(null!);
 
             string expectedErrorMessage = "Cannot convert null to streetcode";
 

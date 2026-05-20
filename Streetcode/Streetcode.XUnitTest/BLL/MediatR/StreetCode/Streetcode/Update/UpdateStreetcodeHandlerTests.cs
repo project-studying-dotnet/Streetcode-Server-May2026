@@ -138,7 +138,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
         public async Task Handle_MapperResultNull_ReturnsFailResult()
         {
             // Arrange
-            var request = new UpdateStreetcodeCommand(null);
+            var request = new UpdateStreetcodeCommand(null!);
 
             string expextedErrorMessage = $"Cannot convert null to streetcode";
 

@@ -7,5 +7,6 @@ using Streetcode.BLL.DTO.Streetcode;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
 {
-    public record UpdateStreetcodeCommand(StreetcodeDTO streetcode) : IRequest<Result<StreetcodeDTO>>;
+    public record UpdateStreetcodeCommand(StreetcodeDTO streetcode)
+        : IRequest<Result<StreetcodeDTO>>;
 }
