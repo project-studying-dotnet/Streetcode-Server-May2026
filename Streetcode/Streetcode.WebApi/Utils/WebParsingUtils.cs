@@ -103,8 +103,8 @@ public class WebParsingUtils
     public async Task ParseZipFileFromWebAsync()
     {
         var projRootDirectory = Directory.GetParent(Environment.CurrentDirectory)?.FullName!;
-        var zipPath = $"houses.zip";
-        var extractTo = $"/root/build/StreetCode/Streetcode/Streetcode.DAL";
+        var zipPath = Path.Combine(projRootDirectory, "houses.zip");
+        var extractTo = Path.Combine(projRootDirectory, "Streetcode.DAL");
 
         var cancellationToken = new CancellationTokenSource().Token;
 
