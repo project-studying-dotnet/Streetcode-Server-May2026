@@ -10,6 +10,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
     using System.Threading.Tasks;
     using AutoMapper;
     using FluentAssertions;
+    using MockQueryable.Moq;
     using Moq;
     using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
     using Streetcode.BLL.Interfaces.Logging;
@@ -76,13 +77,20 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             var requestDto = CreateRequestDto();
             var command = new CreateTextCommand(requestDto);
 
+            var streetcodes = new List<StreetcodeContent>
+            {
+                new StreetcodeContent { Id = requestDto.StreetcodeId },
+            }.AsQueryable().BuildMock();
+
+            var texts = new List<T.Text>().AsQueryable().BuildMock();
+
             this.streetcodeRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null))
-                .ReturnsAsync(new StreetcodeContent { Id = requestDto.StreetcodeId });
+                .Setup(r => r.FindAll())
+                .Returns(streetcodes);
 
             this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .ReturnsAsync((T.Text?)null);
+                .Setup(r => r.FindAll())
+                .Returns(texts);
 
             this.textRepoMock
                 .Setup(r => r.CreateAsync(It.IsAny<T.Text>()))
@@ -98,14 +106,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             result.Value.Should().NotBeNull();
             result.Value.Title.Should().Be(requestDto.Title);
 
-            this.streetcodeRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null),
-                Times.Once);
-
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
-
+            this.streetcodeRepoMock.Verify(r => r.FindAll(), Times.Once);
+            this.textRepoMock.Verify(r => r.FindAll(), Times.Once);
             this.textRepoMock.Verify(r => r.CreateAsync(It.IsAny<T.Text>()), Times.Once);
             this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Once);
 
@@ -124,23 +126,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             var requestDto = CreateRequestDto();
             var command = new CreateTextCommand(requestDto);
 
+            var emptyStreetcodes = new List<StreetcodeContent>().AsQueryable().BuildMock();
+
             this.streetcodeRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null))
-                .ReturnsAsync((StreetcodeContent?)null);
+                .Setup(r => r.FindAll())
+                .Returns(emptyStreetcodes);
 
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message.Contains($"Streetcode with Id {requestDto.StreetcodeId} does not exist."));
 
-            this.streetcodeRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null),
-                Times.Once);
-
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Never);
-
+            this.streetcodeRepoMock.Verify(r => r.FindAll(), Times.Once);
+            this.textRepoMock.Verify(r => r.FindAll(), Times.Never);
             this.textRepoMock.Verify(r => r.CreateAsync(It.IsAny<T.Text>()), Times.Never);
             this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
             this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
@@ -156,27 +154,31 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             var requestDto = CreateRequestDto();
             var command = new CreateTextCommand(requestDto);
 
+            var streetcodes = new List<StreetcodeContent>
+            {
+                new StreetcodeContent { Id = requestDto.StreetcodeId },
+            }.AsQueryable().BuildMock();
+
+            var existingTexts = new List<T.Text>
+            {
+                new T.Text { StreetcodeId = requestDto.StreetcodeId },
+            }.AsQueryable().BuildMock();
+
             this.streetcodeRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null))
-                .ReturnsAsync(new StreetcodeContent { Id = requestDto.StreetcodeId });
+                .Setup(r => r.FindAll())
+                .Returns(streetcodes);
 
             this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .ReturnsAsync(new T.Text { StreetcodeId = requestDto.StreetcodeId });
+                .Setup(r => r.FindAll())
+                .Returns(existingTexts);
 
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message.Contains("already exists"));
 
-            this.streetcodeRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null),
-                Times.Once);
-
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
-
+            this.streetcodeRepoMock.Verify(r => r.FindAll(), Times.Once);
+            this.textRepoMock.Verify(r => r.FindAll(), Times.Once);
             this.textRepoMock.Verify(r => r.CreateAsync(It.IsAny<T.Text>()), Times.Never);
             this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
             this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
@@ -192,13 +194,20 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             var requestDto = CreateRequestDto();
             var command = new CreateTextCommand(requestDto);
 
+            var streetcodes = new List<StreetcodeContent>
+            {
+                new StreetcodeContent { Id = requestDto.StreetcodeId },
+            }.AsQueryable().BuildMock();
+
+            var texts = new List<T.Text>().AsQueryable().BuildMock();
+
             this.streetcodeRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null))
-                .ReturnsAsync(new StreetcodeContent { Id = requestDto.StreetcodeId });
+                .Setup(r => r.FindAll())
+                .Returns(streetcodes);
 
             this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .ReturnsAsync((T.Text?)null);
+                .Setup(r => r.FindAll())
+                .Returns(texts);
 
             this.textRepoMock
                 .Setup(r => r.CreateAsync(It.IsAny<T.Text>()))
@@ -213,14 +222,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle();
 
-            this.streetcodeRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null),
-                Times.Once);
-
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
-
+            this.streetcodeRepoMock.Verify(r => r.FindAll(), Times.Once);
+            this.textRepoMock.Verify(r => r.FindAll(), Times.Once);
             this.textRepoMock.Verify(r => r.CreateAsync(It.IsAny<T.Text>()), Times.Once);
             this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Once);
             this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), "Failed to save new Text."), Times.Once);
@@ -236,26 +239,26 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             var requestDto = CreateRequestDto();
             var command = new CreateTextCommand(requestDto);
 
+            var streetcodes = new List<StreetcodeContent>
+            {
+                new StreetcodeContent { Id = requestDto.StreetcodeId },
+            }.AsQueryable().BuildMock();
+
             this.streetcodeRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null))
-                .ReturnsAsync(new StreetcodeContent { Id = requestDto.StreetcodeId });
+                .Setup(r => r.FindAll())
+                .Returns(streetcodes);
 
             this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .ThrowsAsync(new Exception("Database connection failure"));
+                .Setup(r => r.FindAll())
+                .Throws(new Exception("Database connection failure"));
 
             Func<Task> act = () => this.handler.Handle(command, CancellationToken.None);
 
             await act.Should().ThrowAsync<Exception>()
                 .WithMessage("Database connection failure");
 
-            this.streetcodeRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null),
-                Times.Once);
-
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
+            this.streetcodeRepoMock.Verify(r => r.FindAll(), Times.Once);
+            this.textRepoMock.Verify(r => r.FindAll(), Times.Once);
 
             this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
             this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
@@ -271,13 +274,20 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             var requestDto = CreateRequestDto();
             var command = new CreateTextCommand(requestDto);
 
+            var streetcodes = new List<StreetcodeContent>
+            {
+                new StreetcodeContent { Id = requestDto.StreetcodeId },
+            }.AsQueryable().BuildMock();
+
+            var texts = new List<T.Text>().AsQueryable().BuildMock();
+
             this.streetcodeRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null))
-                .ReturnsAsync(new StreetcodeContent { Id = requestDto.StreetcodeId });
+                .Setup(r => r.FindAll())
+                .Returns(streetcodes);
 
             this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .ReturnsAsync((T.Text?)null);
+                .Setup(r => r.FindAll())
+                .Returns(texts);
 
             var mockMapper = new Mock<IMapper>();
             mockMapper
@@ -294,14 +304,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message.Contains("map"));
 
-            this.streetcodeRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null),
-                Times.Once);
-
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
-
+            this.streetcodeRepoMock.Verify(r => r.FindAll(), Times.Once);
+            this.textRepoMock.Verify(r => r.FindAll(), Times.Once);
             this.textRepoMock.Verify(r => r.CreateAsync(It.IsAny<T.Text>()), Times.Never);
             this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
 
