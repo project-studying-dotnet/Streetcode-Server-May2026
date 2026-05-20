@@ -25,7 +25,7 @@ public class WebParsingUtils
 
     private static readonly string _fileToParseUrl = "https://www.ukrposhta.ua/files/shares/out/houses.zip?_ga=2.213909844.272819342.1674050613-1387315609.1673613938&_gl=1*1obnqll*_ga*MTM4NzMxNTYwOS4xNjczNjEzOTM4*_ga_6400KY4HRY*MTY3NDA1MDYxMy4xMC4xLjE2NzQwNTE3ODUuNjAuMC4w";
 
-    private readonly IRepositoryWrapper _repository;
+    private readonly IRepositoryWrapper _repository; // NOSONAR
     private readonly StreetcodeDbContext _streetcodeContext;
 
     public WebParsingUtils(StreetcodeDbContext streetcodeContext)
