@@ -7,16 +7,16 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
     using System.Linq.Expressions;
     using AutoMapper;
     using FluentAssertions;
+    using global::Streetcode.BLL.DTO.Streetcode.TextContent.Text;
+    using global::Streetcode.BLL.Interfaces.Logging;
+    using global::Streetcode.BLL.Mapping.Streetcode.TextContent;
+    using global::Streetcode.BLL.MediatR.Streetcode.Text.GetAll;
+    using global::Streetcode.DAL.Repositories.Interfaces.Base;
+    using global::Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
     using Microsoft.EntityFrameworkCore.Query;
     using Moq;
-    using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.Mapping.Streetcode.TextContent;
-    using Streetcode.BLL.MediatR.Streetcode.Text.GetAll;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
     using Xunit;
-    using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
+    using TextEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Text;
 
     /// <summary>
     /// Unit tests for <see cref="GetAllTextsHandler"/>.
@@ -65,10 +65,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
                 new TextEntity { Id = 2, Title = "Title 2", TextContent = "Content 2", StreetcodeId = 2 },
             };
 
-            var textDtos = new List<TextDTO>
+            var textDtos = new List<TextDto>
             {
-                new TextDTO { Id = 1, Title = "Title 1", TextContent = "Content 1", StreetcodeId = 1 },
-                new TextDTO { Id = 2, Title = "Title 2", TextContent = "Content 2", StreetcodeId = 2 },
+                new TextDto { Id = 1, Title = "Title 1", TextContent = "Content 1", StreetcodeId = 1 },
+                new TextDto { Id = 2, Title = "Title 2", TextContent = "Content 2", StreetcodeId = 2 },
             };
 
             this.textRepositoryMock

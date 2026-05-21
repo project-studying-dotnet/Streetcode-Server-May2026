@@ -36,9 +36,11 @@ namespace Streetcode.DAL.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Latitude")
+                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("Longtitude")
+                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
@@ -621,6 +623,9 @@ namespace Streetcode.DAL.Persistence.Migrations
                     b.Property<int?>("ImageId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
                     b.Property<int>("StreetcodeId")
                         .HasColumnType("int");
 
@@ -842,7 +847,7 @@ namespace Streetcode.DAL.Persistence.Migrations
 
                     b.HasIndex("HistoricalContextId");
 
-                    b.ToTable("HistoricalContextsTimelines", (string)null);
+                    b.ToTable("HistoricalContextsTimelines");
                 });
 
             modelBuilder.Entity("Streetcode.DAL.Entities.Timeline.TimelineItem", b =>
@@ -1013,8 +1018,6 @@ namespace Streetcode.DAL.Persistence.Migrations
 
                     b.HasIndex("StreetcodeId");
 
-                    b.ToTable("coordinates", "add_content");
-
                     b.HasDiscriminator().HasValue("coordinate_streetcode");
                 });
 
@@ -1029,16 +1032,12 @@ namespace Streetcode.DAL.Persistence.Migrations
                         .IsUnique()
                         .HasFilter("[ToponymId] IS NOT NULL");
 
-                    b.ToTable("coordinates", "add_content");
-
                     b.HasDiscriminator().HasValue("coordinate_toponym");
                 });
 
             modelBuilder.Entity("Streetcode.DAL.Entities.Streetcode.Types.EventStreetcode", b =>
                 {
                     b.HasBaseType("Streetcode.DAL.Entities.Streetcode.StreetcodeContent");
-
-                    b.ToTable("streetcodes", "streetcode");
 
                     b.HasDiscriminator().HasValue("streetcode-event");
                 });
@@ -1060,8 +1059,6 @@ namespace Streetcode.DAL.Persistence.Migrations
                     b.Property<string>("Rank")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.ToTable("streetcodes", "streetcode");
 
                     b.HasDiscriminator().HasValue("streetcode-person");
                 });
