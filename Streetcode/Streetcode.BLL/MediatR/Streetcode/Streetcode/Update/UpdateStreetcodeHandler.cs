@@ -36,14 +36,13 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
                 return Result.Fail(new Error(errorMsg));
             }
 
-            var response = _mapper.Map<StreetcodeDTO>(streetcode);
-
             _repositoryWrapper.StreetcodeRepository.Update(streetcode);
 
             var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
 
             if (resultIsSuccess)
             {
+                var response = _mapper.Map<StreetcodeDTO>(streetcode);
                 return Result.Ok(response);
             }
             else
