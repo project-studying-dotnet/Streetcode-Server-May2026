@@ -27,6 +27,16 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
 
         public async Task<Result<StreetcodeDTO>> Handle(UpdateStreetcodeCommand request, CancellationToken cancellationToken)
         {
+            var entity = await _repositoryWrapper.StreetcodeRepository
+                    .GetFirstOrDefaultAsync(s => s.Id == request.streetcode.Id);
+
+            if (entity is null)
+            {
+                string errorMsg = $"Streetcode with ID {request.streetcode.Id} not found";
+                _logger.LogError(request, errorMsg);
+                return Result.Fail(new Error(errorMsg));
+            }
+
             var streetcode = _mapper.Map<StreetcodeContent>(request.streetcode);
 
             if (streetcode is null)
