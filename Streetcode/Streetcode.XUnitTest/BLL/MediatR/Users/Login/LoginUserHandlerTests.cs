@@ -1,6 +1,7 @@
 ﻿// <copyright file="LoginUserHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+
 namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
 {
     using System;
@@ -14,7 +15,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
     using Moq;
     using Streetcode.BLL.DTO.Users;
     using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.Mapping.Timeline;
+    using Streetcode.BLL.Interfaces.PasswordHasher;
     using Streetcode.BLL.MediatR.Users.Login;
     using Streetcode.DAL.Entities.Users;
     using Streetcode.DAL.Enums;
@@ -30,6 +31,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
         private readonly Mock<IRepositoryWrapper> repoWrapperMock;
         private readonly Mock<IUserRepository> userRepoMock;
         private readonly IMapper mapper;
+        private readonly Mock<IPasswordHasher> passwordHasherMock;
         private readonly Mock<ILoggerService> loggerMock;
         private readonly LoginUserHandler handler;
 
@@ -40,13 +42,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<TimelineItemProfile>();
+                cfg.CreateMap<User, UserDTO>();
             });
 
             this.mapper = config.CreateMapper();
             this.repoWrapperMock = new Mock<IRepositoryWrapper>();
             this.userRepoMock = new Mock<IUserRepository>();
             this.loggerMock = new Mock<ILoggerService>();
+            this.passwordHasherMock = new Mock<IPasswordHasher>();
 
             this.repoWrapperMock
                 .Setup(x => x.UserRepository)
@@ -55,11 +58,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             this.handler = new LoginUserHandler(
                 this.repoWrapperMock.Object,
                 this.mapper,
+                this.passwordHasherMock.Object,
                 this.loggerMock.Object);
         }
 
         /// <summary>
-        /// Should return successful LoginResultDTO when credentials are correct and valid.
+        /// Should return successful LoginResultDTO with safe UserDTO when credentials are correct.
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
         [Fact]
@@ -72,38 +76,37 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             {
                 Id = 1,
                 Login = loginDto.Login,
-                Password = "correctPassword",
+                PasswordHash = new byte[] { 1, 2, 3 },
+                PasswordSalt = new byte[] { 4, 5, 6 },
                 Name = "John",
                 Surname = "Doe",
                 Email = "john.doe@gmail.com",
+                Role = UserRole.MainAdministrator,
             };
 
             var usersMock = new List<User> { dbUser }.AsQueryable().BuildMock();
 
-            var expectedUserDto = new UserDTO
-            {
-                Id = dbUser.Id,
-                Login = dbUser.Login,
-                Name = dbUser.Name,
-                Surname = dbUser.Surname,
-                Email = dbUser.Email,
-                Role = UserRole.MainAdministrator,
-            };
-
             this.userRepoMock
                 .Setup(r => r.FindAll())
                 .Returns(usersMock);
+
+            this.passwordHasherMock
+                .Setup(p => p.VerifyPassword(loginDto.Password, dbUser.PasswordHash, dbUser.PasswordSalt))
+                .Returns(true);
 
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
             result.Value.Token.Should().NotBeNullOrEmpty();
+            result.Value.ExpireAt.Should().BeAfter(DateTime.UtcNow);
+
+            result.Value.User.Id.Should().Be(dbUser.Id);
             result.Value.User.Login.Should().Be(loginDto.Login);
             result.Value.User.Name.Should().Be("John");
             result.Value.User.Surname.Should().Be("Doe");
             result.Value.User.Email.Should().Be("john.doe@gmail.com");
-            result.Value.ExpireAt.Should().BeAfter(DateTime.UtcNow);
+            result.Value.User.Role.Should().Be(UserRole.MainAdministrator);
 
             this.userRepoMock.Verify(r => r.FindAll(), Times.Once);
         }
@@ -127,7 +130,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
 
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message.Contains("Invalid login or password."));
-
             this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -141,18 +143,28 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             var loginDto = new UserLoginDTO { Login = "admin", Password = "wrongPassword" };
             var command = new LoginUserCommand(loginDto);
 
-            var dbUser = new User { Login = loginDto.Login, Password = "correctPassword" };
+            var dbUser = new User
+            {
+                Login = loginDto.Login,
+                Name = "John",
+                Surname = "Doe",
+                PasswordHash = new byte[] { 1 },
+                PasswordSalt = new byte[] { 2 },
+            };
             var usersMock = new List<User> { dbUser }.AsQueryable().BuildMock();
 
             this.userRepoMock
                 .Setup(r => r.FindAll())
                 .Returns(usersMock);
 
+            this.passwordHasherMock
+                .Setup(p => p.VerifyPassword(loginDto.Password, dbUser.PasswordHash, dbUser.PasswordSalt))
+                .Returns(false);
+
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message.Contains("Invalid login or password."));
-
             this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
     }

@@ -19,11 +19,6 @@ namespace Streetcode.BLL.DTO.Users
         [MaxLength(20)]
         public string Login { get; set; } = string.Empty;
         [Required]
-        public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
-
-        [Required]
-        public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
-        [Required]
         public UserRole Role { get; set; }
     }
 }
