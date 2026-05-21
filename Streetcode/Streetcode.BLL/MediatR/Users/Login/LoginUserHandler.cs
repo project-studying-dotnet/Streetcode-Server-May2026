@@ -25,6 +25,7 @@ namespace Streetcode.BLL.MediatR.Users.Login
         {
             var user = await _repositoryWrapper.UserRepository
                 .FindAll()
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Login == request.LoginDto.Login, cancellationToken);
 
             if (user is null)

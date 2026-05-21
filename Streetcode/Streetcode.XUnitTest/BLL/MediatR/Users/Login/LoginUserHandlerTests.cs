@@ -1,7 +1,6 @@
 ﻿// <copyright file="LoginUserHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-
 namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
 {
     using System;
@@ -15,6 +14,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
     using Moq;
     using Streetcode.BLL.DTO.Users;
     using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.Mapping.Timeline;
     using Streetcode.BLL.MediatR.Users.Login;
     using Streetcode.DAL.Entities.Users;
     using Streetcode.DAL.Enums;
@@ -29,7 +29,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
     {
         private readonly Mock<IRepositoryWrapper> repoWrapperMock;
         private readonly Mock<IUserRepository> userRepoMock;
-        private readonly Mock<IMapper> mapperMock;
+        private readonly IMapper mapper;
         private readonly Mock<ILoggerService> loggerMock;
         private readonly LoginUserHandler handler;
 
@@ -38,9 +38,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
         /// </summary>
         public LoginUserHandlerTests()
         {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<TimelineItemProfile>();
+            });
+
+            this.mapper = config.CreateMapper();
             this.repoWrapperMock = new Mock<IRepositoryWrapper>();
             this.userRepoMock = new Mock<IUserRepository>();
-            this.mapperMock = new Mock<IMapper>();
             this.loggerMock = new Mock<ILoggerService>();
 
             this.repoWrapperMock
@@ -49,7 +54,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
 
             this.handler = new LoginUserHandler(
                 this.repoWrapperMock.Object,
-                this.mapperMock.Object,
+                this.mapper,
                 this.loggerMock.Object);
         }
 
@@ -89,10 +94,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
                 .Setup(r => r.FindAll())
                 .Returns(usersMock);
 
-            this.mapperMock
-                .Setup(m => m.Map<UserDTO>(dbUser))
-                .Returns(expectedUserDto);
-
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
@@ -105,7 +106,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             result.Value.ExpireAt.Should().BeAfter(DateTime.UtcNow);
 
             this.userRepoMock.Verify(r => r.FindAll(), Times.Once);
-            this.mapperMock.Verify(m => m.Map<UserDTO>(It.IsAny<User>()), Times.Once);
         }
 
         /// <summary>
@@ -129,7 +129,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             result.Errors.Should().ContainSingle(e => e.Message.Contains("Invalid login or password."));
 
             this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
-            this.mapperMock.Verify(m => m.Map<UserDTO>(It.IsAny<User>()), Times.Never);
         }
 
         /// <summary>
@@ -155,7 +154,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             result.Errors.Should().ContainSingle(e => e.Message.Contains("Invalid login or password."));
 
             this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
-            this.mapperMock.Verify(m => m.Map<UserDTO>(It.IsAny<User>()), Times.Never);
         }
     }
 }
