@@ -30,7 +30,7 @@ public class VideoController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] VideoCreateDTO createVideoRequest)
+    public async Task<IActionResult> Create([FromBody] VideoCreateDto createVideoRequest)
     {
         return HandleResult(await Mediator.Send(new CreateVideoCommand(createVideoRequest)));
     }

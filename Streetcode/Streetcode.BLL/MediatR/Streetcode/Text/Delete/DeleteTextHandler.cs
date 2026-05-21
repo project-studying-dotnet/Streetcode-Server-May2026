@@ -8,7 +8,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Text.Delete
 {
-    public class DeleteTextHandler : IRequestHandler<DeleteTextCommand, Result<TextDTO>>
+    public class DeleteTextHandler : IRequestHandler<DeleteTextCommand, Result<TextDto>>
     {
         private readonly IMapper _mapper;
         private readonly IRepositoryWrapper _repositoryWrapper;
@@ -21,7 +21,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Delete
             _logger = logger;
         }
 
-        public async Task<Result<TextDTO>> Handle(DeleteTextCommand request, CancellationToken cancellationToken)
+        public async Task<Result<TextDto>> Handle(DeleteTextCommand request, CancellationToken cancellationToken)
         {
             var textEntity = await _repositoryWrapper.TextRepository
                 .GetFirstOrDefaultAsync(t => t.Id == request.Id);
@@ -30,7 +30,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Delete
             {
                 string errorMsg = $"Text with Id {request.Id} not found.";
                 _logger.LogError(request, errorMsg);
-                return Result.Fail<TextDTO>(errorMsg);
+                return Result.Fail<TextDto>(errorMsg);
             }
 
             _repositoryWrapper.TextRepository.Delete(textEntity);
@@ -38,12 +38,12 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Delete
 
             if (saveResult > 0)
             {
-                return Result.Ok(_mapper.Map<TextDTO>(textEntity));
+                return Result.Ok(_mapper.Map<TextDto>(textEntity));
             }
 
             string failMsg = $"Failed to delete Text with Id {request.Id}.";
             _logger.LogError(request, failMsg);
-            return Result.Fail<TextDTO>(failMsg);
+            return Result.Fail<TextDto>(failMsg);
         }
     }
 }

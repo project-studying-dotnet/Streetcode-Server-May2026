@@ -38,13 +38,13 @@ public class TextController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] TextCreateDTO createTextRequest)
+    public async Task<IActionResult> Create([FromBody] TextCreateDto createTextRequest)
     {
         return HandleResult(await Mediator.Send(new CreateTextCommand(createTextRequest)));
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] TextUpdateDTO updateTextRequest)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] TextUpdateDto updateTextRequest)
     {
         return HandleResult(await Mediator.Send(new UpdateTextCommand(updateTextRequest)));
     }

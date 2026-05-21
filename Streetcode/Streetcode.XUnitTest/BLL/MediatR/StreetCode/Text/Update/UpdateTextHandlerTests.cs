@@ -278,8 +278,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Update
         /// <summary>
         /// Creates valid TextUpdateDTO test data.
         /// </summary>
-        private static TextUpdateDTO UpdateRequestDto() =>
-           new TextUpdateDTO()
+        private static TextUpdateDto UpdateRequestDto() =>
+           new TextUpdateDto()
            {
                Id = 1,
                Title = "Update Title",

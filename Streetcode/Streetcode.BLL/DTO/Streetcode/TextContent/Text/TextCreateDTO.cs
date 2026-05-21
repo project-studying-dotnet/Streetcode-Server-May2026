@@ -1,6 +1,6 @@
 namespace Streetcode.BLL.DTO.Streetcode.TextContent.Text
 {
-  public class TextCreateDTO
+  public class TextCreateDto
   {
     public string Title { get; set; } = string.Empty;
     public string TextContent { get; set; } = string.Empty;

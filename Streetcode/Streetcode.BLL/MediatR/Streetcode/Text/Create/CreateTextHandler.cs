@@ -9,7 +9,7 @@ using T = Streetcode.DAL.Entities.Streetcode.TextContent;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Text.Create;
 
-public class CreateTextHandler : IRequestHandler<CreateTextCommand, Result<TextDTO>>
+public class CreateTextHandler : IRequestHandler<CreateTextCommand, Result<TextDto>>
 {
     private readonly IMapper _mapper;
     private readonly IRepositoryWrapper _repositoryWrapper;
@@ -22,30 +22,30 @@ public class CreateTextHandler : IRequestHandler<CreateTextCommand, Result<TextD
         _logger = logger;
     }
 
-    public async Task<Result<TextDTO>> Handle(CreateTextCommand request, CancellationToken cancellationToken)
+    public async Task<Result<TextDto>> Handle(CreateTextCommand request, CancellationToken cancellationToken)
     {
         var streetcodeId = request.createTextRequest.StreetcodeId;
 
         var streetcodeExists = await _repositoryWrapper.StreetcodeRepository
             .FindAll()
-            .AnyAsync(s => s.Id == streetcodeId);
+            .AnyAsync(s => s.Id == streetcodeId, cancellationToken);
 
         if (!streetcodeExists)
         {
             string errorMsg = $"Streetcode with Id {streetcodeId} does not exist.";
             _logger.LogError(request, errorMsg);
-            return Result.Fail<TextDTO>(errorMsg);
+            return Result.Fail<TextDto>(errorMsg);
         }
 
         bool textAlreadyExists = await _repositoryWrapper.TextRepository
                 .FindAll()
-                .AnyAsync(t => t.StreetcodeId == streetcodeId);
+                .AnyAsync(t => t.StreetcodeId == streetcodeId, cancellationToken);
 
         if (textAlreadyExists)
         {
             string errorMsg = $"Text for Streetcode Id {streetcodeId} already exists. Cannot create a duplicate.";
             _logger.LogError(request, errorMsg);
-            return Result.Fail<TextDTO>(errorMsg);
+            return Result.Fail<TextDto>(errorMsg);
         }
 
         var textEntity = _mapper.Map<T.Text>(request.createTextRequest);
@@ -54,7 +54,7 @@ public class CreateTextHandler : IRequestHandler<CreateTextCommand, Result<TextD
         {
             const string errorMsg = "Cannot map CreateTextRequest to entity.";
             _logger.LogError(request, errorMsg);
-            return Result.Fail<TextDTO>(errorMsg);
+            return Result.Fail<TextDto>(errorMsg);
         }
 
         await _repositoryWrapper.TextRepository.CreateAsync(textEntity);
@@ -62,11 +62,11 @@ public class CreateTextHandler : IRequestHandler<CreateTextCommand, Result<TextD
 
         if (saveResult > 0)
         {
-            return Result.Ok(_mapper.Map<TextDTO>(textEntity));
+            return Result.Ok(_mapper.Map<TextDto>(textEntity));
         }
 
         const string failMsg = "Failed to save new Text.";
         _logger.LogError(request, failMsg);
-        return Result.Fail<TextDTO>(failMsg);
+        return Result.Fail<TextDto>(failMsg);
     }
 }

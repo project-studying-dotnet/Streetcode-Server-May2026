@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Streetcode.BLL.DTO.Streetcode.TextContent.Text
 {
-    public class TextUpdateDTO
+    public class TextUpdateDto
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;

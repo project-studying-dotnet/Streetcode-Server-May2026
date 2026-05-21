@@ -8,7 +8,7 @@ using T = Streetcode.DAL.Entities.Streetcode.TextContent;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Text.Update
 {
-    public class UpdateTextHandler : IRequestHandler<UpdateTextCommand, Result<TextDTO>>
+    public class UpdateTextHandler : IRequestHandler<UpdateTextCommand, Result<TextDto>>
     {
         private readonly IMapper _mapper;
         private readonly IRepositoryWrapper _repositoryWrapper;
@@ -21,7 +21,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Update
             _logger = logger;
         }
 
-        public async Task<Result<TextDTO>> Handle(UpdateTextCommand request, CancellationToken cancellationToken)
+        public async Task<Result<TextDto>> Handle(UpdateTextCommand request, CancellationToken cancellationToken)
         {
             var textEntity = await _repositoryWrapper.TextRepository
                 .GetFirstOrDefaultAsync(t => t.Id == request.updateTextRequest.Id);
@@ -30,14 +30,14 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Update
             {
                 string errorMsg = $"Text with Id {request.updateTextRequest.Id} not found.";
                 _logger.LogError(request, errorMsg);
-                return Result.Fail<TextDTO>(errorMsg);
+                return Result.Fail<TextDto>(errorMsg);
             }
 
             if (textEntity.StreetcodeId != request.updateTextRequest.StreetcodeId)
             {
                 string errorMsg = "Changing StreetcodeId for an existing Text is not allowed.";
                 _logger.LogError(request, errorMsg);
-                return Result.Fail<TextDTO>(errorMsg);
+                return Result.Fail<TextDto>(errorMsg);
             }
 
             _mapper.Map(request.updateTextRequest, textEntity);
@@ -47,12 +47,12 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Update
 
             if (saveResult > 0)
             {
-                return Result.Ok(_mapper.Map<TextDTO>(textEntity));
+                return Result.Ok(_mapper.Map<TextDto>(textEntity));
             }
 
             const string failMsg = "Failed to update Text.";
             _logger.LogError(request, failMsg);
-            return Result.Fail<TextDTO>(failMsg);
+            return Result.Fail<TextDto>(failMsg);
         }
     }
 }

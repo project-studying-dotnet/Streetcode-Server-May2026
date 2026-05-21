@@ -68,7 +68,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
                 StreetcodeId = 1,
             };
 
-            var textDto = new TextDTO
+            var textDto = new TextDto
             {
                 Id = textId,
                 Title = "Test Title",

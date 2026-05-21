@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Streetcode.BLL.DTO.Media.Video
 {
-    public class VideoCreateDTO
+    public class VideoCreateDto
     {
         ////public string Title { get; set; } = string.Empty;
         ////public string? Description { get; set; }

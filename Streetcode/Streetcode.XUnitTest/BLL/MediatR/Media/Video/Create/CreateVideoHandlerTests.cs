@@ -258,7 +258,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Video.Create
 
             var mockMapper = new Mock<IMapper>();
             mockMapper
-                .Setup(m => m.Map<T.Video>(It.IsAny<VideoCreateDTO>()))
+                .Setup(m => m.Map<T.Video>(It.IsAny<VideoCreateDto>()))
                 .Returns((T.Video?)null!);
 
             var customHandler = new CreateVideoHandler(
@@ -281,8 +281,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Video.Create
         /// <summary>
         /// Creates valid VideoCreateDTO test data.
         /// </summary>
-        private static VideoCreateDTO CreateRequestDto() =>
-           new VideoCreateDTO()
+        private static VideoCreateDto CreateRequestDto() =>
+           new VideoCreateDto()
            {
                Url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                StreetcodeId = 4,

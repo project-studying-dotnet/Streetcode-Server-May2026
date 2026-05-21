@@ -291,7 +291,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
 
             var mockMapper = new Mock<IMapper>();
             mockMapper
-                .Setup(m => m.Map<T.Text>(It.IsAny<TextCreateDTO>()))
+                .Setup(m => m.Map<T.Text>(It.IsAny<TextCreateDto>()))
                 .Returns((T.Text?)null!);
 
             var customHandler = new CreateTextHandler(
@@ -317,8 +317,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
         /// <summary>
         /// Creates valid TextCreateDTO test data.
         /// </summary>
-        private static TextCreateDTO CreateRequestDto() =>
-           new TextCreateDTO()
+        private static TextCreateDto CreateRequestDto() =>
+           new TextCreateDto()
            {
                Title = "Test Title",
                TextContent = "Text Content",

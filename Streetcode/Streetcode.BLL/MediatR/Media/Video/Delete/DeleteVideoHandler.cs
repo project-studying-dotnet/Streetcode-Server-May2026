@@ -7,7 +7,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Media.Video.Delete
 {
-    public class DeleteVideoHandler : IRequestHandler<DeleteVideoCommand, Result<VideoDTO>>
+    public class DeleteVideoHandler : IRequestHandler<DeleteVideoCommand, Result<VideoDto>>
     {
         private readonly IMapper _mapper;
         private readonly IRepositoryWrapper _repositoryWrapper;
@@ -20,7 +20,7 @@ namespace Streetcode.BLL.MediatR.Media.Video.Delete
             _logger = logger;
         }
 
-        public async Task<Result<VideoDTO>> Handle(DeleteVideoCommand request, CancellationToken cancellationToken)
+        public async Task<Result<VideoDto>> Handle(DeleteVideoCommand request, CancellationToken cancellationToken)
         {
             var videoEntity = await _repositoryWrapper.VideoRepository
                 .GetFirstOrDefaultAsync(v => v.Id == request.Id);
@@ -37,7 +37,7 @@ namespace Streetcode.BLL.MediatR.Media.Video.Delete
 
             if (saveResult > 0)
             {
-                return Result.Ok(_mapper.Map<VideoDTO>(videoEntity));
+                return Result.Ok(_mapper.Map<VideoDto>(videoEntity));
             }
 
             string failMsg = $"Failed to delete Video with Id {request.Id}.";
