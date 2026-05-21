@@ -2,7 +2,7 @@
 using MediatR;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
 
-namespace Streetcode.BLL.MediatR.Streetcode.Text.GetById;
+namespace Streetcode.BLL.MediatR.Streetcode.Text.Create;
 
-public record GetTextByIdQuery(int Id)
+public record CreateTextCommand(TextCreateDto createTextRequest)
     : IRequest<Result<TextDto>>;

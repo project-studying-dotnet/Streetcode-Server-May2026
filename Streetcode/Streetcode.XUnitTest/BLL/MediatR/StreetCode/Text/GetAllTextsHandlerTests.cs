@@ -65,10 +65,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
                 new TextEntity { Id = 2, Title = "Title 2", TextContent = "Content 2", StreetcodeId = 2 },
             };
 
-            var textDtos = new List<TextDTO>
+            var textDtos = new List<TextDto>
             {
-                new TextDTO { Id = 1, Title = "Title 1", TextContent = "Content 1", StreetcodeId = 1 },
-                new TextDTO { Id = 2, Title = "Title 2", TextContent = "Content 2", StreetcodeId = 2 },
+                new TextDto { Id = 1, Title = "Title 1", TextContent = "Content 1", StreetcodeId = 1 },
+                new TextDto { Id = 2, Title = "Title 2", TextContent = "Content 2", StreetcodeId = 2 },
             };
 
             this.textRepositoryMock
