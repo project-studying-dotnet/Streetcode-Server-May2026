@@ -20,7 +20,8 @@ namespace Streetcode.BLL.Validators.Partners.Update
                 .SetValidator(new CreatePartnerDtoValidator());
 
             RuleFor(x => x.Partner.Id)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .When(x => x.Partner != null);
         }
     }
 }

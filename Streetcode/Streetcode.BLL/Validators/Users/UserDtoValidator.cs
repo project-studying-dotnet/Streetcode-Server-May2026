@@ -32,7 +32,7 @@ namespace Streetcode.BLL.Validators.Users
             RuleFor(x => x.Email)
                 .NotEmpty()
                 .WithMessage("Email is required")
-                .EmailAddress()
+                .Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")
                 .WithMessage("Invalid email format");
 
             RuleFor(x => x.Login)
