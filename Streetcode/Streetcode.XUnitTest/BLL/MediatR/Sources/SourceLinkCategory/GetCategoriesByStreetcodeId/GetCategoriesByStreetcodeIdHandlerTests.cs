@@ -36,8 +36,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCategor
                 _repositoryWrapperMock.Object,
                 _mapperMock.Object,
                 _blobServiceMock.Object,
-                _loggerMock.Object
-                );
+                _loggerMock.Object);
         }
 
         [Fact]
@@ -50,7 +49,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCategor
                 It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<SourceLinkCategoryEntity>,
                     IIncludableQueryable<SourceLinkCategoryEntity, object>>>()))
-            .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>?)null);
+            .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>)null!);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -59,8 +58,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCategor
             result.Errors[0].Message.Should()
                 .Be("Cant find any source category with the streetcode id 1");
             _loggerMock.Verify(
-                logger => logger.LogError(query,
-                "Cant find any source category with the streetcode id 1"),
+                logger => logger.LogError(
+                    query,
+                    "Cant find any source category with the streetcode id 1"),
                 Times.Once);
         }
 
@@ -131,6 +131,5 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCategor
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
-
     }
 }

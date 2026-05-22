@@ -118,7 +118,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCaregor
             resultDto.Image.Should().NotBeNull();
             resultDto.Image!.Id.Should().Be(10);
             resultDto.Image.Base64.Should().Be(base64);
-            resultDto.Image.BlobName.Should().Be(blobName); ;
+            resultDto.Image.BlobName.Should().Be(blobName);
 
             _mapperMock.Verify(
                 mapper => mapper.Map<SourceLinkCategoryDTO>(categoryEntity),

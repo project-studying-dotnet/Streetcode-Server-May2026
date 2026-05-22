@@ -38,7 +38,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
 
             _repositoryWrapperMock
                 .Setup(x => x.SourceCategoryRepository.GetAllAsync(null, null))
-                .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>?)null);
+                .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>)null!);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 

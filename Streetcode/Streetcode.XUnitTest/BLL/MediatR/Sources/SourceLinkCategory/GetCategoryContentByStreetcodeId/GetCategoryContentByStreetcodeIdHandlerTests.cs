@@ -11,9 +11,8 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
-using StreetcodeContentEntity = Streetcode.DAL.Entities.Streetcode.StreetcodeContent;
 using StreetcodeCategoryContentEntity = Streetcode.DAL.Entities.Sources.StreetcodeCategoryContent;
-
+using StreetcodeContentEntity = Streetcode.DAL.Entities.Streetcode.StreetcodeContent;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCaregoryContentByStreetcodeId
 {

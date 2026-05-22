@@ -51,7 +51,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
                     It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
                     It.IsAny<Func<IQueryable<SourceLinkCategoryEntity>,
                         IIncludableQueryable<SourceLinkCategoryEntity, object>>>()))
-                .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>?)null);
+                .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>)null!);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 
