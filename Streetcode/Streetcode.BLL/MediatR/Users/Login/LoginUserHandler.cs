@@ -1,62 +1,56 @@
 ﻿using AutoMapper;
 using FluentResults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Streetcode.BLL.DTO.Users;
 using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.Interfaces.PasswordHasher;
-using Streetcode.BLL.Interfaces.Users;
-using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Entities.Users;
 
 namespace Streetcode.BLL.MediatR.Users.Login
 {
-    public class LoginUserHandler : IRequestHandler<LoginUserCommand, Result<LoginResultDTO>>
+    public class LoginUserHandler : IRequestHandler<LoginUserCommand, Result<LoginResultDto>>
     {
-        private readonly IRepositoryWrapper _repositoryWrapper;
-        private readonly IPasswordHasher _passwordHasher;
+        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILoggerService _logger;
 
-        public LoginUserHandler(IRepositoryWrapper repositoryWrapper, IMapper mapper, IPasswordHasher passwordHasher, ILoggerService logger)
+        public LoginUserHandler(UserManager<User> userManager, IMapper mapper, ILoggerService logger)
         {
-            _repositoryWrapper = repositoryWrapper;
+            _userManager = userManager;
             _mapper = mapper;
-            _passwordHasher = passwordHasher;
             _logger = logger;
         }
 
-        public async Task<Result<LoginResultDTO>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<LoginResultDto>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Login attempt for {Login}");
+            _logger.LogInformation($"Login attempt for {request.loginRequest.Login}");
 
-            var user = await _repositoryWrapper.UserRepository
-                .FindAll()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Login == request.LoginDto.Login, cancellationToken);
+            var user = await _userManager.FindByNameAsync(request.loginRequest.Login);
 
             if (user is null)
             {
-                string errorMsg = $"User with login '{request.LoginDto.Login}' not found.";
+                string errorMsg = $"User with login '{request.loginRequest.Login}' not found.";
                 _logger.LogError(request, errorMsg);
-                return Result.Fail<LoginResultDTO>("Invalid login or password.");
+
+                return Result.Fail<LoginResultDto>("Invalid login or password.");
             }
 
-            bool isPasswordValid = _passwordHasher.VerifyPassword(request.LoginDto.Password, user.PasswordHash, user.PasswordSalt);
+            bool isPasswordValid = await _userManager.CheckPasswordAsync(user, request.loginRequest.Password);
 
             if (!isPasswordValid)
             {
-                string errorMsg = $"Invalid password attempt for login '{request.LoginDto.Login}'.";
+                string errorMsg = $"Invalid password attempt for login '{request.loginRequest.Login}'.";
                 _logger.LogError(request, errorMsg);
-                return Result.Fail<LoginResultDTO>("Invalid login or password.");
+                return Result.Fail<LoginResultDto>("Invalid login or password.");
             }
 
             var token = "generated-jwt-token-here";
 
             _logger.LogInformation($"User {user.Id} successfully logged in");
 
-            var userDto = _mapper.Map<UserDTO>(user);
+            var userDto = _mapper.Map<UserDto>(user);
 
-            var loginResult = new LoginResultDTO
+            var loginResult = new LoginResultDto
             {
                 User = userDto,
                 Token = token,

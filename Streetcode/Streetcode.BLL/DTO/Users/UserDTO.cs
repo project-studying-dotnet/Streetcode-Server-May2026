@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Streetcode.DAL.Enums;
 
 namespace Streetcode.BLL.DTO.Users
 {
-    public class UserDTO
+    public class UserDto
     {
         public int Id { get; set; }
         [Required]
@@ -19,6 +20,7 @@ namespace Streetcode.BLL.DTO.Users
         [MaxLength(20)]
         public string Login { get; set; } = string.Empty;
         [Required]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public UserRole Role { get; set; }
     }
 }

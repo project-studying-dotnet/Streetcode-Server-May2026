@@ -4,6 +4,6 @@ using Streetcode.BLL.DTO.Users;
 
 namespace Streetcode.BLL.MediatR.Users.Login
 {
-    public record LoginUserCommand(UserLoginDTO LoginDto)
-        : IRequest<Result<LoginResultDTO>>;
+    public record LoginUserCommand(UserLoginDto loginRequest)
+        : IRequest<Result<LoginResultDto>>;
 }

@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Streetcode.BLL.Services.BlobStorageService;
@@ -15,10 +17,10 @@ using Streetcode.DAL.Entities.Streetcode.Types;
 using Streetcode.DAL.Entities.Team;
 using Streetcode.DAL.Entities.Timeline;
 using Streetcode.DAL.Entities.Transactions;
+using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Enums;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Realizations.Base;
-
 namespace Streetcode.WebApi.Extensions
 {
     public static class SeedingLocalExtension
@@ -27,40 +29,93 @@ namespace Streetcode.WebApi.Extensions
         {
             using (var scope = app.Services.CreateScope())
             {
-                Directory.CreateDirectory(app.Configuration.GetValue<string>("Blob:BlobStorePath"));
+                string blobPath = app.Configuration.GetValue<string>("Blob:BlobStorePath")
+                    ?? throw new InvalidOperationException("Critical error: Path not specified 'Blob:BlobStorePath' в конфигурации.");
+
+                Directory.CreateDirectory(blobPath);
                 var dbContext = scope.ServiceProvider.GetRequiredService<StreetcodeDbContext>();
                 var blobOptions = app.Services.GetRequiredService<IOptions<BlobEnvironmentVariables>>();
-                string blobPath = app.Configuration.GetValue<string>("Blob:BlobStorePath");
                 var repo = new RepositoryWrapper(dbContext);
                 var blobService = new BlobService(blobOptions, repo);
                 string initialDataImagePath = "../Streetcode.DAL/InitialData/images.json";
                 string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
+
+                var adminUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin");
+
+                var identityPasswordHasher = new PasswordHasher<User>();
+
+                if (adminUser == null)
+                {
+                    var newAdmin = new User
+                    {
+                        Email = "admin@admin.com",
+                        NormalizedEmail = "ADMIN@ADMIN.COM",
+                        UserName = "admin",
+                        NormalizedUserName = "ADMIN",
+                        Name = "admin",
+                        Surname = "admin",
+                        Role = UserRole.MainAdministrator,
+                        EmailConfirmed = true,
+                    };
+
+                    newAdmin.PasswordHash = identityPasswordHasher.HashPassword(newAdmin, "admin");
+
+                    await dbContext.Users.AddAsync(newAdmin);
+                    await dbContext.SaveChangesAsync();
+                }
+                else if (string.IsNullOrEmpty(adminUser.PasswordHash) || adminUser.PasswordHash.Length < 20)
+                {
+                    adminUser.PasswordHash = identityPasswordHasher.HashPassword(adminUser, "admin");
+
+                    await dbContext.SaveChangesAsync();
+                }
+
                 if (!dbContext.Images.Any())
                 {
                     string imageJson = File.ReadAllText(initialDataImagePath, Encoding.UTF8);
                     string audiosJson = File.ReadAllText(initialDataAudioPath, Encoding.UTF8);
+
                     var imgfromJson = JsonConvert.DeserializeObject<List<Image>>(imageJson);
                     var audiosfromJson = JsonConvert.DeserializeObject<List<Audio>>(audiosJson);
 
-                    foreach (var img in imgfromJson)
+                    if (imgfromJson != null)
                     {
-                        string filePath = Path.Combine(blobPath, img.BlobName);
-                        if (!File.Exists(filePath))
+                        foreach (var img in imgfromJson)
                         {
-                            blobService.SaveFileInStorageBase64(img.Base64, img.BlobName.Split('.')[0], img.BlobName.Split('.')[1]);
+                            if (string.IsNullOrEmpty(img.BlobName) || string.IsNullOrEmpty(img.Base64))
+                            {
+                                continue;
+                            }
+
+                            string filePath = Path.Combine(blobPath, img.BlobName);
+                            if (!File.Exists(filePath))
+                            {
+                                blobService.SaveFileInStorageBase64(img.Base64, img.BlobName.Split('.')[0], img.BlobName.Split('.')[1]);
+                            }
                         }
                     }
 
-                    foreach (var audio in audiosfromJson)
+                    if (audiosfromJson != null)
                     {
-                        string filePath = Path.Combine(blobPath, audio.BlobName);
-                        if (!File.Exists(filePath))
+                        foreach (var audio in audiosfromJson)
                         {
-                            blobService.SaveFileInStorageBase64(audio.Base64, audio.BlobName.Split('.')[0], audio.BlobName.Split('.')[1]);
+                            if (string.IsNullOrEmpty(audio.BlobName) || string.IsNullOrEmpty(audio.Base64))
+                            {
+                                continue;
+                            }
+
+                            string filePath = Path.Combine(blobPath, audio.BlobName);
+                            if (!File.Exists(filePath))
+                            {
+                                blobService.SaveFileInStorageBase64(audio.Base64, audio.BlobName.Split('.')[0], audio.BlobName.Split('.')[1]);
+                            }
                         }
                     }
 
-                    dbContext.Images.AddRange(imgfromJson);
+                    if (imgfromJson != null)
+                    {
+                        dbContext.Images.AddRange(imgfromJson);
+                    }
 
                     await dbContext.SaveChangesAsync();
 
@@ -78,6 +133,37 @@ namespace Streetcode.WebApi.Extensions
                                 Name = "Danyil",
                                 Description = "Nice project",
                                 Email = "dt210204@gmail.com"
+                            });
+
+                        await dbContext.SaveChangesAsync();
+                    }
+
+                    if (!dbContext.News.Any())
+                    {
+                        dbContext.News.AddRange(
+                            new DAL.Entities.News.News
+                            {
+                                Title = "27 квітня встановлюємо перший стріткод!",
+                                Text = "<p>Встановлення таблички про Михайла Грушевського в м. Київ стало важливою подією для киян та гостей столиці. Вона не лише прикрашає вулицю міста, а й нагадує про значний внесок цієї визначної особистості в історію України. Це також сприяє розповсюдженню знань про Михайла Грушевського серед широкого загалу, виховує національну свідомість та гордість за власну культуру.\r\n\r\nВстановлення таблички про Михайла Грушевського в Києві є важливим кроком на шляху вшанування відомих особистостей, які внесли вагомий внесок у розвиток України. Це також показує, що в Україні дбають про збереження національної спадщини та визнання внеску видатних історичних постатей в формування національної ідентичності.\r\n\r\nУрочисте встановлення таблички про Михайла Грушевського відбулося за участі високопосадовців міста, представників наукової спільноти та громадськості. Під час церемонії відбулися промови, в яких відзначили важливість дослідницької та літературної діяльності М. Грушевського, його внесок у вивчення історії України та роль у національному відродженні.\r\n\r\nМихайло Грушевський жив і працював в Києві на початку ХХ століття. Він був визнаний одним з провідних істориків свого часу, який досліджував історію України з наукової та національної позицій. Його праці були визнані авторитетними не лише в Україні, але й у світі, і мають велике значення для розуміння минулого та формування майбутнього українського народу.\r\n\r\nТабличка з відтвореним зображенням Михайла Грушевського стала вагомим символом вшанування цієї видатної постаті. Вона стала візитівкою Києва та пам'яткою культурної спадщини України, яка привертає увагу мешканців та гостей міста. Це важливий крок на шляху до збереження національної історії, культури та національної свідомості в Україні.\r\n\r\nВстановлення таблички про Михайла Грушевського в Києві свідчить про важливість визнання історичної спадщини та внеску видатних постатей в національну свідомість. Це також є визнанням ролі М. Грушевського у формуванні української національної ідентичності та його внеску в розвиток наукової та культурної спадщини України.\r\n\r\nТабличка була встановлена на видному місці в центрі Києва, недалеко від місця, де розташовується будинок, в якому колись проживав Михайло Грушевський. Зображення на табличці передає фотографію видатного історика, а також містить кратку інформацію про його життя та діяльність.\r\n\r\nМешканці та гості Києва високо оцінюють встановлення таблички про Михайла Грушевського, яке стало ще одним кроком на шляху до вшанування історичної спадщини України. Це також важливий крок у визнанні ролі українських науковців та культурних діячів у світовому контексті.\r\n\r\nВстановлення таблички про Михайла Грушевського в Києві є однією з ініціатив, спрямованих на підтримку і розширення національної пам'яті та відтворення історичної правди. Це важливий крок на шляху до відродження національної свідомості та підкреслення значення української культурної спадщини в світовому контексті.</p>",
+                                URL = "first-streetcode",
+                                ImageId = 24,
+                                CreationDate = DateTime.Now,
+                            },
+                            new DAL.Entities.News.News
+                            {
+                                Title = "Новий учасник команди!",
+                                Text = "<p>Привітаймо нового учасника команди - Терентьєва Даниїла!. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque arcu orci, dictum at posuere a, tincidunt sit amet nibh. Donec pellentesque ac mauris tristique egestas. Vestibulum hendrerit eget nisi non viverra. Nullam ultricies sapien ac ipsum ullamcorper tristique. Mauris auctor, sapien vitae molestie ornare, libero orci fringilla velit, sed pharetra nibh augue id tellus. Mauris pulvinar vel felis convallis molestie. Integer mauris felis, ultrices nec vestibulum at, ullamcorper eu massa. Proin posuere consectetur facilisis. Nunc volutpat dictum massa, ac volutpat nisl malesuada nec.\r\n\r\nNulla nec felis quis metus efficitur efficitur ac nec est. Nulla eros quam, tincidunt at elit nec, iaculis eleifend sem. Pellentesque id sem id erat mollis fermentum non at ipsum. Donec justo ante, commodo a pharetra a, consectetur at urna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent porta, odio sed venenatis posuere, felis nibh finibus dui, placerat molestie dui libero at nisi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis quis nisi in nisi pulvinar ultrices.\r\n\r\nPellentesque ante nunc, mattis vitae iaculis id, sollicitudin nec tortor. Pellentesque eu lectus suscipit, sodales nunc eu, lobortis enim. Praesent tempus dolor et felis vulputate hendrerit. Nunc ut lacus.</p>",
+                                URL = "danya",
+                                ImageId = 28,
+                                CreationDate = DateTime.Now,
+                            },
+                            new DAL.Entities.News.News
+                            {
+                                Title = "Новий учасник команди!",
+                                Text = "<p>Привітаймо нового учасника команди - Скам Мастера!. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque arcu orci, dictum at posuere a, tincidunt sit amet nibh. Donec pellentesque ac mauris tristique egestas. Vestibulum hendrerit eget nisi non viverra. Nullam ultricies sapien ac ipsum ullamcorper tristique. Mauris auctor, sapien vitae molestie ornare, libero orci fringilla velit, sed pharetra nibh augue id tellus. Mauris pulvinar vel felis convallis molestie. Integer mauris felis, ultrices nec vestibulum at, ullamcorper eu massa. Proin posuere consectetur facilisis. Nunc volutpat dictum massa, ac volutpat nisl malesuada nec.\r\n\r\nNulla nec felis quis metus efficitur efficitur ac nec est. Nulla eros quam, tincidunt at elit nec, iaculis eleifend sem. Pellentesque id sem id erat mollis fermentum non at ipsum. Donec justo ante, commodo a pharetra a, consectetur at urna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent porta, odio sed venenatis posuere, felis nibh finibus dui, placerat molestie dui libero at nisi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis quis nisi in nisi pulvinar ultrices.\r\n\r\nPellentesque ante nunc, mattis vitae iaculis id, sollicitudin nec tortor. Pellentesque eu lectus suscipit, sodales nunc eu, lobortis enim. Praesent tempus dolor et felis vulputate hendrerit. Nunc ut lacus.</p>",
+                                URL = "scum",
+                                ImageId = 29,
+                                CreationDate = DateTime.Now,
                             });
 
                         await dbContext.SaveChangesAsync();
@@ -265,53 +351,6 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
                         }
-                    }
-
-                    if (!dbContext.Users.Any())
-                    {
-                        dbContext.Users.AddRange(
-                            new DAL.Entities.Users.User
-                            {
-                                Email = "admin",
-                                Role = UserRole.MainAdministrator,
-                                Login = "admin",
-                                Name = "admin",
-                                Password = "admin",
-                                Surname = "admin",
-                            });
-
-                        await dbContext.SaveChangesAsync();
-                    }
-
-                    if (!dbContext.News.Any())
-                    {
-                        dbContext.News.AddRange(
-                            new DAL.Entities.News.News
-                            {
-                                Title = "27 квітня встановлюємо перший стріткод!",
-                                Text = "<p>Встановлення таблички про Михайла Грушевського в м. Київ стало важливою подією для киян та гостей столиці. Вона не лише прикрашає вулицю міста, а й нагадує про значний внесок цієї визначної особистості в історію України. Це також сприяє розповсюдженню знань про Михайла Грушевського серед широкого загалу, виховує національну свідомість та гордість за власну культуру.\r\n\r\nВстановлення таблички про Михайла Грушевського в Києві є важливим кроком на шляху вшанування відомих особистостей, які внесли вагомий внесок у розвиток України. Це також показує, що в Україні дбають про збереження національної спадщини та визнання внеску видатних історичних постатей в формування національної ідентичності.\r\n\r\nУрочисте встановлення таблички про Михайла Грушевського відбулося за участі високопосадовців міста, представників наукової спільноти та громадськості. Під час церемонії відбулися промови, в яких відзначили важливість дослідницької та літературної діяльності М. Грушевського, його внесок у вивчення історії України та роль у національному відродженні.\r\n\r\nМихайло Грушевський жив і працював в Києві на початку ХХ століття. Він був визнаний одним з провідних істориків свого часу, який досліджував історію України з наукової та національної позицій. Його праці були визнані авторитетними не лише в Україні, але й у світі, і мають велике значення для розуміння минулого та формування майбутнього українського народу.\r\n\r\nТабличка з відтвореним зображенням Михайла Грушевського стала вагомим символом вшанування цієї видатної постаті. Вона стала візитівкою Києва та пам'яткою культурної спадщини України, яка привертає увагу мешканців та гостей міста. Це важливий крок на шляху до збереження національної історії, культури та національної свідомості в Україні.\r\n\r\nВстановлення таблички про Михайла Грушевського в Києві свідчить про важливість визнання історичної спадщини та внеску видатних постатей в національну свідомість. Це також є визнанням ролі М. Грушевського у формуванні української національної ідентичності та його внеску в розвиток наукової та культурної спадщини України.\r\n\r\nТабличка була встановлена на видному місці в центрі Києва, недалеко від місця, де розташовується будинок, в якому колись проживав Михайло Грушевський. Зображення на табличці передає фотографію видатного історика, а також містить кратку інформацію про його життя та діяльність.\r\n\r\nМешканці та гості Києва високо оцінюють встановлення таблички про Михайла Грушевського, яке стало ще одним кроком на шляху до вшанування історичної спадщини України. Це також важливий крок у визнанні ролі українських науковців та культурних діячів у світовому контексті.\r\n\r\nВстановлення таблички про Михайла Грушевського в Києві є однією з ініціатив, спрямованих на підтримку і розширення національної пам'яті та відтворення історичної правди. Це важливий крок на шляху до відродження національної свідомості та підкреслення значення української культурної спадщини в світовому контексті.</p>",
-                                URL = "first-streetcode",
-                                ImageId = 24,
-                                CreationDate = DateTime.Now,
-                            },
-                            new DAL.Entities.News.News
-                            {
-                                Title = "Новий учасник команди!",
-                                Text = "<p>Привітаймо нового учасника команди - Терентьєва Даниїла!. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque arcu orci, dictum at posuere a, tincidunt sit amet nibh. Donec pellentesque ac mauris tristique egestas. Vestibulum hendrerit eget nisi non viverra. Nullam ultricies sapien ac ipsum ullamcorper tristique. Mauris auctor, sapien vitae molestie ornare, libero orci fringilla velit, sed pharetra nibh augue id tellus. Mauris pulvinar vel felis convallis molestie. Integer mauris felis, ultrices nec vestibulum at, ullamcorper eu massa. Proin posuere consectetur facilisis. Nunc volutpat dictum massa, ac volutpat nisl malesuada nec.\r\n\r\nNulla nec felis quis metus efficitur efficitur ac nec est. Nulla eros quam, tincidunt at elit nec, iaculis eleifend sem. Pellentesque id sem id erat mollis fermentum non at ipsum. Donec justo ante, commodo a pharetra a, consectetur at urna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent porta, odio sed venenatis posuere, felis nibh finibus dui, placerat molestie dui libero at nisi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis quis nisi in nisi pulvinar ultrices.\r\n\r\nPellentesque ante nunc, mattis vitae iaculis id, sollicitudin nec tortor. Pellentesque eu lectus suscipit, sodales nunc eu, lobortis enim. Praesent tempus dolor et felis vulputate hendrerit. Nunc ut lacus.</p>",
-                                URL = "danya",
-                                ImageId = 28,
-                                CreationDate = DateTime.Now,
-                            },
-                            new DAL.Entities.News.News
-                            {
-                                Title = "Новий учасник команди!",
-                                Text = "<p>Привітаймо нового учасника команди - Скам Мастера!. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque arcu orci, dictum at posuere a, tincidunt sit amet nibh. Donec pellentesque ac mauris tristique egestas. Vestibulum hendrerit eget nisi non viverra. Nullam ultricies sapien ac ipsum ullamcorper tristique. Mauris auctor, sapien vitae molestie ornare, libero orci fringilla velit, sed pharetra nibh augue id tellus. Mauris pulvinar vel felis convallis molestie. Integer mauris felis, ultrices nec vestibulum at, ullamcorper eu massa. Proin posuere consectetur facilisis. Nunc volutpat dictum massa, ac volutpat nisl malesuada nec.\r\n\r\nNulla nec felis quis metus efficitur efficitur ac nec est. Nulla eros quam, tincidunt at elit nec, iaculis eleifend sem. Pellentesque id sem id erat mollis fermentum non at ipsum. Donec justo ante, commodo a pharetra a, consectetur at urna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent porta, odio sed venenatis posuere, felis nibh finibus dui, placerat molestie dui libero at nisi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis quis nisi in nisi pulvinar ultrices.\r\n\r\nPellentesque ante nunc, mattis vitae iaculis id, sollicitudin nec tortor. Pellentesque eu lectus suscipit, sodales nunc eu, lobortis enim. Praesent tempus dolor et felis vulputate hendrerit. Nunc ut lacus.</p>",
-                                URL = "scum",
-                                ImageId = 29,
-                                CreationDate = DateTime.Now,
-                            });
-
-                        await dbContext.SaveChangesAsync();
                     }
 
                     if (!dbContext.Audios.Any())

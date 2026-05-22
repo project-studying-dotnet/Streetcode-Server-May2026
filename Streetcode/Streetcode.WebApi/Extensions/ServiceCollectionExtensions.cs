@@ -3,20 +3,20 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity;
+using Streetcode.DAL.Entities.Users;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Email;
 using Streetcode.BLL.Interfaces.Instagram;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Interfaces.Payment;
 using Streetcode.BLL.Interfaces.Text;
-using Streetcode.BLL.Interfaces.PasswordHasher;
 using Streetcode.BLL.Services.BlobStorageService;
 using Streetcode.BLL.Services.Email;
 using Streetcode.BLL.Services.Instagram;
 using Streetcode.BLL.Services.Logging;
 using Streetcode.BLL.Services.Payment;
 using Streetcode.BLL.Services.Text;
-using Streetcode.BLL.Util;
 using Streetcode.DAL.Entities.AdditionalContent.Email;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Interfaces.Base;
@@ -45,7 +45,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IInstagramService, InstagramService>();
         services.AddScoped<ITextService, AddTermsToTextService>();
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
     }
 
     public static void AddApplicationServices(this IServiceCollection services, ConfigurationManager configuration)
@@ -62,6 +61,18 @@ public static class ServiceCollectionExtensions
                 opt.MigrationsHistoryTable("__EFMigrationsHistory", schema: "entity_framework");
             });
         });
+
+        services.AddIdentity<User, IdentityRole<int>>(options =>
+        {
+            options.Password.RequireDigit = false;
+            options.Password.RequiredLength = 6;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireLowercase = false;
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<StreetcodeDbContext>()
+        .AddDefaultTokenProviders();
 
         services.AddHangfire(config =>
         {
