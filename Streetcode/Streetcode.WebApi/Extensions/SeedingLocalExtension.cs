@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,8 +22,10 @@ using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Enums;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Realizations.Base;
+
 namespace Streetcode.WebApi.Extensions
 {
+    [ExcludeFromCodeCoverage]
     public static class SeedingLocalExtension
     {
         public static async Task SeedDataAsync(this WebApplication app)
