@@ -1,20 +1,131 @@
-﻿using System;
+﻿using System.Linq.Expressions;
+
 using AutoMapper;
-using FluentResults;
-using MediatR;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Xunit;
-using Microsoft.EntityFrameworkCore;
+
 using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
 using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoriesByStreetcodeId;
+using Streetcode.BLL.DTO.Media.Images;
+using Streetcode.DAL.Entities.Media.Images;
+using SourceLinkCategoryEntity = Streetcode.DAL.Entities.Sources.SourceLinkCategory;
 
-public class GetCategoriesByStreetcodeIdTests
+namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCaregoriesByStreetcodeId
 {
-	public GetCategoriesByStreetcodeIdTests()
+	public class GetCategoriesByStreetcodeIdTests
 	{
-	}
+		private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+		private readonly Mock<IMapper> _mapperMock;
+		private readonly Mock<IBlobService> _blobServiceMock;
+		private readonly Mock<ILoggerService> _loggerMock;
+		private readonly GetCategoriesByStreetcodeIdHandler _handler;
+
+		public GetCategoriesByStreetcodeIdTests()
+		{
+			_repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+			_mapperMock = new Mock<IMapper>();
+			_blobServiceMock = new Mock<IBlobService>();
+			_loggerMock = new Mock<ILoggerService>();
+
+			_handler = new GetCategoriesByStreetcodeIdHandler(
+				_repositoryWrapperMock.Object,
+				_mapperMock.Object,
+				_blobServiceMock.Object,
+				_loggerMock.Object
+				);
+		}
+		[Fact]
+		public async Task Handle_ShouldReturnFail_WhenCategoriesAreNull()
+		{
+            var query = new GetCategoriesByStreetcodeIdQuery(1);
+
+            _repositoryWrapperMock
+			.Setup(x => x.SourceCategoryRepository.GetAllAsync(
+				It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
+				It.IsAny<Func<IQueryable<SourceLinkCategoryEntity>,
+					IIncludableQueryable<SourceLinkCategoryEntity, object>>>()))
+			.ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>)null!);
+
+			var result = await _handler.Handle(query, CancellationToken.None);
+
+			result.IsFailed.Should().BeTrue();
+			result.Errors[0].Message.Should()
+				.Be("Cant find any source category with the streetcode id 1");
+			_loggerMock.Verify(
+				logger => logger.LogError(query,
+				"Cant find any source category with the streetcode id 1"
+				), Times.Once);
+        }
+		[Fact]
+		public async Task Handle_ShouldReturnMappedCategoriesWithBase64_WhenCategoriesExist()
+		{
+			var query = new GetCategoriesByStreetcodeIdQuery(1);
+			var categories = new List<SourceLinkCategoryEntity>
+			{
+					new()
+					{
+						Id = 1,
+						Title = "Books",
+						Image = new Image
+						{
+							BlobName = "books.png"
+						}
+					}
+			};
+
+            var dtos = new List<SourceLinkCategoryDTO>
+			{
+				new()
+				{
+					Id = 1,
+					Title = "Books",
+					Image = new ImageDTO
+					{
+						BlobName = "books.png"
+					}
+				}
+			};
+			_repositoryWrapperMock
+				.Setup(x => x.SourceCategoryRepository.GetAllAsync(
+					It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
+					It.IsAny<Func<IQueryable<SourceLinkCategoryEntity>,
+						IIncludableQueryable<SourceLinkCategoryEntity, object>>>()))
+				.ReturnsAsync(categories);
+			_mapperMock
+				.Setup(mapper => mapper.Map<IEnumerable<SourceLinkCategoryDTO>>(categories))
+				.Returns(dtos);
+			_blobServiceMock
+				.Setup(blob => blob.FindFileInStorageAsBase64("books.png"))
+				.Returns("base64-content");
+
+			var result = await _handler.Handle(query, CancellationToken.None);
+
+			result.IsSuccess.Should().BeTrue();
+
+			var resultdtos = result.Value.ToList();
+            resultdtos.Should().HaveCount(1);
+            resultdtos[0].Id.Should().Be(1);
+            resultdtos[0].Title.Should().Be("Books");
+            resultdtos[0].Image.Base64.Should().Be("base64-content");
+
+            _mapperMock.Verify(
+                mapper => mapper.Map<IEnumerable<SourceLinkCategoryDTO>>(categories),
+                Times.Once);
+
+            _blobServiceMock.Verify(
+                blob => blob.FindFileInStorageAsBase64("books.png"),
+                Times.Once);
+
+            _loggerMock.Verify(
+                logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
+                Times.Never);
+        }
+
+    } 
 }
