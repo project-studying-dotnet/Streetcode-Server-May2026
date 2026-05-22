@@ -5,13 +5,11 @@ using Xunit;
 
 namespace Streetcode.XUnitTest.Validators
 {
-    // 1. Створюємо допоміжний клас для тестування
     public class TestStreetcodeQuery : IHasStreetcodeId
     {
         public int StreetcodeId { get; set; }
     }
 
-    // 2. Конкретна реалізація для тестування
     public class TestPositiveStreetcodeIdValidator : PositiveStreetcodeIdValidator<TestStreetcodeQuery> { }
 
     public class PositiveStreetcodeIdValidatorTests

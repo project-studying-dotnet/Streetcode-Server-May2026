@@ -42,7 +42,6 @@ namespace Streetcode.XUnitTest.Validators.Media.Image.Create
         [InlineData("Valid descriptive alt text")]
         public void Should_Not_Have_Errors_When_DTO_Is_Valid(string altText)
         {
-            // Now passing mock values for base properties to satisfy FileBaseCreateDtoValidator
             var dto = CreateValidImageDto(altText);
 
             var result = _validator.TestValidate(dto);
@@ -50,15 +49,11 @@ namespace Streetcode.XUnitTest.Validators.Media.Image.Create
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        /// <summary>
-        /// Helper method to create a DTO with base properties populated to pass FileBaseCreateDtoValidator
-        /// </summary>
         private ImageFileBaseCreateDTO CreateValidImageDto(string alt)
         {
             return new ImageFileBaseCreateDTO
             {
                 Alt = alt,
-                // Assuming these property names map to your FileBaseCreateDTO structure:
                 Title = "valid_image_title",
                 BaseFormat = "png",
                 MimeType = "image/png",

@@ -20,28 +20,20 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Subtitle.GetById
         [InlineData(-5)]
         public void Should_Have_Error_When_Id_Is_Less_Or_Equal_To_Zero(int invalidId)
         {
-            // Arrange
-            // Створюємо запит на отримання субтитра за некоректним Id
             var query = new GetSubtitleByIdQuery(invalidId);
 
-            // Act
             var result = _validator.TestValidate(query);
 
-            // Assert
-            // Перевіряємо, що базова валідація на позитивний Id спрацювала
             result.ShouldHaveValidationErrorFor(x => x.Id);
         }
 
         [Fact]
         public void Should_Not_Have_Errors_When_Id_Is_Valid()
         {
-            // Arrange
-            var query = new GetSubtitleByIdQuery(1); // Валідний Id
+            var query = new GetSubtitleByIdQuery(1); 
 
-            // Act
             var result = _validator.TestValidate(query);
 
-            // Assert
             result.ShouldNotHaveAnyValidationErrors();
         }
     }

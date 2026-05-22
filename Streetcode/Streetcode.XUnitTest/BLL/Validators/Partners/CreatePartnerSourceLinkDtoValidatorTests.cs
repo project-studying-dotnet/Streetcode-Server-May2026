@@ -1,7 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Partners.Create;
 using Streetcode.BLL.Validators.Partners.Create;
-using Streetcode.DAL.Enums; // <--- Додаємо імпорт, який підказала помилка
+using Streetcode.DAL.Enums;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Validators.Partners.Create
@@ -94,7 +94,6 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
         {
             return new CreatePartnerSourceLinkDTO
             {
-                // Беремо будь-яке перше дефолтне значення, наприклад 0 або 1
                 LogoType = (LogoType)0,
                 TargetUrl = "https://facebook.com/streetcodeua"
             };

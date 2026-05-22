@@ -24,7 +24,6 @@ namespace Streetcode.XUnitTest.Validators.Partners.Update
 
             var result = _validator.TestValidate(query);
 
-            // Якщо ви вже додали `.When(x => x.Partner != null)` у валідатор, цей тест пройде успішно.
             result.ShouldHaveValidationErrorFor(x => x.Partner)
                   .WithErrorMessage("Partner is required");
         }

@@ -42,7 +42,7 @@ namespace Streetcode.XUnitTest.Validators.Payment
 
         [Theory]
         [InlineData("just-plain-text")]
-        [InlineData("www.google.com")] // Без http/https схеми це не Absolute URL
+        [InlineData("www.google.com")]
         [InlineData("/relative/path")]
         public void Should_Have_Error_When_RedirectUrl_Is_Provided_But_Not_A_Valid_Absolute_URL(string invalidUrl)
         {
