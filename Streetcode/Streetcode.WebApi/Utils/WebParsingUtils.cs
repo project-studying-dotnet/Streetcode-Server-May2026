@@ -56,7 +56,7 @@ public class WebParsingUtils
         ["в’їзд "] = "в’їзд",
     };
 
-    private readonly RepositoryWrapper _repository;
+    private readonly IRepositoryWrapper _repository;
     private readonly StreetcodeDbContext _streetcodeContext;
 
     public WebParsingUtils(StreetcodeDbContext streetcodeContext)
