@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Xunit;
 
-using Streetcode.BLL.DTO.Sources;
+using Streetcode.BLL.Mapping.Sources;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId;
 using Streetcode.DAL.Repositories.Interfaces.Base;
@@ -14,24 +14,31 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 using StreetcodeCategoryContentEntity = Streetcode.DAL.Entities.Sources.StreetcodeCategoryContent;
 using StreetcodeContentEntity = Streetcode.DAL.Entities.Streetcode.StreetcodeContent;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCaregoryContentByStreetcodeId
+namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId
 {
     public class GetCategoryContentByStreetcodeIdHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly IMapper _mapper;
         private readonly Mock<ILoggerService> _loggerMock;
         private readonly GetCategoryContentByStreetcodeIdHandler _handler;
 
         public GetCategoryContentByStreetcodeIdHandlerTests()
         {
             _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            _mapperMock = new Mock<IMapper>();
             _loggerMock = new Mock<ILoggerService>();
+
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<SourceLinkCategoryProfile>();
+                cfg.AddProfile<StreetcodeCategoryContentProfile>();
+            });
+
+            _mapper = mapperConfig.CreateMapper();
 
             _handler = new GetCategoryContentByStreetcodeIdHandler(
                 _repositoryWrapperMock.Object,
-                _mapperMock.Object,
+                _mapper,
                 _loggerMock.Object);
         }
 
@@ -46,13 +53,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             };
 
             var streetcodeCategoryContentEntity = new StreetcodeCategoryContentEntity
-            {
-                StreetcodeId = query.streetcodeId,
-                SourceLinkCategoryId = query.categoryId,
-                Text = "Test content"
-            };
-
-            var streetcodeCategoryContentDto = new StreetcodeCategoryContentDTO
             {
                 StreetcodeId = query.streetcodeId,
                 SourceLinkCategoryId = query.categoryId,
@@ -75,10 +75,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(streetcodeCategoryContentEntity);
 
-            _mapperMock
-                .Setup(mapper => mapper.Map<StreetcodeCategoryContentDTO>(streetcodeCategoryContentEntity))
-                .Returns(streetcodeCategoryContentDto);
-
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
@@ -89,10 +85,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             resultDto.StreetcodeId.Should().Be(query.streetcodeId);
             resultDto.SourceLinkCategoryId.Should().Be(query.categoryId);
             resultDto.Text.Should().Be("Test content");
-
-            _mapperMock.Verify(
-                mapper => mapper.Map<StreetcodeCategoryContentDTO>(streetcodeCategoryContentEntity),
-                Times.Once);
 
             _loggerMock.Verify(
                 logger => logger.LogError(
@@ -124,10 +116,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             _loggerMock.Verify(
                 logger => logger.LogError(query, errorMsg),
                 Times.Once);
-
-            _mapperMock.Verify(
-                mapper => mapper.Map<StreetcodeCategoryContentDTO>(It.IsAny<StreetcodeCategoryContentEntity>()),
-                Times.Never);
 
             _repositoryWrapperMock.Verify(
                 wrapper => wrapper.StreetcodeCategoryContentRepository.GetFirstOrDefaultAsync(
@@ -174,10 +162,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             _loggerMock.Verify(
                 logger => logger.LogError(query, errorMsg),
                 Times.Once);
-
-            _mapperMock.Verify(
-                mapper => mapper.Map<StreetcodeCategoryContentDTO>(It.IsAny<StreetcodeCategoryContentEntity>()),
-                Times.Never);
         }
     }
 }

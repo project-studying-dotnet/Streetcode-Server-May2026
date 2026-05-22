@@ -6,23 +6,23 @@ using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Xunit;
 
-using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
+using Streetcode.BLL.Mapping.Sources;
+using Streetcode.BLL.Mapping.Media.Images;
 using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoryById;
-using Streetcode.BLL.DTO.Media.Images;
 using Streetcode.DAL.Entities.Media.Images;
 
 using SourceLinkCategoryEntity = Streetcode.DAL.Entities.Sources.SourceLinkCategory;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCaregoryById
+namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryById
 {
     public class GetCategoryByIdHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly IMapper _mapper;
         private readonly Mock<ILoggerService> _loggerMock;
         private readonly Mock<IBlobService> _blobServiceMock;
         private readonly GetCategoryByIdHandler _handler;
@@ -30,13 +30,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCaregor
         public GetCategoryByIdHandlerTests()
         {
             _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            _mapperMock = new Mock<IMapper>();
             _blobServiceMock = new Mock<IBlobService>();
             _loggerMock = new Mock<ILoggerService>();
 
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<SourceLinkCategoryProfile>();
+                cfg.AddProfile<ImageProfile>();
+            });
+            _mapper = mapperConfig.CreateMapper();
+
             _handler = new GetCategoryByIdHandler(
                 _repositoryWrapperMock.Object,
-                _mapperMock.Object,
+                _mapper,
                 _blobServiceMock.Object,
                 _loggerMock.Object);
         }
@@ -59,9 +65,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCaregor
             result.Errors.Should().NotBeEmpty();
             result.Errors[0].Message.Should().Be(errorMsg);
             _loggerMock.Verify(logger => logger.LogError(query, errorMsg), Times.Once);
-            _mapperMock.Verify(
-                mapper => mapper.Map<SourceLinkCategoryDTO>(It.IsAny<SourceLinkCategoryEntity>()),
-                Times.Never);
             _blobServiceMock.Verify(
                 blob => blob.FindFileInStorageAsBase64(It.IsAny<string>()),
                 Times.Never);
@@ -84,15 +87,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCaregor
                 Id = query.Id,
                 Image = image
             };
-            var categoryDto = new SourceLinkCategoryDTO
-            {
-                Id = query.Id,
-                Image = new ImageDTO
-                {
-                    Id = 10,
-                    BlobName = blobName
-                }
-            };
             _repositoryWrapperMock
                 .Setup(wrapper => wrapper.SourceCategoryRepository.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
@@ -100,9 +94,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCaregor
                         IIncludableQueryable<SourceLinkCategoryEntity, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(categoryEntity);
-            _mapperMock
-                .Setup(mapper => mapper.Map<SourceLinkCategoryDTO>(categoryEntity))
-                .Returns(categoryDto);
             _blobServiceMock
                 .Setup(blob => blob.FindFileInStorageAsBase64(blobName))
                 .Returns(base64);
@@ -120,9 +111,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCaregor
             resultDto.Image.Base64.Should().Be(base64);
             resultDto.Image.BlobName.Should().Be(blobName);
 
-            _mapperMock.Verify(
-                mapper => mapper.Map<SourceLinkCategoryDTO>(categoryEntity),
-                Times.Once);
             _blobServiceMock.Verify(
                 blob => blob.FindFileInStorageAsBase64(blobName),
                 Times.Once);

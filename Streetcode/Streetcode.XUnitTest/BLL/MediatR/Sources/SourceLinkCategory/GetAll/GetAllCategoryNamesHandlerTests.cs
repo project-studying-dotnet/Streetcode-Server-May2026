@@ -3,7 +3,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-using Streetcode.BLL.DTO.Sources;
+using Streetcode.BLL.Mapping.Sources;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetAll;
 using Streetcode.DAL.Repositories.Interfaces.Base;
@@ -15,19 +15,24 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
     public class GetAllCategoryNamesHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly IMapper _mapper;
         private readonly Mock<ILoggerService> _loggerMock;
         private readonly GetAllCategoryNamesHandler _handler;
 
         public GetAllCategoryNamesHandlerTests()
         {
             _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            _mapperMock = new Mock<IMapper>();
             _loggerMock = new Mock<ILoggerService>();
+
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<SourceLinkCategoryProfile>();
+            });
+            _mapper = mapperConfig.CreateMapper();
 
             _handler = new GetAllCategoryNamesHandler(
                 _repositoryWrapperMock.Object,
-                _mapperMock.Object,
+                _mapper,
                 _loggerMock.Object);
         }
 
@@ -65,22 +70,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
                 }
             };
 
-            var dtos = new List<CategoryWithNameDTO>
-            {
-                new()
-                {
-                    Id = 1,
-                    Title = "Books"
-                }
-            };
-
             _repositoryWrapperMock
                 .Setup(x => x.SourceCategoryRepository.GetAllAsync(null, null))
                 .ReturnsAsync(categories);
-
-            _mapperMock
-                .Setup(mapper => mapper.Map<IEnumerable<CategoryWithNameDTO>>(categories))
-                .Returns(dtos);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -92,10 +84,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
             resultDtos.Should().HaveCount(1);
             resultDtos[0].Id.Should().Be(1);
             resultDtos[0].Title.Should().Be("Books");
-
-            _mapperMock.Verify(
-                mapper => mapper.Map<IEnumerable<CategoryWithNameDTO>>(categories),
-                Times.Once);
 
             _loggerMock.Verify(
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),

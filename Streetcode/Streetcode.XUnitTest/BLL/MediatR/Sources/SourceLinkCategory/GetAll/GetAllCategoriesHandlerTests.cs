@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Xunit;
 
-using Streetcode.BLL.DTO.Media.Images;
-using Streetcode.BLL.DTO.Sources;
+using Streetcode.BLL.Mapping.Sources;
+using Streetcode.BLL.Mapping.Media.Images;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetAll;
@@ -22,7 +22,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
     public class GetAllCategoriesHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly IMapper _mapper;
         private readonly Mock<IBlobService> _blobServiceMock;
         private readonly Mock<ILoggerService> _loggerMock;
         private readonly GetAllCategoriesHandler _handler;
@@ -30,13 +30,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
         public GetAllCategoriesHandlerTests()
         {
             _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            _mapperMock = new Mock<IMapper>();
             _blobServiceMock = new Mock<IBlobService>();
             _loggerMock = new Mock<ILoggerService>();
 
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<SourceLinkCategoryProfile>();
+                cfg.AddProfile<ImageProfile>();
+            });
+            _mapper = mapperConfig.CreateMapper();
+
             _handler = new GetAllCategoriesHandler(
                 _repositoryWrapperMock.Object,
-                _mapperMock.Object,
+                _mapper,
                 _blobServiceMock.Object,
                 _loggerMock.Object);
         }
@@ -82,29 +88,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
                 }
             };
 
-            var dtos = new List<SourceLinkCategoryDTO>
-            {
-                new()
-                {
-                    Id = 1,
-                    Title = "Books",
-                    Image = new ImageDTO
-                    {
-                        BlobName = "books.png"
-                    }
-                }
-            };
-
             _repositoryWrapperMock
                 .Setup(x => x.SourceCategoryRepository.GetAllAsync(
                     It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
                     It.IsAny<Func<IQueryable<SourceLinkCategoryEntity>,
                         IIncludableQueryable<SourceLinkCategoryEntity, object>>>()))
                 .ReturnsAsync(categories);
-
-            _mapperMock
-                .Setup(mapper => mapper.Map<IEnumerable<SourceLinkCategoryDTO>>(categories))
-                .Returns(dtos);
 
             _blobServiceMock
                 .Setup(blob => blob.FindFileInStorageAsBase64("books.png"))
@@ -122,10 +111,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
             resultDtos[0].Title.Should().Be("Books");
             resultDtos[0].Image.Should().NotBeNull();
             resultDtos[0].Image!.Base64.Should().Be("base64-content");
-
-            _mapperMock.Verify(
-                mapper => mapper.Map<IEnumerable<SourceLinkCategoryDTO>>(categories),
-                Times.Once);
 
             _blobServiceMock.Verify(
                 blob => blob.FindFileInStorageAsBase64("books.png"),
