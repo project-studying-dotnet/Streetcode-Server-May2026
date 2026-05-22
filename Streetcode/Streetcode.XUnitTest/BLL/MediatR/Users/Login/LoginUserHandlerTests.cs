@@ -23,11 +23,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
     /// </summary>
     public class LoginUserHandlerTests
     {
-        private readonly Mock<IUserStore<User>> userStoreMock;
-        private readonly Mock<UserManager<User>> userManagerMock;
-        private readonly IMapper mapper;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly LoginUserHandler handler;
+        private readonly Mock<IUserStore<User>> _userStoreMock;
+        private readonly Mock<UserManager<User>> _userManagerMock;
+        private readonly IMapper _mapper;
+        private readonly Mock<ILoggerService> _loggerMock;
+        private readonly LoginUserHandler _handler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginUserHandlerTests"/> class.
@@ -40,12 +40,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
                     .ForMember(dest => dest.Login, opt => opt.MapFrom(src => src.UserName));
             });
 
-            this.mapper = config.CreateMapper();
-            this.loggerMock = new Mock<ILoggerService>();
+            _mapper = config.CreateMapper();
+            _loggerMock = new Mock<ILoggerService>();
 
-            this.userStoreMock = new Mock<IUserStore<User>>();
-            this.userManagerMock = new Mock<UserManager<User>>(
-                 this.userStoreMock.Object,
+            _userStoreMock = new Mock<IUserStore<User>>();
+            _userManagerMock = new Mock<UserManager<User>>(
+                 _userStoreMock.Object,
                  null!,
                  null!,
                  null!,
@@ -55,10 +55,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
                  null!,
                  null!);
 
-            this.handler = new LoginUserHandler(
-                this.userManagerMock.Object,
-                this.mapper,
-                this.loggerMock.Object);
+            _handler = new LoginUserHandler(
+                _userManagerMock.Object,
+                _mapper,
+                _loggerMock.Object);
         }
 
         /// <summary>
@@ -81,15 +81,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
                 Role = UserRole.MainAdministrator,
             };
 
-            this.userManagerMock
+            _userManagerMock
                 .Setup(m => m.FindByNameAsync(loginDto.Login))
                 .ReturnsAsync(dbUser);
 
-            this.userManagerMock
+            _userManagerMock
                 .Setup(m => m.CheckPasswordAsync(dbUser, loginDto.Password))
                 .ReturnsAsync(true);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+            var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
@@ -103,8 +103,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             result.Value.User.Email.Should().Be("john.doe@gmail.com");
             result.Value.User.Role.Should().Be(UserRole.MainAdministrator);
 
-            this.userManagerMock.Verify(m => m.FindByNameAsync(loginDto.Login), Times.Once);
-            this.userManagerMock.Verify(m => m.CheckPasswordAsync(dbUser, loginDto.Password), Times.Once);
+            _userManagerMock.Verify(m => m.FindByNameAsync(loginDto.Login), Times.Once);
+            _userManagerMock.Verify(m => m.CheckPasswordAsync(dbUser, loginDto.Password), Times.Once);
         }
 
         /// <summary>
@@ -117,15 +117,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             var loginDto = new UserLoginDto { Login = "wrongUser", Password = "anyPassword" };
             var command = new LoginUserCommand(loginDto);
 
-            this.userManagerMock
+            _userManagerMock
                 .Setup(m => m.FindByNameAsync(loginDto.Login))
                 .ReturnsAsync((User?)null);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+            var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message.Contains("Invalid login or password."));
-            this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            _loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -145,19 +145,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
                 Surname = "Doe",
             };
 
-            this.userManagerMock
+            _userManagerMock
                 .Setup(m => m.FindByNameAsync(loginDto.Login))
                 .ReturnsAsync(dbUser);
 
-            this.userManagerMock
+            _userManagerMock
                 .Setup(m => m.CheckPasswordAsync(dbUser, loginDto.Password))
                 .ReturnsAsync(false);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+            var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message.Contains("Invalid login or password."));
-            this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            _loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

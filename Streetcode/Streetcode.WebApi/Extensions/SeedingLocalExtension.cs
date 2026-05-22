@@ -43,9 +43,11 @@ namespace Streetcode.WebApi.Extensions
                 string initialDataImagePath = "../Streetcode.DAL/InitialData/images.json";
                 string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
 
+                const string AdminLiteral = "admin";
+                var identityPasswordHasher = new PasswordHasher<User>();
+
                 var adminUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin");
 
-                var identityPasswordHasher = new PasswordHasher<User>();
 
                 if (adminUser == null)
                 {
@@ -53,27 +55,27 @@ namespace Streetcode.WebApi.Extensions
                     {
                         Email = "admin@admin.com",
                         NormalizedEmail = "ADMIN@ADMIN.COM",
-                        UserName = "admin",
+                        UserName = AdminLiteral,
                         NormalizedUserName = "ADMIN",
-                        Name = "admin",
-                        Surname = "admin",
+                        Name = AdminLiteral,
+                        Surname = AdminLiteral,
                         Role = UserRole.MainAdministrator,
                         EmailConfirmed = true,
                     };
 
-                    newAdmin.PasswordHash = identityPasswordHasher.HashPassword(newAdmin, "admin");
+                    newAdmin.PasswordHash = identityPasswordHasher.HashPassword(newAdmin, AdminLiteral);
 
                     await dbContext.Users.AddAsync(newAdmin);
                     await dbContext.SaveChangesAsync();
                 }
                 else if (string.IsNullOrEmpty(adminUser.PasswordHash) || adminUser.PasswordHash.Length < 20)
                 {
-                    adminUser.PasswordHash = identityPasswordHasher.HashPassword(adminUser, "admin");
+                    adminUser.PasswordHash = identityPasswordHasher.HashPassword(adminUser, AdminLiteral);
 
                     await dbContext.SaveChangesAsync();
                 }
 
-                if (!dbContext.Images.Any())
+                if (!await dbContext.Images.AnyAsync())
                 {
                     string imageJson = File.ReadAllText(initialDataImagePath, Encoding.UTF8);
                     string audiosJson = File.ReadAllText(initialDataAudioPath, Encoding.UTF8);
@@ -122,7 +124,7 @@ namespace Streetcode.WebApi.Extensions
 
                     await dbContext.SaveChangesAsync();
 
-                    if (!dbContext.Responses.Any())
+                    if (!await dbContext.Responses.AnyAsync())
                     {
                         dbContext.Responses.AddRange(
                             new Response
@@ -141,7 +143,7 @@ namespace Streetcode.WebApi.Extensions
                         await dbContext.SaveChangesAsync();
                     }
 
-                    if (!dbContext.News.Any())
+                    if (!await dbContext.News.AnyAsync())
                     {
                         dbContext.News.AddRange(
                             new DAL.Entities.News.News
@@ -172,7 +174,7 @@ namespace Streetcode.WebApi.Extensions
                         await dbContext.SaveChangesAsync();
                     }
 
-                    if (!dbContext.Terms.Any())
+                    if (!await dbContext.Terms.AnyAsync())
                     {
                         dbContext.Terms.AddRange(
                             new Term
@@ -201,7 +203,7 @@ namespace Streetcode.WebApi.Extensions
 
                         await dbContext.SaveChangesAsync();
 
-                        if (!dbContext.RelatedTerms.Any())
+                        if (!await dbContext.RelatedTerms.AnyAsync())
                         {
                             dbContext.RelatedTerms.AddRange(
                                 new RelatedTerm
@@ -214,7 +216,7 @@ namespace Streetcode.WebApi.Extensions
                         }
                     }
 
-                    if (!dbContext.TeamMembers.Any())
+                    if (!await dbContext.TeamMembers.AnyAsync())
                     {
                         dbContext.AddRange(
                             new TeamMember
@@ -244,7 +246,7 @@ namespace Streetcode.WebApi.Extensions
 
                         await dbContext.SaveChangesAsync();
 
-                        if (!dbContext.Positions.Any())
+                        if (!await dbContext.Positions.AnyAsync())
                         {
                             dbContext.Positions.AddRange(
                                 new Positions
@@ -254,7 +256,7 @@ namespace Streetcode.WebApi.Extensions
 
                             await dbContext.SaveChangesAsync();
 
-                            if (!dbContext.TeamMemberPosition.Any())
+                            if (!await dbContext.TeamMemberPosition.AnyAsync())
                             {
                                 dbContext.TeamMemberPosition.AddRange(
                                     new TeamMemberPositions
@@ -276,7 +278,7 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
 
-                            if (!dbContext.TeamMemberLinks.Any())
+                            if (!await dbContext.TeamMemberLinks.AnyAsync())
                             {
                                 dbContext.AddRange(
                                     new TeamMemberLink
@@ -356,13 +358,13 @@ namespace Streetcode.WebApi.Extensions
                         }
                     }
 
-                    if (!dbContext.Audios.Any())
+                    if (!await dbContext.Audios.AnyAsync())
                     {
-                        dbContext.Audios.AddRange(audiosfromJson);
+                        dbContext.Audios.AddRange(audiosfromJson ?? Enumerable.Empty<Audio>());
 
                         await dbContext.SaveChangesAsync();
 
-                        if (!dbContext.Streetcodes.Any())
+                        if (!await dbContext.Streetcodes.AnyAsync())
                         {
                             dbContext.Streetcodes.AddRange(
                                 new PersonStreetcode
@@ -407,7 +409,7 @@ namespace Streetcode.WebApi.Extensions
 
                             await dbContext.SaveChangesAsync();
 
-                            if (!dbContext.Subtitles.Any())
+                            if (!await dbContext.Subtitles.AnyAsync())
                             {
                                 dbContext.Subtitles.AddRange(
                                     new Subtitle
@@ -424,7 +426,7 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
 
-                            if (!dbContext.StreetcodeCoordinates.Any())
+                            if (!await dbContext.StreetcodeCoordinates.AnyAsync())
                             {
                                 dbContext.StreetcodeCoordinates.AddRange(
                                     new StreetcodeCoordinate
@@ -443,7 +445,7 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
 
-                            if (!dbContext.Videos.Any())
+                            if (!await dbContext.Videos.AnyAsync())
                             {
                                 dbContext.Videos.AddRange(
                                     new Video
@@ -463,7 +465,7 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
 
-                            if (!dbContext.Partners.Any())
+                            if (!await dbContext.Partners.AnyAsync())
                             {
                                 dbContext.Partners.AddRange(
                                     new Partner
@@ -495,7 +497,7 @@ namespace Streetcode.WebApi.Extensions
 
                                 await dbContext.SaveChangesAsync();
 
-                                if (!dbContext.PartnerSourceLinks.Any())
+                                if (!await dbContext.PartnerSourceLinks.AnyAsync())
                                 {
                                     dbContext.PartnerSourceLinks.AddRange(
                                         new PartnerSourceLink
@@ -520,7 +522,7 @@ namespace Streetcode.WebApi.Extensions
                                     await dbContext.SaveChangesAsync();
                                 }
 
-                                if (!dbContext.StreetcodePartners.Any())
+                                if (!await dbContext.StreetcodePartners.AnyAsync())
                                 {
                                     dbContext.StreetcodePartners.AddRange(
                                         new StreetcodePartner
@@ -558,7 +560,7 @@ namespace Streetcode.WebApi.Extensions
                                 }
                             }
 
-                            if (!dbContext.Arts.Any())
+                            if (!await dbContext.Arts.AnyAsync())
                             {
                                 dbContext.Arts.AddRange(
                                     new Art
@@ -622,7 +624,7 @@ namespace Streetcode.WebApi.Extensions
 
                                 await dbContext.SaveChangesAsync();
 
-                                if (!dbContext.StreetcodeArts.Any())
+                                if (!await dbContext.StreetcodeArts.AnyAsync())
                                 {
                                     dbContext.StreetcodeArts.AddRange(
                                         new StreetcodeArt
@@ -690,7 +692,7 @@ namespace Streetcode.WebApi.Extensions
                                 }
                             }
 
-                            if (!dbContext.Texts.Any())
+                            if (!await dbContext.Texts.AnyAsync())
                             {
                                 dbContext.Texts.AddRange(
                                     new Text
@@ -724,7 +726,7 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
 
-                            if (!dbContext.TimelineItems.Any())
+                            if (!await dbContext.TimelineItems.AnyAsync())
                             {
                                 dbContext.TimelineItems.AddRange(
                                     new TimelineItem
@@ -929,7 +931,7 @@ namespace Streetcode.WebApi.Extensions
 
                                 await dbContext.SaveChangesAsync();
 
-                                if (!dbContext.HistoricalContexts.Any())
+                                if (!await dbContext.HistoricalContexts.AnyAsync())
                                 {
                                     dbContext.HistoricalContexts.AddRange(
                                         new HistoricalContext
@@ -963,7 +965,7 @@ namespace Streetcode.WebApi.Extensions
 
                                     await dbContext.SaveChangesAsync();
 
-                                    if (!dbContext.HistoricalContextsTimelines.Any())
+                                    if (!await dbContext.HistoricalContextsTimelines.AnyAsync())
                                     {
                                         dbContext.HistoricalContextsTimelines.AddRange(
                                         new HistoricalContextTimeline
@@ -1092,7 +1094,7 @@ namespace Streetcode.WebApi.Extensions
                                 }
                             }
 
-                            if (!dbContext.TransactionLinks.Any())
+                            if (!await dbContext.TransactionLinks.AnyAsync())
                             {
                                 dbContext.TransactionLinks.AddRange(
                                     new TransactionLink
@@ -1109,7 +1111,7 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
 
-                            if (!dbContext.Facts.Any())
+                            if (!await dbContext.Facts.AnyAsync())
                             {
                                 dbContext.Facts.AddRange(
                                     new Fact
@@ -1255,7 +1257,7 @@ namespace Streetcode.WebApi.Extensions
                                 });
                             }
 
-                            if (!dbContext.SourceLinks.Any())
+                            if (!await dbContext.SourceLinks.AnyAsync())
                             {
                                 dbContext.SourceLinks.AddRange(
                                     new SourceLinkCategory
@@ -1276,7 +1278,7 @@ namespace Streetcode.WebApi.Extensions
 
                                 await dbContext.SaveChangesAsync();
 
-                                if (!dbContext.StreetcodeCategoryContent.Any())
+                                if (!await dbContext.StreetcodeCategoryContent.AnyAsync())
                                 {
                                     dbContext.StreetcodeCategoryContent.AddRange(
                                         new StreetcodeCategoryContent
@@ -1308,7 +1310,7 @@ namespace Streetcode.WebApi.Extensions
                                 }
                             }
 
-                            if (!dbContext.RelatedFigures.Any())
+                            if (!await dbContext.RelatedFigures.AnyAsync())
                             {
                                 dbContext.RelatedFigures.AddRange(
                                     new RelatedFigure
@@ -1325,7 +1327,7 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
 
-                            if (!dbContext.StreetcodeImages.Any())
+                            if (!await dbContext.StreetcodeImages.AnyAsync())
                             {
                                 dbContext.StreetcodeImages.AddRange(
                                     new StreetcodeImage
@@ -1352,7 +1354,7 @@ namespace Streetcode.WebApi.Extensions
                                 await dbContext.SaveChangesAsync();
                             }
 
-                            if (!dbContext.Tags.Any())
+                            if (!await dbContext.Tags.AnyAsync())
                             {
                                 dbContext.Tags.AddRange(
                                     new Tag
@@ -1398,7 +1400,7 @@ namespace Streetcode.WebApi.Extensions
 
                                 await dbContext.SaveChangesAsync();
 
-                                if (!dbContext.StreetcodeTagIndices.Any())
+                                if (!await dbContext.StreetcodeTagIndices.AnyAsync())
                                 {
                                     dbContext.StreetcodeTagIndices.AddRange(
                                         new StreetcodeTagIndex
