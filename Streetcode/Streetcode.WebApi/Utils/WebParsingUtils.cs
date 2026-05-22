@@ -352,7 +352,7 @@ public class WebParsingUtils
     {
         if (streetname.Contains("жилий масив ", StringComparison.Ordinal))
         {
-            int secondSpace = streetname.IndexOf(" ", streetname.IndexOf(" ", StringComparison.Ordinal) + 1, StringComparison.Ordinal);
+            int secondSpace = streetname.IndexOf(' ', streetname.IndexOf(' ') + 1);
             return (streetname.Substring(secondSpace + 1), "парк");
         }
 
@@ -360,7 +360,7 @@ public class WebParsingUtils
         {
             if (streetname.Contains(prefix, StringComparison.Ordinal))
             {
-                return (streetname.Substring(streetname.IndexOf(" ", StringComparison.Ordinal) + 1), typeName);
+                return (streetname.Substring(streetname.IndexOf(' ') + 1), typeName);
             }
         }
 
