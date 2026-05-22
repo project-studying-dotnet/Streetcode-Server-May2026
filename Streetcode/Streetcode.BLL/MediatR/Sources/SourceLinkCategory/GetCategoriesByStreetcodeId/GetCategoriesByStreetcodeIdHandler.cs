@@ -7,6 +7,8 @@ using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Shared;
+using DalSourceLinkCategory = Streetcode.DAL.Entities.Sources.SourceLinkCategory;
 
 namespace Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoriesByStreetcodeId;
 
@@ -29,9 +31,9 @@ public class GetCategoriesByStreetcodeIdHandler : IRequestHandler<GetCategoriesB
     {
         var srcCategories = await _repositoryWrapper
             .SourceCategoryRepository
-            .GetAllAsync(
-                predicate: sc => sc.Streetcodes.Any(s => s.Id == request.StreetcodeId),
-                include: scl => scl.Include(sc => sc.Image) !);
+            .GetAllAsync(new ByStreetcodeIdSpecification<DalSourceLinkCategory>(
+                request.StreetcodeId,
+                scl => scl.Include(sc => sc.Image)!));
 
         if (srcCategories is null)
         {

@@ -1,5 +1,7 @@
 ﻿namespace Streetcode.XUnitTest.BLL.MediatR.Toponyms
 {
+    using System;
+    using System.Linq.Expressions;
     using AutoMapper;
     using FluentAssertions;
     using Moq;
@@ -68,7 +70,7 @@
             {
                 Title = null,
             });
-            this.toponymRepositoryMock.Setup(r => r.FindAll(null)).Returns(toponyms);
+            this.toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -76,7 +78,7 @@
             // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll(null), Times.Once);
+            this.toponymRepositoryMock.Verify(r => r.FindAll((Expression<Func<Toponym, bool>>?)null), Times.Once);
         }
 
         /// <summary>
@@ -109,7 +111,7 @@
             {
                 Title = "аНдЕр",
             });
-            this.toponymRepositoryMock.Setup(r => r.FindAll(null)).Returns(toponyms);
+            this.toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -117,7 +119,7 @@
             // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll(null), Times.Once);
+            this.toponymRepositoryMock.Verify(r => r.FindAll((Expression<Func<Toponym, bool>>?)null), Times.Once);
         }
 
         /// <summary>
@@ -151,7 +153,7 @@
             {
                 Title = "евч",
             });
-            this.toponymRepositoryMock.Setup(r => r.FindAll(null)).Returns(toponyms);
+            this.toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -159,7 +161,7 @@
             // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll(null), Times.Once);
+            this.toponymRepositoryMock.Verify(r => r.FindAll((Expression<Func<Toponym, bool>>?)null), Times.Once);
         }
 
         /// <summary>
@@ -188,7 +190,7 @@
             {
                 Title = "ийськ",
             });
-            this.toponymRepositoryMock.Setup(r => r.FindAll(null)).Returns(toponyms);
+            this.toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -196,7 +198,7 @@
             // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll(null), Times.Once);
+            this.toponymRepositoryMock.Verify(r => r.FindAll((Expression<Func<Toponym, bool>>?)null), Times.Once);
         }
     }
 }

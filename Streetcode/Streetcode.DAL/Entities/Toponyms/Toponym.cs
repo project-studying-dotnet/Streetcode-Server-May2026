@@ -1,9 +1,10 @@
 ﻿using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
 using Streetcode.DAL.Entities.Streetcode;
+using Streetcode.DAL.Specifications.Shared;
 
 namespace Streetcode.DAL.Entities.Toponyms;
 
-public class Toponym
+public class Toponym : IHasStreetcodes
 {
     public int Id { get; set; }
     public string Oblast { get; set; }

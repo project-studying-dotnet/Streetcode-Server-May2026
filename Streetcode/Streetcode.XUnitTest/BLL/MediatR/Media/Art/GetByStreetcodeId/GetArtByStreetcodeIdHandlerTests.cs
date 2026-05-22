@@ -19,6 +19,7 @@
     using Streetcode.DAL.Entities.Media.Images;
     using Streetcode.DAL.Entities.Streetcode;
     using Streetcode.DAL.Repositories.Interfaces.Base;
+    using Streetcode.DAL.Specifications.Base;
     using Xunit;
 
     /// <summary>
@@ -97,10 +98,7 @@
             };
 
             this.mockArtRepository
-                    .Setup(r => r.GetAllAsync(
-                        It.IsAny<Expression<Func<Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<Art>,
-                            IIncludableQueryable<Art, object>>>()))
+                    .Setup(r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()))
                     .ReturnsAsync(arts);
 
             // Act
@@ -120,11 +118,9 @@
                 Assert.IsType<ArtDTO>(item);
             });
 
-            this.mockArtRepository.Verify(r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Art, bool>>>(),
-                    It.IsAny<Func<IQueryable<Art>,
-                        IIncludableQueryable<Art, object>>>()),
-                    Times.Once);
+            this.mockArtRepository.Verify(
+                r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()),
+                Times.Once);
         }
 
         /// <summary>
@@ -140,10 +136,7 @@
             var expectedErrorMessage = $"Cannot find any art with corresponding streetcode id: {query.StreetcodeId}";
 
             this.mockArtRepository
-                    .Setup(r => r.GetAllAsync(
-                        It.IsAny<Expression<Func<Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<Art>,
-                            IIncludableQueryable<Art, object>>>()))
+                    .Setup(r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()))
                     .ReturnsAsync((List<Art>?)null);
 
             // Act
@@ -154,11 +147,9 @@
 
             Assert.Equal(expectedErrorMessage, result.Errors.First().Message);
 
-            this.mockArtRepository.Verify(r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Art, bool>>>(),
-                    It.IsAny<Func<IQueryable<Art>,
-                        IIncludableQueryable<Art, object>>>()),
-                    Times.Once);
+            this.mockArtRepository.Verify(
+                r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()),
+                Times.Once);
         }
     }
 }

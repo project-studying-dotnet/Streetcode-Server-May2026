@@ -17,6 +17,7 @@
     using Streetcode.DAL.Entities.Toponyms;
     using Streetcode.DAL.Repositories.Interfaces.Base;
     using Streetcode.DAL.Repositories.Interfaces.Toponyms;
+    using Streetcode.DAL.Specifications.Base;
     using Xunit;
 
     /// <summary>
@@ -83,9 +84,7 @@
             };
             GetToponymsByStreetcodeIdQuery query = new(1);
             this.toponymRepositoryMock.Setup(
-                r => r.FindAll(
-                    It.IsAny<Expression<Func<Toponym, bool>>>()
-                )
+                r => r.FindAll(It.IsAny<ISpecification<Toponym>>())
             ).Returns(toponyms);
 
             // Act
@@ -95,9 +94,7 @@
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(expected_toponyms);
             this.toponymRepositoryMock.Verify(
-                r => r.FindAll(
-                    It.IsAny<Expression<Func<Toponym, bool>>>()
-                ),
+                r => r.FindAll(It.IsAny<ISpecification<Toponym>>()),
                 Times.Once
             );
         }
@@ -153,9 +150,7 @@
             };
             GetToponymsByStreetcodeIdQuery query = new(1);
             this.toponymRepositoryMock.Setup(
-                r => r.FindAll(
-                    It.IsAny<Expression<Func<Toponym, bool>>>()
-                )
+                r => r.FindAll(It.IsAny<ISpecification<Toponym>>())
             ).Returns(toponyms);
 
             // Act
@@ -165,9 +160,7 @@
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(expected_toponyms);
             this.toponymRepositoryMock.Verify(
-                r => r.FindAll(
-                    It.IsAny<Expression<Func<Toponym, bool>>>()
-                ),
+                r => r.FindAll(It.IsAny<ISpecification<Toponym>>()),
                 Times.Once
             );
         }
@@ -182,9 +175,7 @@
             // Arrange
             GetToponymsByStreetcodeIdQuery query = new(3);
             this.toponymRepositoryMock.Setup(
-                r => r.FindAll(
-                    It.IsAny<Expression<Func<Toponym, bool>>>()
-                )
+                r => r.FindAll(It.IsAny<ISpecification<Toponym>>())
             ).Returns(Enumerable.Empty<Toponym>().BuildMock());
             this.loggerMock.Setup(
                 l => l.LogError(query, It.IsAny<string>())
@@ -197,9 +188,7 @@
             result.IsSuccess.Should().BeFalse();
             result.Errors.Should().NotBeEmpty();
             this.toponymRepositoryMock.Verify(
-                r => r.FindAll(
-                    It.IsAny<Expression<Func<Toponym, bool>>>()
-                ),
+                r => r.FindAll(It.IsAny<ISpecification<Toponym>>()),
                 Times.Once
             );
             this.loggerMock.Verify(

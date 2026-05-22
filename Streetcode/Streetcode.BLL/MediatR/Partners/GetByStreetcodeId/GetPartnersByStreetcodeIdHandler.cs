@@ -1,11 +1,11 @@
 using AutoMapper;
 using FluentResults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Partners;
 
 namespace Streetcode.BLL.MediatR.Partners.GetByStreetcodeId;
 
@@ -24,20 +24,8 @@ public class GetPartnersByStreetcodeIdHandler : IRequestHandler<GetPartnersByStr
 
     public async Task<Result<IEnumerable<PartnerDTO>>> Handle(GetPartnersByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
-        var streetcode = await _repositoryWrapper.StreetcodeRepository
-            .GetSingleOrDefaultAsync(st => st.Id == request.StreetcodeId);
-
-        if (streetcode is null)
-        {
-            string errorMsg = $"Cannot find any partners with corresponding streetcode id: {request.StreetcodeId}";
-            _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
-        }
-
         var partners = await _repositoryWrapper.PartnersRepository
-            .GetAllAsync(
-                predicate: p => p.Streetcodes.Any(sc => sc.Id == streetcode.Id) || p.IsVisibleEverywhere,
-                include: p => p.Include(pl => pl.PartnerSourceLinks));
+            .GetAllAsync(new PartnerByStreetcodeIdSpecification(request.StreetcodeId));
 
         if (partners is null)
         {
