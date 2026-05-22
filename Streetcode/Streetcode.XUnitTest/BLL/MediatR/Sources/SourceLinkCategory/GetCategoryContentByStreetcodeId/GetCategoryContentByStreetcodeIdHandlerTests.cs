@@ -83,8 +83,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
+            result.Value.Should().NotBeNull();
 
-            var resultDto = result.Value;
+            var resultDto = result.Value!;
 
             resultDto.StreetcodeId.Should().Be(query.streetcodeId);
             resultDto.SourceLinkCategoryId.Should().Be(query.categoryId);
@@ -118,6 +119,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
+            result.Errors.Should().NotBeEmpty();
             result.Errors[0].Message.Should().Be(errorMsg);
 
             _loggerMock.Verify(
@@ -167,6 +169,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
+            result.Errors.Should().NotBeEmpty();
             result.Errors[0].Message.Should().Be(errorMsg);
 
             _loggerMock.Verify(

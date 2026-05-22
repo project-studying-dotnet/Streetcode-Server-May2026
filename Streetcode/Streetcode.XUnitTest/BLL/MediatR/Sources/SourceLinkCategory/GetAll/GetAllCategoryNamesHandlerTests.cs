@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using FluentAssertions;
 using Moq;
-using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
+using Xunit;
+
+using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetAll;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.BLL.DTO.Sources;
-using Xunit;
 
 using SourceLinkCategoryEntity = Streetcode.DAL.Entities.Sources.SourceLinkCategory;
 
@@ -38,11 +38,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
 
             _repositoryWrapperMock
                 .Setup(x => x.SourceCategoryRepository.GetAllAsync(null, null))
-                .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>)null!);
+                .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>?)null);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
+            result.Errors.Should().NotBeEmpty();
             result.Errors[0].Message.Should().Be("Categories is null");
 
             _loggerMock.Verify(
@@ -84,8 +85,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
+            result.Value.Should().NotBeNull();
 
-            var resultDtos = result.Value.ToList();
+            var resultDtos = result.Value!.ToList();
 
             resultDtos.Should().HaveCount(1);
             resultDtos[0].Id.Should().Be(1);

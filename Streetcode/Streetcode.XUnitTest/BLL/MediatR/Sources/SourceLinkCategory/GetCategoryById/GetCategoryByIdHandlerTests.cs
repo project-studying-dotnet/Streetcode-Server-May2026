@@ -17,9 +17,9 @@ using Streetcode.DAL.Entities.Media.Images;
 
 using SourceLinkCategoryEntity = Streetcode.DAL.Entities.Sources.SourceLinkCategory;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCaregoriesById
+namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetCaregoryById
 {
-    public class GetCategoryByIdTests
+    public class GetCategoryByIdHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
         private readonly Mock<IMapper> _mapperMock;
@@ -27,7 +27,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
         private readonly Mock<IBlobService> _blobServiceMock;
         private readonly GetCategoryByIdHandler _handler;
 
-        public GetCategoryByIdTests()
+        public GetCategoryByIdHandlerTests()
         {
             _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             _mapperMock = new Mock<IMapper>();
@@ -40,6 +40,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
                 _blobServiceMock.Object,
                 _loggerMock.Object);
         }
+
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenCategoryDoesNotExist()
         {
@@ -55,8 +56,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
+            result.Errors.Should().NotBeEmpty();
             result.Errors[0].Message.Should().Be(errorMsg);
-            _loggerMock.Verify(logger => logger.LogError(query, errorMsg),Times.Once);
+            _loggerMock.Verify(logger => logger.LogError(query, errorMsg), Times.Once);
             _mapperMock.Verify(
                 mapper => mapper.Map<SourceLinkCategoryDTO>(It.IsAny<SourceLinkCategoryEntity>()),
                 Times.Never);
@@ -64,7 +66,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
                 blob => blob.FindFileInStorageAsBase64(It.IsAny<string>()),
                 Times.Never);
         }
-        [Fact]  
+
+        [Fact]
         public async Task Handle_ShouldReturnSourceLinkCategoryDTO_WhenCategoryExists()
         {
             var query = new GetCategoryByIdQuery(1);
@@ -107,23 +110,27 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAllCare
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
+            result.Value.Should().NotBeNull();
 
-            var resultDto = result.Value;
+            var resultDto = result.Value!;
 
             resultDto.Id.Should().Be(query.Id);
-            resultDto.Image.Id.Should().Be(10);
+            resultDto.Image.Should().NotBeNull();
+            resultDto.Image!.Id.Should().Be(10);
             resultDto.Image.Base64.Should().Be(base64);
-            resultDto.Image.BlobName.Should().Be(blobName);
+            resultDto.Image.BlobName.Should().Be(blobName); ;
 
             _mapperMock.Verify(
-                mapper => mapper.Map<SourceLinkCategoryDTO>(categoryEntity), Times.Once);
+                mapper => mapper.Map<SourceLinkCategoryDTO>(categoryEntity),
+                Times.Once);
             _blobServiceMock.Verify(
-                blob => blob.FindFileInStorageAsBase64(blobName), Times.Once);
+                blob => blob.FindFileInStorageAsBase64(blobName),
+                Times.Once);
             _loggerMock.Verify(
                  logger => logger.LogError(
                      It.IsAny<GetCategoryByIdQuery>(),
                      It.IsAny<string>()),
                  Times.Never);
-        }          
+        }
     }
 }

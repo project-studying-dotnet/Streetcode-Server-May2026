@@ -20,7 +20,7 @@ using SourceLinkCategoryEntity = Streetcode.DAL.Entities.Sources.SourceLinkCateg
 namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
 {
     public class GetAllCategoriesHandlerTests
-    {   
+    {
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IBlobService> _blobServiceMock;
@@ -51,11 +51,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
                     It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
                     It.IsAny<Func<IQueryable<SourceLinkCategoryEntity>,
                         IIncludableQueryable<SourceLinkCategoryEntity, object>>>()))
-                .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>)null!);
+                .ReturnsAsync((IEnumerable<SourceLinkCategoryEntity>?)null);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
+            result.Errors.Should().NotBeEmpty();
             result.Errors[0].Message.Should().Be("Categories is null");
 
             _loggerMock.Verify(
@@ -81,7 +82,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
                 }
             };
 
-                    var dtos = new List<SourceLinkCategoryDTO>
+            var dtos = new List<SourceLinkCategoryDTO>
             {
                 new()
                 {
@@ -112,13 +113,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.GetAll
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
+            result.Value.Should().NotBeNull();
 
-            var resultDtos = result.Value.ToList();
+            var resultDtos = result.Value!.ToList();
 
             resultDtos.Should().HaveCount(1);
             resultDtos[0].Id.Should().Be(1);
             resultDtos[0].Title.Should().Be("Books");
-            resultDtos[0].Image.Base64.Should().Be("base64-content");
+            resultDtos[0].Image.Should().NotBeNull();
+            resultDtos[0].Image!.Base64.Should().Be("base64-content");
 
             _mapperMock.Verify(
                 mapper => mapper.Map<IEnumerable<SourceLinkCategoryDTO>>(categories),
