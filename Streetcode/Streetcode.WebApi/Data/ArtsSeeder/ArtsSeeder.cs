@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.Media.Images;
 using Streetcode.DAL.Persistence;
 using Streetcode.WebApi.InitialData.SeederExtensions;
 
@@ -8,10 +8,9 @@ namespace Streetcode.WebApi.InitialData.ArtsSeeder
     [ExcludeFromCodeCoverage]
     internal class ArtsSeeder
     {
-        public static async Task FillSeedAsync(
-     StreetcodeDbContext context)
+        public static async Task FillSeedAsync(StreetcodeDbContext context)
         {
-        var data = new[]
+            var data = new[]
             {
                 new { Id = 19, T = "Анатолій Федірко", D = "Анатолій Федірко, «Український супрематичний політичний діяч Михайло Грушевський», 2019-2020 роки." },
                 new { Id = 20, T = "Анатолій Федірко", D = "Анатолій Федірко, «Український супрематичний політичний діяч Михайло Грушевський», 2019-2020 роки." },
@@ -24,16 +23,14 @@ namespace Streetcode.WebApi.InitialData.ArtsSeeder
                 new { Id = 19, T = "Січових стрільців", D = "Some Description" }
             };
 
-        var entities = data.Select(item => new Art
-        {
-            ImageId = item.Id,
-            Title = item.T,
-            Description = item.D
-        }).ToList();
+            var entities = data.Select(item => new Art
+            {
+                ImageId = item.Id,
+                Title = item.T,
+                Description = item.D
+            }).ToList();
 
-        await context.Arts.SeedIfEmptyAsync(
-            entities,
-            context);
+            await context.Arts.SeedIfEmptyAsync(entities, context);
         }
     }
 }
