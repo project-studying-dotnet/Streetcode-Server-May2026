@@ -1,9 +1,11 @@
-﻿using Streetcode.DAL.Entities.Media.Images;
-using Streetcode.WebApi.InitialData.SeederExtensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Persistence;
+using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.ArtsSeeder
 {
+    [ExcludeFromCodeCoverage]
     internal class ArtsSeeder
     {
         public static async Task FillSeedAsync(

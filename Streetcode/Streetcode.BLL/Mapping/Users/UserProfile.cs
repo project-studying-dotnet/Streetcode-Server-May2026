@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics.CodeAnalysis;
+using AutoMapper;
 using Streetcode.BLL.DTO.Users;
 using Streetcode.DAL.Entities.Users;
-
 namespace Streetcode.BLL.Mapping.Users
 {
+    [ExcludeFromCodeCoverage]
     public class UserProfile : Profile
     {
         public UserProfile()

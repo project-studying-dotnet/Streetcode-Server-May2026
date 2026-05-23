@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
 using Streetcode.BLL.MediatR.Users.Login;
 
 namespace Streetcode.WebApi.Controllers.Users
 {
+    [ExcludeFromCodeCoverage]
+
     [Route("api/auth")]
     public class AuthController : BaseApiController
     {
