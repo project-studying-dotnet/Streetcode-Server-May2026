@@ -11,19 +11,21 @@ namespace Streetcode.WebApi.InitialData.TransactionLinkSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
+            var baseUrl = "https://" + "streetcode/";
+
             var entities = new List<TransactionLink>
-        {
-            new()
             {
-                Url = "https://streetcode/1",
-                StreetcodeId = 1
-            },
-            new ()
-            {
-                Url = "https://streetcode/2",
-                StreetcodeId = 2
-            }
-        };
+                new()
+                {
+                    Url = baseUrl + "1",
+                    StreetcodeId = 1
+                },
+                new()
+                {
+                    Url = baseUrl + "2",
+                    StreetcodeId = 2
+                }
+            };
 
             await context.TransactionLinks.SeedIfEmptyAsync(
                 entities,

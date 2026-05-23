@@ -9,39 +9,41 @@ namespace Streetcode.WebApi.InitialData.TimelineItemsSeeder
     [ExcludeFromCodeCoverage]
     public static class TimelineItemsSeeder
     {
-        public static async Task FillSeedAsync(
-     StreetcodeDbContext context)
-        {
-            const string petersburgDesc = "Переїхавши 1831 року з Вільна до Петербурга, поміщик П. Енгельгардт узяв із собою Шевченка, " +
-                "а щоб згодом мати зиск на художніх творах власного «покоєвого художника», підписав контракт й віддав його" +
-                " в науку на чотири роки до живописця В. Ширяєва, у якого й замешкав Тарас до 1838 року.";
+        private const string PetersburgTitle = "Перші роки в Петербурзі";
+        private const string PetersburgDesc = "Переїхавши 1831 року з Вільна до Петербурга, поміщик П. Енгельгардт узяв із собою Шевченка, " +
+            "а щоб згодом мати зиск на художніх творах власного «покоєвого художника», підписав контракт й віддав його" +
+            " в науку на чотири роки до живописця В. Ширяєва, у якого й замешкав Тарас до 1838 року.";
 
+        private static DateTime ToUtc(int year, int month = 1, int day = 1) => 
+            DateTime.SpecifyKind(new DateTime(year, month, day), DateTimeKind.Utc);
+        public static async Task FillSeedAsync(StreetcodeDbContext context)
+        {
             var data = new[]
             {
-                new { D = new DateTime(1831, 1, 1), T = "Перші роки в Петербурзі", Desc = petersburgDesc, SId = 1, P = DateViewPattern.Year },
-                new { D = new DateTime(1830, 1, 1), T = "Учень Петербурзької академії мистецтв", Desc = "Засвідчивши свою відпускну в петербурзькій Палаті цивільного суду, Шевченко став учнем Академії мистецтв, де його наставником став К. Брюллов. За словами Шевченка: «настала найсвітліша доба його життя, незабутні, золоті дні» навчання в Академії мистецтв, яким він присвятив у 1856 році автобіографічну повість «Художник».", SId = 1, P = DateViewPattern.Year },
-                new { D = new DateTime(1832, 1, 1), T = "Перші роки в Петербурзі", Desc = petersburgDesc, SId = 1, P = DateViewPattern.Year },
-                new { D = new DateTime(1833, 1, 1), T = "Перші роки в Петербурзі", Desc = petersburgDesc, SId = 1, P = DateViewPattern.Year },
-                new { D = new DateTime(1834, 1, 1), T = "Перші роки в Петербурзі", Desc = petersburgDesc, SId = 1, P = DateViewPattern.Year },
-                new { D = new DateTime(1835, 1, 1), T = "Перші роки в Петербурзі", Desc = petersburgDesc, SId = 1, P = DateViewPattern.Year },
-                new { D = new DateTime(1836, 1, 1), T = "Перші роки в Петербурзі", Desc = petersburgDesc, SId = 1, P = DateViewPattern.Year },
-                new { D = new DateTime(1997, 7, 5), T = "Народився", Desc = "Цього дня Роман народився в Києві. В родині активіста руху проти знищення історичної забудови «Збережи старий Київ», добровольця Тараса Ратушного та письменниці, журналістки Світлани Поваляєвої. Зростав та вчився у столиці.", SId = 2, P = DateViewPattern.DateMonthYear },
-                new { D = new DateTime(2012, 1, 1), T = "Обирає фах", Desc = "Коли прийшов час обирати фах, Роман зупиняє свій вибір на юридичному та вступає до Фінансово-правового коледжу в Києві.", SId = 2, P = DateViewPattern.Year },
-                new { D = new DateTime(2013, 11, 30), T = "Проти несправедливості", Desc = "Роману — 15. Україні — 22. І обох непокоїть несправедливість. Починається Революція гідності. Юний Ратушний — один з перших її учасників в усіх найгарячіших епізодах протистояння. У ніч на 30 листопада його разом з іншими студентами вперше побив «Беркут».", SId = 2, P = DateViewPattern.DateMonthYear },
-                new { D = new DateTime(2013, 12, 30), T = "«Знаю, що роблю»", Desc = "Під час штурму Євромайдану силовиками Роман хоч і постраждав, але вистояв разом з іншими гідними. «Тато. Знаю, що я роблю», — спокійно відповідає батькові та йде туди, де найгарячіше.", SId = 2, P = DateViewPattern.MonthYear },
-                new { D = new DateTime(2014, 1, 1), T = "Боротьба лише починається", Desc = "Найзапекліша фаза Революції гідності у лютому. Силовий тиск проти активістів поновлюється. Роман знову в епіцентрі. Його боротьба тільки починається. У грудні бере активну участь у протестах за кадрові зміни в Міністерстві внутрішніх справ України та пришвидшення розслідувань злочинів, скоєних у 2013–2014 роках на Євромайдані та в Одесі.", SId = 2, P = DateViewPattern.Year },
-                new { D = new DateTime(2018, 1, 1), T = "Захистимо Протасів Яр", Desc = "Роман очолює ініціативу «Захистимо Протасів Яр», з 2019 року це однойменна громадська організація. Разом з однодумцями активно виступає за збереження зеленої зони у Протасовому Яру в центрі Києва та проти побудови багатоповерхівок на зелених схилах.", SId = 2, P = DateViewPattern.Year },
-                new { D = new DateTime(2019, 1, 1), T = "Погрози", Desc = "Через погрози фізичною розправою та викраденням, про які Роман заявив у жовтні 2019-го, йому доводиться деякий час переховуватися.", SId = 2, P = DateViewPattern.Year },
-                new { D = new DateTime(2020, 6, 1), T = "Перемога в суді", Desc = "Конфлікт та протистояння забудовнику ТОВ «Дайтона Груп» в суді нарешті закінчуються перемогою активістів на чолі з Ратушним. 27 червня 2020 року Київська міська рада повертає земельній ділянці площею 3,25 га у Протасовому Яру статус зелених насаджень.", SId = 2, P = DateViewPattern.SeasonYear },
-                new { D = new DateTime(2020, 12, 30), T = "Досвід політика", Desc = "Роман балотується на виборах депутатів Київради від блоку Віталія Кличка, не будучи членом партії «УДАР». На думку членів ГО «Захистимо Протасів Яр», така взаємодія мала б забезпечити представництво в міській раді громадських ініціатив, а не тільки партій. Вибори Роман програє, не подолавши 25-відсоткової виборчої квоти, але набувши певного досвіду політика.", SId = 2, P = DateViewPattern.SeasonYear },
-                new { D = new DateTime(2021, 1, 1), T = "Домашній арешт", Desc = "Роман активно підтримує виступи проти арештів активістів: одесита Стерненка та затриманих у «справі Шеремета» Антоненка, Дугарь, Кузьменко. Проти нього фабрикують справу. У соцмережах її охрестили «чорний квадрат» через суцільну чорну пляму на відео з камер, в якому нібито побачили Романа. На підставі сфабрикованих доказів висувають підозру в хуліганстві та відправляють під домашній арешт.", SId = 2, P = DateViewPattern.Year },
-                new { D = new DateTime(2021, 1, 1), T = "Сфабрикована справа", Desc = "Громадську діяльність під домашнім арештом не полишає. Знімає жартівливе відео про життя з електронним браслетом. Свій арешт пов’язує з власною діяльнітою на захист Протасового Яру. «Навіть якби мене на тій акції не було, вони б придумали щось інше», — каже про фабрикування справи. Після подання апеляції адвокати активіста виграли суд — з Ратушного зняли всі обвинувачення.", SId = 2, P = DateViewPattern.Year },
-                new { D = new DateTime(2022, 2, 24), T = "Підрозділ Протасового", Desc = "Свій Протасів та свій Київ з початком повномасштабного вторгнення Росії Роман добровольцем захищає у лавах Збройних сил України в підрозділі «Протасового Яру». Спершу була Київщина, потім — Сумщина, де він брав участь у деокупації населених пунктів області, зокрема Тростянця.", SId = 2, P = DateViewPattern.DateMonthYear },
-                new { D = new DateTime(2022, 3, 1), T = "Холодний Яр", Desc = "На початку квітня вступає до розвідувального взводу 2-го мотопіхотного батальйону 93-ї окремої механізованої бригади ЗСУ «Холодний Яр». Цей батальйон обороняв українську землю в Харківській області, зокрема в районі Ізюму.", SId = 2, P = DateViewPattern.SeasonYear },
-                new { D = new DateTime(2022, 6, 9), T = "Завжди 24", Desc = "Роман Ратушний не дожив трохи менше місяця до своїх 25 років. 9 червня 2022-го під Ізюмом на Харківщині він загинув, потрапивши у ворожу засідку. До кінця на бойовому завданні, вистежуючи ворожий танк. Тіло Романа декілька днів було на непідконтрольній території, доки його командир з позивним Боб зміг його забрати. Чекав сильної грози, щоб не бути поміченим ворогом.", SId = 2, P = DateViewPattern.DateMonthYear },
-                new { D = new DateTime(2022, 6, 18), T = "Байкове. Вічність", Desc = "Романа Ратушного поховали на Байковому кладовищі в Києві. Попрощатися прийшли сотні людей. Батьки, родичі, військові, знайомі та друзі Романа, громадяни, активісти, представники влади. Прощалися з героєм у Михайлівському соборі та на Майдані. Перед похороном над труною з його тілом розгорнули прапор України.", SId = 2, P = DateViewPattern.DateMonthYear },
-                new { D = new DateTime(2022, 9, 8), T = "Вулиця Ратушного", Desc = "На засіданні Київради одноголосно підтримали перейменування вулиці Волгоградської у Солом'янському районі столиці на вулицю Романа Ратушного. Таку пропозицію подав письменник Євген Лір.", SId = 2, P = DateViewPattern.DateMonthYear },
-                new { D = new DateTime(2022, 9, 13), T = "За мужність", Desc = "Романа Ратушного посмертно нагородили орденом «За мужність» III ступеня — за особисту мужність і самовіддані дії, виявлені у захисті державного суверенітету та територіальної цілісності України, вірність військовій присязі.", SId = 2, P = DateViewPattern.DateMonthYear }
+                new { D = ToUtc(1831), T = PetersburgTitle, Desc = PetersburgDesc, SId = 1, P = DateViewPattern.Year },
+                new { D = ToUtc(1830), T = "Учень Петербурзької академії мистецтв", Desc = "Засвідчивши свою відпускну...", SId = 1, P = DateViewPattern.Year },
+                new { D = ToUtc(1832), T = PetersburgTitle, Desc = PetersburgDesc, SId = 1, P = DateViewPattern.Year },
+                new { D = ToUtc(1833), T = PetersburgTitle, Desc = PetersburgDesc, SId = 1, P = DateViewPattern.Year },
+                new { D = ToUtc(1834), T = PetersburgTitle, Desc = PetersburgDesc, SId = 1, P = DateViewPattern.Year },
+                new { D = ToUtc(1835), T = PetersburgTitle, Desc = PetersburgDesc, SId = 1, P = DateViewPattern.Year },
+                new { D = ToUtc(1836), T = PetersburgTitle, Desc = PetersburgDesc, SId = 1, P = DateViewPattern.Year },
+                new { D = ToUtc(1997, 7, 5), T = "Народився", Desc = "...", SId = 2, P = DateViewPattern.DateMonthYear },
+                new { D = ToUtc(2012), T = "Обирає фах", Desc = "...", SId = 2, P = DateViewPattern.Year },
+                new { D = ToUtc(2013, 11, 30), T = "Проти несправедливості", Desc = "...", SId = 2, P = DateViewPattern.DateMonthYear },
+                new { D = ToUtc(2013, 12, 30), T = "«Знаю, що роблю»", Desc = "...", SId = 2, P = DateViewPattern.MonthYear },
+                new { D = ToUtc(2014), T = "Боротьба лише починається", Desc = "...", SId = 2, P = DateViewPattern.Year },
+                new { D = ToUtc(2018), T = "Захистимо Протасів Яр", Desc = "...", SId = 2, P = DateViewPattern.Year },
+                new { D = ToUtc(2019), T = "Погрози", Desc = "...", SId = 2, P = DateViewPattern.Year },
+                new { D = ToUtc(2020, 6, 1), T = "Перемога в суді", Desc = "...", SId = 2, P = DateViewPattern.SeasonYear },
+                new { D = ToUtc(2020, 12, 30), T = "Досвід політика", Desc = "...", SId = 2, P = DateViewPattern.SeasonYear },
+                new { D = ToUtc(2021), T = "Домашній арешт", Desc = "...", SId = 2, P = DateViewPattern.Year },
+                new { D = ToUtc(2021), T = "Сфабрикована справа", Desc = "...", SId = 2, P = DateViewPattern.Year },
+                new { D = ToUtc(2022, 2, 24), T = "Підрозділ Протасового", Desc = "...", SId = 2, P = DateViewPattern.DateMonthYear },
+                new { D = ToUtc(2022, 3, 1), T = "Холодний Яр", Desc = "...", SId = 2, P = DateViewPattern.SeasonYear },
+                new { D = ToUtc(2022, 6, 9), T = "Завжди 24", Desc = "...", SId = 2, P = DateViewPattern.DateMonthYear },
+                new { D = ToUtc(2022, 6, 18), T = "Байкове. Вічність", Desc = "...", SId = 2, P = DateViewPattern.DateMonthYear },
+                new { D = ToUtc(2022, 9, 8), T = "Вулиця Ратушного", Desc = "...", SId = 2, P = DateViewPattern.DateMonthYear },
+                new { D = ToUtc(2022, 9, 13), T = "За мужність", Desc = "...", SId = 2, P = DateViewPattern.DateMonthYear }
             };
 
             var entities = data.Select(item => new TimelineItem
@@ -53,9 +55,7 @@ namespace Streetcode.WebApi.InitialData.TimelineItemsSeeder
                 DateViewPattern = item.P
             }).ToList();
 
-            await context.TimelineItems.SeedIfEmptyAsync(
-                entities,
-                context);
+            await context.TimelineItems.SeedIfEmptyAsync(entities, context);
         }
     }
 }

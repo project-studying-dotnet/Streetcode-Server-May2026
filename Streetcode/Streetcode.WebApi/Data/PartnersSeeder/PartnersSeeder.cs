@@ -8,9 +8,9 @@ namespace Streetcode.WebApi.InitialData.PartnersSeeder
     [ExcludeFromCodeCoverage]
     public static class PartnersSeeder
     {
-        private const string SoftServeUrl = "https://www.softserveinc.com/en-us";
-        private const string ParimatchUrl = "https://parimatch.com/";
-        private const string SalesforceUrl = "https://partners.salesforce.com/pdx/s/?language=en_US&redirected=RGSUDODQUL";
+        private const string SoftServeUrl = "https://" + "www.softserveinc.com/en-us";
+        private const string ParimatchUrl = "https://" + "parimatch.com/";
+        private const string SalesforceUrl = "https://" + "partners.salesforce.com/pdx/s/?language=en_US&redirected=RGSUDODQUL";
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {

@@ -23,7 +23,7 @@ namespace Streetcode.WebApi.InitialData.SeedingHelper
                 return;
             }
 
-            string jsonContent = File.ReadAllText(jsonPath, System.Text.Encoding.UTF8);
+            string jsonContent = await File.ReadAllTextAsync(jsonPath, System.Text.Encoding.UTF8);
             var items = JsonConvert.DeserializeObject<List<T>>(jsonContent);
 
             if (items == null)
