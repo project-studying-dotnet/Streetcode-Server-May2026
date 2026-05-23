@@ -28,7 +28,8 @@ namespace Streetcode.WebApi.InitialData.PersonStreetcodeSeeder
                     CreatedAt = now,
                     DateString = "9 березня 1814 — 10 березня 1861",
                     EventStartOrPersonBirthDate = ToUtc(1814, 3, 9),
-                    EventEndOrPersonDeathDate = ToUtc(1861, 3, 10),FirstName = "Тарас",
+                    EventEndOrPersonDeathDate = ToUtc(1861, 3, 10),
+                    FirstName = "Тарас",
                     Rank = "Григорович",
                     LastName = "Шевченко",
                     Title = "Тарас Шевченко",
@@ -57,9 +58,12 @@ namespace Streetcode.WebApi.InitialData.PersonStreetcodeSeeder
 
             await context.Streetcodes.SeedIfEmptyAsync(entities, context);
         }
+
         private static DateTime ToUtc(int year, int month, int day)
         {
-            return DateTime.SpecifyKind(new DateTime(year, month, day), DateTimeKind.Utc);
+            return DateTime.SpecifyKind(
+                 new DateTime(year, month, day),
+                 DateTimeKind.Utc);
         }
     }
 }
