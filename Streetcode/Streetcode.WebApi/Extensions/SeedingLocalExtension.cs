@@ -137,7 +137,6 @@ namespace Streetcode.WebApi.Extensions
 
                             await TransactionLinkSeeder.FillSeedAsync(dbContext);
 
-
                             if (!await dbContext.Facts.AnyAsync())
                             {
                                 await FactsSeeder.FillSeedAsync(dbContext);
@@ -161,7 +160,6 @@ namespace Streetcode.WebApi.Extensions
 
                                 await StreetcodeTagIndexSeeder.FillSeedAsync(dbContext);
                             }
-                            
                         }
 
                         await dbContext.SaveChangesAsync();

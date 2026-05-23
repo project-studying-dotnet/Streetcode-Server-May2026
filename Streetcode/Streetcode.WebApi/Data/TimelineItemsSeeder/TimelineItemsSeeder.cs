@@ -14,8 +14,6 @@ namespace Streetcode.WebApi.InitialData.TimelineItemsSeeder
             "а щоб згодом мати зиск на художніх творах власного «покоєвого художника», підписав контракт й віддав його" +
             " в науку на чотири роки до живописця В. Ширяєва, у якого й замешкав Тарас до 1838 року.";
 
-        private static DateTime ToUtc(int year, int month = 1, int day = 1) => 
-            DateTime.SpecifyKind(new DateTime(year, month, day), DateTimeKind.Utc);
         public static async Task FillSeedAsync(StreetcodeDbContext context)
         {
             var data = new[]
@@ -56,6 +54,11 @@ namespace Streetcode.WebApi.InitialData.TimelineItemsSeeder
             }).ToList();
 
             await context.TimelineItems.SeedIfEmptyAsync(entities, context);
+        }
+
+        private static DateTime ToUtc(int year, int month = 1, int day = 1)
+        {
+            return DateTime.SpecifyKind(new DateTime(year, month, day), DateTimeKind.Utc);
         }
     }
 }
