@@ -46,7 +46,7 @@ namespace Streetcode.WebApi.InitialData.TimelineItemsSeeder
 
             var entities = data.Select(item => new TimelineItem
             {
-                Date = item.D,
+                Date = DateTime.SpecifyKind(item.D, DateTimeKind.Utc),
                 Title = item.T,
                 Description = item.Desc,
                 StreetcodeId = item.SId,
@@ -58,7 +58,7 @@ namespace Streetcode.WebApi.InitialData.TimelineItemsSeeder
 
         private static DateTime ToUtc(int year, int month = 1, int day = 1)
         {
-            return DateTime.SpecifyKind(new DateTime(year, month, day), DateTimeKind.Utc);
+            return new DateTime(year, month, day);
         }
     }
 }
