@@ -61,9 +61,14 @@ namespace Streetcode.WebApi.InitialData.PersonStreetcodeSeeder
 
         private static DateTime ToUtc(int year, int month, int day)
         {
-            return DateTime.SpecifyKind(
-                 new DateTime(year, month, day),
-                 DateTimeKind.Utc);
+            return new DateTime(
+                year,
+                month,
+                day,
+                0,
+                0,
+                0,
+                DateTimeKind.Utc);
         }
     }
 }
