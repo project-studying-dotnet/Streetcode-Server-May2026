@@ -6,7 +6,7 @@ using Streetcode.WebApi.InitialData.SeederExtensions;
 namespace Streetcode.WebApi.InitialData.SubtitlesSeeder
 {
     [ExcludeFromCodeCoverage]
-    public class SubtitlesSeeder
+    public static class SubtitlesSeeder
     {
         public static async Task FillSeedAsync(
         StreetcodeDbContext context)

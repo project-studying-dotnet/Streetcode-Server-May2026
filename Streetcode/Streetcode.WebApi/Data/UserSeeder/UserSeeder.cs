@@ -17,7 +17,6 @@ namespace Streetcode.WebApi.InitialData.UserSeeder
 
             var adminUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin");
 
-
             if (adminUser == null)
             {
                 var newAdmin = new User

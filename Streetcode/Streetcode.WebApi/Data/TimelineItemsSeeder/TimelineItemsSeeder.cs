@@ -7,7 +7,7 @@ using Streetcode.WebApi.InitialData.SeederExtensions;
 namespace Streetcode.WebApi.InitialData.TimelineItemsSeeder
 {
     [ExcludeFromCodeCoverage]
-    public class TimelineItemsSeeder
+    public static class TimelineItemsSeeder
     {
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)

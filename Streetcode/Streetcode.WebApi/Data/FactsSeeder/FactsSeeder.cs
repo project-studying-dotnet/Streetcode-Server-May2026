@@ -5,7 +5,7 @@ using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.FactsSeeder
 {
-    internal class FactsSeeder
+    internal static class FactsSeeder
     {
         [ExcludeFromCodeCoverage]
         public static async Task FillSeedAsync(

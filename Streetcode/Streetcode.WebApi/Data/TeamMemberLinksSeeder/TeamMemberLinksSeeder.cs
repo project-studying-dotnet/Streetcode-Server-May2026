@@ -7,7 +7,7 @@ using Streetcode.WebApi.InitialData.SeederExtensions;
 namespace Streetcode.WebApi.InitialData.TeamMemberLinksSeeder
 {
     [ExcludeFromCodeCoverage]
-    public class TeamMemberLinksSeeder
+    public static class TeamMemberLinksSeeder
     {
         public static async Task FillSeedAsync(
        StreetcodeDbContext context)

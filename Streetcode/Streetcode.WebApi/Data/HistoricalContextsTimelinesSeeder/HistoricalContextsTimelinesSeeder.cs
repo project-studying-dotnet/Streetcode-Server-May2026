@@ -6,7 +6,7 @@ using Streetcode.WebApi.InitialData.SeederExtensions;
 namespace Streetcode.WebApi.InitialData.HistoricalContextsTimelinesSeeder
 {
     [ExcludeFromCodeCoverage]
-    public class HistoricalContextsTimelinesSeeder
+    public static class HistoricalContextsTimelinesSeeder
     {
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)

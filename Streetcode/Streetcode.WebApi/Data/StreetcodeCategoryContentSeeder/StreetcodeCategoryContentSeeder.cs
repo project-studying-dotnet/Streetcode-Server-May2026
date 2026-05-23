@@ -6,7 +6,7 @@ using Streetcode.WebApi.InitialData.SeederExtensions;
 namespace Streetcode.WebApi.InitialData.StreetcodeCategoryContentSeeder
 {
     [ExcludeFromCodeCoverage]
-    public class StreetcodeCategoryContentSeeder
+    public static class StreetcodeCategoryContentSeeder
     {
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
