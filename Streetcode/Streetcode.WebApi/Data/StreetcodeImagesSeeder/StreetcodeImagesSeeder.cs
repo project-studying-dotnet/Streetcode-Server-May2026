@@ -11,29 +11,19 @@ namespace Streetcode.WebApi.InitialData.StreetcodeImagesSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-            var entities = new List<StreetcodeImage>
-        {
-            new()
+            var data = new[]
+             {
+                new { Img = 1, Sc = 1 },
+                new { Img = 5, Sc = 1 },
+                new { Img = 1, Sc = 2 },
+                new { Img = 23, Sc = 2 }
+             };
+
+            var entities = data.Select(item => new StreetcodeImage
             {
-                ImageId = 1,
-                StreetcodeId = 1,
-            },
-            new ()
-            {
-                ImageId = 5,
-                StreetcodeId = 1,
-            },
-            new ()
-            {
-                ImageId = 1,
-                StreetcodeId = 2,
-            },
-            new ()
-            {
-                ImageId = 23,
-                StreetcodeId = 2,
-            }
-        };
+                ImageId = item.Img,
+                StreetcodeId = item.Sc
+            }).ToList();
 
             await context.StreetcodeImages.SeedIfEmptyAsync(
                 entities,

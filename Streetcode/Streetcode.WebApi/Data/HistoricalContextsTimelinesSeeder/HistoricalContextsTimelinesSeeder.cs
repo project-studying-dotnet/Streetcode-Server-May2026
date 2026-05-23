@@ -11,129 +11,19 @@ namespace Streetcode.WebApi.InitialData.HistoricalContextsTimelinesSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-            var entities = new List<HistoricalContextTimeline>
-        {
-            new()
+            var data = new[]
+              {
+                (3, 1), (2, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7),
+                (4, 8), (4, 9), (5, 10), (5, 11), (6, 12), (6, 13), (6, 14),
+                (6, 15), (6, 16), (6, 17), (6, 18), (7, 19), (7, 20), (7, 21),
+                (7, 22), (7, 23), (7, 24)
+              };
+
+            var entities = data.Select(item => new HistoricalContextTimeline
             {
-                HistoricalContextId = 3,
-                TimelineId = 1
-            },
-            new ()
-            {
-                HistoricalContextId = 2,
-                TimelineId = 2,
-            },
-            new ()
-            {
-                HistoricalContextId = 3,
-                TimelineId = 3
-            },
-            new ()
-            {
-                HistoricalContextId = 3,
-                TimelineId = 4
-            },
-            new ()
-            {
-                HistoricalContextId = 3,
-                TimelineId = 5
-            },
-            new ()
-            {
-                HistoricalContextId = 3,
-                TimelineId = 6
-            },
-            new ()
-            {
-                HistoricalContextId = 3,
-                TimelineId = 7
-            },
-            new ()
-            {
-                HistoricalContextId = 4,
-                TimelineId = 8
-            },
-            new ()
-            {
-                HistoricalContextId = 4,
-                TimelineId = 9
-            },
-            new ()
-            {
-                HistoricalContextId = 5,
-                TimelineId = 10
-            },
-            new ()
-            {
-                HistoricalContextId = 5,
-                TimelineId = 11
-            },
-            new ()
-            {
-                HistoricalContextId = 6,
-                TimelineId = 12
-            },
-            new ()
-            {
-                HistoricalContextId = 6,
-                TimelineId = 13
-            },
-            new ()
-            {
-                HistoricalContextId = 6,
-                TimelineId = 14
-            },
-            new ()
-            {
-                HistoricalContextId = 6,
-                TimelineId = 15
-            },
-            new ()
-            {
-                HistoricalContextId = 6,
-                TimelineId = 16
-            },
-            new ()
-            {
-                HistoricalContextId = 6,
-                TimelineId = 17
-            },
-            new ()
-            {
-                HistoricalContextId = 6,
-                TimelineId = 18
-            },
-            new ()
-            {
-                HistoricalContextId = 7,
-                TimelineId = 19
-            },
-            new ()
-            {
-                HistoricalContextId = 7,
-                TimelineId = 20
-            },
-            new ()
-            {
-                HistoricalContextId = 7,
-                TimelineId = 21
-            },
-            new ()
-            {
-                HistoricalContextId = 7,
-                TimelineId = 22
-            },
-            new ()
-            {
-                HistoricalContextId = 7,
-                TimelineId = 23
-            },
-            new ()
-            {
-                HistoricalContextId = 7,
-                TimelineId = 24
-            }
-        };
+                HistoricalContextId = item.Item1,
+                TimelineId = item.Item2
+            }).ToList();
 
             await context.HistoricalContextsTimelines.SeedIfEmptyAsync(
                 entities,

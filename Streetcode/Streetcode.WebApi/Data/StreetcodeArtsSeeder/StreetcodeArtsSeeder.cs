@@ -11,69 +11,18 @@ namespace Streetcode.WebApi.InitialData.StreetcodeArtsSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-            var entities = new List<StreetcodeArt>
-        {
-            new()
+            var data = new[]
+              {
+                (1, 1, 1), (2, 1, 2), (3, 1, 3), (4, 1, 4), (5, 1, 5), (6, 1, 6),
+                (7, 2, 1), (4, 2, 2), (5, 2, 3), (6, 2, 4)
+              };
+
+            var entities = data.Select(item => new StreetcodeArt
             {
-                ArtId = 1,
-                StreetcodeId = 1,
-                Index = 1,
-            },
-            new ()
-            {
-                ArtId = 2,
-                StreetcodeId = 1,
-                Index = 2,
-            },
-            new ()
-            {
-                ArtId = 3,
-                StreetcodeId = 1,
-                Index = 3,
-            },
-            new ()
-            {
-                ArtId = 4,
-                StreetcodeId = 1,
-                Index = 4,
-            },
-            new ()
-            {
-                ArtId = 5,
-                StreetcodeId = 1,
-                Index = 5,
-            },
-            new ()
-            {
-                ArtId = 6,
-                StreetcodeId = 1,
-                Index = 6,
-            },
-            new ()
-            {
-                ArtId = 7,
-                StreetcodeId = 2,
-                Index = 1,
-            },
-            new ()
-            {
-                ArtId = 4,
-                StreetcodeId = 2,
-                Index = 2,
-            },
-            new ()
-            {
-                ArtId = 5,
-                StreetcodeId = 2,
-                Index = 3,
-            },
-            new ()
-            {
-                ArtId = 6,
-                StreetcodeId = 2,
-                Index = 4,
-            }
-        };
+                ArtId = item.Item1,
+                StreetcodeId = item.Item2,
+                Index = item.Item3
+            }).ToList();
 
             await context.StreetcodeArts.SeedIfEmptyAsync(
                 entities,

@@ -11,41 +11,23 @@ namespace Streetcode.WebApi.InitialData.StreetcodePartnersSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-        var entities = new List<StreetcodePartner>
-        {
-            new()
+            var data = new[]
             {
-                StreetcodeId = 2,
-                PartnerId = 1
-            },
-            new ()
-            {
-                StreetcodeId = 2,
-                PartnerId = 2
-            },
-            new ()
-            {
-                StreetcodeId = 2,
-                PartnerId = 3
-            },
-            new ()
-            {
-                StreetcodeId = 1,
-                PartnerId = 1
-            },
-            new ()
-            {
-                StreetcodeId = 1,
-                PartnerId = 2
-            },
-            new ()
-            {
-                StreetcodeId = 1,
-                PartnerId = 3
-            }
-        };
+                new { Sc = 2, P = 1 },
+                new { Sc = 2, P = 2 },
+                new { Sc = 2, P = 3 },
+                new { Sc = 1, P = 1 },
+                new { Sc = 1, P = 2 },
+                new { Sc = 1, P = 3 }
+            };
 
-        await context.StreetcodePartners.SeedIfEmptyAsync(
+            var entities = data.Select(item => new StreetcodePartner
+            {
+                StreetcodeId = item.Sc,
+                PartnerId = item.P
+            }).ToList();
+
+            await context.StreetcodePartners.SeedIfEmptyAsync(
             entities,
             context);
         }

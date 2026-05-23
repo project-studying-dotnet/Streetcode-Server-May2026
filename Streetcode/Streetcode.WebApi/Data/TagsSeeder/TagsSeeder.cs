@@ -11,49 +11,24 @@ namespace Streetcode.WebApi.InitialData.TagsSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-            var entities = new List<Tag>
-        {
-            new()
+            var titles = new[]
             {
-                Title = "writer"
-            },
-            new ()
+                "writer",
+                "artist",
+                "composer",
+                "victory",
+                "Наукова школа",
+                "Історія",
+                "Політика",
+                "Активіст",
+                "Борці за незалежність",
+                "Герої"
+            };
+
+            var entities = titles.Select(t => new Tag
             {
-                Title = "artist"
-            },
-            new ()
-            {
-                Title = "composer"
-            },
-            new ()
-            {
-                Title = "victory"
-            },
-            new ()
-            {
-                Title = "Наукова школа"
-            },
-            new ()
-            {
-                Title = "Історія"
-            },
-            new ()
-            {
-                Title = "Політика"
-            },
-            new ()
-            {
-                Title = "Активіст",
-            },
-            new ()
-            {
-                Title = "Борці за незалежність",
-            },
-            new ()
-            {
-                Title = "Герої",
-            }
-        };
+                Title = t
+            }).ToList();
 
             await context.Tags.SeedIfEmptyAsync(
                 entities,

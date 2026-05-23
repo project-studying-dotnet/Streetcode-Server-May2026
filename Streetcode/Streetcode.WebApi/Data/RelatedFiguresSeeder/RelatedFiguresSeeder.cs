@@ -11,19 +11,17 @@ namespace Streetcode.WebApi.InitialData.RelatedFiguresSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-            var entities = new List<RelatedFigure>
-        {
-            new()
+            var data = new[]
+              {
+                new { Observer = 2, Target = 1 },
+                new { Observer = 1, Target = 2 }
+              };
+
+            var entities = data.Select(item => new RelatedFigure
             {
-                ObserverId = 2,
-                TargetId = 1
-            },
-            new ()
-            {
-                ObserverId = 1,
-                TargetId = 2
-            }
-        };
+                ObserverId = item.Observer,
+                TargetId = item.Target
+            }).ToList();
 
             await context.RelatedFigures.SeedIfEmptyAsync(
                 entities,

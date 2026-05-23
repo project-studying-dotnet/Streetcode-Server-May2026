@@ -11,39 +11,23 @@ namespace Streetcode.WebApi.InitialData.HistoricalContextsSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-        var entities = new List<HistoricalContext>
-        {
-            new()
+            var titles = new[]
             {
-                Title = "Дитинство"
-            },
-            new HistoricalContext
-            {
-                Title = "Студентство"
-            },
-            new HistoricalContext
-            {
-                Title = "Життя в Петербурзі"
-            },
-            new HistoricalContext
-            {
-                Title = "Незалежна Україна"
-            },
-            new HistoricalContext
-            {
-                Title = "Революція гідності"
-            },
-            new HistoricalContext
-            {
-                Title = "Збройна агресія Росії"
-            },
-            new HistoricalContext
-            {
-                Title = "Повномасштабне вторгнення Росії"
-            }
-        };
+                "Дитинство",
+                "Студентство",
+                "Життя в Петербурзі",
+                "Незалежна Україна",
+                "Революція гідності",
+                "Збройна агресія Росії",
+                "Повномасштабне вторгнення Росії"
+            };
 
-        await context.HistoricalContexts.SeedIfEmptyAsync(
+            var entities = titles.Select(title => new HistoricalContext
+            {
+                Title = title
+            }).ToList();
+
+            await context.HistoricalContexts.SeedIfEmptyAsync(
             entities,
             context);
         }

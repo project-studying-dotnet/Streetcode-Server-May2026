@@ -12,29 +12,21 @@ namespace Streetcode.WebApi.InitialData.PartnerSourceLinksSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-        var entities = new List<PartnerSourceLink>
-        {
-            new()
+            var data = new[]
             {
-                LogoType = LogoType.Twitter,
-                TargetUrl = "https://twitter.com/SoftServeInc",
-                PartnerId = 1
-            },
-            new ()
-            {
-                LogoType = LogoType.Instagram,
-                TargetUrl = "https://www.instagram.com/softserve_people/",
-                PartnerId = 1
-            },
-            new ()
-            {
-                LogoType = LogoType.Facebook,
-                TargetUrl = "https://www.facebook.com/SoftServeCompany",
-                PartnerId = 1
-            }
-        };
+                new { Type = LogoType.Twitter, Url = "https://twitter.com/SoftServeInc", PId = 1 },
+                new { Type = LogoType.Instagram, Url = "https://www.instagram.com/softserve_people/", PId = 1 },
+                new { Type = LogoType.Facebook, Url = "https://www.facebook.com/SoftServeCompany", PId = 1 }
+            };
 
-        await context.PartnerSourceLinks.SeedIfEmptyAsync(
+            var entities = data.Select(item => new PartnerSourceLink
+            {
+                LogoType = item.Type,
+                TargetUrl = item.Url,
+                PartnerId = item.PId
+            }).ToList();
+
+            await context.PartnerSourceLinks.SeedIfEmptyAsync(
             entities,
             context);
         }

@@ -11,26 +11,20 @@ namespace Streetcode.WebApi.InitialData.TeamMemberPositionSeeder
         public static async Task FillSeedAsync(
         StreetcodeDbContext context)
         {
-        var entities = new List<TeamMemberPositions>
-        {
-            new()
+            var data = new[]
             {
-                PositionsId = 1,
-                TeamMemberId = 1
-            },
-            new ()
-            {
-                PositionsId = 1,
-                TeamMemberId = 2
-            },
-            new ()
-            {
-                PositionsId = 1,
-                TeamMemberId = 3
-            }
-        };
+                new { Pos = 1, Member = 1 },
+                new { Pos = 1, Member = 2 },
+                new { Pos = 1, Member = 3 }
+            };
 
-        await context.TeamMemberPosition.SeedIfEmptyAsync(
+            var entities = data.Select(item => new TeamMemberPositions
+            {
+                PositionsId = item.Pos,
+                TeamMemberId = item.Member
+            }).ToList();
+
+            await context.TeamMemberPosition.SeedIfEmptyAsync(
             entities,
             context);
         }

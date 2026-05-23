@@ -9,71 +9,29 @@ namespace Streetcode.WebApi.InitialData.ArtsSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-            var entities = new List<Art>
-        {
-            new()
+        var data = new[]
             {
-                ImageId = 19,
-                Title = "Анатолій Федірко",
-                Description = "Анатолій Федірко, «Український супрематичний політичний діяч Михайло Грушевський», 2019-2020 роки."
-            },
-            new()
-            {
-                ImageId = 20,
-                Title = "Анатолій Федірко",
-                Description = "Анатолій Федірко, «Український супрематичний політичний діяч Михайло Грушевський», 2019-2020 роки."
-            },
-            new()
-            {
-                ImageId = 21,
-                Title = "Назар Дубів",
-                Description = "Назар Дубів опублікував серію малюнків, у яких перетворив класиків української літератури та політичних діячів на сучасних модників"
-            },
-            new ()
-            {
-                ImageId = 22
-            },
-            new ()
-            {
-                ImageId = 22,
-                Title = "Козаки на орбіті",
-                Description = "«Козаки на орбіті» поєднує не тільки тему козаків, а й апелює до космічної тематики."
-            },
-            new ()
-            {
-                ImageId = 21,
-                Title = "Січових стрільців",
-                Description = "На вулиці Січових стрільців, 75 закінчили малювати мурал Михайла Грушевського на місці малюнка будинку з лелекою."
-            },
-            new ()
-            {
-                ImageId = 16,
-                Title = "Січових стрільців",
-                Description = "Some Description"
-            },
-            new ()
-            {
-                ImageId = 17,
-                Title = "Січових стрільців",
-                Description = "Some Description"
-            },
-            new ()
-            {
-                ImageId = 18,
-                Title = "Січових стрільців",
-                Description = "Some Description"
-            },
-            new ()
-            {
-                ImageId = 19,
-                Title = "Січових стрільців",
-                Description = "Some Description"
-            }
-        };
+                new { Id = 19, T = "Анатолій Федірко", D = "Анатолій Федірко, «Український супрематичний політичний діяч Михайло Грушевський», 2019-2020 роки." },
+                new { Id = 20, T = "Анатолій Федірко", D = "Анатолій Федірко, «Український супрематичний політичний діяч Михайло Грушевський», 2019-2020 роки." },
+                new { Id = 21, T = "Назар Дубів", D = "Назар Дубів опублікував серію малюнків, у яких перетворив класиків української літератури та політичних діячів на сучасних модників" },
+                new { Id = 22, T = "Козаки на орбіті", D = "«Козаки на орбіті» поєднує не тільки тему козаків, а й апелює до космічної тематики." },
+                new { Id = 21, T = "Січових стрільців", D = "На вулиці Січових стрільців, 75 закінчили малювати мурал Михайла Грушевського на місці малюнка будинку з лелекою." },
+                new { Id = 16, T = "Січових стрільців", D = "Some Description" },
+                new { Id = 17, T = "Січових стрільців", D = "Some Description" },
+                new { Id = 18, T = "Січових стрільців", D = "Some Description" },
+                new { Id = 19, T = "Січових стрільців", D = "Some Description" }
+            };
 
-            await context.Arts.SeedIfEmptyAsync(
-                entities,
-                context);
+        var entities = data.Select(item => new Art
+        {
+            ImageId = item.Id,
+            Title = item.T,
+            Description = item.D
+        }).ToList();
+
+        await context.Arts.SeedIfEmptyAsync(
+            entities,
+            context);
         }
     }
 }

@@ -11,57 +11,17 @@ namespace Streetcode.WebApi.InitialData.StreetcodeTagIndexSeeder
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {
-            var entities = new List<StreetcodeTagIndex>
-        {
-            new()
+            var data = new[]
+              {
+                (1, 1), (1, 2), (2, 1), (4, 2), (7, 2), (8, 2), (9, 2), (10, 2)
+              };
+
+            var entities = data.Select(item => new StreetcodeTagIndex
             {
-                TagId = 1,
-                StreetcodeId = 1,
-                IsVisible = true,
-            },
-            new ()
-            {
-                TagId = 1,
-                StreetcodeId = 2,
-                IsVisible = true,
-            },
-            new ()
-            {
-                TagId = 2,
-                StreetcodeId = 1,
-                IsVisible = true,
-            },
-            new ()
-            {
-                TagId = 4,
-                StreetcodeId = 2,
-                IsVisible = true,
-            },
-            new ()
-            {
-                TagId = 7,
-                StreetcodeId = 2,
-                IsVisible = true,
-            },
-            new ()
-            {
-                TagId = 8,
-                StreetcodeId = 2,
-                IsVisible = true,
-            },
-            new ()
-            {
-                TagId = 9,
-                StreetcodeId = 2,
-                IsVisible = true,
-            },
-            new ()
-            {
-                TagId = 10,
-                StreetcodeId = 2,
-                IsVisible = true,
-            }
-        };
+                TagId = item.Item1,
+                StreetcodeId = item.Item2,
+                IsVisible = true
+            }).ToList();
 
             await context.StreetcodeTagIndices.SeedIfEmptyAsync(
                 entities,

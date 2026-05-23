@@ -11,24 +11,18 @@ namespace Streetcode.WebApi.InitialData.SourceLinkCategorySeeder
         public static async Task FillSeedAsync(
        StreetcodeDbContext context)
         {
-            var entities = new List<SourceLinkCategory>
-        {
-            new()
+            var data = new[]
             {
-                Title = "Книги",
-                ImageId = 9,
-            },
-            new ()
+                new { T = "Книги", Img = 9 },
+                new { T = "Фільми", Img = 10 },
+                new { T = "Цитати", Img = 11 }
+            };
+
+            var entities = data.Select(item => new SourceLinkCategory
             {
-                Title = "Фільми",
-                ImageId = 10,
-            },
-            new ()
-            {
-                Title = "Цитати",
-                ImageId = 11,
-            }
-        };
+                Title = item.T,
+                ImageId = item.Img
+            }).ToList();
 
             await context.SourceLinks.SeedIfEmptyAsync(
                 entities,
