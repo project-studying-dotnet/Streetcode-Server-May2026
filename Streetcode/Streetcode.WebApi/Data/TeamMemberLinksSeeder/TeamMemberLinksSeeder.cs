@@ -1,10 +1,12 @@
-﻿using Streetcode.DAL.Entities.Team;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.Team;
 using Streetcode.DAL.Enums;
-using Streetcode.WebApi.InitialData.SeederExtensions;
 using Streetcode.DAL.Persistence;
+using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.TeamMemberLinksSeeder
 {
+    [ExcludeFromCodeCoverage]
     public class TeamMemberLinksSeeder
     {
         public static async Task FillSeedAsync(

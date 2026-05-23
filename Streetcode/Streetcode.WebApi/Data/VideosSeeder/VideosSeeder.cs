@@ -1,9 +1,11 @@
-﻿using Streetcode.DAL.Entities.Media;
-using Streetcode.WebApi.InitialData.SeederExtensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.Media;
 using Streetcode.DAL.Persistence;
+using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.VideosSeeder
 {
+    [ExcludeFromCodeCoverage]
     public class VideosSeeder
     {
         public static async Task FillSeedAsync(

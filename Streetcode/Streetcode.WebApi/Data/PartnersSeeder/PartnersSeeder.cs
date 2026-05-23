@@ -1,9 +1,11 @@
-﻿using Streetcode.DAL.Entities.Partners;
-using Streetcode.WebApi.InitialData.SeederExtensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Persistence;
+using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.PartnersSeeder
 {
+    [ExcludeFromCodeCoverage]
     public class PartnersSeeder
     {
         public static async Task FillSeedAsync(

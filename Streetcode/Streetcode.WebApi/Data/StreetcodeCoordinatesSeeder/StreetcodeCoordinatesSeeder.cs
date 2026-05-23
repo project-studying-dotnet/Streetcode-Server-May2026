@@ -1,9 +1,11 @@
-﻿using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
-using Streetcode.WebApi.InitialData.SeederExtensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
 using Streetcode.DAL.Persistence;
+using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.StreetcodeCoordinatesSeeder
 {
+    [ExcludeFromCodeCoverage]
     public class StreetcodeCoordinatesSeeder
     {
         public static async Task FillSeedAsync(

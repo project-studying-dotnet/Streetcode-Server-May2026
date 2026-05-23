@@ -1,10 +1,12 @@
-﻿using Streetcode.DAL.Entities.Timeline;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.Timeline;
 using Streetcode.DAL.Enums;
-using Streetcode.WebApi.InitialData.SeederExtensions;
 using Streetcode.DAL.Persistence;
+using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.TimelineItemsSeeder
 {
+    [ExcludeFromCodeCoverage]
     public class TimelineItemsSeeder
     {
         public static async Task FillSeedAsync(

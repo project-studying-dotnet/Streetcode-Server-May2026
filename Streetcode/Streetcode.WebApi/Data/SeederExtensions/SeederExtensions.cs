@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Streetcode.DAL.Persistence;
 
 namespace Streetcode.WebApi.InitialData.SeederExtensions
 {
+    [ExcludeFromCodeCoverage]
     public static class SeederExtensions
     {
         public static async Task SeedIfEmptyAsync<T>(

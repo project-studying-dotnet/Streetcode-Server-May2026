@@ -39,8 +39,6 @@ using Streetcode.WebApi.InitialData.TransactionLinkSeeder;
 using Streetcode.WebApi.InitialData.UserSeeder;
 using Streetcode.WebApi.InitialData.VideosSeeder;
 
-
-
 namespace Streetcode.WebApi.Extensions
 {
     [ExcludeFromCodeCoverage]

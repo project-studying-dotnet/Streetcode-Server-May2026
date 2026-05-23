@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 using Streetcode.BLL.Services.BlobStorageService;
 using Streetcode.DAL.Persistence;
 
 namespace Streetcode.WebApi.InitialData.SeedingHelper
 {
+    [ExcludeFromCodeCoverage]
     public static class SeedingHelper
     {
         public static async Task SeedFilesAsync<T>(

@@ -1,9 +1,11 @@
-﻿using Streetcode.DAL.Entities.Timeline;
-using Streetcode.WebApi.InitialData.SeederExtensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.Timeline;
 using Streetcode.DAL.Persistence;
+using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.HistoricalContextsSeeder
 {
+    [ExcludeFromCodeCoverage]
     public class HistoricalContextsSeeder
     {
         public static async Task FillSeedAsync(

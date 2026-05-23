@@ -1,4 +1,5 @@
-﻿using Streetcode.DAL.Entities.Streetcode.TextContent;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.Streetcode.TextContent;
 using Streetcode.DAL.Persistence;
 using Streetcode.WebApi.InitialData.SeederExtensions;
 
@@ -6,6 +7,7 @@ namespace Streetcode.WebApi.InitialData.FactsSeeder
 {
     internal class FactsSeeder
     {
+        [ExcludeFromCodeCoverage]
         public static async Task FillSeedAsync(
      StreetcodeDbContext context)
         {

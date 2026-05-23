@@ -1,9 +1,11 @@
-﻿using Streetcode.DAL.Entities.AdditionalContent;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.AdditionalContent;
 using Streetcode.DAL.Persistence;
 using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.SubtitlesSeeder
 {
+    [ExcludeFromCodeCoverage]
     public class SubtitlesSeeder
     {
         public static async Task FillSeedAsync(

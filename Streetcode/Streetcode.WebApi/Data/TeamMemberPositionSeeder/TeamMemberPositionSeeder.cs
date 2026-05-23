@@ -1,9 +1,11 @@
-﻿using Streetcode.DAL.Entities.Team;
-using Streetcode.WebApi.InitialData.SeederExtensions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Entities.Team;
 using Streetcode.DAL.Persistence;
+using Streetcode.WebApi.InitialData.SeederExtensions;
 
 namespace Streetcode.WebApi.InitialData.TeamMemberPositionSeeder
 {
+    [ExcludeFromCodeCoverage]
     public class TeamMemberPositionSeeder
     {
         public static async Task FillSeedAsync(
