@@ -23,7 +23,11 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete
 
         public async Task<Result<RelatedTermDTO>> Handle(DeleteRelatedTermCommand request, CancellationToken cancellationToken)
         {
-            var relatedTerm = await _repository.RelatedTermRepository.GetFirstOrDefaultAsync(rt => rt.Word.ToLower().Equals(request.word.ToLower()));
+            var word = request.word?.ToLower();
+
+            var relatedTerm = await _repository.RelatedTermRepository.GetFirstOrDefaultAsync(
+                predicate: rt => rt.Word != null && rt.Word.ToLower().Equals(word),
+                cancellationToken: cancellationToken);
 
             if (relatedTerm is null)
             {
@@ -34,7 +38,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete
 
             _repository.RelatedTermRepository.Delete(relatedTerm);
 
-            var resultIsSuccess = await _repository.SaveChangesAsync() > 0;
+            var resultIsSuccess = await _repository.SaveChangesAsync(cancellationToken) > 0;
             var relatedTermDto = _mapper.Map<RelatedTermDTO>(relatedTerm);
             if(resultIsSuccess && relatedTermDto != null)
             {
