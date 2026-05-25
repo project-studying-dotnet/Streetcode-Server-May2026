@@ -10,15 +10,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Coordinate.Delete;
 
 public class DeleteCoordinateHandlerTests
 {
-    private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-    private readonly DeleteCoordinateHandler handler;
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly DeleteCoordinateHandler _handler;
 
     public DeleteCoordinateHandlerTests()
     {
-        repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
 
-        handler = new DeleteCoordinateHandler(
-            repositoryWrapperMock.Object);
+        _handler = new DeleteCoordinateHandler(
+            _repositoryWrapperMock.Object);
     }
 
     [Fact]
@@ -26,13 +26,13 @@ public class DeleteCoordinateHandlerTests
     {
         var command = new DeleteCoordinateCommand(1);
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository.GetFirstOrDefaultAsync(
                 It.IsAny<System.Linq.Expressions.Expression<Func<StreetcodeCoordinate, bool>>>(),
                 null))
             .ReturnsAsync((StreetcodeCoordinate?)null);
 
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(
@@ -45,20 +45,20 @@ public class DeleteCoordinateHandlerTests
         var command = new DeleteCoordinateCommand(1);
         var coordinate = new StreetcodeCoordinate { Id = command.Id };
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository.GetFirstOrDefaultAsync(
                 It.IsAny<System.Linq.Expressions.Expression<Func<StreetcodeCoordinate, bool>>>(),
                 null))
             .ReturnsAsync(coordinate);
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository.Delete(coordinate));
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.SaveChangesAsync())
             .ReturnsAsync(0);
 
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.FailedToDeleteCoordinate);

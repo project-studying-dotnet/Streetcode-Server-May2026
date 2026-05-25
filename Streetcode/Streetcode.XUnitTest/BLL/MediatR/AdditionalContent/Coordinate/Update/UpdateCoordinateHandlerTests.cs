@@ -41,7 +41,7 @@ public class UpdateCoordinateHandlerTests
         _mapperMock
             .Setup(m => m.Map<StreetcodeCoordinate>(
                 command.StreetcodeCoordinate))
-            .Returns((StreetcodeCoordinate?)null);
+            .Returns((StreetcodeCoordinate)null!);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 

@@ -10,18 +10,18 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Coordinate.Create;
 
 public class CreateCoordinateHandlerTests
 {
-    private readonly Mock<IMapper> mapperMock;
-    private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-    private readonly CreateCoordinateHandler handler;
+    private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly CreateCoordinateHandler _handler;
 
     public CreateCoordinateHandlerTests()
     {
-        mapperMock = new Mock<IMapper>();
-        repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _mapperMock = new Mock<IMapper>();
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
 
-        handler = new CreateCoordinateHandler(
-            repositoryWrapperMock.Object,
-            mapperMock.Object);
+        _handler = new CreateCoordinateHandler(
+            _repositoryWrapperMock.Object,
+            _mapperMock.Object);
     }
 
     [Fact]
@@ -29,12 +29,12 @@ public class CreateCoordinateHandlerTests
     {
         var command = new CreateCoordinateCommand(null!);
 
-        mapperMock
+        _mapperMock
             .Setup(m => m.Map<DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate>(
                 command.StreetcodeCoordinate))
-            .Returns((DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate?)null);
+            .Returns((DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate)null!);
 
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.CannotConvertNullToStreetcodeCoordinate);
@@ -48,19 +48,19 @@ public class CreateCoordinateHandlerTests
         var coordinate =
             new DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate();
 
-        mapperMock
+        _mapperMock
             .Setup(m => m.Map<DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate>(
                 command.StreetcodeCoordinate))
             .Returns(coordinate);
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository.Create(coordinate));
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.SaveChangesAsync())
             .ReturnsAsync(0);
 
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.FailedToCreateStreetcodeCoordinate);
