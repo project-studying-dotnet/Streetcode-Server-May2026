@@ -16,12 +16,12 @@ public class CreateCoordinateHandlerTests
 
     public CreateCoordinateHandlerTests()
     {
-        this.mapperMock = new Mock<IMapper>();
-        this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        mapperMock = new Mock<IMapper>();
+        repositoryWrapperMock = new Mock<IRepositoryWrapper>();
 
-        this.handler = new CreateCoordinateHandler(
-            this.repositoryWrapperMock.Object,
-            this.mapperMock.Object);
+        handler = new CreateCoordinateHandler(
+            repositoryWrapperMock.Object,
+            mapperMock.Object);
     }
 
     [Fact]
@@ -29,12 +29,12 @@ public class CreateCoordinateHandlerTests
     {
         var command = new CreateCoordinateCommand(null!);
 
-        this.mapperMock
+        mapperMock
             .Setup(m => m.Map<DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate>(
                 command.StreetcodeCoordinate))
             .Returns((DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate?)null);
 
-        var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.CannotConvertNullToStreetcodeCoordinate);
@@ -48,19 +48,19 @@ public class CreateCoordinateHandlerTests
         var coordinate =
             new DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate();
 
-        this.mapperMock
+        mapperMock
             .Setup(m => m.Map<DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate>(
                 command.StreetcodeCoordinate))
             .Returns(coordinate);
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository.Create(coordinate));
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.SaveChangesAsync())
             .ReturnsAsync(0);
 
-        var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.FailedToCreateStreetcodeCoordinate);
