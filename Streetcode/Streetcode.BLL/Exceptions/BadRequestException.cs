@@ -1,5 +1,8 @@
-﻿namespace Streetcode.BLL.Exceptions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Streetcode.BLL.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class BadRequestException : BaseException
     {
         public BadRequestException(string message)

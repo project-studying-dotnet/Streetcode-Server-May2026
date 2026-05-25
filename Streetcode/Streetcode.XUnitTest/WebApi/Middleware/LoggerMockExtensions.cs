@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Streetcode.XUnitTest.WebApi.Middleware
 {
     public static class LoggerMockExtensions
     {
+        [SuppressMessage("Performance", "CA1873:Do not directly use a method that returns a value as an argument to a logger", Justification = "Necessary for verifying log message content in unit tests.")]
         public static void VerifyLog<T>(
             this Mock<ILogger<T>> logger,
             string expectedMessage,
