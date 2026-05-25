@@ -13,24 +13,24 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Coordinate.Update;
 
 public class UpdateCoordinateHandlerTests
 {
-    private readonly Mock<IMapper> mapperMock;
-    private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-    private readonly Mock<IStreetcodeCoordinateRepository> coordinateRepositoryMock;
-    private readonly UpdateCoordinateHandler handler;
+    private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly Mock<IStreetcodeCoordinateRepository> _coordinateRepositoryMock;
+    private readonly UpdateCoordinateHandler _handler;
 
     public UpdateCoordinateHandlerTests()
     {
-        mapperMock = new Mock<IMapper>();
-        repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-        coordinateRepositoryMock = new Mock<IStreetcodeCoordinateRepository>();
+        _mapperMock = new Mock<IMapper>();
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _coordinateRepositoryMock = new Mock<IStreetcodeCoordinateRepository>();
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository)
-            .Returns(coordinateRepositoryMock.Object);
+            .Returns(_coordinateRepositoryMock.Object);
 
-        handler = new UpdateCoordinateHandler(
-            repositoryWrapperMock.Object,
-            mapperMock.Object);
+        _handler = new UpdateCoordinateHandler(
+            _repositoryWrapperMock.Object,
+            _mapperMock.Object);
     }
 
     [Fact]
@@ -38,12 +38,12 @@ public class UpdateCoordinateHandlerTests
     {
         var command = new UpdateCoordinateCommand(null!);
 
-        mapperMock
+        _mapperMock
             .Setup(m => m.Map<StreetcodeCoordinate>(
                 command.StreetcodeCoordinate))
             .Returns((StreetcodeCoordinate?)null);
 
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should()
@@ -57,25 +57,25 @@ public class UpdateCoordinateHandlerTests
         var command = new UpdateCoordinateCommand(coordinateDto);
         var coordinate = new StreetcodeCoordinate();
 
-        mapperMock
+        _mapperMock
             .Setup(m => m.Map<StreetcodeCoordinate>(coordinateDto))
             .Returns(coordinate);
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.SaveChangesAsync())
             .ReturnsAsync(0);
 
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should()
             .Be(ErrorMessages.FailedToUpdateStreetcodeCoordinate);
 
-        coordinateRepositoryMock.Verify(
+        _coordinateRepositoryMock.Verify(
             r => r.Update(coordinate),
             Times.Once);
 
-        repositoryWrapperMock.Verify(
+        _repositoryWrapperMock.Verify(
             r => r.SaveChangesAsync(),
             Times.Once);
     }
@@ -87,23 +87,23 @@ public class UpdateCoordinateHandlerTests
         var command = new UpdateCoordinateCommand(coordinateDto);
         var coordinate = new StreetcodeCoordinate();
 
-        mapperMock
+        _mapperMock
             .Setup(m => m.Map<StreetcodeCoordinate>(coordinateDto))
             .Returns(coordinate);
 
-        repositoryWrapperMock
+        _repositoryWrapperMock
             .Setup(r => r.SaveChangesAsync())
             .ReturnsAsync(1);
 
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
 
-        coordinateRepositoryMock.Verify(
+        _coordinateRepositoryMock.Verify(
             r => r.Update(coordinate),
             Times.Once);
 
-        repositoryWrapperMock.Verify(
+        _repositoryWrapperMock.Verify(
             r => r.SaveChangesAsync(),
             Times.Once);
     }

@@ -9,7 +9,6 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 using Streetcode.BLL.Resources;
 
-
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
 {
     public class CreateNewsHandlerTests
