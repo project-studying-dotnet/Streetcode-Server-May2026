@@ -22,13 +22,20 @@ public class GetBaseAudioHandler : IRequestHandler<GetBaseAudioQuery, Result<Mem
 
     public async Task<Result<MemoryStream>> Handle(GetBaseAudioQuery request, CancellationToken cancellationToken)
     {
-        var audio = await _repositoryWrapper.AudioRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id);
+        var audio = await _repositoryWrapper.AudioRepository.GetFirstOrDefaultAsync(
+            predicate: a => a.Id == request.Id,
+            cancellationToken: cancellationToken);
 
         if (audio is null)
         {
             string errorMsg = string.Format(ErrorMessages.CannotFindAudioByCategoryId, request.Id);
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
+        }
+
+        if (audio.BlobName is null)
+        {
+            return Result.Fail(new FluentResults.Error(string.Format(ErrorMessages.CannotFindAudioByCategoryId, request.Id)));
         }
 
         return _blobStorage.FindFileInStorageAsMemoryStream(audio.BlobName);

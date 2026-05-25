@@ -31,7 +31,9 @@ public class GetAudioByStreetcodeIdQueryHandler : IRequestHandler<GetAudioByStre
     {
         var streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
             s => s.Id == request.StreetcodeId,
-            include: q => q.Include(s => s.Audio) !);
+            include: q => q.Include(s => s.Audio) !,
+            cancellationToken);
+
         if (streetcode == null)
         {
             string errorMsg = string.Format(ErrorMessages.CannotFindAudioByStreetcodeId, request.StreetcodeId);

@@ -26,7 +26,9 @@ public class GetAudioByIdHandler : IRequestHandler<GetAudioByIdQuery, Result<Aud
 
     public async Task<Result<AudioDTO>> Handle(GetAudioByIdQuery request, CancellationToken cancellationToken)
     {
-        var audio = await _repositoryWrapper.AudioRepository.GetFirstOrDefaultAsync(f => f.Id == request.Id);
+        var audio = await _repositoryWrapper.AudioRepository.GetFirstOrDefaultAsync(
+            predicate: f => f.Id == request.Id,
+            cancellationToken: cancellationToken);
 
         if (audio is null)
         {
