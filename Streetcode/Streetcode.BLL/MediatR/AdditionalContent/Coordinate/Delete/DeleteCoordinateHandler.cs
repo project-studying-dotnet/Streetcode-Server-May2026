@@ -20,7 +20,7 @@ public class DeleteCoordinateHandler : IRequestHandler<DeleteCoordinateCommand, 
 
         if (streetcodeCoordinate is null)
         {
-            return Result.Fail(new Error(ErrorMessages.CannotFindCoordinateByCategoryId));
+            return Result.Fail(new Error(string.Format(ErrorMessages.CannotFindCoordinateByCategoryId, request.Id)));
         }
 
         _repositoryWrapper.StreetcodeCoordinateRepository.Delete(streetcodeCoordinate);
