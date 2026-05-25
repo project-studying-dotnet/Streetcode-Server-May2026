@@ -15,10 +15,10 @@ public class DeleteCoordinateHandlerTests
 
     public DeleteCoordinateHandlerTests()
     {
-        this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        repositoryWrapperMock = new Mock<IRepositoryWrapper>();
 
-        this.handler = new DeleteCoordinateHandler(
-            this.repositoryWrapperMock.Object);
+        handler = new DeleteCoordinateHandler(
+            repositoryWrapperMock.Object);
     }
 
     [Fact]
@@ -26,13 +26,13 @@ public class DeleteCoordinateHandlerTests
     {
         var command = new DeleteCoordinateCommand(1);
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository.GetFirstOrDefaultAsync(
                 It.IsAny<System.Linq.Expressions.Expression<Func<StreetcodeCoordinate, bool>>>(),
                 null))
             .ReturnsAsync((StreetcodeCoordinate?)null);
 
-        var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(
@@ -45,20 +45,20 @@ public class DeleteCoordinateHandlerTests
         var command = new DeleteCoordinateCommand(1);
         var coordinate = new StreetcodeCoordinate { Id = command.Id };
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository.GetFirstOrDefaultAsync(
                 It.IsAny<System.Linq.Expressions.Expression<Func<StreetcodeCoordinate, bool>>>(),
                 null))
             .ReturnsAsync(coordinate);
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository.Delete(coordinate));
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.SaveChangesAsync())
             .ReturnsAsync(0);
 
-        var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.FailedToDeleteCoordinate);
