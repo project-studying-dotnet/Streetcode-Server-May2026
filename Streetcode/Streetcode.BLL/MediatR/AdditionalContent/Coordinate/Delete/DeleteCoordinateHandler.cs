@@ -16,7 +16,10 @@ public class DeleteCoordinateHandler : IRequestHandler<DeleteCoordinateCommand, 
 
     public async Task<Result<Unit>> Handle(DeleteCoordinateCommand request, CancellationToken cancellationToken)
     {
-        var streetcodeCoordinate = await _repositoryWrapper.StreetcodeCoordinateRepository.GetFirstOrDefaultAsync(f => f.Id == request.Id);
+        var streetcodeCoordinate = await _repositoryWrapper.StreetcodeCoordinateRepository
+            .GetFirstOrDefaultAsync(
+                predicate: f => f.Id == request.Id,
+                cancellationToken: cancellationToken);
 
         if (streetcodeCoordinate is null)
         {
@@ -25,7 +28,7 @@ public class DeleteCoordinateHandler : IRequestHandler<DeleteCoordinateCommand, 
 
         _repositoryWrapper.StreetcodeCoordinateRepository.Delete(streetcodeCoordinate);
 
-        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
         return resultIsSuccess ? Result.Ok(Unit.Value) : Result.Fail(new Error(ErrorMessages.FailedToDeleteCoordinate));
     }
 }

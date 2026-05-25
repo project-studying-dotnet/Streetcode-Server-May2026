@@ -28,7 +28,7 @@ public class UpdateCoordinateHandler : IRequestHandler<UpdateCoordinateCommand, 
 
         _repositoryWrapper.StreetcodeCoordinateRepository.Update(streetcodeCoordinate);
 
-        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
         return resultIsSuccess ? Result.Ok(Unit.Value) : Result.Fail(new Error(ErrorMessages.FailedToUpdateStreetcodeCoordinate));
     }
 }
