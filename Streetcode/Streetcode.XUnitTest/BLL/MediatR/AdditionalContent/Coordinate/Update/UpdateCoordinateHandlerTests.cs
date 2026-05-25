@@ -20,17 +20,17 @@ public class UpdateCoordinateHandlerTests
 
     public UpdateCoordinateHandlerTests()
     {
-        this.mapperMock = new Mock<IMapper>();
-        this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-        this.coordinateRepositoryMock = new Mock<IStreetcodeCoordinateRepository>();
+        mapperMock = new Mock<IMapper>();
+        repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        coordinateRepositoryMock = new Mock<IStreetcodeCoordinateRepository>();
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.StreetcodeCoordinateRepository)
-            .Returns(this.coordinateRepositoryMock.Object);
+            .Returns(coordinateRepositoryMock.Object);
 
-        this.handler = new UpdateCoordinateHandler(
-            this.repositoryWrapperMock.Object,
-            this.mapperMock.Object);
+        handler = new UpdateCoordinateHandler(
+            repositoryWrapperMock.Object,
+            mapperMock.Object);
     }
 
     [Fact]
@@ -38,12 +38,12 @@ public class UpdateCoordinateHandlerTests
     {
         var command = new UpdateCoordinateCommand(null!);
 
-        this.mapperMock
+        mapperMock
             .Setup(m => m.Map<StreetcodeCoordinate>(
                 command.StreetcodeCoordinate))
             .Returns((StreetcodeCoordinate?)null);
 
-        var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should()
@@ -57,25 +57,25 @@ public class UpdateCoordinateHandlerTests
         var command = new UpdateCoordinateCommand(coordinateDto);
         var coordinate = new StreetcodeCoordinate();
 
-        this.mapperMock
+        mapperMock
             .Setup(m => m.Map<StreetcodeCoordinate>(coordinateDto))
             .Returns(coordinate);
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.SaveChangesAsync())
             .ReturnsAsync(0);
 
-        var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should()
             .Be(ErrorMessages.FailedToUpdateStreetcodeCoordinate);
 
-        this.coordinateRepositoryMock.Verify(
+        coordinateRepositoryMock.Verify(
             r => r.Update(coordinate),
             Times.Once);
 
-        this.repositoryWrapperMock.Verify(
+        repositoryWrapperMock.Verify(
             r => r.SaveChangesAsync(),
             Times.Once);
     }
@@ -87,23 +87,23 @@ public class UpdateCoordinateHandlerTests
         var command = new UpdateCoordinateCommand(coordinateDto);
         var coordinate = new StreetcodeCoordinate();
 
-        this.mapperMock
+        mapperMock
             .Setup(m => m.Map<StreetcodeCoordinate>(coordinateDto))
             .Returns(coordinate);
 
-        this.repositoryWrapperMock
+        repositoryWrapperMock
             .Setup(r => r.SaveChangesAsync())
             .ReturnsAsync(1);
 
-        var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
 
-        this.coordinateRepositoryMock.Verify(
+        coordinateRepositoryMock.Verify(
             r => r.Update(coordinate),
             Times.Once);
 
-        this.repositoryWrapperMock.Verify(
+        repositoryWrapperMock.Verify(
             r => r.SaveChangesAsync(),
             Times.Once);
     }
