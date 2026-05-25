@@ -11,14 +11,14 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.Create
 {
     public class CreateTermHandler : IRequestHandler<CreateTermCommand, Result<TermDto>>
     {
-        private readonly IRepositoryWrapper _repository;
         private readonly IMapper _mapper;
+        private readonly IRepositoryWrapper _repository;
         private readonly ILoggerService _logger;
 
-        public CreateTermHandler(IRepositoryWrapper repository, IMapper mapper, ILoggerService logger)
+        public CreateTermHandler(IMapper mapper, IRepositoryWrapper repository, ILoggerService logger)
         {
-            _repository = repository;
             _mapper = mapper;
+            _repository = repository;
             _logger = logger;
         }
 
@@ -38,7 +38,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.Create
 
             if (existingTerms is null || existingTerms.Any())
             {
-                const string errorMsg = "Термін з такою назвою вже існує у словнику";
+                const string errorMsg = "A term with that name already exists in the dictionary!";
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }
@@ -62,7 +62,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.Create
             }
             else
             {
-                const string errorMsg = "Cannot map entity to DTO!";
+                const string errorMsg = "Cannot map entity to Dto!";
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }

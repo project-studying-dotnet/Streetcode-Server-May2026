@@ -22,20 +22,21 @@ namespace Streetcode.BLL.MediatR.Newss.Create
 
         public async Task<Result<NewsDTO>> Handle(CreateNewsCommand request, CancellationToken cancellationToken)
         {
-            var newNews = _mapper.Map<News>(request.newNews);
-            if (newNews is null)
+            var news = _mapper.Map<News>(request.newNews);
+
+            if (news is null)
             {
                 const string errorMsg = "Cannot convert null to news";
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(errorMsg);
             }
 
-            if (newNews.ImageId == 0)
+            if (news.ImageId == 0)
             {
-                newNews.ImageId = null;
+                news.ImageId = null;
             }
 
-            var entity = _repositoryWrapper.NewsRepository.Create(newNews);
+            var entity = _repositoryWrapper.NewsRepository.Create(news);
             var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
             if (resultIsSuccess)
             {
