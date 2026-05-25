@@ -1,24 +1,14 @@
-﻿using Serilog.Events;
+﻿using System.Diagnostics.CodeAnalysis;
 using Serilog;
 using Streetcode.BLL.Services.BlobStorageService;
 using Streetcode.BLL.Services.Instagram;
 using Streetcode.BLL.Services.Payment;
-using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Streetcode.WebApi.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class ConfigureHostBuilderExtensions
 {
-    public static void ConfigureApplication(this ConfigureHostBuilder host)
-    {
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Local";
-
-        host.ConfigureAppConfiguration((_, config) =>
-        {
-            config.ConfigureCustom(environment);
-        });
-    }
-
     public static void ConfigureBlob(this IServiceCollection services, WebApplicationBuilder builder)
     {
         services.Configure<BlobEnvironmentVariables>(builder.Configuration.GetSection("Blob"));
@@ -39,7 +29,8 @@ public static class ConfigureHostBuilderExtensions
         builder.Host.UseSerilog((ctx, services, loggerConfiguration) =>
         {
             loggerConfiguration
-                .ReadFrom.Configuration(builder.Configuration);
+                .ReadFrom.Configuration(builder.Configuration)
+                .Enrich.FromLogContext();
         });
     }
 }

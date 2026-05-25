@@ -4,7 +4,9 @@ using Streetcode.WebApi.Extensions;
 using Streetcode.WebApi.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.ConfigureApplication();
+
+var environment = builder.Environment.EnvironmentName;
+builder.Configuration.ConfigureCustom(environment);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddSwaggerServices();
@@ -29,6 +31,9 @@ await app.ApplyMigrations();
 
 // await app.SeedDataAsync(); // uncomment for seeding data in local
 app.UseCors();
+
+app.UseCustomMiddlewares();
+
 app.UseHttpsRedirection();
 app.UseRouting();
 
