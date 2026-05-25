@@ -250,6 +250,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete an audio.
+        /// </summary>
+        public static string FailedToDeleteAnAudio {
+            get {
+                return ResourceManager.GetString("FailedToDeleteAnAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to delete a coordinate.
         /// </summary>
         public static string FailedToDeleteCoordinate {

@@ -210,4 +210,7 @@
   <data name="FailedToUpdateStreetcodeCoordinate" xml:space="preserve">
     <value>Failed to update a streetcodeCoordinate</value>
   </data>
+  <data name="FailedToDeleteAnAudio" xml:space="preserve">
+    <value>Failed to delete an audio</value>
+  </data>
 </root>

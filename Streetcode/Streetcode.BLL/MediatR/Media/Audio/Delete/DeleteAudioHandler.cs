@@ -22,7 +22,9 @@ public class DeleteAudioHandler : IRequestHandler<DeleteAudioCommand, Result<Uni
 
     public async Task<Result<Unit>> Handle(DeleteAudioCommand request, CancellationToken cancellationToken)
     {
-        var audio = await _repositoryWrapper.AudioRepository.GetFirstOrDefaultAsync(a => a.Id == request.Id);
+        var audio = await _repositoryWrapper.AudioRepository.GetFirstOrDefaultAsync(
+            predicate: a => a.Id == request.Id,
+            cancellationToken: cancellationToken);
 
         if (audio is null)
         {
@@ -33,21 +35,21 @@ public class DeleteAudioHandler : IRequestHandler<DeleteAudioCommand, Result<Uni
 
         _repositoryWrapper.AudioRepository.Delete(audio);
 
-        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
-        if (resultIsSuccess)
+        if (resultIsSuccess && audio.BlobName is not null)
         {
             _blobService.DeleteFileInStorage(audio.BlobName);
         }
 
-        if (resultIsSuccess)
+        if (resultIsSuccess && audio.BlobName is not null)
         {
             _logger?.LogInformation($"DeleteAudioCommand handled successfully");
             return Result.Ok(Unit.Value);
         }
         else
         {
-            string errorMsg = $"Failed to delete an audio";
+            string errorMsg = ErrorMessages.FailedToDeleteAnAudio;
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }

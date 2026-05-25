@@ -154,7 +154,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Failed to delete an audio");
+            result.Errors[0].Message.Should().Be(ErrorMessages.FailedToDeleteAnAudio);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
             await this.handler.Handle(command, CancellationToken.None);
 
             this.loggerMock.Verify(
-                logger => logger.LogError(command, "Failed to delete an audio"),
+                logger => logger.LogError(command, ErrorMessages.FailedToDeleteAnAudio),
                 Times.Once);
         }
 
