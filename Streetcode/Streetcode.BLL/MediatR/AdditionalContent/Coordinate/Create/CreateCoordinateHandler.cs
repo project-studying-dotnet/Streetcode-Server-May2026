@@ -3,7 +3,6 @@ using FluentResults;
 using MediatR;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.BLL.Resources;
-using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.AdditionalContent.Coordinate.Create;
 
