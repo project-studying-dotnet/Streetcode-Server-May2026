@@ -16,7 +16,7 @@ namespace Streetcode.XUnitTest.WebApi.Middleware
                 new EventId(0),
                 "Test message",
                 null,
-                (state, exception) => state.ToString()!);
+                (state, exception) => state.ToString() !);
 
             loggerMock.VerifyLog("Test message");
         }
@@ -31,7 +31,7 @@ namespace Streetcode.XUnitTest.WebApi.Middleware
                 new EventId(1),
                 "Warning occurred",
                 null,
-                (state, exception) => state.ToString()!);
+                (state, exception) => state.ToString() !);
 
             loggerMock.VerifyLog(
                 "Warning occurred",

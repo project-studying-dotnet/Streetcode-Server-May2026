@@ -18,6 +18,7 @@ public class CorrelationIdMiddleware
         {
             correlationId = context.TraceIdentifier;
         }
+
         context.Items["CorrelationId"] = correlationId;
 
         using (LogContext.PushProperty("CorrelationId", correlationId))

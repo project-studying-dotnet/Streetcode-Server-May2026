@@ -21,12 +21,12 @@ public static class WebApplicationExtensions
 
                 var pendingMigrations = (await streetcodeContext.Database.GetPendingMigrationsAsync()).ToList();
 
-                if (pendingMigrations.Any())
+                if (pendingMigrations.Count > 0)
                 {
                     if (logger.IsEnabled(LogLevel.Information))
                     {
                         logger.LogInformation(
-                            "Found {Count} pending migrations: {Migrations}", 
+                            "Found {Count} pending migrations: {Migrations}",
                             pendingMigrations.Count,
                             string.Join(", ", pendingMigrations));
                     }
@@ -42,7 +42,7 @@ public static class WebApplicationExtensions
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occured during startup migration at startup.      ");
+            logger.LogError(ex, "An error occured during startup migration at startup.");
         }
     }
 
