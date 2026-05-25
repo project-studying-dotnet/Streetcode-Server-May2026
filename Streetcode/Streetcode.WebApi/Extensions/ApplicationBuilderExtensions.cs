@@ -1,7 +1,9 @@
-﻿using Streetcode.WebApi.Middleware;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.WebApi.Middleware;
 
 namespace Streetcode.WebApi.Extensions
 {
+    [ExcludeFromCodeCoverage]
     public static class ApplicationBuilderExtensions
     {
         public static IApplicationBuilder UseCustomMiddlewares(this IApplicationBuilder app)
