@@ -15,6 +15,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
     using Streetcode.BLL.MediatR.Media.Audio.Delete;
     using Streetcode.DAL.Repositories.Interfaces.Base;
     using Xunit;
+    using Streetcode.BLL.Resources;
     using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
 
     /// <summary>
@@ -66,7 +67,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
 
             result.IsFailed.Should().BeTrue();
             result.Errors[0].Message.Should()
-                .Be($"Cannot find an audio with corresponding categoryId: {AudioId}");
+                .Be(string.Format(ErrorMessages.CannotFindAudioByCategoryId, AudioId));
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
             this.loggerMock.Verify(
                 logger => logger.LogError(
                     command,
-                    $"Cannot find an audio with corresponding categoryId: {AudioId}"),
+                    string.Format(ErrorMessages.CannotFindAudioByCategoryId, AudioId)),
                 Times.Once);
         }
 

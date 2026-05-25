@@ -3,6 +3,7 @@ using MediatR;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Media.Audio.Delete;
 
@@ -25,7 +26,7 @@ public class DeleteAudioHandler : IRequestHandler<DeleteAudioCommand, Result<Uni
 
         if (audio is null)
         {
-            string errorMsg = $"Cannot find an audio with corresponding categoryId: {request.Id}";
+            string errorMsg = string.Format(ErrorMessages.CannotFindAudioByCategoryId, request.Id);
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }

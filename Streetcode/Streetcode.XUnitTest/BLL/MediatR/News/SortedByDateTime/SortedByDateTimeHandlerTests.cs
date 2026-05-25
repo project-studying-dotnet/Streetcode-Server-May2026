@@ -9,6 +9,7 @@ using Streetcode.BLL.MediatR.Newss.SortedByDateTime;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.SortedByDateTime
 {
@@ -53,8 +54,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.SortedByDateTime
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal("There are no news in the database", result.Errors[0].Message);
-            _loggerMock.Verify(l => l.LogError(request, "There are no news in the database"), Times.Once);
+            Assert.Equal(ErrorMessages.ThereAreNoNewsInDatabase, result.Errors[0].Message);
+            _loggerMock.Verify(l => l.LogError(request, ErrorMessages.ThereAreNoNewsInDatabase), Times.Once);
         }
 
         [Fact]

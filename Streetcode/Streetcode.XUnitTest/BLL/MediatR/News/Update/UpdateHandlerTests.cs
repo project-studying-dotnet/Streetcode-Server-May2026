@@ -10,6 +10,7 @@ using Streetcode.DAL.Entities.Media.Images;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
 {
@@ -52,8 +53,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal("Cannot convert null to news", result.Errors[0].Message);
-            _loggerMock.Verify(l => l.LogError(request, "Cannot convert null to news"), Times.Once);
+            Assert.Equal(ErrorMessages.CannotConvertNullToNews, result.Errors[0].Message);
+            _loggerMock.Verify(l => l.LogError(request, ErrorMessages.CannotConvertNullToNews), Times.Once);
         }
 
         [Fact]
@@ -134,8 +135,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal("Failed to update news", result.Errors[0].Message);
-            _loggerMock.Verify(l => l.LogError(request, "Failed to update news"), Times.Once);
+            Assert.Equal(ErrorMessages.FailedToUpdateNews, result.Errors[0].Message);
+            _loggerMock.Verify(l => l.LogError(request, ErrorMessages.FailedToUpdateNews), Times.Once);
         }
     }
 }
