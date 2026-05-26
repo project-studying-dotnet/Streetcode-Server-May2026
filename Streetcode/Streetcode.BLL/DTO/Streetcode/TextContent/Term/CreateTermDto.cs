@@ -1,4 +1,4 @@
-﻿namespace Streetcode.BLL.DTO.Streetcode.TextContent
+﻿namespace Streetcode.BLL.DTO.Streetcode.TextContent.Term
 {
     public class CreateTermDto
     {
