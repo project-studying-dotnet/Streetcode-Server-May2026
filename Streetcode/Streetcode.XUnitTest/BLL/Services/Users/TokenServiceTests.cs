@@ -92,7 +92,7 @@ namespace Streetcode.XUnitTest.BLL.Services.Users
                 .WithMessage("Token does not contain user role.");
         }
 
-        private User CreateUser()
+        private static User CreateUser()
         {
             return new User
             {

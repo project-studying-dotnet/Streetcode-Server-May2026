@@ -82,7 +82,7 @@ namespace Streetcode.XUnitTest.WebApi.Controllers
         {
             var claims = role is null
                 ? Array.Empty<Claim>()
-                : new[] { new Claim(ClaimTypes.Role, role.ToString()!) };
+                : new[] { new Claim(ClaimTypes.Role, role.ToString() !) };
 
             var controller = new TestableBaseApiController
             {
