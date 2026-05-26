@@ -5,6 +5,8 @@
 namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
 {
     using System;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMapper;
@@ -13,7 +15,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
     using Moq;
     using Streetcode.BLL.DTO.Users;
     using Streetcode.BLL.Interfaces.Logging;
+    using Streetcode.BLL.Interfaces.Users;
     using Streetcode.BLL.MediatR.Users.Login;
+    using Streetcode.BLL.Settings;
     using Streetcode.DAL.Entities.Users;
     using Streetcode.DAL.Enums;
     using Xunit;
@@ -27,6 +31,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
         private readonly Mock<UserManager<User>> _userManagerMock;
         private readonly IMapper _mapper;
         private readonly Mock<ILoggerService> _loggerMock;
+        private readonly Mock<ITokenService> _tokenServiceMock;
         private readonly LoginUserHandler _handler;
 
         /// <summary>
@@ -42,6 +47,23 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
 
             _mapper = config.CreateMapper();
             _loggerMock = new Mock<ILoggerService>();
+            _tokenServiceMock = new Mock<ITokenService>();
+
+            var jwtSettings = new JwtSettings
+            {
+                Key = "StreetcodeSuperSecretJwtKeyForUnitTests1234567890",
+                Issuer = "Streetcode.WebApi",
+                Audience = "Streetcode.Client",
+                AccessTokenLifetimeInMinutes = 120,
+            };
+
+            _tokenServiceMock
+                .Setup(t => t.GenerateJWTToken(It.IsAny<User>()))
+                .Returns((User user) =>
+                {
+                    var tokenService = new Streetcode.BLL.Services.Users.TokenService(jwtSettings);
+                    return tokenService.GenerateJWTToken(user);
+                });
 
             _userStoreMock = new Mock<IUserStore<User>>();
             _userManagerMock = new Mock<UserManager<User>>(
@@ -58,7 +80,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             _handler = new LoginUserHandler(
                 _userManagerMock.Object,
                 _mapper,
-                _loggerMock.Object);
+                _loggerMock.Object,
+                _tokenServiceMock.Object);
         }
 
         /// <summary>
@@ -95,6 +118,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Users.Login
             result.Value.Should().NotBeNull();
             result.Value.Token.Should().NotBeNullOrEmpty();
             result.Value.ExpireAt.Should().BeAfter(DateTime.UtcNow);
+
+            var jwtHandler = new JwtSecurityTokenHandler();
+            var jwtToken = jwtHandler.ReadJwtToken(result.Value.Token);
+            jwtToken.Claims.Should().Contain(c => c.Type == ClaimTypes.Role && c.Value == UserRole.MainAdministrator.ToString());
 
             result.Value.User.Id.Should().Be(dbUser.Id);
             result.Value.User.Login.Should().Be(loginDto.Login);

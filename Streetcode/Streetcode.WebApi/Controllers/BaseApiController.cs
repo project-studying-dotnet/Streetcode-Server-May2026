@@ -1,7 +1,8 @@
-﻿using FluentResults;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.ResultVariations;
+using Streetcode.DAL.Enums;
 
 namespace Streetcode.WebApi.Controllers;
 
@@ -13,6 +14,19 @@ public class BaseApiController : ControllerBase
 
     protected IMediator Mediator => _mediator ??=
         HttpContext.RequestServices.GetService<IMediator>()!;
+
+    protected UserRole? GetUserRole()
+    {
+        foreach (UserRole role in Enum.GetValues<UserRole>())
+        {
+            if (User.IsInRole(role.ToString()))
+            {
+                return role;
+            }
+        }
+
+        return null;
+    }
 
     protected ActionResult HandleResult<T>(Result<T> result)
     {

@@ -4,7 +4,9 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Streetcode.BLL.DTO.Users;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Interfaces.Users;
 using Streetcode.DAL.Entities.Users;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Streetcode.BLL.MediatR.Users.Login
 {
@@ -13,12 +15,18 @@ namespace Streetcode.BLL.MediatR.Users.Login
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILoggerService _logger;
+        private readonly ITokenService _tokenService;
 
-        public LoginUserHandler(UserManager<User> userManager, IMapper mapper, ILoggerService logger)
+        public LoginUserHandler(
+            UserManager<User> userManager,
+            IMapper mapper,
+            ILoggerService logger,
+            ITokenService tokenService)
         {
             _userManager = userManager;
             _mapper = mapper;
             _logger = logger;
+            _tokenService = tokenService;
         }
 
         public async Task<Result<LoginResultDto>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -44,7 +52,8 @@ namespace Streetcode.BLL.MediatR.Users.Login
                 return Result.Fail<LoginResultDto>("Invalid login or password.");
             }
 
-            var token = "generated-jwt-token-here";
+            var jwtToken = _tokenService.GenerateJWTToken(user);
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
             _logger.LogInformation($"User {user.Id} successfully logged in");
 
@@ -54,7 +63,7 @@ namespace Streetcode.BLL.MediatR.Users.Login
             {
                 User = userDto,
                 Token = token,
-                ExpireAt = DateTime.UtcNow.AddHours(2)
+                ExpireAt = jwtToken.ValidTo,
             };
 
             return Result.Ok(loginResult);
