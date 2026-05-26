@@ -1,5 +1,6 @@
 using Hangfire;
 using Streetcode.BLL.Services.BlobStorageService;
+using Streetcode.DAL.Persistence;
 using Streetcode.WebApi.Extensions;
 using Streetcode.WebApi.Utils;
 
@@ -9,6 +10,7 @@ var environment = builder.Environment.EnvironmentName;
 builder.Configuration.ConfigureCustom(environment);
 
 builder.Services.AddApplicationServices(builder.Configuration);
+
 builder.Services.AddSwaggerServices();
 builder.Services.AddCustomServices();
 builder.Services.ConfigureBlob(builder);
@@ -29,7 +31,7 @@ else
 
 await app.ApplyMigrations();
 
-// await app.SeedDataAsync(); // uncomment for seeding data in local
+await app.SeedDataAsync(); // uncomment for seeding data in local
 app.UseCors();
 
 app.UseCustomMiddlewares();
