@@ -52,8 +52,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Create
             var termDto = new CreateTermDto { Title = "Test Title", Description = "Test Description" };
             var request = new CreateTermCommand(termDto);
 
-            _repositoryWrapperMock.Setup(r => r.TermRepository.Create(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()))
-                                  .Returns((DAL.Entities.Streetcode.TextContent.Term n) => n);
+            _repositoryWrapperMock.Setup(r => r.TermRepository.GetAllAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
+                                  .ReturnsAsync(new List<DAL.Entities.Streetcode.TextContent.Term>());
+
+            _repositoryWrapperMock.Setup(r => r.TermRepository.CreateAsync(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()))
+                                  .Returns((DAL.Entities.Streetcode.TextContent.Term n) => Task.FromResult(n));
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
                                   .ReturnsAsync(1);
@@ -65,7 +68,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Create
             Assert.Equal(termDto.Title, result.Value.Title);
             Assert.Equal(termDto.Description, result.Value.Description);
 
-            _repositoryWrapperMock.Verify(r => r.TermRepository.Create(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()), Times.Once);
+            _repositoryWrapperMock.Verify(r => r.TermRepository.CreateAsync(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()), Times.Once);
         }
 
         [Fact]
@@ -75,9 +78,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Create
 
             DAL.Entities.Streetcode.TextContent.Term capturedEntity = null;
 
-            _repositoryWrapperMock.Setup(r => r.TermRepository.Create(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()))
+            _repositoryWrapperMock.Setup(r => r.TermRepository.GetAllAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
+                                  .ReturnsAsync(new List<DAL.Entities.Streetcode.TextContent.Term>());
+
+            _repositoryWrapperMock.Setup(r => r.TermRepository.CreateAsync(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()))
                                   .Callback<DAL.Entities.Streetcode.TextContent.Term>(n => capturedEntity = n)
-                                  .Returns((DAL.Entities.Streetcode.TextContent.Term n) => n);
+                                  .Returns((DAL.Entities.Streetcode.TextContent.Term n) => Task.FromResult(n));
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
                                   .ReturnsAsync(0);
