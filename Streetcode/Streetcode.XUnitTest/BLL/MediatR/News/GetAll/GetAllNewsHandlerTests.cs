@@ -52,7 +52,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetAll
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetAllAsync(
                 It.IsAny<Expression<Func<NewsEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
-                .ReturnsAsync((IEnumerable<NewsEntity>)null);
+                .ReturnsAsync((IEnumerable<NewsEntity>)null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -115,7 +115,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetAll
 
             Assert.True(result.IsSuccess);
             Assert.Single(result.Value);
-            Assert.Equal(expectedBase64, result.Value.First().Image.Base64);
+            Assert.Equal(expectedBase64, result.Value.First().Image!.Base64);
 
             _blobServiceMock.Verify(b => b.FindFileInStorageAsBase64("test-image.jpg"), Times.Once);
         }

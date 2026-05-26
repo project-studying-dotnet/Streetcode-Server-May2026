@@ -37,7 +37,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
                     _repositoryWrapperMock.Object,
                     _mapperMock.Object,
                     _loggerMock.Object);
-
         }
 
         [Fact]
@@ -79,10 +78,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
         {
             int id = 1;
             var deletePartnerQuery = new DeletePartnerQuery(id);
-            var partner = new Partner { Id = 1, Title = "Title 1", LogoId = 1,
+            var partner = new Partner
+            {
+                Id = 1, Title = "Title 1", LogoId = 1,
                 IsKeyPartner = true, IsVisibleEverywhere = true,
             };
-            var dto = new PartnerDTO { Id = 1, Title = "Title 1", LogoId = 1,
+            var dto = new PartnerDTO
+            {
+                Id = 1, Title = "Title 1", LogoId = 1,
                 IsKeyPartner = true, IsVisibleEverywhere = true,
             };
 
@@ -121,6 +124,5 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
-
     }
 }

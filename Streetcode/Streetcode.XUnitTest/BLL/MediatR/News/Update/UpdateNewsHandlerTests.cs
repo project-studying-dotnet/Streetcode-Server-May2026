@@ -77,7 +77,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal("base64-string", result.Value.Image.Base64);
+            Assert.Equal("base64-string", result.Value.Image!.Base64);
             _repositoryWrapperMock.Verify(r => r.NewsRepository.Update(It.Is<NewsEntity>(n => n.Id == 1)), Times.Once);
             _blobServiceMock.Verify(b => b.FindFileInStorageAsBase64("test.jpg"), Times.Once);
         }
