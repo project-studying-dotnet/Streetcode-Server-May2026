@@ -6,6 +6,7 @@ using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Newss.GetByUrl
 {
@@ -32,7 +33,7 @@ namespace Streetcode.BLL.MediatR.Newss.GetByUrl
                     .Include(sc => sc.Image)));
             if (newsDTO is null)
             {
-                string errorMsg = $"No news by entered Url - {url}";
+                string errorMsg = string.Format(ErrorMessages.NoNewsFoundByUrl, url);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(errorMsg);
             }

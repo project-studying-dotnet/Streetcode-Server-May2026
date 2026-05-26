@@ -4,6 +4,7 @@ using MediatR;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Text.GetAll;
 
@@ -26,7 +27,7 @@ public class GetAllTextsHandler : IRequestHandler<GetAllTextsQuery, Result<IEnum
 
         if (texts is null)
         {
-            const string errorMsg = $"Cannot find any text";
+            string errorMsg = ErrorMessages.CannotFindAnyText;
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }

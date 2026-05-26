@@ -16,6 +16,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
     using Microsoft.EntityFrameworkCore.Query;
     using Moq;
     using Xunit;
+    using global::Streetcode.BLL.Resources;
     using TextEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Text;
 
     /// <summary>
@@ -115,11 +116,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
             var result = await this.handler.Handle(query, CancellationToken.None);
 
             // Assert
+            var expectedMessage = string.Format(
+                ErrorMessages.CannotFindTextById,
+                textId);
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be($"Cannot find any text with corresponding id: {textId}");
+            result.Errors[0].Message.Should().Be(expectedMessage);
 
             this.loggerMock.Verify(
-                l => l.LogError(query, $"Cannot find any text with corresponding id: {textId}"),
+                l => l.LogError(query, expectedMessage),
                 Times.Once);
         }
     }

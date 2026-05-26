@@ -5,6 +5,7 @@ using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Entities.News;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Newss.Create
 {
@@ -25,7 +26,7 @@ namespace Streetcode.BLL.MediatR.Newss.Create
             var newNews = _mapper.Map<News>(request.newNews);
             if (newNews is null)
             {
-                const string errorMsg = "Cannot convert null to news";
+                string errorMsg = ErrorMessages.CannotConvertNullToNews;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(errorMsg);
             }
@@ -43,7 +44,7 @@ namespace Streetcode.BLL.MediatR.Newss.Create
             }
             else
             {
-                const string errorMsg = "Failed to create a news";
+                string errorMsg = ErrorMessages.FailedToCreateNews;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }

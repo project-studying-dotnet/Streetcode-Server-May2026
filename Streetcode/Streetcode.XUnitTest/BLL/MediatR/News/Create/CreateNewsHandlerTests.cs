@@ -7,6 +7,7 @@ using Streetcode.BLL.Mapping.Newss;
 using Streetcode.BLL.MediatR.Newss.Create;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
 {
@@ -43,9 +44,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal("Cannot convert null to news", result.Errors[0].Message);
+            Assert.Equal(ErrorMessages.CannotConvertNullToNews, result.Errors[0].Message);
 
-            _loggerMock.Verify(l => l.LogError(request, "Cannot convert null to news"), Times.Once);
+            _loggerMock.Verify(l => l.LogError(request, ErrorMessages.CannotConvertNullToNews), Times.Once);
         }
 
         [Fact]
@@ -87,9 +88,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal("Failed to create a news", result.Errors[0].Message);
+            Assert.Equal(ErrorMessages.FailedToCreateNews, result.Errors[0].Message);
 
-            _loggerMock.Verify(l => l.LogError(request, "Failed to create a news"), Times.Once);
+            _loggerMock.Verify(l => l.LogError(request, ErrorMessages.FailedToCreateNews), Times.Once);
 
             Assert.NotNull(capturedEntity);
             Assert.Null(capturedEntity.ImageId);

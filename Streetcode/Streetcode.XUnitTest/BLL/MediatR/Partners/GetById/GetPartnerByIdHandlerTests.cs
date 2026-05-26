@@ -11,6 +11,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
 using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Partners.GetById
 {
@@ -54,10 +55,10 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot find any partner with corresponding id: " + id);
+            result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindPartnerById, id));
 
             _loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot find any partner with corresponding id: " + id),
+                logger => logger.LogError(query, string.Format(ErrorMessages.CannotFindPartnerById, id)),
                 Times.Once);
 
             _mapperMock.Verify(

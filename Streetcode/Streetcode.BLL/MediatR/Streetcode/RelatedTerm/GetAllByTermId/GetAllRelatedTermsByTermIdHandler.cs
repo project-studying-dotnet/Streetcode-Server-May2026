@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId
 {
@@ -26,11 +27,11 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId
             var relatedTerms = await _repository.RelatedTermRepository
                 .GetAllAsync(
                 predicate: rt => rt.TermId == request.id,
-                include: rt => rt.Include(rt => rt.Term));
+                include: rt => rt.Include(rt => rt.Term!));
 
             if (relatedTerms is null)
             {
-                const string errorMsg = "Cannot get words by term id";
+                string errorMsg = ErrorMessages.CannotGetWordsByTermId;
                 _logger.LogError(request, errorMsg);
                 return new Error(errorMsg);
             }
@@ -39,7 +40,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId
 
             if (relatedTermsDTO is null)
             {
-                const string errorMsg = "Cannot create DTOs for related words!";
+                string errorMsg = ErrorMessages.CannotCreateRelatedWordDtos;
                 _logger.LogError(request, errorMsg);
                 return new Error(errorMsg);
             }

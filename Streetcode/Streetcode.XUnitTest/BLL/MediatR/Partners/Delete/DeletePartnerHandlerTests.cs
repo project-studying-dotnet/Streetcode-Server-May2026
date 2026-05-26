@@ -11,6 +11,7 @@ using Streetcode.BLL.DTO.Partners;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
 {
@@ -54,10 +55,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
             var result = await _handler.Handle(deletePartnerQuery, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("No partner with such id");
+            result.Errors[0].Message.Should().Be(ErrorMessages.NoPartnerWithSuchId);
 
             _loggerMock.Verify(
-                logger => logger.LogError(deletePartnerQuery, "No partner with such id"),
+                logger => logger.LogError(deletePartnerQuery, ErrorMessages.NoPartnerWithSuchId),
                 Times.Once);
 
             _PartnersRepositoryMock.Verify(
