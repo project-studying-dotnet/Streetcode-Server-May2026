@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using System.Linq.Expressions;
+using AutoMapper;
 using Moq;
 using Streetcode.BLL.DTO.Media.Images;
 using Streetcode.BLL.DTO.News;
@@ -8,9 +9,10 @@ using Streetcode.BLL.Mapping.Newss;
 using Streetcode.BLL.MediatR.Newss.Update;
 using Streetcode.DAL.Entities.Media.Images;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Linq.Expressions;
 using Xunit;
 using Streetcode.BLL.Resources;
+
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
 {
@@ -35,7 +37,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
             _blobServiceMock = new Mock<IBlobService>();
             _loggerMock = new Mock<ILoggerService>();
 
-            _repositoryWrapperMock.Setup(r => r.NewsRepository.Update(It.IsAny<DAL.Entities.News.News>()));
+            _repositoryWrapperMock.Setup(r => r.NewsRepository.Update(It.IsAny<NewsEntity>()));
             _repositoryWrapperMock.Setup(r => r.ImageRepository.Delete(It.IsAny<Image>()));
 
             _handler = new UpdateNewsHandler(
@@ -48,7 +50,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenMapperReturnsNull()
         {
-            var request = new UpdateNewsCommand(null);
+            var request = new UpdateNewsCommand(null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -76,7 +78,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
 
             Assert.True(result.IsSuccess);
             Assert.Equal("base64-string", result.Value.Image.Base64);
-            _repositoryWrapperMock.Verify(r => r.NewsRepository.Update(It.Is<DAL.Entities.News.News>(n => n.Id == 1)), Times.Once);
+            _repositoryWrapperMock.Verify(r => r.NewsRepository.Update(It.Is<NewsEntity>(n => n.Id == 1)), Times.Once);
             _blobServiceMock.Verify(b => b.FindFileInStorageAsBase64("test.jpg"), Times.Once);
         }
 
@@ -98,7 +100,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
 
             Assert.True(result.IsSuccess);
             _repositoryWrapperMock.Verify(r => r.ImageRepository.Delete(oldImageEntity), Times.Once);
-            _repositoryWrapperMock.Verify(r => r.NewsRepository.Update(It.Is<DAL.Entities.News.News>(n => n.Id == 1)), Times.Once);
+            _repositoryWrapperMock.Verify(r => r.NewsRepository.Update(It.Is<NewsEntity>(n => n.Id == 1)), Times.Once);
         }
 
         [Fact]
@@ -109,7 +111,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
 
             _repositoryWrapperMock.Setup(r => r.ImageRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<Image, bool>>>(), null))
-                .ReturnsAsync((Image)null);
+                .ReturnsAsync((Image)null!);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
 
@@ -117,7 +119,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
 
             Assert.True(result.IsSuccess);
             _repositoryWrapperMock.Verify(r => r.ImageRepository.Delete(It.IsAny<Image>()), Times.Never);
-            _repositoryWrapperMock.Verify(r => r.NewsRepository.Update(It.Is<DAL.Entities.News.News>(n => n.Id == 1)), Times.Once);
+            _repositoryWrapperMock.Verify(r => r.NewsRepository.Update(It.Is<NewsEntity>(n => n.Id == 1)), Times.Once);
         }
 
         [Fact]
@@ -128,7 +130,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Update
 
             _repositoryWrapperMock.Setup(r => r.ImageRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<Image, bool>>>(), null))
-                .ReturnsAsync((Image)null);
+                .ReturnsAsync((Image)null!);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(0);
 

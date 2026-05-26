@@ -11,6 +11,9 @@ using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
+using ImageEntity = global::Streetcode.DAL.Entities.Media.Images.Image;
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
+
 namespace Streetcode.XUnitTest.BLL.MediatR.News.SortedByDateTime;
 
 public class SortedByDateTimeHandlerTests
@@ -51,11 +54,11 @@ public class SortedByDateTimeHandlerTests
 
         _repositoryWrapperMock
             .Setup(r => r.NewsRepository.GetAllAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
                 It.IsAny<Func<
-                    IQueryable<DAL.Entities.News.News>,
-                    IIncludableQueryable<DAL.Entities.News.News, object>>>()))
-            .ReturnsAsync((IEnumerable<DAL.Entities.News.News>)null!);
+                    IQueryable<NewsEntity>,
+                    IIncludableQueryable<NewsEntity, object>>>()))
+            .ReturnsAsync((IEnumerable<NewsEntity>)null!);
 
         var result = await _handler.Handle(
             request,
@@ -79,7 +82,7 @@ public class SortedByDateTimeHandlerTests
     {
         var request = new SortedByDateTimeQuery();
 
-        var newsEntities = new List<DAL.Entities.News.News>
+        var newsEntities = new List<NewsEntity>
         {
             new()
             {
@@ -91,7 +94,7 @@ public class SortedByDateTimeHandlerTests
             {
                 Id = 2,
                 CreationDate = new DateTime(2023, 1, 1),
-                Image = new DAL.Entities.Media.Images.Image
+                Image = new ImageEntity
                 {
                     BlobName = "test.jpg",
                 },
@@ -102,10 +105,10 @@ public class SortedByDateTimeHandlerTests
 
         _repositoryWrapperMock
             .Setup(r => r.NewsRepository.GetAllAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
                 It.IsAny<Func<
-                    IQueryable<DAL.Entities.News.News>,
-                    IIncludableQueryable<DAL.Entities.News.News, object>>>()))
+                    IQueryable<NewsEntity>,
+                    IIncludableQueryable<NewsEntity, object>>>()))
             .ReturnsAsync(newsEntities);
 
         _blobServiceMock
