@@ -9,6 +9,7 @@ using Streetcode.BLL.MediatR.Newss.GetByUrl;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
 {
@@ -45,7 +46,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
         {
             string testUrl = "example-news-url";
             var request = new GetNewsByUrlQuery(testUrl);
-            var errorMsg = $"No news by entered Url - {testUrl}";
+            var errorMsg = string.Format(ErrorMessages.NoNewsFoundByUrl, testUrl);
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),

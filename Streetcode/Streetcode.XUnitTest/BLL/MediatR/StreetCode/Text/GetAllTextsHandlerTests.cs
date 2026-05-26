@@ -16,6 +16,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
     using Microsoft.EntityFrameworkCore.Query;
     using Moq;
     using Xunit;
+    using global::Streetcode.BLL.Resources;
     using TextEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Text;
 
     /// <summary>
@@ -110,10 +111,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 
             // Assert
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot find any text");
+            result.Errors[0].Message.Should().Be(ErrorMessages.CannotFindAnyText);
 
             this.loggerMock.Verify(
-                l => l.LogError(query, "Cannot find any text"),
+                l => l.LogError(query, ErrorMessages.CannotFindAnyText),
                 Times.Once);
         }
 
