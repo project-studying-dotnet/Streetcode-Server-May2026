@@ -98,7 +98,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetById
 
             var result = await this.handler.Handle(query, CancellationToken.None);
 
-            var expectedDto = this.mapper.Map<TimelineItemDTO>(timelineItem);
+            var expectedDto = this.mapper.Map<TimelineItemDto>(timelineItem);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();

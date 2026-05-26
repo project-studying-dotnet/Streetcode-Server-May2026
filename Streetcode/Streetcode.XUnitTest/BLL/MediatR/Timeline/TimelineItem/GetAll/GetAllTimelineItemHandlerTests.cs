@@ -100,7 +100,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll
 
             var result = await this.handler.Handle(query, CancellationToken.None);
 
-            var expectedDtos = this.mapper.Map<List<TimelineItemDTO>>(timelineItems);
+            var expectedDtos = this.mapper.Map<List<TimelineItemDto>>(timelineItems);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
