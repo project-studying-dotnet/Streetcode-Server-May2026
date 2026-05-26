@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Streetcode.DAL.Entities.AdditionalContent;
-using Streetcode.DAL.Entities.AdditionalContent.Coordinates;
 using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
 using Streetcode.DAL.Entities.Analytics;
 using Streetcode.DAL.Entities.Feedback;
@@ -12,18 +12,16 @@ using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Entities.Sources;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Entities.Streetcode.TextContent;
-using Streetcode.DAL.Entities.Streetcode.Types;
 using Streetcode.DAL.Entities.Team;
 using Streetcode.DAL.Entities.Timeline;
 using Streetcode.DAL.Entities.Toponyms;
 using Streetcode.DAL.Entities.Transactions;
 using Streetcode.DAL.Entities.Users;
-using Streetcode.DAL.Enums;
 using Streetcode.DAL.Persistence.Configurations;
 
 namespace Streetcode.DAL.Persistence;
 
-public class StreetcodeDbContext : DbContext
+public class StreetcodeDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
     public StreetcodeDbContext()
     {
@@ -59,7 +57,6 @@ public class StreetcodeDbContext : DbContext
     public DbSet<Video> Videos { get; set; }
     public DbSet<StreetcodeCategoryContent> StreetcodeCategoryContent { get; set; }
     public DbSet<StreetcodeArt> StreetcodeArts { get; set; }
-    public DbSet<User> Users { get; set; }
     public DbSet<StreetcodeTagIndex> StreetcodeTagIndices { get; set; }
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<TeamMemberLink> TeamMemberLinks { get; set; }
@@ -71,49 +68,49 @@ public class StreetcodeDbContext : DbContext
     public DbSet<StreetcodePartner> StreetcodePartners { get; set; }
     public DbSet<TeamMemberPositions> TeamMemberPosition { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
 
-        modelBuilder.UseCollation("SQL_Ukrainian_CP1251_CI_AS");
+        builder.UseCollation("SQL_Ukrainian_CP125bS");
 
-        modelBuilder.ApplyConfiguration(new StatisticRecordConfiguration());
-        modelBuilder.ApplyConfiguration(new NewsConfiguration());
-        modelBuilder.ApplyConfiguration(new TeamMemberConfiguration());
-        modelBuilder.ApplyConfiguration(new TeamMemberLinkConfiguration());
-        modelBuilder.ApplyConfiguration(new PositionsConfiguration());
-        modelBuilder.ApplyConfiguration(new TagConfiguration());
-        modelBuilder.ApplyConfiguration(new SubtitleConfiguration());
-        modelBuilder.ApplyConfiguration(new StreetcodeTagIndexConfiguration());
-        modelBuilder.ApplyConfiguration(new ToponymConfiguration());
-        modelBuilder.ApplyConfiguration(new StreetcodeToponymConfiguration());
-        modelBuilder.ApplyConfiguration(new PartnerConfiguration());
-        modelBuilder.ApplyConfiguration(new PartnerSourceLinkConfiguration());
-        modelBuilder.ApplyConfiguration(new StreetcodePartnerConfiguration());
-        modelBuilder.ApplyConfiguration(new HistoricalContextConfiguration());
-        modelBuilder.ApplyConfiguration(new HistoricalContextTimelineConfiguration());
-        modelBuilder.ApplyConfiguration(new TimelineItemConfiguration());
-        modelBuilder.ApplyConfiguration(new SourceLinkCategoryConfiguration());
-        modelBuilder.ApplyConfiguration(new StreetcodeCategoryContentConfiguration());
-        modelBuilder.ApplyConfiguration(new ImageConfiguration());
-        modelBuilder.ApplyConfiguration(new ImageDetailsConfiguration());
-        modelBuilder.ApplyConfiguration(new StreetcodeImageConfiguration());
-        modelBuilder.ApplyConfiguration(new AudioConfiguration());
-        modelBuilder.ApplyConfiguration(new VideoConfiguration());
-        modelBuilder.ApplyConfiguration(new RelatedFigureConfiguration());
-        modelBuilder.ApplyConfiguration(new StreetcodeArtConfiguration());
-        modelBuilder.ApplyConfiguration(new StreetcodeContentConfiguration());
-        modelBuilder.ApplyConfiguration(new PersonStreetcodeConfiguration());
-        modelBuilder.ApplyConfiguration(new TextConfiguration());
-        modelBuilder.ApplyConfiguration(new TermConfiguration());
-        modelBuilder.ApplyConfiguration(new FactConfiguration());
-        modelBuilder.ApplyConfiguration(new RelatedTermConfiguration());
-        modelBuilder.ApplyConfiguration(new CoordinateConfiguration());
-        modelBuilder.ApplyConfiguration(new StreetcodeCoordinateConfiguration());
-        modelBuilder.ApplyConfiguration(new ToponymCoordinateConfiguration());
-        modelBuilder.ApplyConfiguration(new TransactionLinkConfiguration());
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
-        modelBuilder.ApplyConfiguration(new ResponseConfiguration());
-        modelBuilder.ApplyConfiguration(new ArtConfiguration());
+        builder.ApplyConfiguration(new StatisticRecordConfiguration());
+        builder.ApplyConfiguration(new NewsConfiguration());
+        builder.ApplyConfiguration(new TeamMemberConfiguration());
+        builder.ApplyConfiguration(new TeamMemberLinkConfiguration());
+        builder.ApplyConfiguration(new PositionsConfiguration());
+        builder.ApplyConfiguration(new TagConfiguration());
+        builder.ApplyConfiguration(new SubtitleConfiguration());
+        builder.ApplyConfiguration(new StreetcodeTagIndexConfiguration());
+        builder.ApplyConfiguration(new ToponymConfiguration());
+        builder.ApplyConfiguration(new StreetcodeToponymConfiguration());
+        builder.ApplyConfiguration(new PartnerConfiguration());
+        builder.ApplyConfiguration(new PartnerSourceLinkConfiguration());
+        builder.ApplyConfiguration(new StreetcodePartnerConfiguration());
+        builder.ApplyConfiguration(new HistoricalContextConfiguration());
+        builder.ApplyConfiguration(new HistoricalContextTimelineConfiguration());
+        builder.ApplyConfiguration(new TimelineItemConfiguration());
+        builder.ApplyConfiguration(new SourceLinkCategoryConfiguration());
+        builder.ApplyConfiguration(new StreetcodeCategoryContentConfiguration());
+        builder.ApplyConfiguration(new ImageConfiguration());
+        builder.ApplyConfiguration(new ImageDetailsConfiguration());
+        builder.ApplyConfiguration(new StreetcodeImageConfiguration());
+        builder.ApplyConfiguration(new AudioConfiguration());
+        builder.ApplyConfiguration(new VideoConfiguration());
+        builder.ApplyConfiguration(new RelatedFigureConfiguration());
+        builder.ApplyConfiguration(new StreetcodeArtConfiguration());
+        builder.ApplyConfiguration(new StreetcodeContentConfiguration());
+        builder.ApplyConfiguration(new PersonStreetcodeConfiguration());
+        builder.ApplyConfiguration(new TextConfiguration());
+        builder.ApplyConfiguration(new TermConfiguration());
+        builder.ApplyConfiguration(new FactConfiguration());
+        builder.ApplyConfiguration(new RelatedTermConfiguration());
+        builder.ApplyConfiguration(new CoordinateConfiguration());
+        builder.ApplyConfiguration(new StreetcodeCoordinateConfiguration());
+        builder.ApplyConfiguration(new ToponymCoordinateConfiguration());
+        builder.ApplyConfiguration(new TransactionLinkConfiguration());
+        builder.ApplyConfiguration(new UserConfiguration());
+        builder.ApplyConfiguration(new ResponseConfiguration());
+        builder.ApplyConfiguration(new ArtConfiguration());
     }
 }

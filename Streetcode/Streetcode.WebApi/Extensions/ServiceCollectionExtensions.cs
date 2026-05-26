@@ -1,5 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
 using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
@@ -16,12 +18,14 @@ using Streetcode.BLL.Services.Logging;
 using Streetcode.BLL.Services.Payment;
 using Streetcode.BLL.Services.Text;
 using Streetcode.DAL.Entities.AdditionalContent.Email;
+using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Realizations.Base;
 
 namespace Streetcode.WebApi.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions
 {
     public static void AddRepositoryServices(this IServiceCollection services)
@@ -59,6 +63,18 @@ public static class ServiceCollectionExtensions
                 opt.MigrationsHistoryTable("__EFMigrationsHistory", schema: "entity_framework");
             });
         });
+
+        services.AddIdentity<User, IdentityRole<int>>(options =>
+        {
+            options.Password.RequireDigit = false;
+            options.Password.RequiredLength = 6;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireLowercase = false;
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<StreetcodeDbContext>()
+        .AddDefaultTokenProviders();
 
         services.AddHangfire(config =>
         {
