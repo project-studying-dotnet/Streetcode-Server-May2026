@@ -1,11 +1,10 @@
-﻿using Moq;
-using Xunit;
+﻿using System.Linq.Expressions;
 using FluentAssertions;
+using Moq;
+using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Streetcode.Term.Delete;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.DAL.Entities.Streetcode.TextContent;
-using System.Linq.Expressions;
+using Xunit;
 
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.Term;
 

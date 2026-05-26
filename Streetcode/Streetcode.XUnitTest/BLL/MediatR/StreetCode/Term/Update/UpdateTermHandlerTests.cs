@@ -5,7 +5,6 @@ using Streetcode.BLL.DTO.Streetcode.TextContent.Term;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.Term.Update;
-using Streetcode.DAL.Entities.Streetcode.TextContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
 using Xunit;

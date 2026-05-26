@@ -4,7 +4,6 @@ using Moq;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.Term.GetById;
-using Streetcode.DAL.Entities.Streetcode.TextContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
 using Xunit;
