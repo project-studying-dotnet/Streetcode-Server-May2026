@@ -51,8 +51,13 @@ public static class ServiceCollectionExtensions
 
     public static void AddApplicationServices(this IServiceCollection services, ConfigurationManager configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-        var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("DefaultConnection is missing");
+        var emailConfig = configuration
+            .GetSection("EmailConfiguration")
+            .Get<EmailConfiguration>()
+            ?? throw new InvalidOperationException("EmailConfiguration is missing");
+
         services.AddSingleton(emailConfig);
 
         services.AddDbContext<StreetcodeDbContext>(options =>

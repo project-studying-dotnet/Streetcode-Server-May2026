@@ -2,207 +2,235 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Delete
+using System.Linq.Expressions;
+using AutoMapper;
+using FluentAssertions;
+using Moq;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Streetcode.TextContent;
+using Streetcode.BLL.MediatR.Streetcode.Text.Delete;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+using Xunit;
+
+using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Delete;
+
+public class DeleteTextHandlerTests
 {
-    using System;
-    using System.Linq.Expressions;
-    using System.Threading;
-    using System.Threading.Tasks;
+    private const int TextId = 1;
+    private const string TextTitle = "Test Title";
+    private const string DatabaseFailureMessage = "Database connection failure";
 
-    using AutoMapper;
-    using FluentAssertions;
-    using global::Streetcode.BLL.Interfaces.Logging;
-    using global::Streetcode.BLL.Mapping.Streetcode.TextContent;
-    using global::Streetcode.BLL.MediatR.Streetcode.Text.Delete;
-    using global::Streetcode.DAL.Repositories.Interfaces.Base;
-    using global::Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-    using Moq;
-    using Xunit;
+    private readonly Mock<IRepositoryWrapper> _repoWrapperMock;
+    private readonly Mock<ITextRepository> _textRepoMock;
+    private readonly IMapper _mapper;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly DeleteTextHandler _handler;
 
-    using T = global::Streetcode.DAL.Entities.Streetcode.TextContent;
-
-    /// <summary>
-    /// Unit tests for DeleteTextHandler.
-    /// </summary>
-    public class DeleteTextHandlerTests
+    public DeleteTextHandlerTests()
     {
-        private readonly Mock<IRepositoryWrapper> repoWrapperMock;
-        private readonly Mock<ITextRepository> textRepoMock;
-        private readonly IMapper mapper;
-        private readonly Mock<ILoggerService> loggerMock;
-
-        private readonly DeleteTextHandler handler;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteTextHandlerTests"/> class.
-        /// </summary>
-        public DeleteTextHandlerTests()
+        _mapper = new MapperConfiguration(cfg =>
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<TextProfile>();
-            });
+            cfg.AddProfile<TextProfile>();
+        }).CreateMapper();
 
-            this.mapper = config.CreateMapper();
+        _repoWrapperMock = new Mock<IRepositoryWrapper>();
+        _textRepoMock = new Mock<ITextRepository>();
+        _loggerMock = new Mock<ILoggerService>();
 
-            this.repoWrapperMock = new Mock<IRepositoryWrapper>();
-            this.textRepoMock = new Mock<ITextRepository>();
-            this.loggerMock = new Mock<ILoggerService>();
+        _repoWrapperMock
+            .Setup(x => x.TextRepository)
+            .Returns(_textRepoMock.Object);
 
-            this.repoWrapperMock
-                .Setup(x => x.TextRepository)
-                .Returns(this.textRepoMock.Object);
+        _handler = new DeleteTextHandler(
+            _repoWrapperMock.Object,
+            _mapper,
+            _loggerMock.Object);
+    }
 
-            this.handler = new DeleteTextHandler(
-                this.repoWrapperMock.Object,
-                this.mapper,
-                this.loggerMock.Object);
-        }
-
-        /// <summary>
-        /// Should return successful Result when database delete succeeds.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnTextDto_WhenDeleteSucceeds()
+    [Fact]
+    public async Task Handle_ShouldReturnTextDto_WhenDeleteSucceeds()
+    {
+        var command = new DeleteTextCommand(TextId);
+        var existingText = new TextEntity
         {
-            int id = 1;
-            var command = new DeleteTextCommand(id);
-            var existingText = new T.Text { Id = id, Title = "Test Title" };
+            Id = TextId,
+            Title = TextTitle,
+        };
 
-            this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .ReturnsAsync(existingText);
+        _textRepoMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                null))
+            .ReturnsAsync(existingText);
 
-            this.textRepoMock
-                .Setup(r => r.Delete(It.IsAny<T.Text>()));
+        _textRepoMock
+            .Setup(r => r.Delete(It.IsAny<TextEntity>()));
 
-            this.repoWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(1);
+        _repoWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(1);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
 
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
-            this.textRepoMock.Verify(r => r.Delete(It.IsAny<T.Text>()), Times.Once);
-            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Once);
+        _textRepoMock.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                null),
+            Times.Once);
 
-            this.loggerMock.Verify(
-                l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
-                Times.Never);
-        }
+        _textRepoMock.Verify(
+            r => r.Delete(It.IsAny<TextEntity>()),
+            Times.Once);
 
-        /// <summary>
-        /// Should return failed Result and log error when database save fails.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnFailResult_WhenDeleteFails()
+        _repoWrapperMock.Verify(
+            w => w.SaveChangesAsync(),
+            Times.Once);
+
+        _loggerMock.Verify(
+            l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnFailResult_WhenDeleteFails()
+    {
+        var command = new DeleteTextCommand(TextId);
+        var existingText = new TextEntity
         {
-            int id = 1;
-            var command = new DeleteTextCommand(id);
-            var existingText = new T.Text { Id = id, Title = "Test Title" };
-            string expectedErrorMsg = $"Failed to delete Text with Id {id}.";
+            Id = TextId,
+            Title = TextTitle,
+        };
 
-            this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .ReturnsAsync(existingText);
+        var expectedErrorMessage = $"Failed to delete Text with Id {TextId}.";
 
-            this.textRepoMock
-                .Setup(r => r.Delete(It.IsAny<T.Text>()));
+        _textRepoMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                null))
+            .ReturnsAsync(existingText);
 
-            this.repoWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(0);
+        _textRepoMock
+            .Setup(r => r.Delete(It.IsAny<TextEntity>()));
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+        _repoWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(0);
 
-            result.IsFailed.Should().BeTrue();
-            result.Errors
-                .Should()
-                .ContainSingle()
-                .Which.Message
-                .Should()
-                .Be(expectedErrorMsg);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
-            this.textRepoMock.Verify(r => r.Delete(It.IsAny<T.Text>()), Times.Once);
-            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Once);
+        result.IsFailed.Should().BeTrue();
 
-            this.loggerMock.Verify(
-                l => l.LogError(It.IsAny<DeleteTextCommand>(), expectedErrorMsg),
-                Times.Once);
-        }
+        result.Errors
+            .Should()
+            .ContainSingle()
+            .Which.Message
+            .Should()
+            .Be(expectedErrorMessage);
 
-        /// <summary>
-        /// Should return failed Result when entity with given Id does not exist in the database.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnFail_WhenTextDoesNotExist()
-        {
-            int id = 1;
-            var command = new DeleteTextCommand(id);
-            string expectedErrorMsg = $"Text with Id {id} not found.";
+        _textRepoMock.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                null),
+            Times.Once);
 
-            this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .ReturnsAsync((T.Text?)null);
+        _textRepoMock.Verify(
+            r => r.Delete(It.IsAny<TextEntity>()),
+            Times.Once);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+        _repoWrapperMock.Verify(
+            w => w.SaveChangesAsync(),
+            Times.Once);
 
-            result.IsFailed.Should().BeTrue();
-            result.Errors
-                .Should()
-                .ContainSingle()
-                .Which.Message
-                .Should()
-                .Be(expectedErrorMsg);
+        _loggerMock.Verify(
+            l => l.LogError(
+                It.IsAny<DeleteTextCommand>(),
+                expectedErrorMessage),
+            Times.Once);
+    }
 
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
-            this.textRepoMock.Verify(r => r.Delete(It.IsAny<T.Text>()), Times.Never);
-            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
+    [Fact]
+    public async Task Handle_ShouldReturnFail_WhenTextDoesNotExist()
+    {
+        var command = new DeleteTextCommand(TextId);
+        var expectedErrorMessage = $"Text with Id {TextId} not found.";
 
-            this.loggerMock.Verify(
-                l => l.LogError(It.IsAny<DeleteTextCommand>(), expectedErrorMsg),
-                Times.Once);
-        }
+        _textRepoMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                null))
+            .ReturnsAsync((TextEntity)null!);
 
-        /// <summary>
-        /// Should propagate exception when repository throws.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldPropagateException_WhenRepositoryThrows()
-        {
-            var command = new DeleteTextCommand(1);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            this.textRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null))
-                .Throws(new Exception("Database connection failure"));
+        result.IsFailed.Should().BeTrue();
 
-            Func<Task> act = () => this.handler.Handle(command, CancellationToken.None);
+        result.Errors
+            .Should()
+            .ContainSingle()
+            .Which.Message
+            .Should()
+            .Be(expectedErrorMessage);
 
-            await act.Should().ThrowAsync<Exception>()
-                .WithMessage("Database connection failure");
+        _textRepoMock.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                null),
+            Times.Once);
 
-            this.textRepoMock.Verify(
-                r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Text, bool>>>(), null),
-                Times.Once);
-            this.textRepoMock.Verify(r => r.Delete(It.IsAny<T.Text>()), Times.Never);
-            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
-            this.loggerMock.Verify(
-                l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
-                Times.Never);
-        }
+        _textRepoMock.Verify(
+            r => r.Delete(It.IsAny<TextEntity>()),
+            Times.Never);
+
+        _repoWrapperMock.Verify(
+            w => w.SaveChangesAsync(),
+            Times.Never);
+
+        _loggerMock.Verify(
+            l => l.LogError(
+                It.IsAny<DeleteTextCommand>(),
+                expectedErrorMessage),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldPropagateException_WhenRepositoryThrows()
+    {
+        var command = new DeleteTextCommand(TextId);
+
+        _textRepoMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                null))
+            .Throws(new Exception(DatabaseFailureMessage));
+
+        Func<Task> act = () => _handler.Handle(command, CancellationToken.None);
+
+        await act.Should()
+            .ThrowAsync<Exception>()
+            .WithMessage(DatabaseFailureMessage);
+
+        _textRepoMock.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TextEntity, bool>>>(),
+                null),
+            Times.Once);
+
+        _textRepoMock.Verify(
+            r => r.Delete(It.IsAny<TextEntity>()),
+            Times.Never);
+
+        _repoWrapperMock.Verify(
+            w => w.SaveChangesAsync(),
+            Times.Never);
+
+        _loggerMock.Verify(
+            l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
+            Times.Never);
     }
 }

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -9,7 +10,6 @@ using Streetcode.BLL.MediatR.Team.GetById;
 using Streetcode.DAL.Entities.Team;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Team;
-using System.Linq.Expressions;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Team
@@ -35,7 +35,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Team
         }
     
 
-    [Fact]
+        [Fact]
         public async Task Handle_ReturnsOkResult_WhenTeamExists()
         {
             var teamEntity = new TeamMember { Id = 1, FirstName = "John", LastName = "Doe" };

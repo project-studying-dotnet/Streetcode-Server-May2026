@@ -97,6 +97,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any arts.
+        /// </summary>
+        public static string CannotFindAnyArts {
+            get {
+                return ResourceManager.GetString("CannotFindAnyArts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any audios.
         /// </summary>
         public static string CannotFindAnyAudios {
@@ -106,11 +115,38 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any team links.
+        /// </summary>
+        public static string CannotFindAnyTeamLinks {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTeamLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any text.
         /// </summary>
         public static string CannotFindAnyText {
             get {
                 return ResourceManager.GetString("CannotFindAnyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find an art with corresponding id: {0}.
+        /// </summary>
+        public static string CannotFindArtById {
+            get {
+                return ResourceManager.GetString("CannotFindArtById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any art with corresponding streetcode id: {0}.
+        /// </summary>
+        public static string CannotFindArtByStreetcodeId {
+            get {
+                return ResourceManager.GetString("CannotFindArtByStreetcodeId", resourceCulture);
             }
         }
         

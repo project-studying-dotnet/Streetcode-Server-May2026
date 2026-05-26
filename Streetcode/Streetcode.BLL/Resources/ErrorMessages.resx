@@ -213,4 +213,16 @@
   <data name="FailedToDeleteAnAudio" xml:space="preserve">
     <value>Failed to delete an audio</value>
   </data>
+  <data name="CannotFindAnyArts" xml:space="preserve">
+    <value>Cannot find any arts</value>
+  </data>
+  <data name="CannotFindArtById" xml:space="preserve">
+    <value>Cannot find an art with corresponding id: {0}</value>
+  </data>
+  <data name="CannotFindArtByStreetcodeId" xml:space="preserve">
+    <value>Cannot find any art with corresponding streetcode id: {0}</value>
+  </data>
+  <data name="CannotFindAnyTeamLinks" xml:space="preserve">
+    <value>Cannot find any team links</value>
+  </data>
 </root>

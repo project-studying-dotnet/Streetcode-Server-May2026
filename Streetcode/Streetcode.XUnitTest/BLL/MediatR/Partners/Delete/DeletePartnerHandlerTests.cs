@@ -79,8 +79,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
         {
             int id = 1;
             var deletePartnerQuery = new DeletePartnerQuery(id);
-            var partner = new Partner { Id = 1, Title = "Title 1", LogoId = 1
-                , IsKeyPartner = true, IsVisibleEverywhere = true,
+            var partner = new Partner { Id = 1, Title = "Title 1", LogoId = 1, 
+                IsKeyPartner = true, IsVisibleEverywhere = true,
             };
             var dto = new PartnerDTO { Id = 1, Title = "Title 1", LogoId = 1,
                 IsKeyPartner = true, IsVisibleEverywhere = true,

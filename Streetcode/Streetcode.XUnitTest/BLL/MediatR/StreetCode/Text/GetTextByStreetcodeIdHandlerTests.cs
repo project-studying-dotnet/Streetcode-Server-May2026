@@ -1,7 +1,3 @@
-// <copyright file="GetTextByStreetcodeIdHandlerTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 {
     using System.Linq.Expressions;
@@ -26,39 +22,39 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
     /// </summary>
     public class GetTextByStreetcodeIdHandlerTests
     {
-        private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly Mock<ITextRepository> textRepositoryMock;
-        private readonly Mock<IStreetcodeRepository> streetcodeRepositoryMock;
-        private readonly IMapper mapper;
-        private readonly Mock<ITextService> textServiceMock;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly GetTextByStreetcodeIdHandler handler;
+        private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+        private readonly Mock<ITextRepository> _textRepositoryMock;
+        private readonly Mock<IStreetcodeRepository> _streetcodeRepositoryMock;
+        private readonly IMapper _mapper;
+        private readonly Mock<ITextService> _textServiceMock;
+        private readonly Mock<ILoggerService> _loggerMock;
+        private readonly GetTextByStreetcodeIdHandler _handler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetTextByStreetcodeIdHandlerTests"/> class.
         /// </summary>
         public GetTextByStreetcodeIdHandlerTests()
         {
-            this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            this.textRepositoryMock = new Mock<ITextRepository>();
-            this.streetcodeRepositoryMock = new Mock<IStreetcodeRepository>();
-            this.mapper = new MapperConfiguration(cfg => cfg.AddProfile<TextProfile>()).CreateMapper();
-            this.textServiceMock = new Mock<ITextService>();
-            this.loggerMock = new Mock<ILoggerService>();
+            this._repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+            this._textRepositoryMock = new Mock<ITextRepository>();
+            this._streetcodeRepositoryMock = new Mock<IStreetcodeRepository>();
+            this._mapper = new MapperConfiguration(cfg => cfg.AddProfile<TextProfile>()).CreateMapper();
+            this._textServiceMock = new Mock<ITextService>();
+            this._loggerMock = new Mock<ILoggerService>();
 
-            this.repositoryWrapperMock
+            this._repositoryWrapperMock
                 .Setup(w => w.TextRepository)
-                .Returns(this.textRepositoryMock.Object);
+                .Returns(this._textRepositoryMock.Object);
 
-            this.repositoryWrapperMock
+            this._repositoryWrapperMock
                 .Setup(w => w.StreetcodeRepository)
-                .Returns(this.streetcodeRepositoryMock.Object);
+                .Returns(this._streetcodeRepositoryMock.Object);
 
-            this.handler = new GetTextByStreetcodeIdHandler(
-                this.repositoryWrapperMock.Object,
-                this.mapper,
-                this.textServiceMock.Object,
-                this.loggerMock.Object);
+            this._handler = new GetTextByStreetcodeIdHandler(
+                this._repositoryWrapperMock.Object,
+                this._mapper,
+                this._textServiceMock.Object,
+                this._loggerMock.Object);
         }
 
         /// <summary>
@@ -80,29 +76,29 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
                 TextContent = originalContent,
             };
 
-            this.textRepositoryMock
+            this._textRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<TextEntity, bool>>>(),
                     It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
                 .ReturnsAsync(textEntity);
 
-            this.textServiceMock
+            this._textServiceMock
                 .Setup(s => s.AddTermsTag(originalContent))
                 .ReturnsAsync(taggedContent);
 
             // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+            var result = await this._handler.Handle(query, CancellationToken.None);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
             result.Value!.TextContent.Should().Be(taggedContent);
 
-            this.textServiceMock.Verify(
+            this._textServiceMock.Verify(
                 s => s.AddTermsTag(originalContent),
                 Times.Once);
 
-            this.loggerMock.Verify(
+            this._loggerMock.Verify(
                 l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
@@ -117,30 +113,30 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
             // Arrange
             var query = new GetTextByStreetcodeIdQuery(StreetcodeId: 1);
 
-            this.textRepositoryMock
+            this._textRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<TextEntity, bool>>>(),
                     It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
                 .ReturnsAsync((TextEntity?)null);
 
-            this.streetcodeRepositoryMock
+            this._streetcodeRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
                     It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>?>()))
                 .ReturnsAsync(new StreetcodeContent { Id = 1 });
 
             // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+            var result = await this._handler.Handle(query, CancellationToken.None);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeNull();
 
-            this.loggerMock.Verify(
+            this._loggerMock.Verify(
                 l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
 
-            this.textServiceMock.Verify(
+            this._textServiceMock.Verify(
                 s => s.AddTermsTag(It.IsAny<string>()),
                 Times.Never);
         }
@@ -155,29 +151,29 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
             // Arrange
             var query = new GetTextByStreetcodeIdQuery(StreetcodeId: 1);
 
-            this.textRepositoryMock
+            this._textRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<TextEntity, bool>>>(),
                     It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
                 .ReturnsAsync((TextEntity?)null);
 
-            this.streetcodeRepositoryMock
+            this._streetcodeRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
                     It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>?>()))
                 .ReturnsAsync((StreetcodeContent?)null);
 
             // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+            var result = await this._handler.Handle(query, CancellationToken.None);
 
             // Assert
             result.IsFailed.Should().BeTrue();
 
-            this.loggerMock.Verify(
-                l => l.LogError(query, It.Is<string>(msg => msg.Contains("1"))),
+            this._loggerMock.Verify(
+                l => l.LogError(query, It.Is<string>(msg => msg.Contains('1'))),
                 Times.Once);
 
-            this.textServiceMock.Verify(
+            this._textServiceMock.Verify(
                 s => s.AddTermsTag(It.IsAny<string>()),
                 Times.Never);
         }
@@ -200,18 +196,18 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
                 TextContent = originalContent,
             };
 
-            this.textRepositoryMock
+            this._textRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<TextEntity, bool>>>(),
                     It.IsAny<Func<IQueryable<TextEntity>, IIncludableQueryable<TextEntity, object>>?>()))
                 .ReturnsAsync(textEntity);
 
-            this.textServiceMock
+            this._textServiceMock
                 .Setup(s => s.AddTermsTag(originalContent))
                 .ReturnsAsync(taggedContent);
 
             // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+            var result = await this._handler.Handle(query, CancellationToken.None);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
