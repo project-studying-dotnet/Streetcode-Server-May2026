@@ -8,6 +8,7 @@ using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.MediatR.ResultVariations;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Media.Audio.GetByStreetcodeId;
 
@@ -30,10 +31,12 @@ public class GetAudioByStreetcodeIdQueryHandler : IRequestHandler<GetAudioByStre
     {
         var streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
             s => s.Id == request.StreetcodeId,
-            include: q => q.Include(s => s.Audio) !);
+            include: q => q.Include(s => s.Audio) !,
+            cancellationToken);
+
         if (streetcode == null)
         {
-            string errorMsg = $"Cannot find an audio with the corresponding streetcode id: {request.StreetcodeId}";
+            string errorMsg = string.Format(ErrorMessages.CannotFindAudioByStreetcodeId, request.StreetcodeId);
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }

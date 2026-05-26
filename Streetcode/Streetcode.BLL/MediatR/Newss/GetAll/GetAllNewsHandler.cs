@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Newss.GetAll
@@ -30,7 +31,7 @@ namespace Streetcode.BLL.MediatR.Newss.GetAll
                 include: cat => cat.Include(img => img.Image!));
             if (news == null)
             {
-                const string errorMsg = "There are no news in the database";
+                string errorMsg = ErrorMessages.ThereAreNoNewsInDatabase;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(errorMsg);
             }

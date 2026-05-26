@@ -15,6 +15,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
     using Streetcode.BLL.MediatR.Media.Audio.Create;
     using Streetcode.DAL.Repositories.Interfaces.Base;
     using Xunit;
+    using Streetcode.BLL.Resources;
     using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
 
     /// <summary>
@@ -145,7 +146,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Failed to create an audio");
+            result.Errors[0].Message.Should().Be(ErrorMessages.FailedToCreateAudio);
         }
 
         /// <summary>
@@ -172,7 +173,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
             await this.handler.Handle(command, CancellationToken.None);
 
             this.loggerMock.Verify(
-                logger => logger.LogError(command, "Failed to create an audio"),
+                logger => logger.LogError(command, ErrorMessages.FailedToCreateAudio),
                 Times.Once);
         }
 
