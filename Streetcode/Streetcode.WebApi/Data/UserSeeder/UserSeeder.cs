@@ -10,37 +10,35 @@ namespace Streetcode.WebApi.InitialData.UserSeeder
     [ExcludeFromCodeCoverage]
     public static class UserSeeder
     {
-        public static async Task FillSeedAsync(StreetcodeDbContext dbContext)
+        public static async Task FillSeedAsync(UserManager<User> userManager)
         {
-            const string AdminLiteral = "admin";
-            var identityPasswordHasher = new PasswordHasher<User>();
+            const string adminEmail = "admin@admin.com";
+            const string adminPassword = "admin@1234";
 
-            var adminUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin");
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
             {
                 var newAdmin = new User
                 {
-                    Email = "admin@admin.com",
-                    NormalizedEmail = "ADMIN@ADMIN.COM",
-                    UserName = AdminLiteral,
-                    NormalizedUserName = "ADMIN",
-                    Name = AdminLiteral,
-                    Surname = AdminLiteral,
+                    Email = adminEmail,
+                    UserName = adminEmail,
+                    Name = "admin",
+                    Surname = "adminovich",
                     Role = UserRole.MainAdministrator,
                     EmailConfirmed = true,
                 };
 
-                newAdmin.PasswordHash = identityPasswordHasher.HashPassword(newAdmin, AdminLiteral);
+                var result = await userManager.CreateAsync(
+                    newAdmin,
+                    adminPassword);
 
-                await dbContext.Users.AddAsync(newAdmin);
-                await dbContext.SaveChangesAsync();
-            }
-            else if (string.IsNullOrEmpty(adminUser.PasswordHash) || adminUser.PasswordHash.Length < 20)
-            {
-                adminUser.PasswordHash = identityPasswordHasher.HashPassword(adminUser, AdminLiteral);
-
-                await dbContext.SaveChangesAsync();
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(
+                        newAdmin,
+                        UserRole.MainAdministrator.ToString());
+                }
             }
         }
     }

@@ -1,11 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Streetcode.BLL.Services.BlobStorageService;
 using Streetcode.DAL.Entities.Media;
 using Streetcode.DAL.Entities.Media.Images;
+using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Realizations.Base;
+using Streetcode.WebApi.Data.RoleSeeder;
 using Streetcode.WebApi.Data.TeamMembersSeeder;
 using Streetcode.WebApi.InitialData.ArtsSeeder;
 using Streetcode.WebApi.InitialData.FactsSeeder;
@@ -38,6 +40,7 @@ using Streetcode.WebApi.InitialData.TimelineItemsSeeder;
 using Streetcode.WebApi.InitialData.TransactionLinkSeeder;
 using Streetcode.WebApi.InitialData.UserSeeder;
 using Streetcode.WebApi.InitialData.VideosSeeder;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Streetcode.WebApi.Extensions
 {
@@ -49,17 +52,20 @@ namespace Streetcode.WebApi.Extensions
             using (var scope = app.Services.CreateScope())
             {
                 string blobPath = app.Configuration.GetValue<string>("Blob:BlobStorePath")
-                    ?? throw new InvalidOperationException("Critical error: Path not specified 'Blob:BlobStorePath' в конфигурации.");
+                    ?? throw new InvalidOperationException("Critical error: Path not specified 'Blob:BlobStorePath' in configuration.");
 
                 Directory.CreateDirectory(blobPath);
                 var dbContext = scope.ServiceProvider.GetRequiredService<StreetcodeDbContext>();
                 var blobOptions = app.Services.GetRequiredService<IOptions<BlobEnvironmentVariables>>();
                 var repo = new RepositoryWrapper(dbContext);
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var blobService = new BlobService(blobOptions, repo);
                 string initialDataImagePath = "../Streetcode.DAL/InitialData/images.json";
                 string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
 
-                await UserSeeder.FillSeedAsync(dbContext);
+                await RoleSeeder.FillSeedAsync(roleManager);
+                await UserSeeder.FillSeedAsync(userManager);
                 await PositionsSeeder.FillSeedAsync(dbContext);
 
                 if (!await dbContext.Images.AnyAsync())
