@@ -35,7 +35,7 @@ public sealed class UpdateTimelineItemHandler(
         thisRepositoryWrapper.HistoricalContextTimelineRepository.DeleteRange(timeline_item.HistoricalContextTimelines);
         await thisRepositoryWrapper.SaveChangesAsync(cancellationToken);
 
-        Result<List<HistoricalContextTimeline>> historical_context_result = await RetrieveHistoricalContextTimelines(request, timeline_item, cancellationToken);
+        Result<List<HistoricalContextTimeline>> historical_context_result = await BuildHistoricalContextTimelines(request, timeline_item);
         if(historical_context_result.IsFailed)
         {
             return Result.Fail(historical_context_result.Errors);
@@ -64,39 +64,35 @@ public sealed class UpdateTimelineItemHandler(
         return Result.Ok(updated_dto);
     }
 
-    private async Task<Result<List<HistoricalContextTimeline>>> RetrieveHistoricalContextTimelines(
+    private async Task<Result<List<HistoricalContextTimeline>>> BuildHistoricalContextTimelines(
         UpdateTimelineItemCommand request,
-        TimelineItemEntity timelineItem,
-        CancellationToken cancellationToken)
+        TimelineItemEntity timelineItem)
     {
-        List<Task<Result<HistoricalContextTimeline>>> historical_context_timelines = request.TimelineItem.HistoricalContexts.Select(async r =>
+        List<int> requested_ids = request.TimelineItem.HistoricalContexts.Select(hc => hc.Id).ToList();
+        if (requested_ids.Count == 0)
         {
-            HistContext? historical_context = await thisRepositoryWrapper.HistoricalContextRepository.GetFirstOrDefaultAsync(
-                predicate: hc => hc.Id == r.Id,
-                cancellationToken: cancellationToken);
+            return Result.Ok(new List<HistoricalContextTimeline>());
+        }
 
-            if (historical_context is null)
-            {
-                string error_msg = string.Format(ErrorMessages.HistoricalContextWithIdNotFound, r.Id);
-                thisLogger.LogError(request, error_msg);
-                return Result.Fail(new Error(error_msg));
-            }
+        IEnumerable<HistContext> existing_contexts = await thisRepositoryWrapper.HistoricalContextRepository
+            .GetAllAsync(hc => requested_ids.Contains(hc.Id));
+        List<HistContext> existing_contexts_list = existing_contexts.ToList();
 
-            HistoricalContextTimeline timeline = new()
-            {
-                HistoricalContext = historical_context,
-                Timeline = timelineItem,
-            };
-            return Result.Ok(timeline);
-        }).ToList();
-        Result<HistoricalContextTimeline>[] historical_context_timeline_results = await Task.WhenAll(historical_context_timelines);
-        if (historical_context_timeline_results.Any(r => r.IsFailed) is true)
+        if (existing_contexts_list.Count != requested_ids.Count)
         {
             string error_msg = ErrorMessages.CannotFindOneOrMoreHistoricalContexts;
             thisLogger.LogError(request, error_msg);
             return Result.Fail(new Error(error_msg));
         }
 
-        return Result.Ok(historical_context_timeline_results.Select(r => r.Value).ToList());
+        List<HistoricalContextTimeline> join_records = existing_contexts_list.Select(hc => new HistoricalContextTimeline
+        {
+            TimelineId = timelineItem.Id,
+            HistoricalContextId = hc.Id,
+            Timeline = timelineItem,
+            HistoricalContext = hc,
+        }).ToList();
+
+        return Result.Ok(join_records);
     }
 }

@@ -91,12 +91,11 @@ public sealed class UpdateTimelineItemHandlerTests
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(1);
         _mockHistoricalContextRepository.Setup(
-            r => r.GetFirstOrDefaultAsync(
+            r => r.GetAllAsync(
                 It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>(),
-                It.IsAny<CancellationToken>()
+                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
             )
-        ).ReturnsAsync(historical_context);
+        ).ReturnsAsync([historical_context]);
         _mockTimelineRepository.Setup(
             r => r.Update(timeline_item_entity)
         );
@@ -120,10 +119,9 @@ public sealed class UpdateTimelineItemHandlerTests
             Times.Once
         );
         _mockHistoricalContextRepository.Verify(
-            r => r.GetFirstOrDefaultAsync(
+            r => r.GetAllAsync(
                 It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>(),
-                It.IsAny<CancellationToken>()
+                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
             ),
             Times.Once
         );
@@ -233,14 +231,13 @@ public sealed class UpdateTimelineItemHandlerTests
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(1);
         _mockHistoricalContextRepository.Setup(
-            r => r.GetFirstOrDefaultAsync(
+            r => r.GetAllAsync(
                 It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>(),
-                It.IsAny<CancellationToken>()
+                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
             )
-        ).ReturnsAsync((HistContext?)null);
+        ).ReturnsAsync(Array.Empty<HistContext>());
         _mockLogger.Setup(
-            l => l.LogError(command, string.Format(ErrorMessages.HistoricalContextWithIdNotFound, 999))
+            l => l.LogError(command, ErrorMessages.CannotFindOneOrMoreHistoricalContexts)
         );
 
         // Act
@@ -258,15 +255,14 @@ public sealed class UpdateTimelineItemHandlerTests
             Times.Once
         );
         _mockHistoricalContextRepository.Verify(
-            r => r.GetFirstOrDefaultAsync(
+            r => r.GetAllAsync(
                 It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>(),
-                It.IsAny<CancellationToken>()
+                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
             ),
             Times.Once
         );
         _mockLogger.Verify(
-            l => l.LogError(command, string.Format(ErrorMessages.HistoricalContextWithIdNotFound, 999)),
+            l => l.LogError(command, ErrorMessages.CannotFindOneOrMoreHistoricalContexts),
             Times.Once
         );
     }
@@ -322,12 +318,11 @@ public sealed class UpdateTimelineItemHandlerTests
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(1).ReturnsAsync(0);
         _mockHistoricalContextRepository.Setup(
-            r => r.GetFirstOrDefaultAsync(
+            r => r.GetAllAsync(
                 It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>(),
-                It.IsAny<CancellationToken>()
+                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
             )
-        ).ReturnsAsync(historical_context);
+        ).ReturnsAsync([historical_context]);
         _mockTimelineRepository.Setup(
             r => r.Update(timeline_item_entity)
         );
@@ -417,12 +412,11 @@ public sealed class UpdateTimelineItemHandlerTests
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(1).ThrowsAsync(new Exception(exception_message));
         _mockHistoricalContextRepository.Setup(
-            r => r.GetFirstOrDefaultAsync(
+            r => r.GetAllAsync(
                 It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>(),
-                It.IsAny<CancellationToken>()
+                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
             )
-        ).ReturnsAsync(historical_context);
+        ).ReturnsAsync([historical_context]);
         _mockTimelineRepository.Setup(
             r => r.Update(timeline_item_entity)
         );
@@ -510,16 +504,15 @@ public sealed class UpdateTimelineItemHandlerTests
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(1);
         _mockHistoricalContextRepository.Setup(
-            r => r.GetFirstOrDefaultAsync(
+            r => r.GetAllAsync(
                 It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>(),
-                It.IsAny<CancellationToken>()
+                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
             )
-        ).ReturnsAsync(new HistContext
-        {
-            Id = 1,
-            Title = "Context"
-        });
+        ).ReturnsAsync([
+            new HistContext { Id = 1, Title = "Context 1" },
+            new HistContext { Id = 2, Title = "Context 2" },
+            new HistContext { Id = 3, Title = "Context 3" },
+        ]);
         _mockTimelineRepository.Setup(
             r => r.Update(timeline_item_entity)
         );
@@ -531,12 +524,11 @@ public sealed class UpdateTimelineItemHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.HistoricalContexts.Should().HaveCount(3);
         _mockHistoricalContextRepository.Verify(
-            r => r.GetFirstOrDefaultAsync(
+            r => r.GetAllAsync(
                 It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>(),
-                It.IsAny<CancellationToken>()
+                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
             ),
-            Times.Exactly(3)
+            Times.Once
         );
         _mockRepositoryWrapper.Verify(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
