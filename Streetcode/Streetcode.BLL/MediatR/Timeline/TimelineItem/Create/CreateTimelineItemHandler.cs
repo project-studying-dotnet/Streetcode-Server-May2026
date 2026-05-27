@@ -34,7 +34,6 @@ public sealed class CreateTimelineItemHandler(
             TimelineItemDto dto = thisMapper.Map<TimelineItemDto>(timeline_item);
             dto.HistoricalContexts = request.TimelineItem.HistoricalContexts;
             thisRepositoryWrapper.TimelineRepository.Detach(timeline_item);
-            await thisRepositoryWrapper.SaveChangesAsync(cancellationToken);
 
             UpdateTimelineItemCommand update_command = new(dto);
             return await thisMediator.Send(update_command, cancellationToken);

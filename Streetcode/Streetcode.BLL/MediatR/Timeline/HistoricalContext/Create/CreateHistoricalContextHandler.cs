@@ -19,7 +19,7 @@ public sealed class CreateHistoricalContextHandler(
     {
         try
         {
-            HistContext historical_context = thisMapper.Map<HistContext>(request.HistoricalContext); 
+            HistContext historical_context = thisMapper.Map<HistContext>(request.HistoricalContext);
             await thisRepositoryWrapper.HistoricalContextRepository.CreateAsync(historical_context);
             bool success = await thisRepositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
             if(success is false)
