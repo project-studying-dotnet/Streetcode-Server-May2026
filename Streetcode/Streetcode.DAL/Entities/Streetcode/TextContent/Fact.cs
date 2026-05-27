@@ -5,6 +5,7 @@ namespace Streetcode.DAL.Entities.Streetcode.TextContent;
 public class Fact
 {
     public int Id { get; set; }
+    public int Index { get; set; }
     public string? Title { get; set; }
     public string? FactContent { get; set; }
     public int? ImageId { get; set; }

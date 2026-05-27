@@ -11,6 +11,7 @@ using Streetcode.BLL.DTO.Streetcode.TextContent;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
+using Streetcode.BLL.Resources;
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.RelatedTerm;
 
 namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
@@ -53,12 +54,13 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                 .ReturnsAsync((Entity)null!);
 
             var result = await _handler.Handle(command, CancellationToken.None);
+            const string TestWord = "test";
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot find a related term: test");
+            result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindRelatedTerm, TestWord));
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Cannot find a related term: test"),
+                logger => logger.LogError(command, string.Format(ErrorMessages.CannotFindRelatedTerm, TestWord)),
                 Times.Once);
 
             _relatedTermRepositoryMock.Verify(
@@ -98,7 +100,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Failed to delete a related term");
+            result.Errors[0].Message.Should().Be(ErrorMessages.FailedToDeleteRelatedTerm);
 
             _relatedTermRepositoryMock.Verify(
                 repo => repo.Delete(entity),
@@ -109,7 +111,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                 Times.Once);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Failed to delete a related term"),
+                logger => logger.LogError(command, ErrorMessages.FailedToDeleteRelatedTerm),
                 Times.Once);
         }
 
@@ -136,7 +138,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Failed to delete a related term");
+            result.Errors[0].Message.Should().Be(ErrorMessages.FailedToDeleteRelatedTerm);
 
             _relatedTermRepositoryMock.Verify(
                 repo => repo.Delete(entity),
@@ -147,7 +149,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                 Times.Once);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Failed to delete a related term"),
+                logger => logger.LogError(command, ErrorMessages.FailedToDeleteRelatedTerm),
                 Times.Once);
         }
 

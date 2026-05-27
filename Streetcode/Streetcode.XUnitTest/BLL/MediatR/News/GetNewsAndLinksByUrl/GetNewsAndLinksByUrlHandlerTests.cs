@@ -9,6 +9,7 @@ using Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
 {
@@ -54,7 +55,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal($"No news by entered Url - {testUrl}", result.Errors[0].Message);
+            Assert.Equal(string.Format(ErrorMessages.NoNewsFoundByUrl, testUrl), result.Errors[0].Message);
         }
 
         [Fact]
