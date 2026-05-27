@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var environment = builder.Environment.EnvironmentName;
 builder.Configuration.ConfigureCustom(environment);
+builder.Configuration
+    .AddUserSecrets<Program>();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
@@ -31,7 +33,7 @@ else
 
 await app.ApplyMigrations();
 
-await app.SeedDataAsync(); // uncomment for seeding data in local
+// await app.SeedDataAsync(); // uncomment for seeding data in local
 app.UseCors();
 
 app.UseCustomMiddlewares();

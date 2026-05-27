@@ -55,11 +55,12 @@ namespace Streetcode.WebApi.Extensions
                 var dbContext = scope.ServiceProvider.GetRequiredService<StreetcodeDbContext>();
                 var blobOptions = app.Services.GetRequiredService<IOptions<BlobEnvironmentVariables>>();
                 var repo = new RepositoryWrapper(dbContext);
+                IConfiguration configuration = app.Services.GetRequiredService<IConfiguration>();
                 var blobService = new BlobService(blobOptions, repo);
                 string initialDataImagePath = "../Streetcode.DAL/InitialData/images.json";
                 string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
 
-                await UserSeeder.FillSeedAsync(dbContext);
+                await UserSeeder.FillSeedAsync(dbContext, configuration);
                 await PositionsSeeder.FillSeedAsync(dbContext);
 
                 if (!await dbContext.Images.AnyAsync())
