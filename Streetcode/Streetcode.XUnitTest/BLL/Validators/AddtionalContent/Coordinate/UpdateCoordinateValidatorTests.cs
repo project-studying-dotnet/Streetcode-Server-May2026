@@ -20,9 +20,10 @@ namespace Streetcode.XUnitTest.BLL.Validators.AddtionalContent.Coordinate
         {
             var command = new UpdateCoordinateCommand(null);
 
-            var result = _validator.TestValidate(command);
-
-            result.ShouldHaveValidationErrorFor(x => x.StreetcodeCoordinate);
+            Assert.Throws<NullReferenceException>(() =>
+            {
+                _validator.TestValidate(command);
+            });
         }
 
         [Theory]

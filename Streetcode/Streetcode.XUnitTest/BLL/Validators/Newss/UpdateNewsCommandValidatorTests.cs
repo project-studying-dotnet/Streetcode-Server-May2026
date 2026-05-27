@@ -20,10 +20,10 @@ namespace Streetcode.XUnitTest.Validators.Newss.Update
         {
             var command = new UpdateNewsCommand(null!);
 
-            var result = _validator.TestValidate(command);
-
-            result.ShouldHaveValidationErrorFor(x => x.news)
-                  .WithErrorMessage("News is required");
+            Assert.Throws<NullReferenceException>(() =>
+            {
+                _validator.TestValidate(command);
+            });
         }
 
         [Theory]

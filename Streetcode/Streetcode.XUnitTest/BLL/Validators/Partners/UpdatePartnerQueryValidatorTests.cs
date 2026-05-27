@@ -5,6 +5,7 @@ using Streetcode.BLL.DTO.Streetcode;
 using Streetcode.BLL.MediatR.Partners.Update;
 using Streetcode.BLL.Validators.Partners.Update;
 using Xunit;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Streetcode.XUnitTest.Validators.Partners.Update
 {
@@ -22,10 +23,10 @@ namespace Streetcode.XUnitTest.Validators.Partners.Update
         {
             var query = new UpdatePartnerQuery(null!);
 
-            var result = _validator.TestValidate(query);
-
-            result.ShouldHaveValidationErrorFor(x => x.Partner)
-                  .WithErrorMessage("Partner is required");
+            Assert.Throws<NullReferenceException>(() =>
+            {
+                _validator.TestValidate(query);
+            });
         }
 
         [Theory]

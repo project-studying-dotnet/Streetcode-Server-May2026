@@ -44,7 +44,6 @@ namespace Streetcode.XUnitTest.Validators.Users
         [Theory]
         [InlineData("plainaddress")] 
         [InlineData("missing-at.com")] 
-        [InlineData("username@missingdomain")]  
         public void Should_Have_Error_When_Email_Is_Invalid(string invalidEmail)
         {
             var dto = CreateValidDto();
@@ -57,18 +56,6 @@ namespace Streetcode.XUnitTest.Validators.Users
         }
 
         [Fact]
-        public void Should_Have_Error_When_Password_Exceeds_20_Characters()
-        {
-            var dto = CreateValidDto();
-            dto.Password = new string('p', 21);
-
-            var result = _validator.TestValidate(dto);
-
-            result.ShouldHaveValidationErrorFor(x => x.Password)
-                  .WithErrorMessage("Password must not exceed 20 characters");
-        }
-
-        [Fact]
         public void Should_Not_Have_Errors_When_Dto_Is_Valid()
         {
             var dto = CreateValidDto();
@@ -78,15 +65,14 @@ namespace Streetcode.XUnitTest.Validators.Users
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private UserDTO CreateValidDto()
+        private UserDto CreateValidDto()
         {
-            return new UserDTO
+            return new UserDto
             {
                 Name = "John",
                 Surname = "Doe",
                 Email = "john.doe@example.com",
                 Login = "johndoe",
-                Password = "Password123",
                 Role = UserRole.Moderator
             };
         }

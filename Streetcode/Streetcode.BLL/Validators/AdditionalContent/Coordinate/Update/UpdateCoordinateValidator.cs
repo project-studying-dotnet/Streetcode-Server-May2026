@@ -17,7 +17,6 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate.Update
 
             RuleFor(x => x.StreetcodeCoordinate.Id)
                 .GreaterThan(0)
-                .When(x => x.StreetcodeCoordinate != null)
                 .WithMessage("Coordinate Id must be greater than 0 for update operations.");
 
             RuleFor(x => x.StreetcodeCoordinate)

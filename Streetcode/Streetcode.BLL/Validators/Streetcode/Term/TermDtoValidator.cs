@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
-using Streetcode.BLL.DTO.Streetcode.TextContent;
+using Streetcode.BLL.DTO.Streetcode.TextContent.Term;
 
 namespace Streetcode.BLL.Validators.Streetcode.Term
 {
     /// <summary>
     /// Validator for TermDTO.
     /// </summary>
-    public class TermDtoValidator : AbstractValidator<TermDTO>
+    public class TermDtoValidator : AbstractValidator<TermDto>
     {
         private const int DescriptionMaxLength = 250;
 

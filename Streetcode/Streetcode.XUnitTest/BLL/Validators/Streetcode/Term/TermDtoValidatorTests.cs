@@ -1,5 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using Streetcode.BLL.DTO.Streetcode.TextContent;
+using Streetcode.BLL.DTO.Streetcode.TextContent.Term;
 using Streetcode.BLL.Validators.Streetcode.Term;
 using Xunit;
 
@@ -77,9 +77,9 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Term
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private TermDTO CreateValidDto()
+        private TermDto CreateValidDto()
         {
-            return new TermDTO
+            return new TermDto
             {
                 Title = "Валідний заголовок",
                 Description = "Валідний опис"

@@ -76,9 +76,9 @@ namespace Streetcode.XUnitTest.Validators.Users
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private UserLoginDTO CreateValidDto()
+        private UserLoginDto CreateValidDto()
         {
-            return new UserLoginDTO
+            return new UserLoginDto
             {
                 Login = "validUser",
                 Password = "validPassword123"

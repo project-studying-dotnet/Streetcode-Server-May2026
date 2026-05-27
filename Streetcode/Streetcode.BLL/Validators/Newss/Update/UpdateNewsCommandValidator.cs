@@ -19,8 +19,7 @@ namespace Streetcode.BLL.Validators.Newss.Update
                 .SetValidator(new NewsDtoValidator());
 
             RuleFor(x => x.news.Id)
-                .GreaterThan(0)
-                .When(x => x.news != null);
+                .GreaterThan(0);
         }
     }
 }
