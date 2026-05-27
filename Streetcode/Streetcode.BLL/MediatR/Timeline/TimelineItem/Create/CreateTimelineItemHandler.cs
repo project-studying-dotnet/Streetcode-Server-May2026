@@ -24,7 +24,7 @@ public sealed class CreateTimelineItemHandler(
             TimelineItemEntity timeline_item = thisMapper.Map<TimelineItemEntity>(request.TimelineItem);
             await thisRepositoryWrapper.TimelineRepository.CreateAsync(timeline_item);
             bool success = await thisRepositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
-            if (success is false)
+            if (!success)
             {
                 string error_msg = ErrorMessages.CannotSaveTimelineItem;
                 thisLogger.LogError(request, error_msg);

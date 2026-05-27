@@ -16,20 +16,26 @@ public sealed class HistoricalContextController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] HistoricalContextDto dto)
+    public async Task<IActionResult> Create([FromBody] HistoricalContextDto dto, CancellationToken cancellationToken)
     {
-        return HandleResult(await Mediator.Send(new CreateHistoricalContextCommand(dto)));
+        return HandleResult(
+            await Mediator.Send(new CreateHistoricalContextCommand(dto), cancellationToken)
+        );
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] HistoricalContextDto dto)
+    public async Task<IActionResult> Update([FromBody] HistoricalContextDto dto, CancellationToken cancellationToken)
     {
-        return HandleResult(await Mediator.Send(new UpdateHistoricalContextCommand(dto)));
+        return HandleResult(
+            await Mediator.Send(new UpdateHistoricalContextCommand(dto), cancellationToken)
+        );
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
     {
-        return HandleResult(await Mediator.Send(new DeleteHistoricalContextCommand(id)));
+        return HandleResult(
+            await Mediator.Send(new DeleteHistoricalContextCommand(id), cancellationToken)
+        );
     }
 }

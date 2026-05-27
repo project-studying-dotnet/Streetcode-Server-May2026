@@ -32,7 +32,7 @@ public sealed class DeleteHistoricalContextHandler(
         {
             thisRepositoryWrapper.HistoricalContextRepository.Delete(historical_context);
             bool success = await thisRepositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
-            if(success is false)
+            if(!success)
             {
                 string error_msg = string.Format(ErrorMessages.FailedToDeleteHistoricalContextWithId, request.Id);
                 thisLogger.LogError(request, error_msg);

@@ -22,7 +22,7 @@ public sealed class CreateHistoricalContextHandler(
             HistContext historical_context = thisMapper.Map<HistContext>(request.HistoricalContext);
             await thisRepositoryWrapper.HistoricalContextRepository.CreateAsync(historical_context);
             bool success = await thisRepositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
-            if(success is false)
+            if(!success)
             {
                 string error_msg = ErrorMessages.CannotSaveHistoricalContextToDatabase;
                 thisLogger.LogError(request, error_msg);

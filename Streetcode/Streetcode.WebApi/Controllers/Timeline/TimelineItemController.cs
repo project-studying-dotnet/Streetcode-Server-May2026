@@ -30,20 +30,26 @@ public sealed class TimelineItemController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] TimelineItemDto timelineItem)
+    public async Task<IActionResult> Create([FromBody] TimelineItemDto timelineItem, CancellationToken cancellationToken)
     {
-        return HandleResult(await Mediator.Send(new CreateTimelineItemCommand(timelineItem)));
+        return HandleResult(
+            await Mediator.Send(new CreateTimelineItemCommand(timelineItem), cancellationToken)
+        );
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] TimelineItemDto timelineItem)
+    public async Task<IActionResult> Update([FromBody] TimelineItemDto timelineItem, CancellationToken cancellationToken)
     {
-        return HandleResult(await Mediator.Send(new UpdateTimelineItemCommand(timelineItem)));
+        return HandleResult(
+            await Mediator.Send(new UpdateTimelineItemCommand(timelineItem), cancellationToken)
+        );
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
     {
-        return HandleResult(await Mediator.Send(new DeleteTimelineItemCommand(id)));
+        return HandleResult(
+            await Mediator.Send(new DeleteTimelineItemCommand(id), cancellationToken)
+        );
     }
 }

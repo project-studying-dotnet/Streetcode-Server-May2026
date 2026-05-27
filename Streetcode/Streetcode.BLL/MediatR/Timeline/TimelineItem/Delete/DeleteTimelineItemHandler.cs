@@ -32,7 +32,7 @@ public sealed class DeleteTimelineItemHandler(
         {
             thisRepositoryWrapper.TimelineRepository.Delete(timeline_item);
             bool success = await thisRepositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
-            if(success is false)
+            if(!success)
             {
                 string error_msg = string.Format(ErrorMessages.FailedToDeleteTimelineItemWithId, request.Id);
                 thisLogger.LogError(request, error_msg);

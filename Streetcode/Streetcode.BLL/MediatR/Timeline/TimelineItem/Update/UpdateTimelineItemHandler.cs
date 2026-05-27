@@ -47,7 +47,7 @@ public sealed class UpdateTimelineItemHandler(
         {
             thisRepositoryWrapper.TimelineRepository.Update(timeline_item);
             bool success = await thisRepositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
-            if (success is false)
+            if (!success)
             {
                 string error_msg = string.Format(ErrorMessages.FailedToUpdateTimelineItemWithId, request.TimelineItem.Id);
                 thisLogger.LogError(request, error_msg);
@@ -74,11 +74,11 @@ public sealed class UpdateTimelineItemHandler(
             return Result.Ok(new List<HistoricalContextTimeline>());
         }
 
-        IEnumerable<HistContext> existing_contexts = await thisRepositoryWrapper.HistoricalContextRepository
-            .GetAllAsync(hc => requested_ids.Contains(hc.Id));
+        IEnumerable<HistContext> existing_contexts = await thisRepositoryWrapper.HistoricalContextRepository.GetAllAsync(
+            hc => requested_ids.Contains(hc.Id)
+        );
         List<HistContext> existing_contexts_list = existing_contexts.ToList();
-
-        if (existing_contexts_list.Count != requested_ids.Count)
+        if(existing_contexts_list.Count != requested_ids.Count)
         {
             string error_msg = ErrorMessages.CannotFindOneOrMoreHistoricalContexts;
             thisLogger.LogError(request, error_msg);
@@ -92,7 +92,6 @@ public sealed class UpdateTimelineItemHandler(
             Timeline = timelineItem,
             HistoricalContext = hc,
         }).ToList();
-
         return Result.Ok(join_records);
     }
 }

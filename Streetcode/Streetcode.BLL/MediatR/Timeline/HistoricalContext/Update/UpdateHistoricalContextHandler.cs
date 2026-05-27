@@ -33,7 +33,7 @@ public sealed class UpdateHistoricalContextHandler(
         {
             thisRepositoryWrapper.HistoricalContextRepository.Update(historical_context);
             bool success = await thisRepositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
-            if (success is false)
+            if (!success)
             {
                 string error_msg = string.Format(ErrorMessages.FailedToUpdateHistoricalContextWithId, request.HistoricalContext.Id);
                 thisLogger.LogError(request, error_msg);
