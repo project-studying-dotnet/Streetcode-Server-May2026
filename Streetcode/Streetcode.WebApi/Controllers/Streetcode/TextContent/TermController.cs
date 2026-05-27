@@ -5,11 +5,14 @@ using Streetcode.BLL.MediatR.Streetcode.Term.Delete;
 using Streetcode.BLL.MediatR.Streetcode.Term.GetAll;
 using Streetcode.BLL.MediatR.Streetcode.Term.GetById;
 using Streetcode.BLL.MediatR.Streetcode.Term.Update;
+using Streetcode.DAL.Enums;
+using Streetcode.WebApi.Attributes;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent;
 
 public class TermController : BaseApiController
 {
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTermDto term)
     {
@@ -28,12 +31,14 @@ public class TermController : BaseApiController
         return HandleResult(await Mediator.Send(new GetTermByIdQuery(id)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateTermDto term)
     {
         return HandleResult(await Mediator.Send(new UpdateTermCommand(term)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
