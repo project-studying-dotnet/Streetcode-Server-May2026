@@ -12,6 +12,7 @@ namespace Streetcode.WebApi.InitialData.UserSeeder
     {
         public static async Task FillSeedAsync(StreetcodeDbContext dbContext, IConfiguration configuration)
         {
+            throw new NotSupportedException(); // Will be implemented in the future.
         }
     }
 }
