@@ -225,4 +225,10 @@
   <data name="CannotFindAnyTeamLinks" xml:space="preserve">
     <value>Cannot find any team links</value>
   </data>
+  <data name="DefaultConnectionIsMissing" xml:space="preserve">
+    <value>Default Connection is missing</value>
+  </data>
+  <data name="EmailConfigurationIsMissing" xml:space="preserve">
+    <value>Email Configuration is missing</value>
+  </data>
 </root>
