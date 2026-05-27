@@ -12,16 +12,15 @@ namespace Streetcode.WebApi.InitialData.UserSeeder
     {
         public static async Task FillSeedAsync(StreetcodeDbContext dbContext, IConfiguration configuration)
         {
-            var adminEmail = configuration["AdminSettings:Email"];
-            var adminPassword = configuration["AdminSettings:Password"];
+            // var adminEmail = configuration["AdminSettings:Email"];
+            // var adminPassword = configuration["AdminSettings:Password"];
 
-            //const string AdminLiteral = "admin";
-            //var identityPasswordHasher = new PasswordHasher<User>();
+            // var identityPasswordHasher = new PasswordHasher<User>();
 
-            //var adminUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin");
+            // var adminUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin");
 
-            //if (adminUser == null)
-            //{
+            // if (adminUser == null)
+            // {
             //    var newAdmin = new User
             //    {
             //        Email = "admin@admin.com",
@@ -34,17 +33,17 @@ namespace Streetcode.WebApi.InitialData.UserSeeder
             //        EmailConfirmed = true,
             //    };
 
-            //    newAdmin.PasswordHash = identityPasswordHasher.HashPassword(newAdmin, AdminLiteral);
+            // newAdmin.PasswordHash = identityPasswordHasher.HashPassword(newAdmin, AdminLiteral);
 
-            //    await dbContext.Users.AddAsync(newAdmin);
+            // await dbContext.Users.AddAsync(newAdmin);
             //    await dbContext.SaveChangesAsync();
-            //}
-            //else if (string.IsNullOrEmpty(adminUser.PasswordHash) || adminUser.PasswordHash.Length < 20)
-            //{
+            // }
+            // else if (string.IsNullOrEmpty(adminUser.PasswordHash) || adminUser.PasswordHash.Length < 20)
+            // {
             //    adminUser.PasswordHash = identityPasswordHasher.HashPassword(adminUser, AdminLiteral);
 
-            //    await dbContext.SaveChangesAsync();
-            //}
+            // await dbContext.SaveChangesAsync();
+            // }
         }
     }
 }
