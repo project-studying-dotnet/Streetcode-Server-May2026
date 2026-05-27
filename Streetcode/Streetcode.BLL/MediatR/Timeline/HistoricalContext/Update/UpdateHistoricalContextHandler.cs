@@ -42,7 +42,6 @@ public sealed class UpdateHistoricalContextHandler(
         }
         catch(Exception ex)
         {
-            string error_msg = string.Format(ErrorMessages.FailedToUpdateHistoricalContextWithId, request.HistoricalContext.Id);
             thisLogger.LogError(request, ex.Message);
             return Result.Fail(new Error(ex.Message));
         }
