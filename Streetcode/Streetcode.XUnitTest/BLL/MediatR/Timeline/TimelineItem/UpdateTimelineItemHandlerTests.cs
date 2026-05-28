@@ -62,8 +62,8 @@ public sealed class UpdateTimelineItemHandlerTests
             StreetcodeId = 1,
             HistoricalContexts = [
                 new HistoricalContextDto()
-                { 
-                    Id = 1, 
+                {
+                    Id = 1,
                     Title = "Context 1"
                 }
             ]
@@ -281,8 +281,8 @@ public sealed class UpdateTimelineItemHandlerTests
             StreetcodeId = 1,
             HistoricalContexts = [
                 new HistoricalContextDto()
-                { 
-                    Id = 1, 
+                {
+                    Id = 1,
                     Title = "Context 1"
                 }
             ]
