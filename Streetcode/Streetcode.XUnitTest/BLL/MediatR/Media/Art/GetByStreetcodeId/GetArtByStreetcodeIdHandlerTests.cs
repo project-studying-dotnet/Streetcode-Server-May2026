@@ -118,7 +118,7 @@
                 Assert.IsType<ArtDTO>(item);
             });
 
-            this.mockArtRepository.Verify(
+            mockArtRepository.Verify(
                 r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()),
                 Times.Once);
         }
@@ -147,7 +147,7 @@
 
             Assert.Equal(expectedErrorMessage, result.Errors.First().Message);
 
-            this.mockArtRepository.Verify(
+            mockArtRepository.Verify(
                 r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()),
                 Times.Once);
         }

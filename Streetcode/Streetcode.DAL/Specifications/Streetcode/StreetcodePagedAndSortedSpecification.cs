@@ -27,7 +27,7 @@ public class StreetcodePagedAndSortedSpecification : BaseSpecification<Streetcod
         }
 
         Criteria = s =>
-            s.Title!.ToLower().Contains(title.ToLower()) ||
+            s.Title!.Contains(title, StringComparison.OrdinalIgnoreCase) ||
             s.Index.ToString() == title;
     }
 

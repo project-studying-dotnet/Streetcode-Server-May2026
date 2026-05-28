@@ -70,7 +70,7 @@
             {
                 Title = null,
             });
-            this.toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
+            toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -78,7 +78,7 @@
             // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll((Expression<Func<Toponym, bool>>?)null), Times.Once);
+            toponymRepositoryMock.Verify(r => r.FindAll((Expression<Func<Toponym, bool>>?)null), Times.Once);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@
             {
                 Title = "аНдЕр",
             });
-            this.toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
+            toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -153,7 +153,7 @@
             {
                 Title = "евч",
             });
-            this.toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
+            toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);
@@ -190,7 +190,7 @@
             {
                 Title = "ийськ",
             });
-            this.toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
+            toponymRepositoryMock.Setup(r => r.FindAll((Expression<Func<Toponym, bool>>?)null)).Returns(toponyms);
 
             // Act
             var result = await this.handler.Handle(query, CancellationToken.None);

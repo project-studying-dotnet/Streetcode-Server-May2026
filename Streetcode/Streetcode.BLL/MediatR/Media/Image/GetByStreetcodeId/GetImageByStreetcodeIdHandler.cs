@@ -31,10 +31,10 @@ public class GetImageByStreetcodeIdHandler : IRequestHandler<GetImageByStreetcod
         var images = (await _repositoryWrapper.ImageRepository
             .GetAllAsync(new ByStreetcodeIdSpecification<DalImage>(
                 request.StreetcodeId,
-                q => q.Include(img => img.ImageDetails))))
+                q => q.Include(img => img.ImageDetails!))))
             .OrderBy(img => img.ImageDetails?.Alt);
 
-        if (images is null || images.Count() == 0)
+        if (!images.Any())
         {
             string errorMsg = $"Cannot find an image with the corresponding streetcode id: {request.StreetcodeId}";
             _logger.LogError(request, errorMsg);

@@ -35,7 +35,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByFilter
 
             foreach (var streetcode in streetcodes)
             {
-                if (streetcode.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(streetcode.Title) && streetcode.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                 {
                     results.Add(CreateFilterResult(streetcode, streetcode.Title));
                     continue;
@@ -47,13 +47,13 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByFilter
                     continue;
                 }
 
-                if (streetcode.Teaser.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(streetcode.Teaser) && streetcode.Teaser.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                 {
                     results.Add(CreateFilterResult(streetcode, streetcode.Teaser));
                     continue;
                 }
 
-                if (streetcode.TransliterationUrl.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(streetcode.TransliterationUrl) && streetcode.TransliterationUrl.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                 {
                     results.Add(CreateFilterResult(streetcode, streetcode.TransliterationUrl));
                 }
@@ -61,38 +61,39 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByFilter
 
             foreach (var text in await _repositoryWrapper.TextRepository.GetAllAsync(
     include: i => i.Include(x => x.Streetcode),
-    predicate: x => x.Streetcode.Status == DAL.Enums.StreetcodeStatus.Published))
+    predicate: x => x.Streetcode != null && x.Streetcode.Status == DAL.Enums.StreetcodeStatus.Published))
             {
-                if (text.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(text.Title) && text.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                 {
-                    results.Add(CreateFilterResult(text.Streetcode, text.Title, "Текст", "text"));
+                    results.Add(CreateFilterResult(text.Streetcode!, text.Title, "Текст", "text"));
                     continue;
                 }
 
                 if (!string.IsNullOrEmpty(text.TextContent) && text.TextContent.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                 {
-                    results.Add(CreateFilterResult(text.Streetcode, text.TextContent, "Текст", "text"));
+                    results.Add(CreateFilterResult(text.Streetcode!, text.TextContent, "Текст", "text"));
                 }
             }
 
             foreach (var fact in await _repositoryWrapper.FactRepository.GetAllAsync(
     include: i => i.Include(x => x.Streetcode),
-    predicate: x => x.Streetcode.Status == DAL.Enums.StreetcodeStatus.Published))
+    predicate: x => x.Streetcode != null && x.Streetcode.Status == DAL.Enums.StreetcodeStatus.Published))
             {
-                if (fact.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) || fact.FactContent.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                if ((!string.IsNullOrEmpty(fact.Title) && fact.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(fact.FactContent) && fact.FactContent.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)))
                 {
-                    results.Add(CreateFilterResult(fact.Streetcode, fact.Title, "Wow-факти", "wow-facts"));
+                    results.Add(CreateFilterResult(fact.Streetcode!, fact.Title ?? fact.FactContent ?? string.Empty, "Wow-факти", "wow-facts"));
                 }
             }
 
             foreach (var timelineItem in await _repositoryWrapper.TimelineRepository.GetAllAsync(
-                include: i => i.Include(x => x.Streetcode),
-                predicate: x => x.Streetcode.Status == DAL.Enums.StreetcodeStatus.Published))
+                include: i => i.Include(x => x.Streetcode!),
+                predicate: x => x.Streetcode != null && x.Streetcode.Status == DAL.Enums.StreetcodeStatus.Published))
             {
-                if (timelineItem.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)
+                if ((!string.IsNullOrEmpty(timelineItem.Title) && timelineItem.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                     || (!string.IsNullOrEmpty(timelineItem.Description) && timelineItem.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)))
                 {
-                    results.Add(CreateFilterResult(timelineItem.Streetcode, timelineItem.Title, "Хронологія", "timeline"));
+                    results.Add(CreateFilterResult(timelineItem.Streetcode!, timelineItem.Title ?? string.Empty, "Хронологія", "timeline"));
                 }
             }
 
@@ -117,7 +118,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByFilter
             return results;
         }
 
-        private StreetcodeFilterResultDTO CreateFilterResult(StreetcodeContent streetcode, string content, string? sourceName = null, string? blockName = null)
+        private static StreetcodeFilterResultDTO CreateFilterResult(StreetcodeContent streetcode, string content, string? sourceName = null, string? blockName = null)
         {
             return new StreetcodeFilterResultDTO
             {

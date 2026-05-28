@@ -33,7 +33,7 @@ public class GetCategoriesByStreetcodeIdHandler : IRequestHandler<GetCategoriesB
             .SourceCategoryRepository
             .GetAllAsync(new ByStreetcodeIdSpecification<DalSourceLinkCategory>(
                 request.StreetcodeId,
-                scl => scl.Include(sc => sc.Image)!));
+                scl => scl.Include(sc => sc.Image!)));
 
         if (srcCategories is null)
         {
