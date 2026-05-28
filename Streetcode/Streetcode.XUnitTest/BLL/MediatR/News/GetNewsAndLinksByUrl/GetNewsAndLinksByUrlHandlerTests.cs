@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Streetcode.BLL.Interfaces.BlobStorage;
@@ -7,9 +8,11 @@ using Streetcode.BLL.Mapping.Media.Images;
 using Streetcode.BLL.Mapping.Newss;
 using Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Linq.Expressions;
 using Xunit;
 using Streetcode.BLL.Resources;
+
+using ImageEntity = global::Streetcode.DAL.Entities.Media.Images.Image;
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
 {
@@ -48,9 +51,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             var request = new GetNewsAndLinksByUrlQuery(testUrl);
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
-                .ReturnsAsync((DAL.Entities.News.News)null);
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
+                .ReturnsAsync((NewsEntity)null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -64,17 +67,17 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             string targetUrl = "url1";
             var request = new GetNewsAndLinksByUrlQuery(targetUrl);
 
-            var newsEntities = new List<DAL.Entities.News.News>
+            var newsEntities = new List<NewsEntity>
             {
-                new DAL.Entities.News.News
+                new NewsEntity
                 {
                     Id = 1,
                     URL = "url1",
                     Title = "Title 1",
-                    Image = new DAL.Entities.Media.Images.Image { BlobName = "test.jpg" }
+                    Image = new ImageEntity { BlobName = "test.jpg" }
                 },
-                new DAL.Entities.News.News { Id = 2, URL = "url2", Title = "Title 2" },
-                new DAL.Entities.News.News { Id = 3, URL = "url3", Title = "Title 3" }
+                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2" },
+                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3" }
             };
 
             SetupMocks(newsEntities, newsEntities[0]);
@@ -95,12 +98,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             string targetUrl = "url4";
             var request = new GetNewsAndLinksByUrlQuery(targetUrl);
 
-            var newsEntities = new List<DAL.Entities.News.News>
+            var newsEntities = new List<NewsEntity>
             {
-                new DAL.Entities.News.News { Id = 1, URL = "url1", Title = "Title 1" },
-                new DAL.Entities.News.News { Id = 2, URL = "url2", Title = "Title 2" },
-                new DAL.Entities.News.News { Id = 3, URL = "url3", Title = "Title 3" },
-                new DAL.Entities.News.News { Id = 4, URL = "url4", Title = "Title 4" },
+                new NewsEntity { Id = 1, URL = "url1", Title = "Title 1" },
+                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2" },
+                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3" },
+                new NewsEntity { Id = 4, URL = "url4", Title = "Title 4" },
             };
 
             SetupMocks(newsEntities, newsEntities[3]);
@@ -119,13 +122,13 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             string targetUrl = "url1";
             var request = new GetNewsAndLinksByUrlQuery(targetUrl);
 
-            var newsEntities = new List<DAL.Entities.News.News>
+            var newsEntities = new List<NewsEntity>
             {
-                new DAL.Entities.News.News { Id = 1, URL = "url1", Title = "Title 1" },
-                new DAL.Entities.News.News { Id = 2, URL = "url2", Title = "Title 2" },
-                new DAL.Entities.News.News { Id = 3, URL = "url3", Title = "Title 3" },
-                new DAL.Entities.News.News { Id = 4, URL = "url4", Title = "Title 4" },
-                new DAL.Entities.News.News { Id = 5, URL = "url5", Title = "Title 5" },
+                new NewsEntity { Id = 1, URL = "url1", Title = "Title 1" },
+                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2" },
+                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3" },
+                new NewsEntity { Id = 4, URL = "url4", Title = "Title 4" },
+                new NewsEntity { Id = 5, URL = "url5", Title = "Title 5" },
             };
 
             SetupMocks(newsEntities, newsEntities[0]);
@@ -137,12 +140,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
         }
 
         private void SetupMocks(
-            List<DAL.Entities.News.News> allNews,
-            DAL.Entities.News.News targetEntity)
+            List<NewsEntity> allNews,
+            NewsEntity targetEntity)
         {
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
                 .ReturnsAsync(targetEntity);
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetAllAsync(

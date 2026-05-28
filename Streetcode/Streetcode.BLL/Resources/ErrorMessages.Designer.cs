@@ -19,7 +19,7 @@ namespace Streetcode.BLL.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ErrorMessages {
@@ -97,6 +97,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any arts.
+        /// </summary>
+        public static string CannotFindAnyArts {
+            get {
+                return ResourceManager.GetString("CannotFindAnyArts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any audios.
         /// </summary>
         public static string CannotFindAnyAudios {
@@ -106,11 +115,38 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any team links.
+        /// </summary>
+        public static string CannotFindAnyTeamLinks {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTeamLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any text.
         /// </summary>
         public static string CannotFindAnyText {
             get {
                 return ResourceManager.GetString("CannotFindAnyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find an art with corresponding id: {0}.
+        /// </summary>
+        public static string CannotFindArtById {
+            get {
+                return ResourceManager.GetString("CannotFindArtById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any art with corresponding streetcode id: {0}.
+        /// </summary>
+        public static string CannotFindArtByStreetcodeId {
+            get {
+                return ResourceManager.GetString("CannotFindArtByStreetcodeId", resourceCulture);
             }
         }
         
@@ -241,11 +277,20 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot save timeline item to database.
+        ///   Looks up a localized string similar to Default Connection is missing.
         /// </summary>
-        public static string CannotSaveTimelineItem {
+        public static string DefaultConnectionIsMissing {
             get {
-                return ResourceManager.GetString("CannotSaveTimelineItem", resourceCulture);
+                return ResourceManager.GetString("DefaultConnectionIsMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email Configuration is missing.
+        /// </summary>
+        public static string EmailConfigurationIsMissing {
+            get {
+                return ResourceManager.GetString("EmailConfigurationIsMissing", resourceCulture);
             }
         }
         

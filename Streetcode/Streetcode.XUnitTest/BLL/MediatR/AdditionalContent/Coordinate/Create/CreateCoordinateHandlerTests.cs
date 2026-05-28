@@ -6,6 +6,8 @@ using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
+using StreetcodeCoordinateEntity = global::Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate;
+
 namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Coordinate.Create;
 
 public class CreateCoordinateHandlerTests
@@ -30,9 +32,9 @@ public class CreateCoordinateHandlerTests
         var command = new CreateCoordinateCommand(null!);
 
         _mapperMock
-            .Setup(m => m.Map<DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate>(
+            .Setup(m => m.Map<StreetcodeCoordinateEntity>(
                 command.StreetcodeCoordinate))
-            .Returns((DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate)null!);
+            .Returns((StreetcodeCoordinateEntity)null!);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -46,10 +48,10 @@ public class CreateCoordinateHandlerTests
         var command = new CreateCoordinateCommand(null!);
 
         var coordinate =
-            new DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate();
+            new StreetcodeCoordinateEntity();
 
         _mapperMock
-            .Setup(m => m.Map<DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate>(
+            .Setup(m => m.Map<StreetcodeCoordinateEntity>(
                 command.StreetcodeCoordinate))
             .Returns(coordinate);
 
