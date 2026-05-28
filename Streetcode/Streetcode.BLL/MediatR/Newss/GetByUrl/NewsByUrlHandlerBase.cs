@@ -11,10 +11,12 @@ namespace Streetcode.BLL.MediatR.Newss;
 
 public abstract class NewsByUrlHandlerBase
 {
-    protected readonly IMapper Mapper;
-    protected readonly IRepositoryWrapper RepositoryWrapper;
-    protected readonly IBlobService BlobService;
-    protected readonly ILoggerService Logger;
+    private readonly IMapper mapper;
+    private readonly IRepositoryWrapper _repositoryWrapper;
+
+    protected IRepositoryWrapper RepositoryWrapper => _repositoryWrapper;
+    private readonly IBlobService blobService;
+    private readonly ILoggerService logger;
 
     protected NewsByUrlHandlerBase(
         IMapper mapper,
@@ -22,19 +24,19 @@ public abstract class NewsByUrlHandlerBase
         IBlobService blobService,
         ILoggerService logger)
     {
-        Mapper = mapper;
-        RepositoryWrapper = repositoryWrapper;
-        BlobService = blobService;
-        Logger = logger;
+        this.mapper = mapper;
+        this._repositoryWrapper = repositoryWrapper;
+        this.blobService = blobService;
+        this.logger = logger;
     }
 
     protected async Task<NewsDTO?> GetNewsDtoByUrlAsync(string url)
     {
-        var news = await RepositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
+        var news = await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
             predicate: newsEntity => newsEntity.URL == url,
-            include: query => query.Include(newsEntity => newsEntity.Image));
+            include: query => query.Include(newsEntity => newsEntity.Image!));
 
-        return Mapper.Map<NewsDTO>(news);
+        return mapper.Map<NewsDTO>(news);
     }
 
     protected void FillImageBase64(NewsDTO newsDto)
@@ -44,7 +46,7 @@ public abstract class NewsByUrlHandlerBase
             return;
         }
 
-        newsDto.Image.Base64 = BlobService.FindFileInStorageAsBase64(
+        newsDto.Image.Base64 = blobService.FindFileInStorageAsBase64(
             newsDto.Image.BlobName!);
     }
 
@@ -52,7 +54,7 @@ public abstract class NewsByUrlHandlerBase
     {
         string errorMsg = string.Format(ErrorMessages.NoNewsFoundByUrl, url);
 
-        Logger.LogError(request, errorMsg);
+        logger.LogError(request, errorMsg);
 
         return Result.Fail(errorMsg);
     }
