@@ -11,7 +11,7 @@ public class SourceLinkCategoryDTO
     [MaxLength(23)]
     public string Title { get; set; } = null!;
 
-    [Required]
+    [Range(1, int.MaxValue)]
     public int ImageId { get; set; }
 
     public ImageDTO? Image { get; set; }
