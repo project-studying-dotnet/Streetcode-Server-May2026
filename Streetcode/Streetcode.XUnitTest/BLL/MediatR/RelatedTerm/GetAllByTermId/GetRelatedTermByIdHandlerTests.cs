@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentResults;
 using Moq;
 using FluentAssertions;
@@ -8,7 +9,6 @@ using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
@@ -40,6 +40,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
               _repositoryWrapperMock.Object,
               _loggerMock.Object);
         }
+
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenRelatedTermsIsNull()
         {
@@ -48,7 +49,8 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetAllAsync(
                     It.IsAny<Expression<Func<Entity, bool>>>(),
-                    It.IsAny<Func<IQueryable<Entity>, IIncludableQueryable<Entity, object>>?>()))
+                    It.IsAny<Func<IQueryable<Entity>,
+                    IIncludableQueryable<Entity, object>>?>()))
                 .ReturnsAsync((IEnumerable<Entity>)null!);
 
             var result = await _handler.Handle(query, CancellationToken.None);
@@ -71,9 +73,9 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             var query = new GetAllRelatedTermsByTermIdQuery(1);
 
             var relatedTerms = new List<Entity>
-        {
-            new Entity { Id = 1, TermId = 1, Word = "test" }
-        };
+            {
+                new Entity { Id = 1, TermId = 1, Word = "test" }
+            };
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetAllAsync(
@@ -101,14 +103,24 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             var query = new GetAllRelatedTermsByTermIdQuery(1);
 
             var relatedTerms = new List<Entity>
-        {
-            new Entity { Id = 1, TermId = 1, Word = "test" }
-        };
+            {
+                new Entity
+                {
+                    Id = 1,
+                    TermId = 1,
+                    Word = "test"
+                }
+            };
 
             var relatedTermsDto = new List<RelatedTermDTO>
-        {
-            new RelatedTermDTO { Id = 1, TermId = 1, Word = "test" }
-        };
+            {
+                new RelatedTermDTO
+                {
+                    Id = 1,
+                    TermId = 1,
+                    Word = "test"
+                }
+            };
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetAllAsync(
@@ -129,6 +141,5 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
-
     }
 }
