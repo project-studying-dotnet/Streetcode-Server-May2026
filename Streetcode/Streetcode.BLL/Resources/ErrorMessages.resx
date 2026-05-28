@@ -245,6 +245,7 @@
   </data>
   <data name="TagTitleIsEmpty" xml:space="preserve">
     <value>Test tag</value>
+  </data>
   <data name="CannotSaveHistoricalContextToDatabase" xml:space="preserve">
     <value>Cannot save historical context to database</value>
   </data>
