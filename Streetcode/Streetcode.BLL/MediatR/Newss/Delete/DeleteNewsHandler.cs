@@ -19,7 +19,10 @@ namespace Streetcode.BLL.MediatR.Newss.Delete
         public async Task<Result<Unit>> Handle(DeleteNewsCommand request, CancellationToken cancellationToken)
         {
             int id = request.id;
-            var news = await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(n => n.Id == id);
+            var news = await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
+                predicate: n => n.Id == id,
+                cancellationToken: cancellationToken);
+
             if (news == null)
             {
                 string errorMsg = string.Format(ErrorMessages.NoNewsFoundById, id);
@@ -33,7 +36,9 @@ namespace Streetcode.BLL.MediatR.Newss.Delete
             }
 
             _repositoryWrapper.NewsRepository.Delete(news);
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+
+            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
+
             if (resultIsSuccess)
             {
                 return Result.Ok(Unit.Value);

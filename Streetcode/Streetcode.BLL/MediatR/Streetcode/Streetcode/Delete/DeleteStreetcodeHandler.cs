@@ -26,7 +26,9 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Delete
         public async Task<Result<StreetcodeDTO>> Handle(DeleteStreetcodeCommand request, CancellationToken cancellationToken)
         {
             var streetcode = await _repositoryWrapper.StreetcodeRepository
-                    .GetFirstOrDefaultAsync(s => s.Id == request.id);
+                    .GetFirstOrDefaultAsync(
+                        predicate: s => s.Id == request.id,
+                        cancellationToken: cancellationToken);
 
             if (streetcode == null)
             {
@@ -40,7 +42,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Delete
 
                 try
                 {
-                    await _repositoryWrapper.SaveChangesAsync();
+                    await _repositoryWrapper.SaveChangesAsync(cancellationToken);
                     return Result.Ok(_mapper.Map<StreetcodeDTO>(streetcode));
                 }
                 catch (Exception ex)

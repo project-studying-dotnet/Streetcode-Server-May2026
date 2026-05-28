@@ -8,93 +8,84 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.BLL.Resources;
 
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
+
 namespace Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl
 {
-    public class GetNewsAndLinksByUrlHandler : IRequestHandler<GetNewsAndLinksByUrlQuery, Result<NewsDTOWithURLs>>
+    public class GetNewsAndLinksByUrlHandler
+    : NewsByUrlHandlerBase,
+        IRequestHandler<GetNewsAndLinksByUrlQuery, Result<NewsDTOWithURLs>>
     {
-        private readonly IMapper _mapper;
-        private readonly IRepositoryWrapper _repositoryWrapper;
-        private readonly IBlobService _blobService;
-        private readonly ILoggerService _logger;
-        public GetNewsAndLinksByUrlHandler(IMapper mapper, IRepositoryWrapper repositoryWrapper, IBlobService blobService, ILoggerService logger)
+        public GetNewsAndLinksByUrlHandler(
+            IMapper mapper,
+            IRepositoryWrapper repositoryWrapper,
+            IBlobService blobService,
+            ILoggerService logger)
+            : base(mapper, repositoryWrapper, blobService, logger)
         {
-            _mapper = mapper;
-            _repositoryWrapper = repositoryWrapper;
-            _blobService = blobService;
-            _logger = logger;
         }
 
-        public async Task<Result<NewsDTOWithURLs>> Handle(GetNewsAndLinksByUrlQuery request, CancellationToken cancellationToken)
+        public async Task<Result<NewsDTOWithURLs>> Handle(
+            GetNewsAndLinksByUrlQuery request,
+            CancellationToken cancellationToken)
         {
-            string url = request.url;
-            var newsDTO = _mapper.Map<NewsDTO>(await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
-                predicate: sc => sc.URL == url,
-                include: scl => scl
-                    .Include(sc => sc.Image!)));
+            var newsDto = await GetNewsDtoByUrlAsync(request.url);
 
-            if (newsDTO is null)
+            if (newsDto is null)
             {
-                string errorMsg = string.Format(ErrorMessages.NoNewsFoundByUrl, url);
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(errorMsg);
+                return FailNewsNotFound<NewsDTOWithURLs>(request, request.url);
             }
 
-            if (newsDTO.Image is not null)
+            FillImageBase64(newsDto);
+
+            var news = (await RepositoryWrapper.NewsRepository.GetAllAsync()).ToList();
+            var newsIndex = news.FindIndex(item => item.Id == newsDto.Id);
+
+            var result = new NewsDTOWithURLs
             {
-                newsDTO.Image.Base64 = _blobService.FindFileInStorageAsBase64(newsDTO.Image.BlobName!);
+                News = newsDto,
+                PrevNewsUrl = newsIndex > 0 ? news[newsIndex - 1].URL : null,
+                NextNewsUrl = newsIndex < news.Count - 1 ? news[newsIndex + 1].URL : null,
+                RandomNews = GetRandomNews(news, newsIndex),
+            };
+
+            return Result.Ok(result);
+        }
+
+        private static RandomNewsDTO GetRandomNews(
+            List<NewsEntity> news,
+            int newsIndex)
+        {
+            if (news.Count == 0)
+            {
+                return new RandomNewsDTO();
             }
 
-            var news = (await _repositoryWrapper.NewsRepository.GetAllAsync()).ToList();
-            var newsIndex = news.FindIndex(x => x.Id == newsDTO.Id);
-            string prevNewsLink = null!;
-            string nextNewsLink = null!;
+            var randomIndex = GetRandomNewsIndex(news.Count, newsIndex);
+            var randomNews = news[randomIndex];
 
-            if (newsIndex != 0)
+            return new RandomNewsDTO
             {
-                prevNewsLink = news[newsIndex - 1].URL;
+                RandomNewsUrl = randomNews.URL,
+                Title = randomNews.Title,
+            };
+        }
+
+        private static int GetRandomNewsIndex(int newsCount, int currentIndex)
+        {
+            if (newsCount <= 1)
+            {
+                return currentIndex;
             }
 
-            if (newsIndex != news.Count - 1)
+            if (newsCount <= 3)
             {
-                nextNewsLink = news[newsIndex + 1].URL;
+                return currentIndex;
             }
 
-            var randomNewsTitleAndLink = new RandomNewsDTO();
-
-            var arrCount = news.Count;
-            if (arrCount > 3)
-            {
-                if (newsIndex + 1 == arrCount - 1 || newsIndex == arrCount - 1)
-                {
-                    randomNewsTitleAndLink.RandomNewsUrl = news[newsIndex - 2].URL;
-                    randomNewsTitleAndLink.Title = news[newsIndex - 2].Title;
-                }
-                else
-                {
-                    randomNewsTitleAndLink.RandomNewsUrl = news[arrCount - 1].URL;
-                    randomNewsTitleAndLink.Title = news[arrCount - 1].Title;
-                }
-            }
-            else
-            {
-                randomNewsTitleAndLink.RandomNewsUrl = news[newsIndex].URL;
-                randomNewsTitleAndLink.Title = news[newsIndex].Title;
-            }
-
-            var newsDTOWithUrls = new NewsDTOWithURLs();
-            newsDTOWithUrls.RandomNews = randomNewsTitleAndLink;
-            newsDTOWithUrls.News = newsDTO;
-            newsDTOWithUrls.NextNewsUrl = nextNewsLink;
-            newsDTOWithUrls.PrevNewsUrl = prevNewsLink;
-
-            if (newsDTOWithUrls is null)
-            {
-                string errorMsg = string.Format(ErrorMessages.NoNewsFoundByUrl, url);
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(errorMsg);
-            }
-
-            return Result.Ok(newsDTOWithUrls);
+            return currentIndex == newsCount - 1
+                ? currentIndex - 2
+                : newsCount - 1;
         }
     }
 }
