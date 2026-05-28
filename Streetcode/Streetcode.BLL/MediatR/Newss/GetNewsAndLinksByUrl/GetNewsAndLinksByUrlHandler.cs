@@ -53,7 +53,7 @@ namespace Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl
         }
 
         private static RandomNewsDTO GetRandomNews(
-            IReadOnlyList<NewsEntity> news,
+            List<NewsEntity> news,
             int newsIndex)
         {
             if (news.Count == 0)
