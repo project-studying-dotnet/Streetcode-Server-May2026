@@ -42,7 +42,10 @@ namespace Streetcode.BLL.MediatR.Newss.Update
             }
             else
             {
-                var img = await _repositoryWrapper.ImageRepository.GetFirstOrDefaultAsync(x => x.Id == response.ImageId);
+                var img = await _repositoryWrapper.ImageRepository.GetFirstOrDefaultAsync(
+                    predicate: x => x.Id == response.ImageId,
+                    cancellationToken: cancellationToken);
+
                 if (img != null)
                 {
                     _repositoryWrapper.ImageRepository.Delete(img);
@@ -50,7 +53,7 @@ namespace Streetcode.BLL.MediatR.Newss.Update
             }
 
             _repositoryWrapper.NewsRepository.Update(news);
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
             if (resultIsSuccess)
             {

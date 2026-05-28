@@ -273,4 +273,7 @@
   <data name="FailedToUpdateTimelineItemWithId" xml:space="preserve">
     <value>Failed to update timeline item with id {0}</value>
   </data>
+  <data name="CannotFindVideoById" xml:space="preserve">
+    <value>Cannot find a video with corresponding id: {0}</value>
+  </data>
 </root>

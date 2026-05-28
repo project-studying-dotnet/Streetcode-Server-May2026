@@ -29,8 +29,8 @@ namespace Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl
             string url = request.url;
             var newsDTO = _mapper.Map<NewsDTO>(await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
                 predicate: sc => sc.URL == url,
-                include: scl => scl
-                    .Include(sc => sc.Image!)));
+                include: scl => scl.Include(sc => sc.Image!),
+                cancellationToken: cancellationToken));
 
             if (newsDTO is null)
             {

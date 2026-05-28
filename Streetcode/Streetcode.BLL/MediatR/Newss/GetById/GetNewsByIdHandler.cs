@@ -28,8 +28,9 @@ namespace Streetcode.BLL.MediatR.Newss.GetById
             int id = request.id;
             var newsDTO = _mapper.Map<NewsDTO>(await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
                 predicate: sc => sc.Id == id,
-                include: scl => scl
-                    .Include(sc => sc.Image!)));
+                include: scl => scl.Include(sc => sc.Image!),
+                cancellationToken: cancellationToken));
+
             if (newsDTO is null)
             {
                 string errorMsg = $"No news by entered Id - {id}";
