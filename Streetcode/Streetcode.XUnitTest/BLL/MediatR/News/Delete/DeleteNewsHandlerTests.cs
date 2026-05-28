@@ -53,7 +53,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
             var newsEntity = new NewsEntity
             {
                 Id = 1,
-                Image = new ImageEntity()
+                Image = new ImageEntity(),
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = "test-url",
             };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
@@ -76,7 +79,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
             var newsEntity = new NewsEntity
             {
                 Id = 1,
-                Image = null
+                Image = null,
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = "test-url"
             };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
@@ -96,7 +102,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
         public async Task Handle_ShouldReturnFail_WhenSaveChangesReturnsZero()
         {
             var request = new DeleteNewsCommand(1);
-            var newsEntity = new NewsEntity { Id = 1 };
+            var newsEntity = new NewsEntity
+            {
+                Id = 1,
+                Image = new ImageEntity(),
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = "test-url"
+            };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<NewsEntity, bool>>>(), null))
