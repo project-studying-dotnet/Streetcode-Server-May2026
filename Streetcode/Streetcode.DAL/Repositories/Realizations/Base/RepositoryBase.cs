@@ -83,7 +83,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T>
     {
         IIncludableQueryable<T, object>? query = default;
 
-        if (includes.Any())
+        if (includes.Length > 0)
         {
             query = _dbContext.Set<T>().Include(includes[0]);
         }
