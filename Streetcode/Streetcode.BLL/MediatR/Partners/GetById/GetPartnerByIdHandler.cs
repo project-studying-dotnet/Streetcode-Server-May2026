@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Partners.GetById;
 
@@ -32,7 +33,7 @@ public class GetPartnerByIdHandler : IRequestHandler<GetPartnerByIdQuery, Result
 
         if (partner is null)
         {
-            string errorMsg = $"Cannot find any partner with corresponding id: {request.Id}";
+            string errorMsg = string.Format(ErrorMessages.CannotFindPartnerById, request.Id);
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }

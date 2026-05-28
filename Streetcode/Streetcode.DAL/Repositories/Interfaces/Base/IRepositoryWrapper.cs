@@ -54,7 +54,7 @@ public interface IRepositoryWrapper
     IStreetcodeImageRepository StreetcodeImageRepository { get; }
     public int SaveChanges();
 
-    public Task<int> SaveChangesAsync();
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     public TransactionScope BeginTransaction();
 }

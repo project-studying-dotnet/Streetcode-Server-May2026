@@ -1,146 +1,122 @@
-﻿// <copyright file="GetBaseAudioHandlerTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿using System.Linq.Expressions;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Repositories.Interfaces;
+using Streetcode.BLL.Interfaces.BlobStorage;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Media.Audio.GetBaseAudio;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Xunit;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
+using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio;
+
+public class GetBaseAudioHandlerTests
 {
-    using System.Linq.Expressions;
-    using FluentAssertions;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Repositories.Interfaces;
-    using Streetcode.BLL.Interfaces.BlobStorage;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.MediatR.Media.Audio.GetBaseAudio;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Xunit;
-    using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
+    private const int AudioId = 1;
+    private const string BlobName = "audio-file.mp3";
 
-    /// <summary>
-    /// Unit tests for the <see cref="GetBaseAudioHandler"/> class, which handles retrieving a single audio file by its identifier.
-    /// </summary>
-    public class GetBaseAudioHandlerTests
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly Mock<IBlobService> _blobServiceMock;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly Mock<IAudioRepository> _audioRepositoryMock;
+    private readonly GetBaseAudioHandler _handler;
+
+    public GetBaseAudioHandlerTests()
     {
-        private const int AudioId = 1;
-        private const string BlobName = "audio-file.mp3";
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _audioRepositoryMock = new Mock<IAudioRepository>();
+        _blobServiceMock = new Mock<IBlobService>();
+        _loggerMock = new Mock<ILoggerService>();
 
-        private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly Mock<IBlobService> blobServiceMock;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly Mock<IAudioRepository> audioRepositoryMock;
-        private readonly GetBaseAudioHandler handler;
+        _repositoryWrapperMock
+            .Setup(w => w.AudioRepository)
+            .Returns(_audioRepositoryMock.Object);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetBaseAudioHandlerTests"/> class.
-        /// </summary>
-        public GetBaseAudioHandlerTests()
-        {
-            this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            this.audioRepositoryMock = new Mock<IAudioRepository>();
-            this.blobServiceMock = new Mock<IBlobService>();
-            this.loggerMock = new Mock<ILoggerService>();
+        _handler = new GetBaseAudioHandler(
+            _blobServiceMock.Object,
+            _repositoryWrapperMock.Object,
+            _loggerMock.Object);
+    }
 
-            this.repositoryWrapperMock
-                .Setup(w => w.AudioRepository)
-                .Returns(this.audioRepositoryMock.Object);
+    [Fact]
+    public async Task Handle_WhenAudioFound_ReturnsMemoryStreamFromBlobStorage()
+    {
+        var query = new GetBaseAudioQuery(AudioId);
+        var entity = new AudioEntity { Id = AudioId, BlobName = BlobName };
+        var expectedStream = new MemoryStream(new byte[] { 1, 2, 3 });
 
-            this.handler = new GetBaseAudioHandler(
-                this.blobServiceMock.Object,
-                this.repositoryWrapperMock.Object,
-                this.loggerMock.Object);
-        }
+        SetupGetFirstOrDefault(entity);
 
-        /// <summary>
-        /// Tests that when the audio entity exists in the repository, the handler returns a successful result containing the memory stream retrieved from blob storage.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenAudioFound_ReturnsMemoryStreamFromBlobStorage()
-        {
-            var query = new GetBaseAudioQuery(AudioId);
-            var entity = new AudioEntity { Id = AudioId, BlobName = BlobName };
-            var expectedStream = new MemoryStream(new byte[] { 1, 2, 3 });
+        _blobServiceMock
+            .Setup(b => b.FindFileInStorageAsMemoryStream(BlobName))
+            .Returns(expectedStream);
 
-            this.SetupGetFirstOrDefault(entity);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            this.blobServiceMock
-                .Setup(b => b.FindFileInStorageAsMemoryStream(BlobName))
-                .Returns(expectedStream);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeSameAs(expectedStream);
+    }
 
-            var result = await this.handler.Handle(query, CancellationToken.None);
+    [Fact]
+    public async Task Handle_WhenAudioFound_CallsFindFileInStorageAsMemoryStreamWithCorrectBlobName()
+    {
+        var query = new GetBaseAudioQuery(AudioId);
+        var entity = new AudioEntity { Id = AudioId, BlobName = BlobName };
 
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().BeSameAs(expectedStream);
-        }
+        SetupGetFirstOrDefault(entity);
 
-        /// <summary>
-        /// Tests that when the audio entity exists in the repository, the handler calls blob storage with the correct blob name.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenAudioFound_CallsFindFileInStorageAsMemoryStreamWithCorrectBlobName()
-        {
-            var query = new GetBaseAudioQuery(AudioId);
-            var entity = new AudioEntity { Id = AudioId, BlobName = BlobName };
+        _blobServiceMock
+            .Setup(b => b.FindFileInStorageAsMemoryStream(BlobName))
+            .Returns(new MemoryStream());
 
-            this.SetupGetFirstOrDefault(entity);
+        await _handler.Handle(query, CancellationToken.None);
 
-            this.blobServiceMock
-                .Setup(b => b.FindFileInStorageAsMemoryStream(BlobName))
-                .Returns(new MemoryStream());
+        _blobServiceMock.Verify(
+            b => b.FindFileInStorageAsMemoryStream(BlobName),
+            Times.Once);
+    }
 
-            await this.handler.Handle(query, CancellationToken.None);
+    [Fact]
+    public async Task Handle_WhenAudioNotFound_ReturnsFailResult()
+    {
+        var query = new GetBaseAudioQuery(AudioId);
 
-            this.blobServiceMock.Verify(
-                b => b.FindFileInStorageAsMemoryStream(BlobName),
-                Times.Once);
-        }
+        SetupGetFirstOrDefault(null);
 
-        /// <summary>
-        /// Tests that when the repository does not contain an audio entity with the requested identifier, the handler returns a failed result with the appropriate error message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenAudioNotFound_ReturnsFailResult()
-        {
-            var query = new GetBaseAudioQuery(AudioId);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            this.SetupGetFirstOrDefault(null);
+        result.IsFailed.Should().BeTrue();
+        result.Errors[0].Message.Should()
+            .Be(string.Format(ErrorMessages.CannotFindAudioByCategoryId, AudioId));
+    }
 
-            var result = await this.handler.Handle(query, CancellationToken.None);
+    [Fact]
+    public async Task Handle_WhenAudioNotFound_LogsError()
+    {
+        var query = new GetBaseAudioQuery(AudioId);
 
-            result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should()
-                .Be($"Cannot find an audio with corresponding id: {AudioId}");
-        }
+        SetupGetFirstOrDefault(null);
 
-        /// <summary>
-        /// Tests that when the repository does not contain an audio entity with the requested identifier, the handler logs an error message with the appropriate details.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenAudioNotFound_LogsError()
-        {
-            var query = new GetBaseAudioQuery(AudioId);
+        await _handler.Handle(query, CancellationToken.None);
 
-            this.SetupGetFirstOrDefault(null);
+        _loggerMock.Verify(
+            logger => logger.LogError(
+                query,
+                string.Format(ErrorMessages.CannotFindAudioByCategoryId, AudioId)),
+            Times.Once);
+    }
 
-            await this.handler.Handle(query, CancellationToken.None);
-
-            this.loggerMock.Verify(
-                logger => logger.LogError(
-                    query,
-                    $"Cannot find an audio with corresponding id: {AudioId}"),
-                Times.Once);
-        }
-
-        private void SetupGetFirstOrDefault(AudioEntity? returnValue)
-        {
-            this.audioRepositoryMock
-                .Setup(r => r.GetFirstOrDefaultAsync(
-                    It.IsAny<Expression<Func<AudioEntity, bool>>>(),
-                    It.IsAny<Func<IQueryable<AudioEntity>, IIncludableQueryable<AudioEntity, object>>?>()))
-                .ReturnsAsync(returnValue);
-        }
+    private void SetupGetFirstOrDefault(AudioEntity? returnValue)
+    {
+        _audioRepositoryMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<AudioEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<AudioEntity>,
+                    IIncludableQueryable<AudioEntity, object>>?>()))
+            .ReturnsAsync(returnValue!);
     }
 }

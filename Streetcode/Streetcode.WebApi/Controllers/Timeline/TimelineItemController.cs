@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Timeline;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem.Create;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem.Update;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem.Delete;
 using Streetcode.BLL.MediatR.Timeline.TimelineItem.GetAll;
 using Streetcode.BLL.MediatR.Timeline.TimelineItem.GetById;
 using Streetcode.BLL.MediatR.Timeline.TimelineItem.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Timeline;
 
-public class TimelineItemController : BaseApiController
+public sealed class TimelineItemController : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -24,5 +27,29 @@ public class TimelineItemController : BaseApiController
     public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
     {
         return HandleResult(await Mediator.Send(new GetTimelineItemsByStreetcodeIdQuery(streetcodeId)));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] TimelineItemDto timelineItem, CancellationToken cancellationToken)
+    {
+        return HandleResult(
+            await Mediator.Send(new CreateTimelineItemCommand(timelineItem), cancellationToken)
+        );
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] TimelineItemDto timelineItem, CancellationToken cancellationToken)
+    {
+        return HandleResult(
+            await Mediator.Send(new UpdateTimelineItemCommand(timelineItem), cancellationToken)
+        );
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        return HandleResult(
+            await Mediator.Send(new DeleteTimelineItemCommand(id), cancellationToken)
+        );
     }
 }
