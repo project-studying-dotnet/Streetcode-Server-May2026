@@ -258,4 +258,35 @@
   <data name="FailedToUpdateTimelineItemWithId" xml:space="preserve">
     <value>Failed to update timeline item with id {0}</value>
   </data>
+	<data name="SourceCategoryTitleRequired" xml:space="preserve">
+  <value>Category title is required.</value>
+</data>
+	<data name="SourceCategoryTitleTooLong" xml:space="preserve">
+  <value>Category title must not exceed 23 characters.</value>
+</data>
+
+	<data name="SourceCategoryImageRequired" xml:space="preserve">
+  <value>Category image is required.</value>
+</data>
+
+	<data name="SourceCategoryAlreadyExists" xml:space="preserve">
+  <value>Category with this title already exists.</value>
+</data>
+
+	<data name="CannotSaveSourceCategory" xml:space="preserve">
+  <value>Cannot save source category.</value>
+</data>
+	<data name="SourceCategoryNotFound" xml:space="preserve">
+  <value>Category not found.</value>
+</data>
+
+	<data name="CannotDeleteSourceCategory" xml:space="preserve">
+  <value>Cannot delete source category.</value>
+</data>
+	<data name="SourceCategoryIdRequired" xml:space="preserve">
+  <value>Category id is required.</value>
+</data>
+	<data name="CannotUpdateSourceCategory" xml:space="preserve">
+  <value>Cannot update source category.</value>
+</data>
 </root>

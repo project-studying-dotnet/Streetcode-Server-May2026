@@ -97,6 +97,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot delete source category..
+        /// </summary>
+        public static string CannotDeleteSourceCategory {
+            get {
+                return ResourceManager.GetString("CannotDeleteSourceCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any arts.
         /// </summary>
         public static string CannotFindAnyArts {
@@ -277,11 +286,29 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot save source category..
+        /// </summary>
+        public static string CannotSaveSourceCategory {
+            get {
+                return ResourceManager.GetString("CannotSaveSourceCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot save timeline item to database.
         /// </summary>
         public static string CannotSaveTimelineItem {
             get {
                 return ResourceManager.GetString("CannotSaveTimelineItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot update source category..
+        /// </summary>
+        public static string CannotUpdateSourceCategory {
+            get {
+                return ResourceManager.GetString("CannotUpdateSourceCategory", resourceCulture);
             }
         }
         
@@ -462,6 +489,60 @@ namespace Streetcode.BLL.Resources {
         public static string RelatedWordAlreadyExists {
             get {
                 return ResourceManager.GetString("RelatedWordAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category with this title already exists..
+        /// </summary>
+        public static string SourceCategoryAlreadyExists {
+            get {
+                return ResourceManager.GetString("SourceCategoryAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category id is required..
+        /// </summary>
+        public static string SourceCategoryIdRequired {
+            get {
+                return ResourceManager.GetString("SourceCategoryIdRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category image is required..
+        /// </summary>
+        public static string SourceCategoryImageRequired {
+            get {
+                return ResourceManager.GetString("SourceCategoryImageRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category not found..
+        /// </summary>
+        public static string SourceCategoryNotFound {
+            get {
+                return ResourceManager.GetString("SourceCategoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category title is required..
+        /// </summary>
+        public static string SourceCategoryTitleRequired {
+            get {
+                return ResourceManager.GetString("SourceCategoryTitleRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category title must not exceed 23 characters..
+        /// </summary>
+        public static string SourceCategoryTitleTooLong {
+            get {
+                return ResourceManager.GetString("SourceCategoryTitleTooLong", resourceCulture);
             }
         }
         

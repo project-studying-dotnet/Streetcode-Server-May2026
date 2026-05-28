@@ -3,6 +3,7 @@ using FluentResults;
 using MediatR;
 using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Update;
@@ -32,22 +33,30 @@ public class UpdateSourceLinkCategoryHandler
 
         if (dto.Id <= 0)
         {
-            return Result.Fail(new Error("Category id is required."));
+            string errorMsg = ErrorMessages.SourceCategoryIdRequired;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail(new Error(errorMsg));
         }
 
         if (string.IsNullOrWhiteSpace(dto.Title))
         {
-            return Result.Fail(new Error("Category title is required."));
+            string errorMsg = ErrorMessages.SourceCategoryTitleRequired;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail(new Error(errorMsg));
         }
 
         if (dto.Title.Length > 23)
         {
-            return Result.Fail(new Error("Category title must not exceed 23 characters."));
+            string errorMsg = ErrorMessages.SourceCategoryTitleTooLong;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail(new Error(errorMsg));
         }
 
         if (dto.ImageId <= 0)
         {
-            return Result.Fail(new Error("Category image is required."));
+            string errorMsg = ErrorMessages.SourceCategoryImageRequired;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail(new Error(errorMsg));
         }
 
         var category = await _repositoryWrapper.SourceCategoryRepository
@@ -55,7 +64,9 @@ public class UpdateSourceLinkCategoryHandler
 
         if (category is null)
         {
-            return Result.Fail(new Error("Category not found."));
+            string errorMsg = ErrorMessages.SourceCategoryNotFound;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail(new Error(errorMsg));
         }
 
         var sameTitleCategory = await _repositoryWrapper.SourceCategoryRepository
@@ -66,7 +77,9 @@ public class UpdateSourceLinkCategoryHandler
 
         if (sameTitleCategory is not null)
         {
-            return Result.Fail(new Error("Category with this title already exists."));
+            string errorMsg = ErrorMessages.SourceCategoryAlreadyExists;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail(new Error(errorMsg));
         }
 
         category.Title = dto.Title;
@@ -74,11 +87,13 @@ public class UpdateSourceLinkCategoryHandler
 
         _repositoryWrapper.SourceCategoryRepository.Update(category);
 
-        var isSaved = await _repositoryWrapper.SaveChangesAsync() > 0;
+        var isSaved = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
         if (!isSaved)
         {
-            return Result.Fail(new Error("Cannot update source category."));
+            string errorMsg = ErrorMessages.CannotUpdateSourceCategory;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail(new Error(errorMsg));
         }
 
         return Result.Ok(_mapper.Map<SourceLinkCategoryDTO>(category));

@@ -1,9 +1,9 @@
 using AutoMapper;
 using FluentResults;
 using MediatR;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.DAL.Entities.Sources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using SourceLinkCategoryEntity = Streetcode.DAL.Entities.Sources.SourceLinkCategory;
 
@@ -34,14 +34,21 @@ public class CreateSourceLinkCategoryHandler
 
         if (string.IsNullOrWhiteSpace(dto.Title))
         {
-            string errorMsg = "Category title is required.";
+            string errorMsg = ErrorMessages.SourceCategoryTitleRequired;
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
 
         if (dto.Title.Length > 23)
         {
-            string errorMsg = "Category title must not exceed 23 characters.";
+            string errorMsg = ErrorMessages.SourceCategoryTitleTooLong;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail(new Error(errorMsg));
+        }
+
+        if (dto.ImageId <= 0)
+        {
+            string errorMsg = ErrorMessages.SourceCategoryImageRequired;
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
@@ -51,7 +58,7 @@ public class CreateSourceLinkCategoryHandler
 
         if (existingCategory is not null)
         {
-            string errorMsg = "Category with this title already exists.";
+            string errorMsg = ErrorMessages.SourceCategoryAlreadyExists;
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
@@ -59,11 +66,11 @@ public class CreateSourceLinkCategoryHandler
         var category = _mapper.Map<SourceLinkCategoryEntity>(dto);
 
         await _repositoryWrapper.SourceCategoryRepository.CreateAsync(category);
-        var isSaved = await _repositoryWrapper.SaveChangesAsync() > 0;
+        var isSaved = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
         if (!isSaved)
         {
-            string errorMsg = "Cannot save source category.";
+            string errorMsg = ErrorMessages.CannotSaveSourceCategory;
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
