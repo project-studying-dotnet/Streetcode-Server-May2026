@@ -95,7 +95,7 @@ namespace Streetcode.XUnitTest.Validators.Timeline.TimelineItem
                 Description = "Валідний опис",
                 Date = DateTime.Now,
                 DateViewPattern = DateViewPattern.Year,
-                HistoricalContexts = new List<HistoricalContextDTO>()
+                HistoricalContexts = new List<HistoricalContextDto>()
             };
         }
     }
