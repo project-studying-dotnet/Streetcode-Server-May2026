@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO.Compression;
 using System.Net;
 using System.Text;
@@ -6,9 +6,7 @@ using Newtonsoft.Json;
 using Polly;
 using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
 using Streetcode.DAL.Entities.Toponyms;
-using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Realizations.Base;
 
 namespace Streetcode.WebApi.Utils;
 
@@ -53,16 +51,14 @@ public class WebParsingUtils
         ["бульв. "] = "бульвар",
         ["шосе "] = "шосе",
         ["містечко "] = "містечко",
-        ["в’їзд "] = "в’їзд",
+        ["в'їзд "] = "в'їзд",
     };
 
     private readonly IRepositoryWrapper _repository;
-    private readonly StreetcodeDbContext _streetcodeContext;
 
-    public WebParsingUtils(StreetcodeDbContext streetcodeContext)
+    public WebParsingUtils(IRepositoryWrapper repository)
     {
-        _repository = new RepositoryWrapper(streetcodeContext);
-        _streetcodeContext = streetcodeContext;
+        _repository = repository;
     }
 
     public static async Task DownloadAndExtractAsync(
@@ -129,6 +125,42 @@ public class WebParsingUtils
             Console.WriteLine(ex.Message);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Fetches the coordinates of an address using the OpenStreetMap Nominatim API.
+    /// </summary>
+    /// <param name="address">The address to fetch coordinates for.</param>
+    /// <returns>A tuple containing the latitude and longitude of the address.</returns>
+    public static async Task<(string?, string?)> FetchCoordsByAddressAsync(string address)
+    {
+        var retryPolicy = Policy.Handle<Exception>().WaitAndRetryAsync(
+            3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+
+        var circuitBreakerPolicy = Policy.Handle<Exception>().CircuitBreakerAsync(5, TimeSpan.FromMinutes(1));
+
+        try
+        {
+            using var client = new HttpClient();
+
+            // Add user-agent and referer headers to request
+            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+            client.DefaultRequestHeaders.Add("Referer", "http://www.microsoft.com");
+
+            // Send GET request to Nominatim API and retrieve JSON data
+            var jsonData = await retryPolicy.WrapAsync(circuitBreakerPolicy).ExecuteAsync(async () =>
+                await client.GetByteArrayAsync($"https://nominatim.openstreetmap.org/search?q={address}, Україна&format=json&limit=1&addressdetails=1"));
+
+            return ParseJsonToCoordinateTuple(Encoding.UTF8.GetString(jsonData));
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(ex.Message);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        return (null, null);
     }
 
     public async Task ParseZipFileFromWebAsync()
@@ -265,8 +297,8 @@ public class WebParsingUtils
             .Select(x => x.Split(';'));
 
         // this part of code truncates Toponyms table
-        _streetcodeContext.Set<Toponym>().RemoveRange(_streetcodeContext.Set<Toponym>());
-        _streetcodeContext.SaveChanges();
+        _repository.ToponymRepository.DeleteRange(await _repository.ToponymRepository.GetAllAsync());
+        await _repository.SaveChangesAsync();
 
         foreach (var row in rows)
         {
@@ -298,42 +330,6 @@ public class WebParsingUtils
 
         var isChangeSuccessful = await _repository.SaveChangesAsync() > 0;
         Console.WriteLine($"Success: {isChangeSuccessful}");
-    }
-
-    /// <summary>
-    /// Fetches the coordinates of an address using the OpenStreetMap Nominatim API.
-    /// </summary>
-    /// <param name="address">The address to fetch coordinates for.</param>
-    /// <returns>A tuple containing the latitude and longitude of the address.</returns>
-    public static async Task<(string?, string?)> FetchCoordsByAddressAsync(string address)
-    {
-        var retryPolicy = Policy.Handle<Exception>().WaitAndRetryAsync(
-            3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-
-        var circuitBreakerPolicy = Policy.Handle<Exception>().CircuitBreakerAsync(5, TimeSpan.FromMinutes(1));
-
-        try
-        {
-            using var client = new HttpClient();
-
-            // Add user-agent and referer headers to request
-            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-            client.DefaultRequestHeaders.Add("Referer", "http://www.microsoft.com");
-
-            // Send GET request to Nominatim API and retrieve JSON data
-            var jsonData = await retryPolicy.WrapAsync(circuitBreakerPolicy).ExecuteAsync(async () =>
-                await client.GetByteArrayAsync($"https://nominatim.openstreetmap.org/search?q={address}, Україна&format=json&limit=1&addressdetails=1"));
-
-            return ParseJsonToCoordinateTuple(Encoding.UTF8.GetString(jsonData));
-        }
-        catch (Exception ex)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(ex.Message);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
-        return (null, null);
     }
 
     /// <summary>
