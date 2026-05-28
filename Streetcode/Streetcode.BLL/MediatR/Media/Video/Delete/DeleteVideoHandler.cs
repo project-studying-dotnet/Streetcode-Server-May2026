@@ -23,7 +23,9 @@ namespace Streetcode.BLL.MediatR.Media.Video.Delete
         public async Task<Result<VideoDto>> Handle(DeleteVideoCommand request, CancellationToken cancellationToken)
         {
             var videoEntity = await _repositoryWrapper.VideoRepository
-                .GetFirstOrDefaultAsync(v => v.Id == request.Id);
+                .GetFirstOrDefaultAsync(
+                    v => v.Id == request.Id,
+                    cancellationToken: cancellationToken);
 
             if (videoEntity is null)
             {

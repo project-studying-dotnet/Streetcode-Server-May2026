@@ -273,6 +273,15 @@
   <data name="FailedToUpdateTimelineItemWithId" xml:space="preserve">
     <value>Failed to update timeline item with id {0}</value>
   </data>
+  <data name="CannotFindVideoById" xml:space="preserve">
+    <value>Cannot find a video with corresponding id: {0}</value>
+  </data>
+  <data name="FailedToCreateRelation" xml:space="preserve">
+    <value>Failed to create a relation.</value>
+  </data>
+  <data name="NoExistingStreetcodeWithId" xml:space="preserve">
+    <value>No existing streetcode with id: {0}</value>
+  </data>
   <data name="CoordinateIsRequired" xml:space="preserve">
     <value>Coordinate is required</value>
   </data>

@@ -45,7 +45,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.Create
 
             var createdTerm = await _repository.TermRepository.CreateAsync(term);
 
-            var isSuccessResult = await _repository.SaveChangesAsync() > 0;
+            var isSuccessResult = await _repository.SaveChangesAsync(cancellationToken) > 0;
 
             if (!isSuccessResult)
             {
