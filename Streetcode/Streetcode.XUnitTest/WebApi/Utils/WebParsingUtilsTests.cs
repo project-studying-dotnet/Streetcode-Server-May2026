@@ -23,6 +23,7 @@ namespace Streetcode.XUnitTest.WebApi.Utils
         private const string ValidUrl = "https://example.com/file.zip";
         private static readonly string ValidZipPath = Path.Combine(Path.GetTempPath(), "houses.zip");
         private static readonly string ValidExtractTo = Path.GetTempPath();
+        private static readonly string[] CsvHeaderOnly = new[] { "header" };
 
         static WebParsingUtilsTests()
         {
@@ -642,7 +643,7 @@ namespace Streetcode.XUnitTest.WebApi.Utils
 
                 await File.WriteAllLinesAsync(
                     $"{tempDir}/data.csv",
-                    new[] { "header" },
+                    CsvHeaderOnly,
                     Encoding.GetEncoding(1251));
 
                 var repoMock = CreateRepositoryMock();
