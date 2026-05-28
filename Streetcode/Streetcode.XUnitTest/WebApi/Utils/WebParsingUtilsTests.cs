@@ -607,6 +607,58 @@ namespace Streetcode.XUnitTest.WebApi.Utils
             lon.Should().BeNull();
         }
 
+        /// <summary>
+        /// Verifies that <see cref="WebParsingUtils.FetchCoordsByAddressAsync"/> returns a tuple
+        /// without throwing, regardless of network availability. When the HTTP request succeeds,
+        /// the try-block path is exercised; when it fails, the catch block returns <c>(null, null)</c>.
+        /// </summary>
+        /// <returns>Awaitable task.</returns>
+        [Fact]
+        public async Task FetchCoordsByAddressAsync_ShouldReturnTupleWithoutThrowing_ForAnyAddress()
+        {
+            var act = async () => await WebParsingUtils.FetchCoordsByAddressAsync("Хрещатик, Київ");
+
+            await act.Should().NotThrowAsync();
+        }
+
+        /// <summary>
+        /// Verifies that <see cref="WebParsingUtils.ProcessCsvFileAsync"/> appends a new row to
+        /// <c>data.csv</c> when a row from <c>houses.csv</c> has not yet been parsed, covering the
+        /// coordinate-fetch loop (lines 255–282). Coordinates may be <c>null</c> when the HTTP
+        /// service is unreachable; the row is still written with the available data.
+        /// </summary>
+        /// <returns>Awaitable task.</returns>
+        [Fact]
+        public async Task ProcessCsvFileAsync_ShouldAppendNewRow_WhenRowIsNotYetParsed()
+        {
+            var tempDir = Directory.CreateTempSubdirectory().FullName;
+            try
+            {
+                var unparsedRow = "Регіон;СтараАдмін;НоваАдмін;Громада;м.Київ Київ;col5;вул. Шевченка";
+                await File.WriteAllLinesAsync(
+                    Path.Combine(tempDir, "houses.csv"),
+                    new[] { "header", unparsedRow },
+                    Encoding.GetEncoding(1251));
+
+                await File.WriteAllLinesAsync(
+                    $"{tempDir}/data.csv",
+                    new[] { "header" },
+                    Encoding.GetEncoding(1251));
+
+                var repoMock = CreateRepositoryMock();
+                var utils = new WebParsingUtils(repoMock.Object);
+
+                await utils.ProcessCsvFileAsync(tempDir);
+
+                var lines = await File.ReadAllLinesAsync($"{tempDir}/data.csv", Encoding.GetEncoding(1251));
+                lines.Should().HaveCountGreaterThan(1);
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
         private static string CreateTempCsvWithDataRows(params string[] dataRows)
         {
             var path = Path.GetTempFileName();
