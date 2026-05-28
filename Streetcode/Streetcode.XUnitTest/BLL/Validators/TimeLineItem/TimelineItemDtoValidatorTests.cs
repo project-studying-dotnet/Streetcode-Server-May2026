@@ -86,9 +86,9 @@ namespace Streetcode.XUnitTest.Validators.Timeline.TimelineItem
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private TimelineItemDTO CreateValidDto()
+        private TimelineItemDto CreateValidDto()
         {
-            return new TimelineItemDTO
+            return new TimelineItemDto
             {
                 Id = 1,
                 Title = "Валідний заголовок",

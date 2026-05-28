@@ -4,9 +4,9 @@ using Streetcode.BLL.DTO.Timeline;
 namespace Streetcode.BLL.Validators.Timeline.TimelineItem
 {
     /// <summary>
-    /// Validator for <see cref="TimelineItemDTO"/>.
+    /// Validator for <see cref="TimelineItemDto"/>.
     /// </summary>
-    public class TimelineItemDtoValidator : AbstractValidator<TimelineItemDTO>
+    public class TimelineItemDtoValidator : AbstractValidator<TimelineItemDto>
     {
         private const int TitleMaxLength = 26;
         private const int DescriptionMaxLength = 400;

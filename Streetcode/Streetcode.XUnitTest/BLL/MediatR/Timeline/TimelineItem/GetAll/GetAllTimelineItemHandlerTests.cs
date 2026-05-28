@@ -89,7 +89,7 @@ public class GetAllTimelineItemHandlerTests
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
-        var expectedDtos = _mapper.Map<List<TimelineItemDTO>>(timelineItems);
+        var expectedDtos = _mapper.Map<List<TimelineItemDto>>(timelineItems);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();

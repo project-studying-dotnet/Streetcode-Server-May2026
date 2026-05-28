@@ -88,7 +88,7 @@ public class GetTimelineItemByIdHandlerTests
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
-        var expectedDto = _mapper.Map<TimelineItemDTO>(timelineItem);
+        var expectedDto = _mapper.Map<TimelineItemDto>(timelineItem);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
