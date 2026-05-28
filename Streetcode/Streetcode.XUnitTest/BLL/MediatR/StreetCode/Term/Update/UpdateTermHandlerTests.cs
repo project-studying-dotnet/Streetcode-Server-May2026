@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
 using Moq;
@@ -6,8 +7,10 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.Term.Update;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Linq.Expressions;
 using Xunit;
+
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
+using TermEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Term;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Update
 {
@@ -35,8 +38,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Update
             var request = new UpdateTermCommand(new UpdateTermDto { Id = 1 });
 
             _repositoryWrapperMock.Setup(r => r.TermRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
-                .ReturnsAsync((DAL.Entities.Streetcode.TextContent.Term)null);
+                It.IsAny<Expression<Func<TermEntity, bool>>>(), null))
+                .ReturnsAsync((TermEntity)null!);
 
             var handler = new UpdateTermHandler(_repositoryWrapperMock.Object, _mapper, _loggerMock.Object);
 
@@ -47,17 +50,17 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Update
 
             _loggerMock.Verify(l => l.LogError(request, $"Cannot find a term with corresponding id: {request.Term.Id}"), Times.Once);
 
-            _repositoryWrapperMock.Verify(r => r.TermRepository.Update(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()), Times.Never);
+            _repositoryWrapperMock.Verify(r => r.TermRepository.Update(It.IsAny<TermEntity>()), Times.Never);
         }
 
         [Fact]
         public async Task Handle_ReturnsFailResult_WhenSaveChangesFails()
         {
             var request = new UpdateTermCommand(new UpdateTermDto { Id = 1, Title = "New Title" });
-            var existingTerm = new DAL.Entities.Streetcode.TextContent.Term { Id = 1, Title = "Old Title", Description = "Old Desc" };
+            var existingTerm = new TermEntity { Id = 1, Title = "Old Title", Description = "Old Desc" };
 
             _repositoryWrapperMock.Setup(r => r.TermRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
+                It.IsAny<Expression<Func<TermEntity, bool>>>(), null))
                 .ReturnsAsync(existingTerm);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(0);
@@ -76,10 +79,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Update
         public async Task Handle_ReturnsOkResult_WhenPartialUpdateIsSuccessful_OnlyTitle()
         {
             var request = new UpdateTermCommand(new UpdateTermDto { Id = 1, Title = "New Title", Description = null });
-            var existingTerm = new DAL.Entities.Streetcode.TextContent.Term { Id = 1, Title = "Old Title", Description = "Old Desc" };
+            var existingTerm = new TermEntity { Id = 1, Title = "Old Title", Description = "Old Desc" };
 
             _repositoryWrapperMock.Setup(r => r.TermRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
+                It.IsAny<Expression<Func<TermEntity, bool>>>(), null))
                 .ReturnsAsync(existingTerm);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
@@ -100,10 +103,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Update
         public async Task Handle_ReturnsOkResult_WhenPartialUpdateIsSuccessful_OnlyDescription()
         {
             var request = new UpdateTermCommand(new UpdateTermDto { Id = 1, Title = "   ", Description = "New Desc" });
-            var existingTerm = new DAL.Entities.Streetcode.TextContent.Term { Id = 1, Title = "Old Title", Description = "Old Desc" };
+            var existingTerm = new TermEntity { Id = 1, Title = "Old Title", Description = "Old Desc" };
 
             _repositoryWrapperMock.Setup(r => r.TermRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
+                It.IsAny<Expression<Func<TermEntity, bool>>>(), null))
                 .ReturnsAsync(existingTerm);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
@@ -123,10 +126,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Update
         public async Task Handle_ReturnsOkResult_WhenFullUpdateIsSuccessful()
         {
             var request = new UpdateTermCommand(new UpdateTermDto { Id = 1, Title = "New Title", Description = "New Desc" });
-            var existingTerm = new DAL.Entities.Streetcode.TextContent.Term { Id = 1, Title = "Old Title", Description = "Old Desc" };
+            var existingTerm = new TermEntity { Id = 1, Title = "Old Title", Description = "Old Desc" };
 
             _repositoryWrapperMock.Setup(r => r.TermRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
+                It.IsAny<Expression<Func<TermEntity, bool>>>(), null))
                 .ReturnsAsync(existingTerm);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
