@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
+using Streetcode.BLL.Resources;
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.RelatedTerm;
 
 namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermId
@@ -53,10 +54,10 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot get words by term id");
+            result.Errors[0].Message.Should().Be(ErrorMessages.CannotGetWordsByTermId);
 
             _loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot get words by term id"),
+                logger => logger.LogError(query, ErrorMessages.CannotGetWordsByTermId),
                 Times.Once);
 
             _mapperMock.Verify(
@@ -87,10 +88,10 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot create DTOs for related words!");
+            result.Errors[0].Message.Should().Be(ErrorMessages.CannotCreateRelatedWordDtos);
 
             _loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot create DTOs for related words!"),
+                logger => logger.LogError(query, ErrorMessages.CannotCreateRelatedWordDtos),
                 Times.Once);
         }
 

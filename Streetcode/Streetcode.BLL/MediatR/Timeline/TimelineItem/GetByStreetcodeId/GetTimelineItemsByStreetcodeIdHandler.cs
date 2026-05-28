@@ -9,7 +9,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Timeline.TimelineItem.GetByStreetcodeId;
 
-public class GetTimelineItemsByStreetcodeIdHandler : IRequestHandler<GetTimelineItemsByStreetcodeIdQuery, Result<IEnumerable<TimelineItemDTO>>>
+public class GetTimelineItemsByStreetcodeIdHandler : IRequestHandler<GetTimelineItemsByStreetcodeIdQuery, Result<IEnumerable<TimelineItemDto>>>
 {
     private readonly IMapper _mapper;
     private readonly IRepositoryWrapper _repositoryWrapper;
@@ -22,7 +22,7 @@ public class GetTimelineItemsByStreetcodeIdHandler : IRequestHandler<GetTimeline
         _logger = logger;
     }
 
-    public async Task<Result<IEnumerable<TimelineItemDTO>>> Handle(GetTimelineItemsByStreetcodeIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<TimelineItemDto>>> Handle(GetTimelineItemsByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
         var timelineItems = await _repositoryWrapper.TimelineRepository
             .GetAllAsync(
@@ -38,6 +38,6 @@ public class GetTimelineItemsByStreetcodeIdHandler : IRequestHandler<GetTimeline
             return Result.Fail(new Error(errorMsg));
         }
 
-        return Result.Ok(_mapper.Map<IEnumerable<TimelineItemDTO>>(timelineItems));
+        return Result.Ok(_mapper.Map<IEnumerable<TimelineItemDto>>(timelineItems));
     }
 }

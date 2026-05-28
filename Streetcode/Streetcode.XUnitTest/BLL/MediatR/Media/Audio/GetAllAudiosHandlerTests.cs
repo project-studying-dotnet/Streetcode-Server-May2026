@@ -1,154 +1,168 @@
-﻿// <copyright file="GetAllAudiosHandlerTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿using System.Linq.Expressions;
+using AutoMapper;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Repositories.Interfaces;
+using Streetcode.BLL.DTO.Media.Audio;
+using Streetcode.BLL.Interfaces.BlobStorage;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Media;
+using Streetcode.BLL.MediatR.Media.Audio.GetAll;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Xunit;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
+using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio;
+
+public class GetAllAudiosHandlerTests
 {
-    using System.Linq.Expressions;
-    using AutoMapper;
-    using FluentAssertions;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Repositories.Interfaces;
-    using Streetcode.BLL.DTO.Media.Audio;
-    using Streetcode.BLL.Interfaces.BlobStorage;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.Mapping.Media;
-    using Streetcode.BLL.MediatR.Media.Audio.GetAll;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Xunit;
-    using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly IMapper _mapper;
+    private readonly Mock<IBlobService> _blobServiceMock;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly Mock<IAudioRepository> _audioRepositoryMock;
+    private readonly GetAllAudiosHandler _handler;
 
-    /// <summary>
-    /// Unit tests for the <see cref="GetAllAudiosHandler"/> class, which handles the retrieval of all audio files in the system.
-    /// </summary>
-    public class GetAllAudiosHandlerTests
+    public GetAllAudiosHandlerTests()
     {
-        private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly IMapper mapper;
-        private readonly Mock<IBlobService> blobServiceMock;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly Mock<IAudioRepository> audioRepositoryMock;
-        private readonly GetAllAudiosHandler handler;
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _audioRepositoryMock = new Mock<IAudioRepository>();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetAllAudiosHandlerTests"/> class.
-        /// </summary>
-        public GetAllAudiosHandlerTests()
+        _mapper = new MapperConfiguration(cfg =>
+            cfg.AddProfile<AudioProfile>())
+            .CreateMapper();
+
+        _blobServiceMock = new Mock<IBlobService>();
+        _loggerMock = new Mock<ILoggerService>();
+
+        _repositoryWrapperMock
+            .Setup(w => w.AudioRepository)
+            .Returns(_audioRepositoryMock.Object);
+
+        _handler = new GetAllAudiosHandler(
+            _repositoryWrapperMock.Object,
+            _mapper,
+            _blobServiceMock.Object,
+            _loggerMock.Object);
+    }
+
+    [Fact]
+    public async Task Handle_WhenAudiosExist_ReturnsOkResultWithMappedDTOs()
+    {
+        var query = new GetAllAudiosQuery();
+
+        var entities = new List<AudioEntity>
         {
-            this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            this.audioRepositoryMock = new Mock<IAudioRepository>();
-            this.mapper = new MapperConfiguration(cfg => cfg.AddProfile<AudioProfile>()).CreateMapper();
-            this.blobServiceMock = new Mock<IBlobService>();
-            this.loggerMock = new Mock<ILoggerService>();
-
-            this.repositoryWrapperMock
-                .Setup(w => w.AudioRepository)
-                .Returns(this.audioRepositoryMock.Object);
-
-            this.handler = new GetAllAudiosHandler(
-                this.repositoryWrapperMock.Object,
-                this.mapper,
-                this.blobServiceMock.Object,
-                this.loggerMock.Object);
-        }
-
-        /// <summary>
-        /// Tests that when audio entities exist in the repository, the handler returns a successful result containing a list of mapped <see cref="AudioDTO"/> objects with their Base64 values set correctly.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenAudiosExist_ReturnsOkResultWithMappedDTOs()
-        {
-            var query = new GetAllAudiosQuery();
-            var entities = new List<AudioEntity> { new AudioEntity { Id = 1, BlobName = "blob1.mp3" } };
-            var dtos = new List<AudioDTO> { new AudioDTO { Id = 1, BlobName = "blob1.mp3", Base64 = "base64value" } };
-
-            this.SetupGetAllAsync(entities);
-
-            this.blobServiceMock
-                .Setup(b => b.FindFileInStorageAsBase64(It.IsAny<string>()))
-                .Returns("base64value");
-
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().BeEquivalentTo(dtos);
-        }
-
-        /// <summary>
-        /// Tests that when audio entities exist in the repository, the handler sets the Base64 property for each mapped <see cref="AudioDTO"/> by calling the blob service with the correct blob names.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenAudiosExist_SetsBase64ForEachAudio()
-        {
-            var query = new GetAllAudiosQuery();
-            var entities = new List<AudioEntity>
+            new()
             {
-                new AudioEntity { Id = 1, BlobName = "blob1.mp3" },
-                new AudioEntity { Id = 2, BlobName = "blob2.mp3" },
-            };
+                Id = 1,
+                BlobName = "blob1.mp3",
+            },
+        };
 
-            this.SetupGetAllAsync(entities);
-
-            this.blobServiceMock
-                .Setup(b => b.FindFileInStorageAsBase64("blob1.mp3"))
-                .Returns("base64-for-blob1");
-
-            this.blobServiceMock
-                .Setup(b => b.FindFileInStorageAsBase64("blob2.mp3"))
-                .Returns("base64-for-blob2");
-
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            result.IsSuccess.Should().BeTrue();
-            result.Value.ElementAt(0).Base64.Should().Be("base64-for-blob1");
-            result.Value.ElementAt(1).Base64.Should().Be("base64-for-blob2");
-        }
-
-        /// <summary>
-        /// Tests that when the repository returns null (indicating no audio entities found), the handler returns a failed result with the appropriate error message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenRepositoryReturnsNull_ReturnsFailResult()
+        var dtos = new List<AudioDTO>
         {
-            var query = new GetAllAudiosQuery();
+            new()
+            {
+                Id = 1,
+                BlobName = "blob1.mp3",
+                Base64 = "base64value",
+            },
+        };
 
-            this.SetupGetAllAsync(null);
+        SetupGetAllAsync(entities);
 
-            var result = await this.handler.Handle(query, CancellationToken.None);
+        _blobServiceMock
+            .Setup(b => b.FindFileInStorageAsBase64(It.IsAny<string>()))
+            .Returns("base64value");
 
-            result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot find any audios");
-        }
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-        /// <summary>
-        /// Tests that when the repository returns null (indicating no audio entities found), the handler logs an error message with the appropriate details.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenRepositoryReturnsNull_LogsError()
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(dtos);
+    }
+
+    [Fact]
+    public async Task Handle_WhenAudiosExist_SetsBase64ForEachAudio()
+    {
+        var query = new GetAllAudiosQuery();
+
+        var entities = new List<AudioEntity>
         {
-            var query = new GetAllAudiosQuery();
+            new()
+            {
+                Id = 1,
+                BlobName = "blob1.mp3",
+            },
+            new()
+            {
+                Id = 2,
+                BlobName = "blob2.mp3",
+            },
+        };
 
-            this.SetupGetAllAsync(null);
+        SetupGetAllAsync(entities);
 
-            await this.handler.Handle(query, CancellationToken.None);
+        _blobServiceMock
+            .Setup(b => b.FindFileInStorageAsBase64("blob1.mp3"))
+            .Returns("base64-for-blob1");
 
-            this.loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot find any audios"),
-                Times.Once);
-        }
+        _blobServiceMock
+            .Setup(b => b.FindFileInStorageAsBase64("blob2.mp3"))
+            .Returns("base64-for-blob2");
 
-        private void SetupGetAllAsync(IEnumerable<AudioEntity>? returnValue)
-        {
-            this.audioRepositoryMock
-                .Setup(r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<AudioEntity, bool>>?>(),
-                    It.IsAny<Func<IQueryable<AudioEntity>, IIncludableQueryable<AudioEntity, object>>?>()))
-                .ReturnsAsync(returnValue);
-        }
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+
+        result.Value.ElementAt(0).Base64.Should()
+            .Be("base64-for-blob1");
+
+        result.Value.ElementAt(1).Base64.Should()
+            .Be("base64-for-blob2");
+    }
+
+    [Fact]
+    public async Task Handle_WhenRepositoryReturnsNull_ReturnsFailResult()
+    {
+        var query = new GetAllAudiosQuery();
+
+        SetupGetAllAsync(null);
+
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        result.IsFailed.Should().BeTrue();
+
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.CannotFindAnyAudios);
+    }
+
+    [Fact]
+    public async Task Handle_WhenRepositoryReturnsNull_LogsError()
+    {
+        var query = new GetAllAudiosQuery();
+
+        SetupGetAllAsync(null);
+
+        await _handler.Handle(query, CancellationToken.None);
+
+        _loggerMock.Verify(
+            logger => logger.LogError(
+                query,
+                ErrorMessages.CannotFindAnyAudios),
+            Times.Once);
+    }
+
+    private void SetupGetAllAsync(List<AudioEntity>? returnValue)
+    {
+        _audioRepositoryMock
+            .Setup(r => r.GetAllAsync(
+                It.IsAny<Expression<Func<AudioEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<AudioEntity>,
+                    IIncludableQueryable<AudioEntity, object>>?>()))
+            .ReturnsAsync(returnValue!);
     }
 }
