@@ -1,5 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using Streetcode.BLL.DTO.Team; 
+using Streetcode.BLL.DTO.Team;
 using Streetcode.BLL.MediatR.Team.Create;
 using Streetcode.BLL.Validators.Team.Position.Create;
 using Xunit;

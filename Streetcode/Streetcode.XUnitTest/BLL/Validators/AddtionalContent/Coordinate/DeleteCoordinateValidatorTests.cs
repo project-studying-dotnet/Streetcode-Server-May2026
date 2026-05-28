@@ -19,7 +19,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate.Delete
         [InlineData(-1)]
         [InlineData(-10)]
         public void Should_Have_Error_When_Id_Is_Less_Or_Equal_To_Zero(int invalidId)
-        { 
+        {
             var command = new DeleteCoordinateCommand(invalidId);
 
             var result = _validator.TestValidate(command);
@@ -30,8 +30,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate.Delete
         [Fact]
         public void Should_Not_Have_Errors_When_Id_Is_Valid()
         {
-
-            var command = new DeleteCoordinateCommand(1); 
+            var command = new DeleteCoordinateCommand(1);
 
             var result = _validator.TestValidate(command);
 

@@ -129,7 +129,7 @@ namespace Streetcode.XUnitTest.Validators.Media
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private FileBaseCreateDTO CreateValidDto()
+        private static FileBaseCreateDTO CreateValidDto()
         {
             return new FileBaseCreateDTO
             {

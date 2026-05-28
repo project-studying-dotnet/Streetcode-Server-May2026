@@ -31,7 +31,6 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm.Create
         {
             var validRelatedTermDto = new RelatedTermDTO
             {
-
                 Id = 1,
                 Word = "Валідний термін",
                 TermId = 1,

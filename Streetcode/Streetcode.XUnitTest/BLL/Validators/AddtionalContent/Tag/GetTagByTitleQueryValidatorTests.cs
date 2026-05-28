@@ -17,9 +17,9 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.GetTagByTitle
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void Should_Have_Error_When_Title_Is_Empty_Or_Null(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty_Or_Null(string? invalidTitle)
         {
-            var query = new GetTagByTitleQuery(invalidTitle);
+            var query = new GetTagByTitleQuery(invalidTitle!);
 
             var result = _validator.TestValidate(query);
 
@@ -32,9 +32,9 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.GetTagByTitle
         [InlineData("")]
         [InlineData("   ")]
         [InlineData("\n")]
-        public void Should_Have_Error_When_Title_Is_Empty_Or_Whitespace(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty_Or_Whitespace(string? invalidTitle)
         {
-            var query = new GetTagByTitleQuery(invalidTitle);
+            var query = new GetTagByTitleQuery(invalidTitle!);
 
             var result = _validator.TestValidate(query);
 

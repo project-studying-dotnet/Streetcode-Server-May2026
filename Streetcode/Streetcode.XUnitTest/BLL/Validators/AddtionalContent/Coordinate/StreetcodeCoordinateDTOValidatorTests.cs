@@ -43,7 +43,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
             var dto = new StreetcodeCoordinateDTO
             {
                 StreetcodeId = 1,
-                Latitude = 110.5m 
+                Latitude = 110.5m
             };
 
             var result = _validator.TestValidate(dto);

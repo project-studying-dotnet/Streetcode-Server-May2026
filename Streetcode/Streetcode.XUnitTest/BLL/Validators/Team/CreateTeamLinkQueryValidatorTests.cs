@@ -19,7 +19,7 @@ namespace Streetcode.XUnitTest.Validators.Team.TeamMembersLinks.Create
         [Fact]
         public void Should_Have_Error_When_TeamMember_Is_Null()
         {
-            var query = new CreateTeamLinkQuery(null);
+            var query = new CreateTeamLinkQuery(null!);
 
             var result = _validator.TestValidate(query);
 

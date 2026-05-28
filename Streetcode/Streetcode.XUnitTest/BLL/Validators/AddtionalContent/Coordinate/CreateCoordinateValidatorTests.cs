@@ -28,7 +28,6 @@ namespace Streetcode.XUnitTest.BLL.Validators.AddtionalContent.Coordinate
         [Fact]
         public void Should_Not_Have_NotNull_Error_When_StreetcodeCoordinate_Is_Provided()
         {
-
             var validCoordinateDto = new StreetcodeCoordinateDTO();
             var command = new CreateCoordinateCommand(validCoordinateDto);
 

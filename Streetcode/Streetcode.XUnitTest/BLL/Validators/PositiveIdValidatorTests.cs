@@ -1,16 +1,11 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Interface;
 using Streetcode.BLL.Validators;
+using Streetcode.XUnitTest.BLL.Validators;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Validators
 {
-    public class TestQuery : IHasId
-    {
-        public int Id { get; set; }
-    }
-    public class TestPositiveIdValidator : PositiveIdValidator<TestQuery> { }
-
     public class PositiveIdValidatorTests
     {
         private readonly TestPositiveIdValidator _validator;
