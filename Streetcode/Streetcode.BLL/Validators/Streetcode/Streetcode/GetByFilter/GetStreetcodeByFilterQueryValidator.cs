@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByFilter;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Streetcode.Streetcode.GetByFilter
 {
@@ -14,9 +15,11 @@ namespace Streetcode.BLL.Validators.Streetcode.Streetcode.GetByFilter
         /// </summary>
         public GetStreetcodeByFilterQueryValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Filter)
                 .NotNull()
-                .WithMessage("Filter is required")
+                .WithMessage(ErrorMessages.FilterIsRequired)
                 .SetValidator(new StreetcodeFilterRequestDtoValidator());
         }
     }

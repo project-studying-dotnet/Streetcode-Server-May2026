@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Interface;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators
 {
@@ -8,7 +9,11 @@ namespace Streetcode.BLL.Validators
     {
         public PositiveStreetcodeIdValidator()
         {
-            RuleFor(x => x.StreetcodeId).GreaterThan(0).WithMessage("StreetcodeId must be positive.");
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
+            RuleFor(x => x.StreetcodeId)
+                .GreaterThan(0)
+                .WithMessage(ErrorMessages.StreetcodeIdMustBePositive);
         }
     }
 }

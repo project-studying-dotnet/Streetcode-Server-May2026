@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Timeline;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Timeline.TimelineItem
 {
@@ -8,40 +9,42 @@ namespace Streetcode.BLL.Validators.Timeline.TimelineItem
     /// </summary>
     public class TimelineItemDtoValidator : AbstractValidator<TimelineItemDto>
     {
-        private const int TitleMaxLength = 26;
-        private const int DescriptionMaxLength = 400;
+        private const int MaxTitleLength = 26;
+        private const int MaxDescriptionLength = 400;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimelineItemDtoValidator"/> class.
         /// </summary>
         public TimelineItemDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Id)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Id must be greater than or equal to 0");
+                .WithMessage(ErrorMessages.IdMustBeGreaterOrEqualToZero);
 
             RuleFor(x => x.Title)
                 .NotEmpty()
-                .WithMessage("Title is required")
-                .MaximumLength(TitleMaxLength)
-                .WithMessage($"Title must not exceed {TitleMaxLength} characters");
+                .WithMessage(ErrorMessages.TitleIsRequired)
+                .MaximumLength(MaxTitleLength)
+                .WithMessage(string.Format(ErrorMessages.TitleMustNotExceedCharacters, MaxTitleLength));
 
             RuleFor(x => x.Description)
-                .MaximumLength(DescriptionMaxLength)
-                .WithMessage($"Description must not exceed {DescriptionMaxLength} characters")
+                .MaximumLength(MaxDescriptionLength)
+                .WithMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength))
                 .When(x => !string.IsNullOrWhiteSpace(x.Description));
 
             RuleFor(x => x.Date)
                 .NotEmpty()
-                .WithMessage("Date is required");
+                .WithMessage(ErrorMessages.DateIsRequired);
 
             RuleFor(x => x.DateViewPattern)
                 .IsInEnum()
-                .WithMessage("Invalid date view pattern");
+                .WithMessage(ErrorMessages.InvalidDateViewPattern);
 
             RuleFor(x => x.HistoricalContexts)
                 .NotNull()
-                .WithMessage("Historical contexts collection is required");
+                .WithMessage(ErrorMessages.HistoricalContextsCollectionIsRequired);
         }
     }
 }

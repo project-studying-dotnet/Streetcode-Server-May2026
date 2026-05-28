@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Streetcode;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Partners
 {
@@ -8,17 +9,24 @@ namespace Streetcode.BLL.Validators.Partners
     /// </summary>
     public class StreetcodeShortDtoValidator : AbstractValidator<StreetcodeShortDTO>
     {
+        private const int MaxTitleLength = 255;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StreetcodeShortDtoValidator"/> class.
         /// </summary>
         public StreetcodeShortDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Id)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .WithMessage(ErrorMessages.IdMustBePositive);
 
             RuleFor(x => x.Title)
                 .NotEmpty()
-                .MaximumLength(255);
+                .WithMessage(ErrorMessages.TitleIsRequired)
+                .MaximumLength(MaxTitleLength)
+                .WithMessage(string.Format(ErrorMessages.TitleMustNotExceedCharacters, MaxTitleLength));
         }
     }
 }

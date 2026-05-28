@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Users;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Users
 {
@@ -8,41 +9,43 @@ namespace Streetcode.BLL.Validators.Users
     /// </summary>
     public class UserDtoValidator : AbstractValidator<UserDto>
     {
-        private const int NameMaxLength = 50;
-        private const int LoginMaxLength = 20;
+        private const int MaxNameLength = 50;
+        private const int MaxLoginLength = 20;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserDtoValidator"/> class.
         /// </summary>
         public UserDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .WithMessage("Name is required")
-                .MaximumLength(NameMaxLength)
-                .WithMessage($"Name must not exceed {NameMaxLength} characters");
+                .WithMessage(ErrorMessages.NameIsRequired)
+                .MaximumLength(MaxNameLength)
+                .WithMessage(string.Format(ErrorMessages.NameMustNotExceedCharacters, MaxNameLength));
 
             RuleFor(x => x.Surname)
                 .NotEmpty()
-                .WithMessage("Surname is required")
-                .MaximumLength(NameMaxLength)
-                .WithMessage($"Surname must not exceed {NameMaxLength} characters");
+                .WithMessage(ErrorMessages.SurnameIsRequired)
+                .MaximumLength(MaxNameLength)
+                .WithMessage(string.Format(ErrorMessages.SurnameMustNotExceedCharacters, MaxNameLength));
 
             RuleFor(x => x.Email)
                 .NotEmpty()
-                .WithMessage("Email is required")
+                .WithMessage(ErrorMessages.EmailIsRequired)
                 .EmailAddress()
-                .WithMessage("Invalid email format");
+                .WithMessage(ErrorMessages.InvalidEmailFormat);
 
             RuleFor(x => x.Login)
                 .NotEmpty()
-                .WithMessage("Login is required")
-                .MaximumLength(LoginMaxLength)
-                .WithMessage($"Login must not exceed {LoginMaxLength} characters");
+                .WithMessage(ErrorMessages.LoginIsRequired)
+                .MaximumLength(MaxLoginLength)
+                .WithMessage(string.Format(ErrorMessages.LoginMustNotExceedCharacters, MaxLoginLength));
 
             RuleFor(x => x.Role)
                 .IsInEnum()
-                .WithMessage("Invalid user role");
+                .WithMessage(ErrorMessages.InvalidUserRole);
         }
     }
 }

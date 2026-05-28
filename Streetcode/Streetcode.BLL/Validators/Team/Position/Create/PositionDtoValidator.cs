@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Team;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Team.Position.Create
 {
@@ -10,11 +11,11 @@ namespace Streetcode.BLL.Validators.Team.Position.Create
     {
         public PositionDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Position)
                 .NotEmpty()
-                .WithMessage("Position name is required");
-                ////.MaximumLength(100)
-                ////.WithMessage("Position name must not exceed 100 characters");
+                .WithMessage(ErrorMessages.PositionNameIsRequired);
         }
     }
 }

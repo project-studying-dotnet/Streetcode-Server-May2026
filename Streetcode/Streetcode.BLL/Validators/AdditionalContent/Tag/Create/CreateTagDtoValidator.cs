@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.AdditionalContent.Tag;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.AdditionalContent.Tag.Create
 {
@@ -13,11 +14,13 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Tag.Create
         /// </summary>
         public CreateTagDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Title)
                 .NotEmpty()
-                .WithMessage("Title is required")
-                .Must(title => !string.IsNullOrWhiteSpace(title))
-                .WithMessage("Title cannot contain only whitespace");
+                .WithMessage(ErrorMessages.TitleIsRequired)
+                .Must(title => title.Trim().Length > 0)
+                .WithMessage(ErrorMessages.TitleCannotBeWhitespace);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Team.Create;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Team.Position.Create
 {
@@ -13,9 +14,11 @@ namespace Streetcode.BLL.Validators.Team.Position.Create
         /// </summary>
         public CreatePositionQueryValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.position)
                 .NotNull()
-                .WithMessage("Position is required")
+                .WithMessage(ErrorMessages.PositionIsRequired)
                 .SetValidator(new PositionDtoValidator());
         }
     }

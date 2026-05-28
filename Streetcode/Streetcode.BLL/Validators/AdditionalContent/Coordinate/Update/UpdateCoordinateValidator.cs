@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.AdditionalContent.Coordinate.Update;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate.Update
 {
@@ -13,11 +14,15 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate.Update
         /// </summary>
         public UpdateCoordinateValidator()
         {
-            RuleFor(x => x.StreetcodeCoordinate).NotNull();
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
+            RuleFor(x => x.StreetcodeCoordinate)
+                .NotNull()
+                .WithMessage(ErrorMessages.CoordinateIsRequired);
 
             RuleFor(x => x.StreetcodeCoordinate.Id)
                 .GreaterThan(0)
-                .WithMessage("Coordinate Id must be greater than 0 for update operations.");
+                .WithMessage(ErrorMessages.CoordinateIdMustBePositive);
 
             RuleFor(x => x.StreetcodeCoordinate)
                 .SetValidator(new StreetcodeCoordinateDtoValidator());

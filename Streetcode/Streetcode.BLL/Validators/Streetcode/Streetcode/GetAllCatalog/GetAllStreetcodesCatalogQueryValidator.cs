@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.GetAllCatalog;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Streetcode.Streetcode.GetAllCatalog
 {
@@ -14,13 +15,15 @@ namespace Streetcode.BLL.Validators.Streetcode.Streetcode.GetAllCatalog
         /// </summary>
         public GetAllStreetcodesCatalogQueryValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.page)
                 .GreaterThan(0)
-                .WithMessage("The page number must be greater than 0.");
+                .WithMessage(ErrorMessages.PageNumberMustBePositive);
 
             RuleFor(x => x.count)
                 .GreaterThan(0)
-                .WithMessage("The page size (count) must be greater than 0.");
+                .WithMessage(ErrorMessages.PageSizeMustBePositive);
         }
     }
 }

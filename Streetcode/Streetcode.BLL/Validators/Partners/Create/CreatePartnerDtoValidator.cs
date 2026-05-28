@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Partners;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Partners.Create
 {
@@ -8,34 +9,38 @@ namespace Streetcode.BLL.Validators.Partners.Create
     /// </summary>
     public class CreatePartnerDtoValidator : AbstractValidator<CreatePartnerDTO>
     {
-        private const int DescriptionMaxLength = 400;
+        private const int MaxDescriptionLength = 400;
+        private const int MaxUrlTitleLength = 255;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreatePartnerDtoValidator"/> class.
         /// </summary>
         public CreatePartnerDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Title)
                 .NotEmpty()
-                .WithMessage("Title is required");
+                .WithMessage(ErrorMessages.TitleIsRequired);
 
             RuleFor(x => x.Description)
-               .MaximumLength(DescriptionMaxLength)
-               .WithMessage($"Description must not exceed {DescriptionMaxLength} characters")
-               .When(x => !string.IsNullOrWhiteSpace(x.Description));
+                .MaximumLength(MaxDescriptionLength)
+                .WithMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength))
+                .When(x => !string.IsNullOrWhiteSpace(x.Description));
 
             RuleFor(x => x.TargetUrl)
                 .Must(BeValidUrl)
-                .WithMessage("Target URL must be a valid URL")
+                .WithMessage(ErrorMessages.TargetUrlMustBeValid)
                 .When(x => !string.IsNullOrWhiteSpace(x.TargetUrl));
 
             RuleFor(x => x.UrlTitle)
-                .MaximumLength(255)
-                .WithMessage("Url title is invalid")
+                .MaximumLength(MaxUrlTitleLength)
+                .WithMessage(string.Format(ErrorMessages.UrlTitleMustNotExceedCharacters, MaxUrlTitleLength))
                 .When(x => !string.IsNullOrWhiteSpace(x.UrlTitle));
 
             RuleFor(x => x.LogoId)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .WithMessage(ErrorMessages.LogoIdMustBePositive);
 
             RuleForEach(x => x.PartnerSourceLinks)
                 .SetValidator(new CreatePartnerSourceLinkDtoValidator());

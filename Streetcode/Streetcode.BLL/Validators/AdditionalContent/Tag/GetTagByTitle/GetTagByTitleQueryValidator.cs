@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetByStreetcodeId;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.AdditionalContent.Tag.GetTagByTitle
 {
@@ -8,19 +9,22 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Tag.GetTagByTitle
     /// </summary>
     public class GetTagByTitleQueryValidator : AbstractValidator<GetTagByTitleQuery>
     {
+        private const int MaxTitleLength = 100;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GetTagByTitleQueryValidator"/> class.
         /// </summary>
         public GetTagByTitleQueryValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Title)
-                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                .WithMessage("Title is required")
-                .Must(title => !string.IsNullOrWhiteSpace(title))
-                .WithMessage("Title cannot contain only whitespace")
-                .MaximumLength(100)
-                .WithMessage("Title must not exceed 100 characters");
+                .WithMessage(ErrorMessages.TitleIsRequired)
+                .Must(title => title.Trim().Length > 0)
+                .WithMessage(ErrorMessages.TitleCannotBeWhitespace)
+                .MaximumLength(MaxTitleLength)
+                .WithMessage(string.Format(ErrorMessages.TitleMustNotExceedCharacters, MaxTitleLength));
         }
     }
 }

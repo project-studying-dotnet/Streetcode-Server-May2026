@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Media.Audio;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Media.Audio.Create
 {
@@ -8,16 +9,20 @@ namespace Streetcode.BLL.Validators.Media.Audio.Create
     /// </summary>
     public class AudioFileBaseCreateDtoValidator : AbstractValidator<AudioFileBaseCreateDTO>
     {
+        private const int MaxDescriptionLength = 2500;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioFileBaseCreateDtoValidator"/> class.
         /// </summary>
         public AudioFileBaseCreateDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             Include(new FileBaseCreateDtoValidator());
 
             RuleFor(x => x.Description)
-                .MaximumLength(2500)
-                .WithMessage("Description must not exceed 1000 characters");
+                .MaximumLength(MaxDescriptionLength)
+                .WithMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength));
         }
     }
 }

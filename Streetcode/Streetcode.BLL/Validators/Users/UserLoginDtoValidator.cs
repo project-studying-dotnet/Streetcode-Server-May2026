@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Users;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Users
 {
@@ -8,25 +9,27 @@ namespace Streetcode.BLL.Validators.Users
     /// </summary>
     public class UserLoginDtoValidator : AbstractValidator<UserLoginDto>
     {
-        private const int LoginMaxLength = 20;
-        private const int PasswordMaxLength = 20;
+        private const int MaxLoginLength = 20;
+        private const int MaxPasswordLength = 20;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserLoginDtoValidator"/> class.
         /// </summary>
         public UserLoginDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Login)
                 .NotEmpty()
-                .WithMessage("Login is required")
-                .MaximumLength(LoginMaxLength)
-                .WithMessage($"Login must not exceed {LoginMaxLength} characters");
+                .WithMessage(ErrorMessages.LoginIsRequired)
+                .MaximumLength(MaxLoginLength)
+                .WithMessage(string.Format(ErrorMessages.LoginMustNotExceedCharacters, MaxLoginLength));
 
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .WithMessage("Password is required")
-                .MaximumLength(PasswordMaxLength)
-                .WithMessage($"Password must not exceed {PasswordMaxLength} characters");
+                .WithMessage(ErrorMessages.PasswordIsRequired)
+                .MaximumLength(MaxPasswordLength)
+                .WithMessage(string.Format(ErrorMessages.PasswordMustNotExceedCharacters, MaxPasswordLength));
         }
     }
 }

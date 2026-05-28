@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Team;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Team.TeamMembersLinks.Create
 {
@@ -13,21 +14,21 @@ namespace Streetcode.BLL.Validators.Team.TeamMembersLinks.Create
         /// </summary>
         public TeamMemberLinkDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.TargetUrl)
                 .NotEmpty()
-                .WithMessage("Target URL is required")
-                ////.MaximumLength(2048)
-                ////.WithMessage("Target URL must not exceed 2048 characters")
+                .WithMessage(ErrorMessages.TargetUrlIsRequired)
                 .Must(BeAValidUrl)
-                .WithMessage("Target URL must be a valid URL");
+                .WithMessage(ErrorMessages.TargetUrlMustBeValid);
 
             RuleFor(x => x.TeamMemberId)
                 .GreaterThan(0)
-                .WithMessage("TeamMemberId must be greater than 0");
+                .WithMessage(ErrorMessages.TeamMemberIdMustBePositive);
 
             RuleFor(x => x.LogoType)
                 .IsInEnum()
-                .WithMessage("Invalid logo type");
+                .WithMessage(ErrorMessages.InvalidLogoType);
         }
 
         private static bool BeAValidUrl(string url)

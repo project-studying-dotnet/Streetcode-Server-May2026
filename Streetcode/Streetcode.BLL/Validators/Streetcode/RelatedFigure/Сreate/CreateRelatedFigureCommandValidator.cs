@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Streetcode.RelatedFigure.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.AdditionalContent;
 
 namespace Streetcode.BLL.Validators.Streetcode.RelatedFigure.Сreate
@@ -14,13 +15,15 @@ namespace Streetcode.BLL.Validators.Streetcode.RelatedFigure.Сreate
         /// </summary>
         public CreateRelatedFigureCommandValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.ObserverId)
                 .GreaterThan(0)
-                .WithMessage("The ObserverId must be positive.");
+                .WithMessage(ErrorMessages.ObserverIdMustBePositive);
 
             RuleFor(x => x.TargetId)
                 .GreaterThan(0)
-                .WithMessage("The TargetId must be positive.");
+                .WithMessage(ErrorMessages.TargetIdMustBePositive);
         }
     }
 }

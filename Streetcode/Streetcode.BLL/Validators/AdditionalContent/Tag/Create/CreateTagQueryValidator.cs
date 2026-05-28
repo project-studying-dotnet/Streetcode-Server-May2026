@@ -1,6 +1,7 @@
 using FluentValidation;
 using Streetcode.BLL.DTO.AdditionalContent.Tag;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.Create;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.AdditionalContent.Tag.Create
 {
@@ -14,9 +15,12 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Tag.Create
         /// </summary>
         public CreateTagQueryValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.tag)
-               .NotNull()
-               .SetValidator(new CreateTagDtoValidator());
+                .NotNull()
+                .WithMessage(ErrorMessages.TagIsRequired)
+                .SetValidator(new CreateTagDtoValidator());
         }
     }
 }

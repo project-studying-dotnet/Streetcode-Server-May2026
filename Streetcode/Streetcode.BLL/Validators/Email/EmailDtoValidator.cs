@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Email;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Email
 {
@@ -8,23 +9,26 @@ namespace Streetcode.BLL.Validators.Email
     /// </summary>
     public class EmailDtoValidator : AbstractValidator<EmailDTO>
     {
+        private const int MaxFromLength = 80;
+        private const int MinContentLength = 1;
+        private const int MaxContentLength = 500;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EmailDtoValidator"/> class.
         /// </summary>
         public EmailDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.From)
-                .MaximumLength(80)
-                .WithMessage("From must not exceed 80 characters");
+                .MaximumLength(MaxFromLength)
+                .WithMessage(string.Format(ErrorMessages.EmailFromMustNotExceedCharacters, MaxFromLength));
 
             RuleFor(x => x.Content)
-                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                .WithMessage("Content is required")
-                .MinimumLength(1)
-                .WithMessage("Content must contain at least 1 character")
-                .MaximumLength(500)
-                .WithMessage("Content must not exceed 500 characters");
+                .WithMessage(ErrorMessages.ContentIsRequired)
+                .Length(MinContentLength, MaxContentLength)
+                .WithMessage(string.Format(ErrorMessages.ContentLengthMustBeBetween, MinContentLength, MaxContentLength));
         }
     }
 }

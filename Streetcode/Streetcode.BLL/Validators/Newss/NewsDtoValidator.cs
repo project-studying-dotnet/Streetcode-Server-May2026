@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.News;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Newss
 {
@@ -16,25 +17,21 @@ namespace Streetcode.BLL.Validators.Newss
         /// </summary>
         public NewsDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Title)
-                .NotEmpty()
-                .WithMessage("Title is required")
-                .MaximumLength(TitleMaxLength)
-                .WithMessage($"Title must not exceed {TitleMaxLength} characters");
+                .NotEmpty().WithMessage(ErrorMessages.TitleIsRequired)
+                .MaximumLength(TitleMaxLength).WithMessage(string.Format(ErrorMessages.TitleMustNotExceedCharacters, TitleMaxLength));
 
             RuleFor(x => x.Text)
-                .NotEmpty()
-                .WithMessage("Text is required")
-                .MaximumLength(TextMaxLength)
-                .WithMessage($"Text must not exceed {TextMaxLength} characters");
+                .NotEmpty().WithMessage(ErrorMessages.TextIsRequired)
+                .MaximumLength(TextMaxLength).WithMessage(string.Format(ErrorMessages.TextMustNotExceedCharacters, TextMaxLength));
 
             RuleFor(x => x.URL)
-                .NotEmpty()
-                .WithMessage("URL is required");
+                .NotEmpty().WithMessage(ErrorMessages.UrlIsRequired);
 
             RuleFor(x => x.ImageId)
-                .NotNull()
-                .WithMessage("Image is required");
+                .NotEmpty().WithMessage(ErrorMessages.ImageIsRequired);
         }
     }
 }

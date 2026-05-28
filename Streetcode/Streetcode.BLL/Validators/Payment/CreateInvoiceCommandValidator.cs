@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Payment;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Payment
 {
@@ -13,9 +14,11 @@ namespace Streetcode.BLL.Validators.Payment
         /// </summary>
         public CreateInvoiceCommandValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Payment)
                 .NotNull()
-                .WithMessage("Payment is required")
+                .WithMessage(ErrorMessages.PaymentIsRequired)
                 .SetValidator(new PaymentDtoValidator());
         }
     }

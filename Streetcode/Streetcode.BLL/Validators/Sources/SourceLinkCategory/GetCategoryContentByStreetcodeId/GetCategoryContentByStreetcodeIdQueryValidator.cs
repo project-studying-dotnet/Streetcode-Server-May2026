@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId
 {
@@ -14,13 +15,15 @@ namespace Streetcode.BLL.Validators.Sources.SourceLinkCategory.GetCategoryConten
         /// </summary>
         public GetCategoryContentByStreetcodeIdQueryValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.streetcodeId)
                 .GreaterThan(0)
-                .WithMessage("The streetcodeId must be positive.");
+                .WithMessage(ErrorMessages.StreetcodeIdMustBePositive);
 
             RuleFor(x => x.categoryId)
                 .GreaterThan(0)
-                .WithMessage("The categoryId must be positive.");
+                .WithMessage(ErrorMessages.CategoryIdMustBePositive);
         }
     }
 }

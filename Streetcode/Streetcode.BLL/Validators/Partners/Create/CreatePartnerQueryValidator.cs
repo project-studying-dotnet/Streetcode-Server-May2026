@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Partners.Create;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Partners.Create
 {
@@ -13,9 +14,11 @@ namespace Streetcode.BLL.Validators.Partners.Create
         /// </summary>
         public CreatePartnerQueryValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.newPartner)
                 .NotNull()
-                .WithMessage("Partner is required")
+                .WithMessage(ErrorMessages.PartnerIsRequired)
                 .SetValidator(new CreatePartnerDtoValidator());
         }
     }

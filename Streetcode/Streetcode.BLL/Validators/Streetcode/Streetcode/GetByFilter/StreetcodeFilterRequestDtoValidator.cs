@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.AdditionalContent.Filter;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Streetcode.Streetcode.GetByFilter
 {
@@ -9,16 +10,20 @@ namespace Streetcode.BLL.Validators.Streetcode.Streetcode.GetByFilter
     public class StreetcodeFilterRequestDtoValidator
         : AbstractValidator<StreetcodeFilterRequestDTO>
     {
+        private const int MaxSearchQueryLength = 255;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StreetcodeFilterRequestDtoValidator"/> class.
         /// </summary>
         public StreetcodeFilterRequestDtoValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.SearchQuery)
                 .NotEmpty()
-                .WithMessage("{PropertyName} is required.")
-                .MaximumLength(255)
-                .WithMessage("{PropertyName} must be 255 characters or less.");
+                .WithMessage(ErrorMessages.SearchQueryIsRequired)
+                .MaximumLength(MaxSearchQueryLength)
+                .WithMessage(string.Format(ErrorMessages.SearchQueryMustNotExceedCharacters, MaxSearchQueryLength));
         }
     }
 }
