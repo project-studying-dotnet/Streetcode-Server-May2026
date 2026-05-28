@@ -68,7 +68,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetAll
 
             var newsEntities = new List<NewsEntity>
             {
-                new NewsEntity { Id = 1, Image = null }
+                new NewsEntity
+                {
+                    Id = 1,
+                    Image = null,
+                    Title = "Test News",
+                    Text = "This is a test news.",
+                    URL = "test-url",
+                },
             };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetAllAsync(
@@ -98,6 +105,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetAll
                 {
                     Id = 1,
                     Image = new ImageEntity { BlobName = "test-image.jpg" },
+                    Title = "Test News",
+                    Text = "This is a test news.",
+                    URL = "test-url"
                 },
             };
 

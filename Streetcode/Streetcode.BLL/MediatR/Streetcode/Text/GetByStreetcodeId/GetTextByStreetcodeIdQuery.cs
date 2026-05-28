@@ -1,5 +1,5 @@
-﻿using FluentResults;
-using MediatR;
+﻿using MediatR;
+using FluentResults;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Text.GetByStreetcodeId;

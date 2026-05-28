@@ -4,6 +4,7 @@ using MediatR;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Term;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Term.GetAll
 {
@@ -26,7 +27,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.GetAll
 
             if (terms is null)
             {
-                const string errorMsg = $"Cannot find any term";
+                string errorMsg = ErrorMessages.CannotFindAnyTerm;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }

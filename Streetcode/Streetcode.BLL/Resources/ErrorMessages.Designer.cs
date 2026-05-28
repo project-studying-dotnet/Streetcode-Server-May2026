@@ -115,11 +115,29 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any partners.
+        /// </summary>
+        public static string CannotFindAnyPartners {
+            get {
+                return ResourceManager.GetString("CannotFindAnyPartners", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any team links.
         /// </summary>
         public static string CannotFindAnyTeamLinks {
             get {
                 return ResourceManager.GetString("CannotFindAnyTeamLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any term.
+        /// </summary>
+        public static string CannotFindAnyTerm {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTerm", resourceCulture);
             }
         }
         
@@ -228,6 +246,15 @@ namespace Streetcode.BLL.Resources {
         public static string CannotFindRelatedTerm {
             get {
                 return ResourceManager.GetString("CannotFindRelatedTerm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any term with corresponding id: {0}.
+        /// </summary>
+        public static string CannotFindTermById {
+            get {
+                return ResourceManager.GetString("CannotFindTermById", resourceCulture);
             }
         }
         
@@ -462,6 +489,24 @@ namespace Streetcode.BLL.Resources {
         public static string RelatedWordAlreadyExists {
             get {
                 return ResourceManager.GetString("RelatedWordAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test tag.
+        /// </summary>
+        public static string TagTitleIsEmpty {
+            get {
+                return ResourceManager.GetString("TagTitleIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to text was not parsed successfully.
+        /// </summary>
+        public static string TextWasNotParsedSuccessfully {
+            get {
+                return ResourceManager.GetString("TextWasNotParsedSuccessfully", resourceCulture);
             }
         }
         
