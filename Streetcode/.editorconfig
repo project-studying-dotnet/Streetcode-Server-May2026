@@ -31,7 +31,7 @@ dotnet_diagnostic.SA1026.severity = none
 
 dotnet_diagnostic.SA1027.severity = none
 
-dotnet_diagnostic.SA1028.severity = none
+dotnet_diagnostic.SA1028.severity = warning
 
 dotnet_diagnostic.SA1100.severity = none
 
