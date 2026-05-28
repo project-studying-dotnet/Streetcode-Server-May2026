@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentResults;
 using Moq;
 using FluentAssertions;
@@ -8,7 +9,6 @@ using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
 using Streetcode.BLL.Resources;
@@ -50,7 +50,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
 
             _mapperMock
                 .Setup(mapper => mapper.Map<Entity>(dto))
-                .Returns((Entity)null);
+                .Returns((Entity)null!);
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -120,7 +120,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
                 .Setup(repo => repo.GetAllAsync(
                     It.IsAny<Expression<Func<Entity, bool>>>(),
                     It.IsAny<Func<IQueryable<Entity>, IIncludableQueryable<Entity, object>>?>()))
-                .ReturnsAsync((IEnumerable<Entity>)null);
+                .ReturnsAsync((IEnumerable<Entity>)null!);
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -180,8 +180,9 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
                 Times.Once);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command,
-                ErrorMessages.CannotSaveRelatedWordChanges),
+                logger => logger.LogError(
+                    command,
+                    ErrorMessages.CannotSaveRelatedWordChanges),
                 Times.Once);
         }
 
@@ -220,7 +221,9 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
             result.Errors[0].Message.Should().Be(ErrorMessages.CannotMapEntity);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, ErrorMessages.CannotMapEntity),
+                logger => logger.LogError(
+                    command,
+                    ErrorMessages.CannotMapEntity),
                 Times.Once);
         }
 

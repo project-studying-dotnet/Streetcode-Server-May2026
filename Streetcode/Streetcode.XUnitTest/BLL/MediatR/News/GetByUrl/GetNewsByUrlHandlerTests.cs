@@ -69,7 +69,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
             string testUrl = "example-news-url";
             var request = new GetNewsByUrlQuery(testUrl);
 
-            var newsEntity = new NewsEntity { Id = 1, URL = testUrl, Image = null };
+            var newsEntity = new NewsEntity
+            {
+                Id = 1,
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = testUrl,
+                Image = null
+            };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<NewsEntity, bool>>>(),
@@ -93,6 +100,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
             var newsEntity = new NewsEntity
             {
                 Id = 1,
+                Title = "Test News",
+                Text = "This is a test news.",
                 URL = testUrl,
                 Image = new ImageEntity { BlobName = "test-image.jpg" }
             };
@@ -109,7 +118,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal(expectedBase64, result.Value.Image.Base64);
+            Assert.Equal(expectedBase64, result.Value.Image?.Base64);
             _blobServiceMock.Verify(b => b.FindFileInStorageAsBase64("test-image.jpg"), Times.Once);
         }
     }

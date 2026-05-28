@@ -28,7 +28,7 @@ namespace Streetcode.BLL.MediatR.Newss.SortedByDateTime
         public async Task<Result<List<NewsDTO>>> Handle(SortedByDateTimeQuery request, CancellationToken cancellationToken)
         {
             var news = await _repositoryWrapper.NewsRepository.GetAllAsync(
-                include: cat => cat.Include(img => img.Image));
+                include: cat => cat.Include(img => img.Image!));
             if (news == null)
             {
                 string errorMsg = ErrorMessages.ThereAreNoNewsInDatabase;
@@ -42,7 +42,7 @@ namespace Streetcode.BLL.MediatR.Newss.SortedByDateTime
             {
                 if (dto.Image is not null)
                 {
-                    dto.Image.Base64 = _blobService.FindFileInStorageAsBase64(dto.Image.BlobName);
+                    dto.Image.Base64 = _blobService.FindFileInStorageAsBase64(dto.Image.BlobName!);
                 }
             }
 

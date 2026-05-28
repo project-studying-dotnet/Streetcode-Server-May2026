@@ -19,7 +19,7 @@ namespace Streetcode.BLL.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ErrorMessages {
@@ -115,11 +115,29 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any partners.
+        /// </summary>
+        public static string CannotFindAnyPartners {
+            get {
+                return ResourceManager.GetString("CannotFindAnyPartners", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any team links.
         /// </summary>
         public static string CannotFindAnyTeamLinks {
             get {
                 return ResourceManager.GetString("CannotFindAnyTeamLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any term.
+        /// </summary>
+        public static string CannotFindAnyTerm {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTerm", resourceCulture);
             }
         }
         
@@ -187,6 +205,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find one or more historical contexts.
+        /// </summary>
+        public static string CannotFindOneOrMoreHistoricalContexts {
+            get {
+                return ResourceManager.GetString("CannotFindOneOrMoreHistoricalContexts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any partner with corresponding id: {0}.
         /// </summary>
         public static string CannotFindPartnerById {
@@ -223,6 +250,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any term with corresponding id: {0}.
+        /// </summary>
+        public static string CannotFindTermById {
+            get {
+                return ResourceManager.GetString("CannotFindTermById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any text with corresponding id: {0}.
         /// </summary>
         public static string CannotFindTextById {
@@ -250,11 +286,29 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot save historical context to database.
+        /// </summary>
+        public static string CannotSaveHistoricalContextToDatabase {
+            get {
+                return ResourceManager.GetString("CannotSaveHistoricalContextToDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot save changes in the database after related word creation!.
         /// </summary>
         public static string CannotSaveRelatedWordChanges {
             get {
                 return ResourceManager.GetString("CannotSaveRelatedWordChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot save timeline item to database.
+        /// </summary>
+        public static string CannotSaveTimelineItem {
+            get {
+                return ResourceManager.GetString("CannotSaveTimelineItem", resourceCulture);
             }
         }
         
@@ -322,6 +376,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete historical context with id {0}.
+        /// </summary>
+        public static string FailedToDeleteHistoricalContextWithId {
+            get {
+                return ResourceManager.GetString("FailedToDeleteHistoricalContextWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to delete news.
         /// </summary>
         public static string FailedToDeleteNews {
@@ -336,6 +399,24 @@ namespace Streetcode.BLL.Resources {
         public static string FailedToDeleteRelatedTerm {
             get {
                 return ResourceManager.GetString("FailedToDeleteRelatedTerm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to delete timeline item with id {0}.
+        /// </summary>
+        public static string FailedToDeleteTimelineItemWithId {
+            get {
+                return ResourceManager.GetString("FailedToDeleteTimelineItemWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update historical context with id {0}.
+        /// </summary>
+        public static string FailedToUpdateHistoricalContextWithId {
+            get {
+                return ResourceManager.GetString("FailedToUpdateHistoricalContextWithId", resourceCulture);
             }
         }
         
@@ -358,6 +439,24 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to update timeline item with id {0}.
+        /// </summary>
+        public static string FailedToUpdateTimelineItemWithId {
+            get {
+                return ResourceManager.GetString("FailedToUpdateTimelineItemWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Historical context with id {0} not found.
+        /// </summary>
+        public static string HistoricalContextWithIdNotFound {
+            get {
+                return ResourceManager.GetString("HistoricalContextWithIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No news found by entered Id - {0}.
         /// </summary>
         public static string NoNewsFoundById {
@@ -376,7 +475,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No partner with such id.
+        ///   Looks up a localized string similar to No partner with such id..
         /// </summary>
         public static string NoPartnerWithSuchId {
             get {
@@ -394,11 +493,38 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Test tag.
+        /// </summary>
+        public static string TagTitleIsEmpty {
+            get {
+                return ResourceManager.GetString("TagTitleIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to text was not parsed successfully.
+        /// </summary>
+        public static string TextWasNotParsedSuccessfully {
+            get {
+                return ResourceManager.GetString("TextWasNotParsedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are no news in the database.
         /// </summary>
         public static string ThereAreNoNewsInDatabase {
             get {
                 return ResourceManager.GetString("ThereAreNoNewsInDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timeline item with id {0} not found.
+        /// </summary>
+        public static string TimelineItemWithIdNotFound {
+            get {
+                return ResourceManager.GetString("TimelineItemWithIdNotFound", resourceCulture);
             }
         }
     }

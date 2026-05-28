@@ -74,10 +74,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
                     Id = 1,
                     URL = "url1",
                     Title = "Title 1",
+                    Text = "Text 1",
                     Image = new ImageEntity { BlobName = "test.jpg" }
                 },
-                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2" },
-                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3" }
+                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2", Text = "Text 2" },
+                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3", Text = "Text 3" }
             };
 
             SetupMocks(newsEntities, newsEntities[0]);
@@ -86,10 +87,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal("base64", result.Value.News.Image.Base64);
+            Assert.Equal("base64", result.Value.News.Image?.Base64);
             Assert.Null(result.Value.PrevNewsUrl);
             Assert.Equal("url2", result.Value.NextNewsUrl);
-            Assert.Equal("url1", result.Value.RandomNews.RandomNewsUrl);
+            Assert.Equal("url1", result.Value.RandomNews?.RandomNewsUrl);
         }
 
         [Fact]
@@ -100,10 +101,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
 
             var newsEntities = new List<NewsEntity>
             {
-                new NewsEntity { Id = 1, URL = "url1", Title = "Title 1" },
-                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2" },
-                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3" },
-                new NewsEntity { Id = 4, URL = "url4", Title = "Title 4" },
+                new NewsEntity { Id = 1, URL = "url1", Title = "Title 1", Text = "Text 1" },
+                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2", Text = "Text 2" },
+                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3", Text = "Text 3" },
+                new NewsEntity { Id = 4, URL = "url4", Title = "Title 4", Text = "Text 4" },
             };
 
             SetupMocks(newsEntities, newsEntities[3]);
@@ -113,7 +114,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             Assert.True(result.IsSuccess);
             Assert.Equal("url3", result.Value.PrevNewsUrl);
             Assert.Null(result.Value.NextNewsUrl);
-            Assert.Equal("url2", result.Value.RandomNews.RandomNewsUrl);
+            Assert.Equal("url2", result.Value.RandomNews?.RandomNewsUrl);
         }
 
         [Fact]
@@ -124,11 +125,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
 
             var newsEntities = new List<NewsEntity>
             {
-                new NewsEntity { Id = 1, URL = "url1", Title = "Title 1" },
-                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2" },
-                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3" },
-                new NewsEntity { Id = 4, URL = "url4", Title = "Title 4" },
-                new NewsEntity { Id = 5, URL = "url5", Title = "Title 5" },
+                new NewsEntity { Id = 1, URL = "url1", Title = "Title 1", Text = "Text 1" },
+                new NewsEntity { Id = 2, URL = "url2", Title = "Title 2", Text = "Text 2" },
+                new NewsEntity { Id = 3, URL = "url3", Title = "Title 3", Text = "Text 3" },
+                new NewsEntity { Id = 4, URL = "url4", Title = "Title 4", Text = "Text 4" },
+                new NewsEntity { Id = 5, URL = "url5", Title = "Title 5", Text = "Text 5" },
             };
 
             SetupMocks(newsEntities, newsEntities[0]);
@@ -136,7 +137,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetNewsAndLinksByUrl
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal("url5", result.Value.RandomNews.RandomNewsUrl);
+            Assert.Equal("url5", result.Value.RandomNews?.RandomNewsUrl);
         }
 
         private void SetupMocks(

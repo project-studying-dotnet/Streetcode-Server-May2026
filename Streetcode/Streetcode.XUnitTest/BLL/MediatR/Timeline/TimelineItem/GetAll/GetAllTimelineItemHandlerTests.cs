@@ -16,7 +16,7 @@ using Streetcode.DAL.Enums;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Timeline;
 using Xunit;
-
+using HistContext = Streetcode.DAL.Entities.Timeline.HistoricalContext;
 using TimelineItemEntity = Streetcode.DAL.Entities.Timeline.TimelineItem;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetAll;
@@ -66,18 +66,17 @@ public class GetAllTimelineItemHandlerTests
                 Description = "Description",
                 Date = new DateTime(2020, 1, 1),
                 DateViewPattern = DateViewPattern.Year,
-                HistoricalContextTimelines = new List<HistoricalContextTimeline>
-                {
-                    new()
+                HistoricalContextTimelines = [
+                    new HistoricalContextTimeline()
                     {
-                        HistoricalContext = new HistoricalContext
+                        HistoricalContext = new HistContext
                         {
                             Id = 1,
-                            Title = "Historical Context 1",
-                        },
-                    },
-                },
-            },
+                            Title = "Historical Context 1"
+                        }
+                    }
+                ]
+            }
         };
 
         _timelineRepoMock

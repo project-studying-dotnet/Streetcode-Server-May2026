@@ -8,14 +8,15 @@ public class TimelineItemProfile : Profile
 {
     public TimelineItemProfile()
     {
-        CreateMap<TimelineItem, TimelineItemDto>().ReverseMap();
-
         CreateMap<TimelineItem, TimelineItemDto>()
-            .ForMember(dest => dest.HistoricalContexts, opt => opt.MapFrom(x => x.HistoricalContextTimelines
-                .Select(x => new HistoricalContextDTO
-                {
-                    Id = x.HistoricalContextId,
-                    Title = x.HistoricalContext.Title
-                }).ToList()));
+            .ForMember(dest => dest.HistoricalContexts, opt => opt.MapFrom(src => src.HistoricalContextTimelines));
+
+        CreateMap<TimelineItemDto, TimelineItem>()
+            .ForMember(dest => dest.HistoricalContextTimelines, opt => opt.Ignore())
+            .ForMember(dest => dest.Streetcode, opt => opt.Ignore());
+
+        CreateMap<HistoricalContextTimeline, HistoricalContextDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.HistoricalContextId))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.HistoricalContext!.Title));
     }
 }
