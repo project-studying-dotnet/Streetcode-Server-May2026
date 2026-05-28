@@ -358,6 +358,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to create a relation..
+        /// </summary>
+        public static string FailedToCreateRelation {
+            get {
+                return ResourceManager.GetString("FailedToCreateRelation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to create a streetcodeCoordinate.
         /// </summary>
         public static string FailedToCreateStreetcodeCoordinate {
@@ -462,6 +471,15 @@ namespace Streetcode.BLL.Resources {
         public static string HistoricalContextWithIdNotFound {
             get {
                 return ResourceManager.GetString("HistoricalContextWithIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No existing streetcode with id: {0}.
+        /// </summary>
+        public static string NoExistingStreetcodeWithId {
+            get {
+                return ResourceManager.GetString("NoExistingStreetcodeWithId", resourceCulture);
             }
         }
         
