@@ -5,4 +5,5 @@ using Streetcode.BLL.MediatR.Interface;
 
 namespace Streetcode.BLL.MediatR.Media.Video.GetByStreetcodeId;
 
-public record GetVideoByStreetcodeIdQuery(int StreetcodeId) : IRequest<Result<VideoDTO>>, IHasStreetcodeId;
+public record GetVideoByStreetcodeIdQuery(int StreetcodeId)
+    : IRequest<Result<VideoDto>>, IHasStreetcodeId;

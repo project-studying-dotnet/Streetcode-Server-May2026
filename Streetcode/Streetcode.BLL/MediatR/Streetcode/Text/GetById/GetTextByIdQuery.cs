@@ -5,4 +5,5 @@ using Streetcode.BLL.MediatR.Interface;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Text.GetById;
 
-public record GetTextByIdQuery(int Id) : IRequest<Result<TextDTO>>, IHasId;
+public record GetTextByIdQuery(int Id)
+    : IRequest<Result<TextDto>>, IHasId;

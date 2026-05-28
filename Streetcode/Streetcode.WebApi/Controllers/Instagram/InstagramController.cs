@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.Instagram.GetAll;
 using Streetcode.BLL.MediatR.Payment;

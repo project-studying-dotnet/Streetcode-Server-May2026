@@ -6,7 +6,7 @@ namespace Streetcode.BLL.Validators.Users
     /// <summary>
     /// Validator for UserDTO.
     /// </summary>
-    public class UserDtoValidator : AbstractValidator<UserDTO>
+    public class UserDtoValidator : AbstractValidator<UserDto>
     {
         private const int NameMaxLength = 50;
         private const int LoginMaxLength = 20;
@@ -40,12 +40,6 @@ namespace Streetcode.BLL.Validators.Users
                 .WithMessage("Login is required")
                 .MaximumLength(LoginMaxLength)
                 .WithMessage($"Login must not exceed {LoginMaxLength} characters");
-
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage("Password is required")
-                .MaximumLength(PasswordMaxLength)
-                .WithMessage($"Password must not exceed {PasswordMaxLength} characters");
 
             RuleFor(x => x.Role)
                 .IsInEnum()

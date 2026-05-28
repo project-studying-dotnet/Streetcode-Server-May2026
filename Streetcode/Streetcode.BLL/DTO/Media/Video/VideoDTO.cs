@@ -2,7 +2,7 @@ using Streetcode.BLL.DTO.AdditionalContent;
 
 namespace Streetcode.BLL.DTO.Media.Video;
 
-public class VideoDTO
+public class VideoDto
 {
   public int Id { get; set; }
   public string? Description { get; set; }

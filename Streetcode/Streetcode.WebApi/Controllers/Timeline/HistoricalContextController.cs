@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.Timeline.HistoricalContext.GetAll;
 
 namespace Streetcode.WebApi.Controllers.Timeline

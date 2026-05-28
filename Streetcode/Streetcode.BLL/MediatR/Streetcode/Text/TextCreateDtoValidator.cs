@@ -6,7 +6,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text
     /// <summary>
     /// Validator for <see cref="TextCreateDTO"/>.
     /// </summary>
-    public class TextCreateDtoValidator : AbstractValidator<TextCreateDTO>
+    public class TextCreateDtoValidator : AbstractValidator<TextCreateDto>
     {
         private const int AdditionalTextMaxLength = 250;
 

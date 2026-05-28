@@ -6,7 +6,7 @@ namespace Streetcode.BLL.Validators.Users
     /// <summary>
     /// Validator for UserLoginDTO.
     /// </summary>
-    public class UserLoginDtoValidator : AbstractValidator<UserLoginDTO>
+    public class UserLoginDtoValidator : AbstractValidator<UserLoginDto>
     {
         private const int LoginMaxLength = 20;
         private const int PasswordMaxLength = 20;

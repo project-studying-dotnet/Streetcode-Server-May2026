@@ -22,7 +22,8 @@ namespace Streetcode.BLL.Validators.Streetcode.RelatedTerm.Update
                 .SetValidator(new RelatedTermDtoValidator());
 
             RuleFor(x => x.RelatedTerm.Id)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .When(x => x.RelatedTerm != null);
         }
     }
 }
