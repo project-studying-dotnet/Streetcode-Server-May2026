@@ -6,7 +6,7 @@ namespace Streetcode.DAL.Entities.Partners;
 public class Partner
 {
     public int Id { get; set; }
-    public string Title { get; set; }
+    required public string Title { get; set; }
     public int LogoId { get; set; }
     public bool IsKeyPartner { get; set; }
     public bool IsVisibleEverywhere { get; set; }
