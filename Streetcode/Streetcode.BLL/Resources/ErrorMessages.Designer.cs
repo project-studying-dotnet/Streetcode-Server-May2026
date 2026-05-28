@@ -448,7 +448,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No partner with such id.
+        ///   Looks up a localized string similar to No partner with such id..
         /// </summary>
         public static string NoPartnerWithSuchId {
             get {

@@ -160,7 +160,7 @@
     <value>Cannot find an audio with the corresponding streetcode id: {0}</value>
   </data>
   <data name="NoPartnerWithSuchId" xml:space="preserve">
-    <value>No partner with such id</value>
+    <value>No partner with such id.</value>
   </data>
   <data name="CannotFindPartnerById" xml:space="preserve">
     <value>Cannot find any partner with corresponding id: {0}</value>
