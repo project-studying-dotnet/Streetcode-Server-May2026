@@ -29,9 +29,13 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         if (failures.Count != 0)
         {
             var result = new TResponse();
+
             foreach (var failure in failures)
             {
-                result.Reasons.Add(new Error(failure.ErrorMessage));
+                result.Reasons.Add(
+                    new Error(failure.ErrorMessage)
+                        .WithMetadata("PropertyName", failure.PropertyName)
+                        .WithMetadata("ErrorCode", failure.ErrorCode));
             }
 
             return result;
