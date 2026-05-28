@@ -160,7 +160,7 @@
     <value>Cannot find an audio with the corresponding streetcode id: {0}</value>
   </data>
   <data name="NoPartnerWithSuchId" xml:space="preserve">
-    <value>No partner with such id</value>
+    <value>No partner with such id.</value>
   </data>
   <data name="CannotFindPartnerById" xml:space="preserve">
     <value>Cannot find any partner with corresponding id: {0}</value>
@@ -230,5 +230,32 @@
   </data>
   <data name="EmailConfigurationIsMissing" xml:space="preserve">
     <value>Email Configuration is missing</value>
+  </data>
+  <data name="CannotSaveHistoricalContextToDatabase" xml:space="preserve">
+    <value>Cannot save historical context to database</value>
+  </data>
+  <data name="HistoricalContextWithIdNotFound" xml:space="preserve">
+    <value>Historical context with id {0} not found</value>
+  </data>
+  <data name="FailedToDeleteHistoricalContextWithId" xml:space="preserve">
+    <value>Failed to delete historical context with id {0}</value>
+  </data>
+  <data name="FailedToUpdateHistoricalContextWithId" xml:space="preserve">
+    <value>Failed to update historical context with id {0}</value>
+  </data>
+  <data name="CannotSaveTimelineItem" xml:space="preserve">
+    <value>Cannot save timeline item to database</value>
+  </data>
+  <data name="TimelineItemWithIdNotFound" xml:space="preserve">
+    <value>Timeline item with id {0} not found</value>
+  </data>
+  <data name="FailedToDeleteTimelineItemWithId" xml:space="preserve">
+    <value>Failed to delete timeline item with id {0}</value>
+  </data>
+  <data name="CannotFindOneOrMoreHistoricalContexts" xml:space="preserve">
+    <value>Cannot find one or more historical contexts</value>
+  </data>
+  <data name="FailedToUpdateTimelineItemWithId" xml:space="preserve">
+    <value>Failed to update timeline item with id {0}</value>
   </data>
 </root>
