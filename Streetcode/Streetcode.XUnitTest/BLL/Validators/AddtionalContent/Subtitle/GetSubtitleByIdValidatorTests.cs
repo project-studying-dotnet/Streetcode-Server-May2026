@@ -30,7 +30,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Subtitle.GetById
         [Fact]
         public void Should_Not_Have_Errors_When_Id_Is_Valid()
         {
-            var query = new GetSubtitleByIdQuery(1); 
+            var query = new GetSubtitleByIdQuery(1);
 
             var result = _validator.TestValidate(query);
 

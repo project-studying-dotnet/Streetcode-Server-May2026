@@ -17,10 +17,10 @@ namespace Streetcode.XUnitTest.Validators.Users
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void Should_Have_Error_When_Login_Is_Empty(string invalidLogin)
+        public void Should_Have_Error_When_Login_Is_Empty(string? invalidLogin)
         {
             var dto = CreateValidDto();
-            dto.Login = invalidLogin;
+            dto.Login = invalidLogin!;
 
             var result = _validator.TestValidate(dto);
 
@@ -43,10 +43,10 @@ namespace Streetcode.XUnitTest.Validators.Users
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void Should_Have_Error_When_Password_Is_Empty(string invalidPassword)
+        public void Should_Have_Error_When_Password_Is_Empty(string? invalidPassword)
         {
             var dto = CreateValidDto();
-            dto.Password = invalidPassword;
+            dto.Password = invalidPassword!;
 
             var result = _validator.TestValidate(dto);
 
@@ -76,7 +76,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private UserLoginDto CreateValidDto()
+        private static UserLoginDto CreateValidDto()
         {
             return new UserLoginDto
             {

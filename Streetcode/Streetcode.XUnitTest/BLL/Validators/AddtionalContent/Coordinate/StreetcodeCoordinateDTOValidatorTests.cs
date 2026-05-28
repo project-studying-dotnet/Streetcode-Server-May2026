@@ -7,11 +7,11 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
 {
     public class StreetcodeCoordinateDTOValidatorTests
     {
-        private readonly StreetcodeCoordinateDTOValidator _validator;
+        private readonly StreetcodeCoordinateDtoValidator _validator;
 
         public StreetcodeCoordinateDTOValidatorTests()
         {
-            _validator = new StreetcodeCoordinateDTOValidator();
+            _validator = new StreetcodeCoordinateDtoValidator();
         }
 
         [Theory]
@@ -57,7 +57,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
             var dto = new StreetcodeCoordinateDTO
             {
                 StreetcodeId = 10,
-                Latitude = 50.45m, 
+                Latitude = 50.45m,
                 Longtitude = 30.52m
             };
 

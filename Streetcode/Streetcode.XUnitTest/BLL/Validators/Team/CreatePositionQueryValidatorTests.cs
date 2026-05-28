@@ -18,7 +18,7 @@ namespace Streetcode.XUnitTest.Validators.Team.Position.Create
         [Fact]
         public void Should_Have_Error_When_Position_Is_Null()
         {
-            var query = new CreatePositionQuery(null);
+            var query = new CreatePositionQuery(null!);
 
             var result = _validator.TestValidate(query);
 

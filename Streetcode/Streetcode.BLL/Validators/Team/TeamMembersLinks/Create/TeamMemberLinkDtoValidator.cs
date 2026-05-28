@@ -30,7 +30,7 @@ namespace Streetcode.BLL.Validators.Team.TeamMembersLinks.Create
                 .WithMessage("Invalid logo type");
         }
 
-        private bool BeAValidUrl(string url)
+        private static bool BeAValidUrl(string url)
         {
             return Uri.TryCreate(url, UriKind.Absolute, out _);
         }

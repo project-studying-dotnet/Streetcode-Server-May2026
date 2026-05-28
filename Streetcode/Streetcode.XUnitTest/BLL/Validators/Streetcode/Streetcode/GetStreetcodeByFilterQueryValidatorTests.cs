@@ -31,7 +31,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByFilter
         {
             var validFilter = new StreetcodeFilterRequestDTO
             {
-                SearchQuery = "Валідний запит" 
+                SearchQuery = "Валідний запит"
             };
 
             var query = new GetStreetcodeByFilterQuery(validFilter);

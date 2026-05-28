@@ -18,10 +18,10 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Title_Is_Empty(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty(string? invalidTitle)
         {
             var dto = CreateValidDto();
-            dto.Title = invalidTitle;
+            dto.Title = invalidTitle!;
 
             var result = _validator.TestValidate(dto);
 
@@ -45,10 +45,10 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_FactContent_Is_Empty(string invalidContent)
+        public void Should_Have_Error_When_FactContent_Is_Empty(string? invalidContent)
         {
             var dto = CreateValidDto();
-            dto.FactContent = invalidContent;
+            dto.FactContent = invalidContent!;
 
             var result = _validator.TestValidate(dto);
 
@@ -115,7 +115,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private FactDto CreateValidDto()
+        private static FactDto CreateValidDto()
         {
             return new FactDto
             {

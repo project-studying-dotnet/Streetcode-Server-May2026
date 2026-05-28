@@ -19,10 +19,10 @@ namespace Streetcode.XUnitTest.Validators.Team.TeamMembersLinks.Create
         [InlineData(null)]
         [InlineData("")]
         [InlineData("invalid-url")]
-        public void Should_Have_Error_When_TargetUrl_Is_Invalid(string invalidUrl)
+        public void Should_Have_Error_When_TargetUrl_Is_Invalid(string? invalidUrl)
         {
             var dto = CreateValidDto();
-            dto.TargetUrl = invalidUrl;
+            dto.TargetUrl = invalidUrl!;
 
             var result = _validator.TestValidate(dto);
 
@@ -53,7 +53,7 @@ namespace Streetcode.XUnitTest.Validators.Team.TeamMembersLinks.Create
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private TeamMemberLinkDTO CreateValidDto()
+        private static TeamMemberLinkDTO CreateValidDto()
         {
             return new TeamMemberLinkDTO
             {

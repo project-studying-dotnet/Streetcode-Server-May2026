@@ -18,9 +18,9 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm.Delete
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Word_Is_Empty(string invalidWord)
+        public void Should_Have_Error_When_Word_Is_Empty(string? invalidWord)
         {
-            var command = new DeleteRelatedTermCommand(invalidWord);
+            var command = new DeleteRelatedTermCommand(invalidWord!);
 
             var result = _validator.TestValidate(command);
 

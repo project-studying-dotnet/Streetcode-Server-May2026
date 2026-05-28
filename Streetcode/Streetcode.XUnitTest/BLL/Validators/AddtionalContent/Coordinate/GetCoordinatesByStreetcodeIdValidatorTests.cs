@@ -20,7 +20,6 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate.GetByStre
         [InlineData(-99)]
         public void Should_Have_Error_When_StreetcodeId_Is_Less_Or_Equal_To_Zero(int invalidId)
         {
-
             var query = new GetCoordinatesByStreetcodeIdQuery(invalidId);
 
             var result = _validator.TestValidate(query);
@@ -31,8 +30,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate.GetByStre
         [Fact]
         public void Should_Not_Have_Errors_When_StreetcodeId_Is_Valid()
         {
-
-            var query = new GetCoordinatesByStreetcodeIdQuery(1); 
+            var query = new GetCoordinatesByStreetcodeIdQuery(1);
 
             var result = _validator.TestValidate(query);
 

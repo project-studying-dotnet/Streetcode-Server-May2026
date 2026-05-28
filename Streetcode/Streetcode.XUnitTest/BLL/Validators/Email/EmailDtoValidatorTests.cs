@@ -40,9 +40,9 @@ namespace Streetcode.XUnitTest.Validators.Email
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void Should_Have_Error_When_Content_Is_Empty_Or_Null(string invalidContent)
+        public void Should_Have_Error_When_Content_Is_Empty_Or_Null(string? invalidContent)
         {
-            var dto = new EmailDTO { From = "test@test.com", Content = invalidContent };
+            var dto = new EmailDTO { From = "test@test.com", Content = invalidContent! };
 
             var result = _validator.TestValidate(dto);
 

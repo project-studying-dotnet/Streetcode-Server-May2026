@@ -55,7 +55,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Update
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private CreatePartnerDTO CreateValidPartnerDto()
+        private static CreatePartnerDTO CreateValidPartnerDto()
         {
             return new CreatePartnerDTO
             {

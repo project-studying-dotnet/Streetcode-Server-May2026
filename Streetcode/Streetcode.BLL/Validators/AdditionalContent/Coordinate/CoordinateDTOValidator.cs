@@ -6,12 +6,12 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate
     /// <summary>
     /// Validator for CoordinateDTO.
     /// </summary>
-    public class CoordinateDTOValidator : AbstractValidator<CoordinateDTO>
+    public class CoordinateDtoValidator : AbstractValidator<CoordinateDTO>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CoordinateDTOValidator"/> class.
+        /// Initializes a new instance of the <see cref="CoordinateDtoValidator"/> class.
         /// </summary>
-        public CoordinateDTOValidator()
+        public CoordinateDtoValidator()
         {
             RuleFor(c => c.Latitude)
                 .InclusiveBetween(-90, 90)

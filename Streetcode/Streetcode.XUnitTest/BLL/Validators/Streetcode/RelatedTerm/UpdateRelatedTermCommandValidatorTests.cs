@@ -62,7 +62,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm.Update
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private RelatedTermDTO CreateValidRelatedTermDto()
+        private static RelatedTermDTO CreateValidRelatedTermDto()
         {
             return new RelatedTermDTO
             {

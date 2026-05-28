@@ -18,9 +18,9 @@ namespace Streetcode.XUnitTest.Validators.Team.Position.Create
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Position_Is_Empty(string invalidPosition)
+        public void Should_Have_Error_When_Position_Is_Empty(string? invalidPosition)
         {
-            var dto = new PositionDTO { Position = invalidPosition };
+            var dto = new PositionDTO { Position = invalidPosition! };
 
             var result = _validator.TestValidate(dto);
 

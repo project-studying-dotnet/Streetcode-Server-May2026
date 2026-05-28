@@ -31,10 +31,10 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_TargetUrl_Is_Empty(string invalidUrl)
+        public void Should_Have_Error_When_TargetUrl_Is_Empty(string? invalidUrl)
         {
             var dto = CreateValidDto();
-            dto.TargetUrl = invalidUrl;
+            dto.TargetUrl = invalidUrl!;
 
             var result = _validator.TestValidate(dto);
 
@@ -90,7 +90,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private CreatePartnerSourceLinkDTO CreateValidDto()
+        private static CreatePartnerSourceLinkDTO CreateValidDto()
         {
             return new CreatePartnerSourceLinkDTO
             {

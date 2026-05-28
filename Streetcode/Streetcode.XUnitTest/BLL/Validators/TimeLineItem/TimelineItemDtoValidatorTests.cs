@@ -30,7 +30,7 @@ namespace Streetcode.XUnitTest.Validators.Timeline.TimelineItem
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void Should_Have_Error_When_Title_Is_Empty(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty(string? invalidTitle)
         {
             var dto = CreateValidDto();
             dto.Title = invalidTitle;
@@ -86,7 +86,7 @@ namespace Streetcode.XUnitTest.Validators.Timeline.TimelineItem
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private TimelineItemDto CreateValidDto()
+        private static TimelineItemDto CreateValidDto()
         {
             return new TimelineItemDto
             {

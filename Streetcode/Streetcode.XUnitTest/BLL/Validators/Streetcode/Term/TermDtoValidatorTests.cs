@@ -18,10 +18,10 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Term
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Title_Is_Empty(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty(string? invalidTitle)
         {
             var dto = CreateValidDto();
-            dto.Title = invalidTitle;
+            dto.Title = invalidTitle!;
 
             var result = _validator.TestValidate(dto);
 
@@ -33,10 +33,10 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Term
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Description_Is_Empty(string invalidDescription)
+        public void Should_Have_Error_When_Description_Is_Empty(string? invalidDescription)
         {
             var dto = CreateValidDto();
-            dto.Description = invalidDescription;
+            dto.Description = invalidDescription!;
 
             var result = _validator.TestValidate(dto);
 
@@ -77,7 +77,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Term
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private TermDto CreateValidDto()
+        private static TermDto CreateValidDto()
         {
             return new TermDto
             {

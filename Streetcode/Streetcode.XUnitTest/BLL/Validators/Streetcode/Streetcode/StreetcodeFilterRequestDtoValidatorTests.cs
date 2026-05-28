@@ -32,9 +32,9 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByFilter
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_SearchQuery_Is_Empty(string invalidQuery)
+        public void Should_Have_Error_When_SearchQuery_Is_Empty(string? invalidQuery)
         {
-            var dto = new StreetcodeFilterRequestDTO { SearchQuery = invalidQuery };
+            var dto = new StreetcodeFilterRequestDTO { SearchQuery = invalidQuery! };
 
             var result = _validator.TestValidate(dto);
 

@@ -16,7 +16,7 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate.Create
         {
             RuleFor(x => x.StreetcodeCoordinate)
             .NotNull()
-            .SetValidator(new StreetcodeCoordinateDTOValidator());
+            .SetValidator(new StreetcodeCoordinateDtoValidator());
         }
     }
 }

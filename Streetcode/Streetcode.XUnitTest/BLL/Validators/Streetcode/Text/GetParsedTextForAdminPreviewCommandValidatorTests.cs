@@ -18,9 +18,9 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Text.GetParsed
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_TextToParse_Is_Empty(string invalidText)
+        public void Should_Have_Error_When_TextToParse_Is_Empty(string? invalidText)
         {
-            var command = new GetParsedTextForAdminPreviewCommand(invalidText);
+            var command = new GetParsedTextForAdminPreviewCommand(invalidText!);
 
             var result = _validator.TestValidate(command);
 

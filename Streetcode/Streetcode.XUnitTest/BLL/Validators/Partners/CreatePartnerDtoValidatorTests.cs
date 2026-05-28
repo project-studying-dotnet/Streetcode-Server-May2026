@@ -20,10 +20,10 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Title_Is_Empty(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty(string? invalidTitle)
         {
             var dto = CreateValidDto();
-            dto.Title = invalidTitle;
+            dto.Title = invalidTitle!;
 
             var result = _validator.TestValidate(dto);
 
@@ -47,7 +47,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Not_Have_Error_When_Description_Is_Empty(string emptyDescription)
+        public void Should_Not_Have_Error_When_Description_Is_Empty(string? emptyDescription)
         {
             var dto = CreateValidDto();
             dto.Description = emptyDescription;
@@ -76,7 +76,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Not_Have_Error_When_TargetUrl_Is_Empty(string emptyUrl)
+        public void Should_Not_Have_Error_When_TargetUrl_Is_Empty(string? emptyUrl)
         {
             var dto = CreateValidDto();
             dto.TargetUrl = emptyUrl;
@@ -141,7 +141,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private CreatePartnerDTO CreateValidDto()
+        private static CreatePartnerDTO CreateValidDto()
         {
             return new CreatePartnerDTO
             {

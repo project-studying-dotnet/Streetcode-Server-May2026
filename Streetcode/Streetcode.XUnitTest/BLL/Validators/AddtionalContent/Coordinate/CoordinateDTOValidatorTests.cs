@@ -7,11 +7,11 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
 {
     public class CoordinateDTOValidatorTests
     {
-        private readonly CoordinateDTOValidator _validator;
+        private readonly CoordinateDtoValidator _validator;
 
         public CoordinateDTOValidatorTests()
         {
-            _validator = new CoordinateDTOValidator();
+            _validator = new CoordinateDtoValidator();
         }
 
         [Theory]

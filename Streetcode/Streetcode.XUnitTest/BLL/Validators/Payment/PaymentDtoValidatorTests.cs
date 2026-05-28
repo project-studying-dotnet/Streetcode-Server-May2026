@@ -59,7 +59,7 @@ namespace Streetcode.XUnitTest.Validators.Payment
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Not_Have_Error_When_RedirectUrl_Is_Empty(string emptyUrl)
+        public void Should_Not_Have_Error_When_RedirectUrl_Is_Empty(string? emptyUrl)
         {
             var dto = CreateValidDto();
             dto.RedirectUrl = emptyUrl;
@@ -91,7 +91,7 @@ namespace Streetcode.XUnitTest.Validators.Payment
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private PaymentDTO CreateValidDto()
+        private static PaymentDTO CreateValidDto()
         {
             return new PaymentDTO
             {

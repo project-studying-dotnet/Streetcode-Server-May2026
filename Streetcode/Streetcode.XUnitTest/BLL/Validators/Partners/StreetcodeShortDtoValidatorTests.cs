@@ -32,10 +32,10 @@ namespace Streetcode.XUnitTest.Validators.Partners
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Title_Is_Empty(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty(string? invalidTitle)
         {
             var dto = CreateValidDto();
-            dto.Title = invalidTitle;
+            dto.Title = invalidTitle!;
 
             var result = _validator.TestValidate(dto);
 
@@ -74,7 +74,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private StreetcodeShortDTO CreateValidDto()
+        private static StreetcodeShortDTO CreateValidDto()
         {
             return new StreetcodeShortDTO
             {

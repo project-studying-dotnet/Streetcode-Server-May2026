@@ -22,7 +22,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.GetShortById
 
         public async Task<Result<StreetcodeShortDTO>> Handle(GetStreetcodeShortByIdQuery request, CancellationToken cancellationToken)
         {
-            var streetcode = await _repository.StreetcodeRepository.GetFirstOrDefaultAsync(st => st.Id == request.Id);
+            var streetcode = await _repository.StreetcodeRepository.GetFirstOrDefaultAsync(st => st.Id == request.Id, cancellationToken: cancellationToken);
 
             if (streetcode == null)
             {

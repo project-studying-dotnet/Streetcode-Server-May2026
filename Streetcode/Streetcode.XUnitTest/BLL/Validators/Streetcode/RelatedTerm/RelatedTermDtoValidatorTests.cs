@@ -18,10 +18,10 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Word_Is_Empty(string invalidWord)
+        public void Should_Have_Error_When_Word_Is_Empty(string? invalidWord)
         {
             var dto = CreateValidDto();
-            dto.Word = invalidWord;
+            dto.Word = invalidWord!;
 
             var result = _validator.TestValidate(dto);
 
@@ -62,7 +62,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private RelatedTermDTO CreateValidDto()
+        private static RelatedTermDTO CreateValidDto()
         {
             return new RelatedTermDTO
             {

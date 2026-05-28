@@ -18,7 +18,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.AddtionalContent.Coordinate
         [Fact]
         public void Should_Have_Error_When_StreetcodeCoordinate_Is_Null()
         {
-            var command = new CreateCoordinateCommand(null);
+            var command = new CreateCoordinateCommand(null!);
 
             var result = _validator.TestValidate(command);
 

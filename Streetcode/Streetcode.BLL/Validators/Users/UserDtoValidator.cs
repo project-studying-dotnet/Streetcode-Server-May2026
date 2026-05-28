@@ -10,7 +10,6 @@ namespace Streetcode.BLL.Validators.Users
     {
         private const int NameMaxLength = 50;
         private const int LoginMaxLength = 20;
-        private const int PasswordMaxLength = 20;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserDtoValidator"/> class.

@@ -18,7 +18,7 @@ namespace Streetcode.XUnitTest.Validators.Media
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Title_Is_Empty(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty(string? invalidTitle)
         {
             var dto = CreateValidDto();
             dto.Title = invalidTitle;
@@ -43,7 +43,7 @@ namespace Streetcode.XUnitTest.Validators.Media
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_BaseFormat_Is_Empty(string invalidBaseFormat)
+        public void Should_Have_Error_When_BaseFormat_Is_Empty(string? invalidBaseFormat)
         {
             var dto = CreateValidDto();
             dto.BaseFormat = invalidBaseFormat;
@@ -57,7 +57,7 @@ namespace Streetcode.XUnitTest.Validators.Media
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_MimeType_Is_Empty(string invalidMimeType)
+        public void Should_Have_Error_When_MimeType_Is_Empty(string? invalidMimeType)
         {
             var dto = CreateValidDto();
             dto.MimeType = invalidMimeType;
@@ -82,7 +82,7 @@ namespace Streetcode.XUnitTest.Validators.Media
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Extension_Is_Empty(string invalidExtension)
+        public void Should_Have_Error_When_Extension_Is_Empty(string? invalidExtension)
         {
             var dto = CreateValidDto();
             dto.Extension = invalidExtension;

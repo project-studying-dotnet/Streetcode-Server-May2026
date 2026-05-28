@@ -40,16 +40,16 @@ namespace Streetcode.XUnitTest.Validators.Media.Image.Create
         [InlineData(null)]
         [InlineData("")]
         [InlineData("Valid descriptive alt text")]
-        public void Should_Not_Have_Errors_When_DTO_Is_Valid(string altText)
+        public void Should_Not_Have_Errors_When_DTO_Is_Valid(string? altText)
         {
-            var dto = CreateValidImageDto(altText);
+            var dto = CreateValidImageDto(altText!);
 
             var result = _validator.TestValidate(dto);
 
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private ImageFileBaseCreateDTO CreateValidImageDto(string alt)
+        private static ImageFileBaseCreateDTO CreateValidImageDto(string alt)
         {
             return new ImageFileBaseCreateDTO
             {

@@ -52,7 +52,7 @@ namespace Streetcode.XUnitTest.Validators.Newss.Update
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private NewsDTO CreateValidNewsDto()
+        private static NewsDTO CreateValidNewsDto()
         {
             return new NewsDTO
             {
@@ -60,7 +60,7 @@ namespace Streetcode.XUnitTest.Validators.Newss.Update
                 Title = "Валідна новина для оновлення",
                 Text = "Текст новини з достатньою довжиною для успішної валідації.",
                 URL = "valid-news-url",
-                ImageId = 1 
+                ImageId = 1
             };
         }
     }

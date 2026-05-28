@@ -17,9 +17,9 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.Create
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void Should_Have_Error_When_Title_Is_Empty_Or_Null(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty_Or_Null(string? invalidTitle)
         {
-            var dto = new CreateTagDTO { Title = invalidTitle };
+            var dto = new CreateTagDTO { Title = invalidTitle! };
 
             var result = _validator.TestValidate(dto);
 

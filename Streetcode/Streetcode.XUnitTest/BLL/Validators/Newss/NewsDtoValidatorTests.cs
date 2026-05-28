@@ -18,10 +18,10 @@ namespace Streetcode.XUnitTest.Validators.Newss
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Title_Is_Empty(string invalidTitle)
+        public void Should_Have_Error_When_Title_Is_Empty(string? invalidTitle)
         {
             var dto = CreateValidDto();
-            dto.Title = invalidTitle;
+            dto.Title = invalidTitle!;
 
             var result = _validator.TestValidate(dto);
 
@@ -45,10 +45,10 @@ namespace Streetcode.XUnitTest.Validators.Newss
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Text_Is_Empty(string invalidText)
+        public void Should_Have_Error_When_Text_Is_Empty(string? invalidText)
         {
             var dto = CreateValidDto();
-            dto.Text = invalidText;
+            dto.Text = invalidText!;
 
             var result = _validator.TestValidate(dto);
 
@@ -72,10 +72,10 @@ namespace Streetcode.XUnitTest.Validators.Newss
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_URL_Is_Empty(string invalidUrl)
+        public void Should_Have_Error_When_URL_Is_Empty(string? invalidUrl)
         {
             var dto = CreateValidDto();
-            dto.URL = invalidUrl;
+            dto.URL = invalidUrl!;
 
             var result = _validator.TestValidate(dto);
 
@@ -121,7 +121,7 @@ namespace Streetcode.XUnitTest.Validators.Newss
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private NewsDTO CreateValidDto()
+        private static NewsDTO CreateValidDto()
         {
             return new NewsDTO
             {

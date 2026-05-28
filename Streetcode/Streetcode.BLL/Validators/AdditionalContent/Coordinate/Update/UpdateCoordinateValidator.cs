@@ -20,7 +20,7 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate.Update
                 .WithMessage("Coordinate Id must be greater than 0 for update operations.");
 
             RuleFor(x => x.StreetcodeCoordinate)
-                .SetValidator(new StreetcodeCoordinateDTOValidator());
+                .SetValidator(new StreetcodeCoordinateDtoValidator());
         }
     }
 }

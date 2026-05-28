@@ -18,10 +18,10 @@ namespace Streetcode.XUnitTest.Validators.Users
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public void Should_Have_Error_When_Name_Is_Empty(string invalidName)
+        public void Should_Have_Error_When_Name_Is_Empty(string? invalidName)
         {
             var dto = CreateValidDto();
-            dto.Name = invalidName;
+            dto.Name = invalidName!;
 
             var result = _validator.TestValidate(dto);
 
@@ -42,8 +42,8 @@ namespace Streetcode.XUnitTest.Validators.Users
         }
 
         [Theory]
-        [InlineData("plainaddress")] 
-        [InlineData("missing-at.com")] 
+        [InlineData("plainaddress")]
+        [InlineData("missing-at.com")]
         public void Should_Have_Error_When_Email_Is_Invalid(string invalidEmail)
         {
             var dto = CreateValidDto();
@@ -65,7 +65,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private UserDto CreateValidDto()
+        private static UserDto CreateValidDto()
         {
             return new UserDto
             {

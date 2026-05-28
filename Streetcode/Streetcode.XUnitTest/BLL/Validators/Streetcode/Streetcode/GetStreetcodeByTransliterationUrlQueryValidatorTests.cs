@@ -18,9 +18,9 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByTranslitera
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Url_Is_Empty(string invalidUrl)
+        public void Should_Have_Error_When_Url_Is_Empty(string? invalidUrl)
         {
-            var query = new GetStreetcodeByTransliterationUrlQuery(invalidUrl);
+            var query = new GetStreetcodeByTransliterationUrlQuery(invalidUrl!);
 
             var result = _validator.TestValidate(query);
 

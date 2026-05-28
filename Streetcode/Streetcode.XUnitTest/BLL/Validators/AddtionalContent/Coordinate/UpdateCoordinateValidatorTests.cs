@@ -18,7 +18,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.AddtionalContent.Coordinate
         [Fact]
         public void Should_Have_Error_When_StreetcodeCoordinate_Is_Null()
         {
-            var command = new UpdateCoordinateCommand(null);
+            var command = new UpdateCoordinateCommand(null!);
 
             Assert.Throws<NullReferenceException>(() =>
             {
@@ -44,7 +44,6 @@ namespace Streetcode.XUnitTest.BLL.Validators.AddtionalContent.Coordinate
         [Fact]
         public void Should_Not_Have_Errors_When_Coordinate_And_Id_Are_Valid()
         {
-
             var validCoordinateDto = new StreetcodeCoordinateDTO { Id = 1 };
             var command = new UpdateCoordinateCommand(validCoordinateDto);
 

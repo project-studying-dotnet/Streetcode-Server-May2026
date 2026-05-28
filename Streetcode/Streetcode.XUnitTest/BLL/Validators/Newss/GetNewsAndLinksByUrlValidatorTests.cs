@@ -18,9 +18,9 @@ namespace Streetcode.XUnitTest.Validators.Newss.GetNewsAndLinksByUrl
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Should_Have_Error_When_Url_Is_Empty(string invalidUrl)
+        public void Should_Have_Error_When_Url_Is_Empty(string? invalidUrl)
         {
-            var query = new GetNewsAndLinksByUrlQuery(invalidUrl);
+            var query = new GetNewsAndLinksByUrlQuery(invalidUrl!);
 
             var result = _validator.TestValidate(query);
 
@@ -29,7 +29,7 @@ namespace Streetcode.XUnitTest.Validators.Newss.GetNewsAndLinksByUrl
 
         [Theory]
         [InlineData("just-some-text")]
-        [InlineData("www.google.com")] 
+        [InlineData("www.google.com")]
         [InlineData("/local/path/to/news")]
         [InlineData("http:relative-path")]
         public void Should_Have_Error_When_Url_Is_Not_A_Valid_Absolute_URL(string invalidUrl)
