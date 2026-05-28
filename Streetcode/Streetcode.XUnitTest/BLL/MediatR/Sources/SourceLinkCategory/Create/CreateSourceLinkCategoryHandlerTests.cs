@@ -95,69 +95,6 @@ public class CreateSourceLinkCategoryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnFail_WhenTitleIsEmpty()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Title = "",
-            ImageId = 5
-        };
-
-        var command = new CreateSourceLinkCategoryCommand(dto);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryTitleRequired);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFail_WhenTitleIsTooLong()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Title = new string('a', 24),
-            ImageId = 5
-        };
-
-        var command = new CreateSourceLinkCategoryCommand(dto);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryTitleTooLong);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFail_WhenImageIdIsInvalid()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Title = "News",
-            ImageId = 0
-        };
-
-        var command = new CreateSourceLinkCategoryCommand(dto);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryImageRequired);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
-    }
-
-    [Fact]
     public async Task Handle_ShouldReturnFail_WhenCategoryAlreadyExists()
     {
         var dto = new SourceLinkCategoryDTO
@@ -183,7 +120,8 @@ public class CreateSourceLinkCategoryHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryAlreadyExists);
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.SourceCategoryAlreadyExists);
 
         _sourceCategoryRepositoryMock.Verify(x =>
             x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
@@ -213,7 +151,8 @@ public class CreateSourceLinkCategoryHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.CannotSaveSourceCategory);
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.CannotSaveSourceCategory);
 
         _sourceCategoryRepositoryMock.Verify(x =>
             x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),

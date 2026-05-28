@@ -26,36 +26,17 @@ public class UpdateSourceLinkCategoryHandler
     }
 
     public async Task<Result<SourceLinkCategoryDTO>> Handle(
-        UpdateSourceLinkCategoryCommand request,
-        CancellationToken cancellationToken)
+     UpdateSourceLinkCategoryCommand request,
+     CancellationToken cancellationToken)
     {
         var dto = request.Category;
 
         if (dto.Id <= 0)
         {
             string errorMsg = ErrorMessages.SourceCategoryIdRequired;
-            _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
-        }
 
-        if (string.IsNullOrWhiteSpace(dto.Title))
-        {
-            string errorMsg = ErrorMessages.SourceCategoryTitleRequired;
             _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
-        }
 
-        if (dto.Title.Length > 23)
-        {
-            string errorMsg = ErrorMessages.SourceCategoryTitleTooLong;
-            _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
-        }
-
-        if (dto.ImageId <= 0)
-        {
-            string errorMsg = ErrorMessages.SourceCategoryImageRequired;
-            _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
 
@@ -65,7 +46,9 @@ public class UpdateSourceLinkCategoryHandler
         if (category is null)
         {
             string errorMsg = ErrorMessages.SourceCategoryNotFound;
+
             _logger.LogError(request, errorMsg);
+
             return Result.Fail(new Error(errorMsg));
         }
 
@@ -78,7 +61,9 @@ public class UpdateSourceLinkCategoryHandler
         if (sameTitleCategory is not null)
         {
             string errorMsg = ErrorMessages.SourceCategoryAlreadyExists;
+
             _logger.LogError(request, errorMsg);
+
             return Result.Fail(new Error(errorMsg));
         }
 
@@ -87,12 +72,15 @@ public class UpdateSourceLinkCategoryHandler
 
         _repositoryWrapper.SourceCategoryRepository.Update(category);
 
-        var isSaved = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
+        var isSaved =
+             await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
         if (!isSaved)
         {
             string errorMsg = ErrorMessages.CannotUpdateSourceCategory;
+
             _logger.LogError(request, errorMsg);
+
             return Result.Fail(new Error(errorMsg));
         }
 

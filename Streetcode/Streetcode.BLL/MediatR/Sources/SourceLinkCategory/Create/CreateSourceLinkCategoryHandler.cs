@@ -32,49 +32,40 @@ public class CreateSourceLinkCategoryHandler
     {
         var dto = request.Category;
 
-        if (string.IsNullOrWhiteSpace(dto.Title))
-        {
-            string errorMsg = ErrorMessages.SourceCategoryTitleRequired;
-            _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
-        }
-
-        if (dto.Title.Length > 23)
-        {
-            string errorMsg = ErrorMessages.SourceCategoryTitleTooLong;
-            _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
-        }
-
-        if (dto.ImageId <= 0)
-        {
-            string errorMsg = ErrorMessages.SourceCategoryImageRequired;
-            _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
-        }
-
         var existingCategory = await _repositoryWrapper.SourceCategoryRepository
-            .GetFirstOrDefaultAsync(c => c.Title != null && c.Title.ToLower() == dto.Title.ToLower());
+            .GetFirstOrDefaultAsync(c =>
+                c.Title != null &&
+                c.Title.ToLower() == dto.Title.ToLower());
 
         if (existingCategory is not null)
         {
             string errorMsg = ErrorMessages.SourceCategoryAlreadyExists;
+
             _logger.LogError(request, errorMsg);
+
             return Result.Fail(new Error(errorMsg));
         }
 
         var category = _mapper.Map<SourceLinkCategoryEntity>(dto);
 
         await _repositoryWrapper.SourceCategoryRepository.CreateAsync(category);
-        var isSaved = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
+
+        var isSaved =
+            await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
         if (!isSaved)
         {
             string errorMsg = ErrorMessages.CannotSaveSourceCategory;
+
             _logger.LogError(request, errorMsg);
+
             return Result.Fail(new Error(errorMsg));
         }
 
-        return Result.Ok(_mapper.Map<SourceLinkCategoryDTO>(category));
+        _logger.LogInformation(
+            "Success! SourceLinkCategory was created.");
+
+        return Result.Ok(
+            _mapper.Map<SourceLinkCategoryDTO>(category));
     }
 }

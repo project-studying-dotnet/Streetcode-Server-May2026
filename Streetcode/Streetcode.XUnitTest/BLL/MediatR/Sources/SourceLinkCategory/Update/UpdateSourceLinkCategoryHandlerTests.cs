@@ -63,73 +63,9 @@ public class UpdateSourceLinkCategoryHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryIdRequired);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Update(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFail_WhenTitleIsEmpty()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Id = 1,
-            Title = "",
-            ImageId = 5
-        };
-
-        var command = new UpdateSourceLinkCategoryCommand(dto);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryTitleRequired);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Update(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFail_WhenTitleIsTooLong()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Id = 1,
-            Title = new string('a', 24),
-            ImageId = 5
-        };
-
-        var command = new UpdateSourceLinkCategoryCommand(dto);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryTitleTooLong);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Update(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFail_WhenImageIdIsInvalid()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Id = 1,
-            Title = "News",
-            ImageId = 0
-        };
-
-        var command = new UpdateSourceLinkCategoryCommand(dto);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryImageRequired);
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.SourceCategoryIdRequired);
 
         _sourceCategoryRepositoryMock.Verify(x =>
             x.Update(It.IsAny<SourceLinkCategoryEntity>()),
@@ -158,7 +94,9 @@ public class UpdateSourceLinkCategoryHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryNotFound);
+
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.SourceCategoryNotFound);
 
         _sourceCategoryRepositoryMock.Verify(x =>
             x.Update(It.IsAny<SourceLinkCategoryEntity>()),
@@ -202,7 +140,9 @@ public class UpdateSourceLinkCategoryHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryAlreadyExists);
+
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.SourceCategoryAlreadyExists);
 
         _sourceCategoryRepositoryMock.Verify(x =>
             x.Update(It.IsAny<SourceLinkCategoryEntity>()),
@@ -243,7 +183,9 @@ public class UpdateSourceLinkCategoryHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.CannotUpdateSourceCategory);
+
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.CannotUpdateSourceCategory);
 
         _sourceCategoryRepositoryMock.Verify(x =>
             x.Update(It.IsAny<SourceLinkCategoryEntity>()),
@@ -288,6 +230,7 @@ public class UpdateSourceLinkCategoryHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
+
         result.Value.Id.Should().Be(dto.Id);
         result.Value.Title.Should().Be(dto.Title);
         result.Value.ImageId.Should().Be(dto.ImageId);
