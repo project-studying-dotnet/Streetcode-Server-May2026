@@ -231,6 +231,21 @@
   <data name="EmailConfigurationIsMissing" xml:space="preserve">
     <value>Email Configuration is missing</value>
   </data>
+  <data name="CannotFindAnyTerm" xml:space="preserve">
+    <value>Cannot find any term</value>
+  </data>
+  <data name="CannotFindAnyPartners" xml:space="preserve">
+    <value>Cannot find any partners</value>
+  </data>
+  <data name="TextWasNotParsedSuccessfully" xml:space="preserve">
+    <value>text was not parsed successfully</value>
+  </data>
+  <data name="CannotFindTermById" xml:space="preserve">
+    <value>Cannot find any term with corresponding id: {0}</value>
+  </data>
+  <data name="TagTitleIsEmpty" xml:space="preserve">
+    <value>Test tag</value>
+  </data>
   <data name="CannotSaveHistoricalContextToDatabase" xml:space="preserve">
     <value>Cannot save historical context to database</value>
   </data>

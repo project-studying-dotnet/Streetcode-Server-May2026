@@ -30,7 +30,7 @@ namespace Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl
             var newsDTO = _mapper.Map<NewsDTO>(await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
                 predicate: sc => sc.URL == url,
                 include: scl => scl
-                    .Include(sc => sc.Image)));
+                    .Include(sc => sc.Image!)));
 
             if (newsDTO is null)
             {
@@ -41,13 +41,13 @@ namespace Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl
 
             if (newsDTO.Image is not null)
             {
-                newsDTO.Image.Base64 = _blobService.FindFileInStorageAsBase64(newsDTO.Image.BlobName);
+                newsDTO.Image.Base64 = _blobService.FindFileInStorageAsBase64(newsDTO.Image.BlobName!);
             }
 
             var news = (await _repositoryWrapper.NewsRepository.GetAllAsync()).ToList();
             var newsIndex = news.FindIndex(x => x.Id == newsDTO.Id);
-            string prevNewsLink = null;
-            string nextNewsLink = null;
+            string prevNewsLink = null!;
+            string nextNewsLink = null!;
 
             if (newsIndex != 0)
             {

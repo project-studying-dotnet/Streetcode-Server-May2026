@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -8,8 +9,8 @@ using Streetcode.BLL.MediatR.Partners.GetAll;
 using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
-using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetAll
 {
@@ -43,16 +44,22 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetAll
         {
             var partners = new List<Partner>
             {
-                new Partner { Id = 1, Title = "Title 1", LogoId = 1,
-                    IsKeyPartner = true, IsVisibleEverywhere = true, },
-                new Partner { Id = 2, Title = "Title 2", LogoId = 2,
-                    IsKeyPartner = false, IsVisibleEverywhere = false, },
+                new Partner
+                {
+                    Id = 1, Title = "Title 1", LogoId = 1,
+                    IsKeyPartner = true, IsVisibleEverywhere = true,
+                },
+                new Partner
+                {
+                    Id = 2, Title = "Title 2", LogoId = 2,
+                    IsKeyPartner = false, IsVisibleEverywhere = false,
+                },
             };
 
             _mockPartnersRepo.Setup(repo => repo.GetAllAsync(
                 It.IsAny<Expression<Func<Partner, bool>>>(),
-                It.IsAny<Func<IQueryable<Partner>, IIncludableQueryable<Partner, object>>>()
-            )).ReturnsAsync(partners);
+                It.IsAny<Func<IQueryable<Partner>,
+                IIncludableQueryable<Partner, object>>>())).ReturnsAsync(partners);
 
             var result = await _handler.Handle(new GetAllPartnersQuery(), CancellationToken.None);
 
@@ -66,13 +73,13 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetAll
         {
             _mockPartnersRepo.Setup(repo => repo.GetAllAsync(
                 It.IsAny<Expression<Func<Partner, bool>>>(),
-                It.IsAny<Func<IQueryable<Partner>, IIncludableQueryable<Partner, object>>>()
-            )).ReturnsAsync((IEnumerable<Partner>)null);
+                It.IsAny<Func<IQueryable<Partner>,
+                IIncludableQueryable<Partner, object>>>())).ReturnsAsync((IEnumerable<Partner>)null!);
 
             var result = await _handler.Handle(new GetAllPartnersQuery(), CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors.Should().ContainSingle(e => e.Message == "Cannot find any partners");
+            result.Errors.Should().ContainSingle(e => e.Message == ErrorMessages.CannotFindAnyPartners);
         }
     }
 }
