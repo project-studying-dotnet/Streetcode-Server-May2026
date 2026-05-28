@@ -243,4 +243,7 @@
   <data name="CannotFindTermById" xml:space="preserve">
     <value>Cannot find any term with corresponding id: {0}</value>
   </data>
+  <data name="TagTitleIsEmpty" xml:space="preserve">
+    <value>Test tag</value>
+  </data>
 </root>

@@ -421,6 +421,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Test tag.
+        /// </summary>
+        public static string TagTitleIsEmpty {
+            get {
+                return ResourceManager.GetString("TagTitleIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to text was not parsed successfully.
         /// </summary>
         public static string TextWasNotParsedSuccessfully {
