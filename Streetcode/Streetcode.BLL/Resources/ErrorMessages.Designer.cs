@@ -19,7 +19,7 @@ namespace Streetcode.BLL.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ErrorMessages {
@@ -662,18 +662,7 @@ namespace Streetcode.BLL.Resources {
                 return ResourceManager.GetString("HistoricalContextWithIdNotFound", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to No existing streetcode with id: {0}.
-        /// </summary>
-        public static string NoExistingStreetcodeWithId
-        {
-            get
-            {
-                return ResourceManager.GetString("NoExistingStreetcodeWithId", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Id must be greater than or equal to 0..
         /// </summary>
@@ -855,6 +844,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No existing streetcode with id: {0}.
+        /// </summary>
+        public static string NoExistingStreetcodeWithId {
+            get {
+                return ResourceManager.GetString("NoExistingStreetcodeWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No news found by entered Id - {0}.
         /// </summary>
         public static string NoNewsFoundById {
@@ -1008,7 +1006,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Streetcode Id must be greater than 0.
+        ///   Looks up a localized string similar to StreetcodeId must be greater than 0.
         /// </summary>
         public static string StreetcodeIdMustBePositive {
             get {

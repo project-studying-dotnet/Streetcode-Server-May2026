@@ -295,7 +295,7 @@
     <value>Longitude must be between -180 and 180.</value>
   </data>
   <data name="StreetcodeIdMustBePositive" xml:space="preserve">
-    <value>Streetcode Id must be greater than 0</value>
+    <value>StreetcodeId must be greater than 0</value>
   </data>
   <data name="SubtitleTextIsRequired" xml:space="preserve">
     <value>Subtitle text is required.</value>
