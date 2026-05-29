@@ -662,7 +662,18 @@ namespace Streetcode.BLL.Resources {
                 return ResourceManager.GetString("HistoricalContextWithIdNotFound", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to No existing streetcode with id: {0}.
+        /// </summary>
+        public static string NoExistingStreetcodeWithId
+        {
+            get
+            {
+                return ResourceManager.GetString("NoExistingStreetcodeWithId", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Id must be greater than or equal to 0..
         /// </summary>

@@ -18,7 +18,7 @@ namespace Streetcode.BLL.MediatR.Newss.Delete
 
         public async Task<Result<Unit>> Handle(DeleteNewsCommand request, CancellationToken cancellationToken)
         {
-            int id = request.id;
+            int id = request.Id;
             var news = await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
                 predicate: n => n.Id == id,
                 cancellationToken: cancellationToken);
