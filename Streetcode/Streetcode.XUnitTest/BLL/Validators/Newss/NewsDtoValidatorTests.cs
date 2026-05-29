@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.News;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Newss;
 using Xunit;
 
@@ -7,6 +8,9 @@ namespace Streetcode.XUnitTest.Validators.Newss
 {
     public class NewsDtoValidatorTests
     {
+        private const int TitleMaxLength = 40;
+        private const int TextMaxLength = 450;
+
         private readonly NewsDtoValidator _validator;
 
         public NewsDtoValidatorTests()
@@ -26,7 +30,7 @@ namespace Streetcode.XUnitTest.Validators.Newss
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                  .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Fact]
@@ -38,7 +42,7 @@ namespace Streetcode.XUnitTest.Validators.Newss
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title must not exceed 40 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.TitleMustNotExceedCharacters, TitleMaxLength));
         }
 
         [Theory]
@@ -53,7 +57,7 @@ namespace Streetcode.XUnitTest.Validators.Newss
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Text)
-                  .WithErrorMessage("Text is required");
+                  .WithErrorMessage(ErrorMessages.TextIsRequired);
         }
 
         [Fact]
@@ -65,7 +69,7 @@ namespace Streetcode.XUnitTest.Validators.Newss
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Text)
-                  .WithErrorMessage("Text must not exceed 450 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.TextMustNotExceedCharacters, TextMaxLength));
         }
 
         [Theory]
@@ -80,7 +84,7 @@ namespace Streetcode.XUnitTest.Validators.Newss
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.URL)
-                  .WithErrorMessage("URL is required");
+                  .WithErrorMessage(ErrorMessages.UrlIsRequired);
         }
 
         [Fact]
@@ -92,7 +96,7 @@ namespace Streetcode.XUnitTest.Validators.Newss
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.ImageId)
-                  .WithErrorMessage("Image is required");
+                  .WithErrorMessage(ErrorMessages.ImageIsRequired);
         }
 
         [Fact]

@@ -4,14 +4,8 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Team.TeamMembersLinks.Create
 {
-    /// <summary>
-    /// Validator for <see cref="TeamMemberLinkDTO"/>.
-    /// </summary>
     public class TeamMemberLinkDtoValidator : AbstractValidator<TeamMemberLinkDTO>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TeamMemberLinkDtoValidator"/> class.
-        /// </summary>
         public TeamMemberLinkDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

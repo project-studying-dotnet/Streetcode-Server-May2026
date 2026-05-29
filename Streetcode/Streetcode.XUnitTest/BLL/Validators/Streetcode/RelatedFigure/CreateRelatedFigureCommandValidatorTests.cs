@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Streetcode.RelatedFigure.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.RelatedFigure.Сreate;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedFigure.Create
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.ObserverId)
-                  .WithErrorMessage("The ObserverId must be positive.");
+                  .WithErrorMessage(ErrorMessages.ObserverIdMustBePositive);
         }
 
         [Theory]
@@ -39,7 +40,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedFigure.Create
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.TargetId)
-                  .WithErrorMessage("The TargetId must be positive.");
+                  .WithErrorMessage(ErrorMessages.TargetIdMustBePositive);
         }
 
         [Fact]

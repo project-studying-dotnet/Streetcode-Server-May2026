@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Fact;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.Fact;
 using Xunit;
 
@@ -7,6 +8,8 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
 {
     public class FactDtoValidatorTests
     {
+        private const int MaxTitleLength = 68;
+        private const int MaxFactContentLength = 800;
         private readonly FactDtoValidator _validator;
 
         public FactDtoValidatorTests()
@@ -26,7 +29,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                  .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Fact]
@@ -38,7 +41,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title must not exceed 68 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.TitleMustNotExceedCharacters, MaxTitleLength));
         }
 
         [Theory]
@@ -53,7 +56,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.FactContent)
-                  .WithErrorMessage("Fact content is required");
+                  .WithErrorMessage(ErrorMessages.FactContentIsRequired);
         }
 
         [Fact]
@@ -65,7 +68,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.FactContent)
-                  .WithErrorMessage("Fact content must not exceed 800 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.FactContentMustNotExceedCharacters, MaxFactContentLength));
         }
 
         [Theory]
@@ -80,7 +83,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Streetcode.Fact
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.ImageId)
-                  .WithErrorMessage("ImageId must be greater than 0");
+                  .WithErrorMessage(ErrorMessages.ImageIdMustBePositive);
         }
 
         [Fact]

@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.DTO.Team;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Team.TeamMembersLinks.Create;
 using Xunit;
 
@@ -9,7 +10,6 @@ namespace Streetcode.XUnitTest.Validators.Team.TeamMembersLinks.Create
     public class TeamMemberLinkDtoValidatorTests
     {
         private readonly TeamMemberLinkDtoValidator _validator;
-
         public TeamMemberLinkDtoValidatorTests()
         {
             _validator = new TeamMemberLinkDtoValidator();
@@ -40,7 +40,7 @@ namespace Streetcode.XUnitTest.Validators.Team.TeamMembersLinks.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.TeamMemberId)
-                  .WithErrorMessage("TeamMemberId must be greater than 0");
+                  .WithErrorMessage(ErrorMessages.TeamMemberIdMustBePositive);
         }
 
         [Fact]

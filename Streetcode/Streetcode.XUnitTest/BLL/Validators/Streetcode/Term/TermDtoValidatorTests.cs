@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Term;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.Term;
 using Xunit;
 
@@ -7,6 +8,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Term
 {
     public class TermDtoValidatorTests
     {
+        private const int MaxDescriptionLength = 250;
         private readonly TermDtoValidator _validator;
 
         public TermDtoValidatorTests()
@@ -26,7 +28,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Term
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                  .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Theory]
@@ -41,7 +43,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Term
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Description)
-                  .WithErrorMessage("Description is required");
+                  .WithErrorMessage(ErrorMessages.DescriptionIsRequired);
         }
 
         [Fact]
@@ -53,7 +55,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Term
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Description)
-                  .WithErrorMessage("Description must not exceed 250 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength));
         }
 
         [Fact]

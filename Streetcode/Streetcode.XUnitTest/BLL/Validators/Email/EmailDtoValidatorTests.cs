@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Email;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Email;
 using Xunit;
 
@@ -7,6 +8,10 @@ namespace Streetcode.XUnitTest.Validators.Email
 {
     public class EmailDtoValidatorTests
     {
+        private const int MaxFromLength = 80;
+        private const int MinContentLength = 1;
+        private const int MaxContentLength = 500;
+
         private readonly EmailDtoValidator _validator;
 
         public EmailDtoValidatorTests()
@@ -23,7 +28,7 @@ namespace Streetcode.XUnitTest.Validators.Email
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.From)
-                  .WithErrorMessage("From must not exceed 80 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.EmailFromMustNotExceedCharacters, MaxFromLength));
         }
 
         [Fact]
@@ -47,7 +52,7 @@ namespace Streetcode.XUnitTest.Validators.Email
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Content)
-                  .WithErrorMessage("Content is required");
+                  .WithErrorMessage(ErrorMessages.ContentIsRequired);
         }
 
         [Fact]
@@ -59,7 +64,7 @@ namespace Streetcode.XUnitTest.Validators.Email
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Content)
-                  .WithErrorMessage("Content must not exceed 500 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.ContentLengthMustBeBetween, MinContentLength, MaxContentLength));
         }
 
         [Theory]

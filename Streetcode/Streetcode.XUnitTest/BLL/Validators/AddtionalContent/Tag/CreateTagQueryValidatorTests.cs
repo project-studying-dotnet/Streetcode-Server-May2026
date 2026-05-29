@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.AdditionalContent.Tag;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.AdditionalContent.Tag.Create;
 using Xunit;
 
@@ -34,7 +35,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.Create
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.tag.Title)
-                  .WithErrorMessage("Title is required");
+                 .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Fact]

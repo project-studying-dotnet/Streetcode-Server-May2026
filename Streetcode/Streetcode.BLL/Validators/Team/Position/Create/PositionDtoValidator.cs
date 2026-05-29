@@ -4,9 +4,6 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Team.Position.Create
 {
-    /// <summary>
-    /// Validator for PositionDTO.
-    /// </summary>
     public class PositionDtoValidator : AbstractValidator<PositionDTO>
     {
         public PositionDtoValidator()

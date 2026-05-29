@@ -4,17 +4,11 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Partners.Create
 {
-    /// <summary>
-    /// Validator for CreatePartnerDTO.
-    /// </summary>
     public class CreatePartnerDtoValidator : AbstractValidator<CreatePartnerDTO>
     {
         private const int MaxDescriptionLength = 400;
         private const int MaxUrlTitleLength = 255;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CreatePartnerDtoValidator"/> class.
-        /// </summary>
         public CreatePartnerDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

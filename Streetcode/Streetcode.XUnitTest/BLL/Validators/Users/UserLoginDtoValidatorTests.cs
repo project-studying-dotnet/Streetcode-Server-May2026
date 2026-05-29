@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Users;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Users;
 using Xunit;
 
@@ -7,6 +8,9 @@ namespace Streetcode.XUnitTest.Validators.Users
 {
     public class UserLoginDtoValidatorTests
     {
+        private const int MaxLoginLength = 20;
+        private const int MaxPasswordLength = 20;
+
         private readonly UserLoginDtoValidator _validator;
 
         public UserLoginDtoValidatorTests()
@@ -25,7 +29,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Login)
-                  .WithErrorMessage("Login is required");
+                  .WithErrorMessage(ErrorMessages.LoginIsRequired);
         }
 
         [Fact]
@@ -37,7 +41,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Login)
-                  .WithErrorMessage("Login must not exceed 20 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.LoginMustNotExceedCharacters, MaxLoginLength));
         }
 
         [Theory]
@@ -51,7 +55,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Password)
-                  .WithErrorMessage("Password is required");
+                  .WithErrorMessage(ErrorMessages.PasswordIsRequired);
         }
 
         [Fact]
@@ -63,7 +67,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Password)
-                  .WithErrorMessage("Password must not exceed 20 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.PasswordMustNotExceedCharacters, MaxPasswordLength));
         }
 
         [Fact]

@@ -4,14 +4,8 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Payment
 {
-    /// <summary>
-    /// Validator for CreateInvoiceCommand.
-    /// </summary>
     public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceCommand>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CreateInvoiceCommandValidator"/> class.
-        /// </summary>
         public CreateInvoiceCommandValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

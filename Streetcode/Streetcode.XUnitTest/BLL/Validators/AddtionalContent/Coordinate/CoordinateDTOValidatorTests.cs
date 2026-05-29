@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.AdditionalContent.Coordinate;
 using Xunit;
 
@@ -38,7 +39,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(c => c.Latitude)
-                  .WithErrorMessage("Latitude must be between -90 and 90.");
+                  .WithErrorMessage(ErrorMessages.LatitudeMustBeBetweenMinus90And90);
         }
 
         [Theory]
@@ -65,7 +66,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(c => c.Longtitude)
-                  .WithErrorMessage("Longitude must be between -180 and 180.");
+                  .WithErrorMessage(ErrorMessages.LongitudeMustBeBetweenMinus180And180);
         }
     }
 }

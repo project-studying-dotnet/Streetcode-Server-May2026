@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.AdditionalContent.Filter;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.Streetcode.GetByFilter;
 using Xunit;
 
@@ -7,6 +8,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByFilter
 {
     public class StreetcodeFilterRequestDtoValidatorTests
     {
+        private const int MaxSearchQueryLength = 255;
         private readonly StreetcodeFilterRequestDtoValidator _validator;
 
         public StreetcodeFilterRequestDtoValidatorTests()
@@ -25,7 +27,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByFilter
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.SearchQuery)
-                  .WithErrorMessage("Search Query must be 255 characters or less.");
+                  .WithErrorMessage(string.Format(ErrorMessages.SearchQueryMustNotExceedCharacters, MaxSearchQueryLength));
         }
 
         [Theory]
@@ -39,7 +41,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByFilter
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.SearchQuery)
-                  .WithErrorMessage("Search Query is required.");
+                  .WithErrorMessage(ErrorMessages.SearchQueryIsRequired);
         }
 
         [Fact]

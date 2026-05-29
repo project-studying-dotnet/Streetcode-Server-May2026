@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Payment;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Payment;
 using Xunit;
 
@@ -52,7 +53,7 @@ namespace Streetcode.XUnitTest.Validators.Payment
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.RedirectUrl)
-                  .WithErrorMessage("RedirectUrl must be a valid absolute URL");
+                  .WithErrorMessage(ErrorMessages.UrlMustBeValidAbsoluteUrl);
         }
 
         [Theory]

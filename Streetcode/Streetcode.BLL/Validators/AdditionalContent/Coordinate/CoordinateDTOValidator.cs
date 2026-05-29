@@ -4,19 +4,12 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate
 {
-    /// <summary>
-    /// Validator for CoordinateDTO.
-    /// </summary>
     public class CoordinateDtoValidator : AbstractValidator<CoordinateDTO>
     {
         private const decimal MinLatitude = -90;
         private const decimal MaxLatitude = 90;
         private const decimal MinLongitude = -180;
         private const decimal MaxLongitude = 180;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CoordinateDtoValidator"/> class.
-        /// </summary>
         public CoordinateDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

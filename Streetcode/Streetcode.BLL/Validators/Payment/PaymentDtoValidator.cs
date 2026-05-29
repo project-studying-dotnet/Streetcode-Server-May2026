@@ -4,16 +4,9 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Payment
 {
-    /// <summary>
-    /// Validator for PaymentDTO.
-    /// </summary>
     public class PaymentDtoValidator : AbstractValidator<PaymentDTO>
     {
         private const int MaxUrlLength = 500;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PaymentDtoValidator"/> class.
-        /// </summary>
         public PaymentDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

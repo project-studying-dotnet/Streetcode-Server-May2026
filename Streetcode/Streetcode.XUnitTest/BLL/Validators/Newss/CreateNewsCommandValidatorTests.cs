@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.MediatR.Newss.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Newss.Create;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace Streetcode.XUnitTest.Validators.Newss.Create
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.newNews)
-                  .WithErrorMessage("News is required");
+                  .WithErrorMessage(string.Format(ErrorMessages.NewsIsRequired));
         }
         [Fact]
         public void Should_Not_Have_Errors_When_Command_Is_Fully_Valid()

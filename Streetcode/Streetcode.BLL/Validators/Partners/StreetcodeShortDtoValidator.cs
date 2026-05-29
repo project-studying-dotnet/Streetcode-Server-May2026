@@ -4,16 +4,9 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Partners
 {
-    /// <summary>
-    /// Validator for StreetcodeShortDTO.
-    /// </summary>
     public class StreetcodeShortDtoValidator : AbstractValidator<StreetcodeShortDTO>
     {
         private const int MaxTitleLength = 255;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StreetcodeShortDtoValidator"/> class.
-        /// </summary>
         public StreetcodeShortDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

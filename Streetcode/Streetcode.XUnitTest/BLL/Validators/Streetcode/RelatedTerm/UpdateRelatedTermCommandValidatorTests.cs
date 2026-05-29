@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Update;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.RelatedTerm.Update;
 using Xunit;
 
@@ -35,7 +36,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm.Update
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.RelatedTerm)
-                  .WithErrorMessage("RelatedTerm is required");
+                .WithErrorMessage(ErrorMessages.RelatedTermIsRequired);
         }
 
         [Theory]

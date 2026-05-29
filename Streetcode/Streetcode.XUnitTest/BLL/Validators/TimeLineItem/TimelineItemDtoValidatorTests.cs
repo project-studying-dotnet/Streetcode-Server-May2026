@@ -1,13 +1,16 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Timeline;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Timeline.TimelineItem;
-using Xunit;
 using Streetcode.DAL.Enums;
+using Xunit;
 
 namespace Streetcode.XUnitTest.Validators.Timeline.TimelineItem
 {
     public class TimelineItemDtoValidatorTests
     {
+        private const int MaxTitleLength = 26;
+        private const int MaxDescriptionLength = 400;
         private readonly TimelineItemDtoValidator _validator;
 
         public TimelineItemDtoValidatorTests()
@@ -38,7 +41,7 @@ namespace Streetcode.XUnitTest.Validators.Timeline.TimelineItem
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                  .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Fact]
@@ -50,7 +53,7 @@ namespace Streetcode.XUnitTest.Validators.Timeline.TimelineItem
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title must not exceed 26 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.TitleMustNotExceedCharacters, MaxTitleLength));
         }
 
         [Fact]
@@ -62,7 +65,7 @@ namespace Streetcode.XUnitTest.Validators.Timeline.TimelineItem
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Description)
-                  .WithErrorMessage("Description must not exceed 400 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength));
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Streetcode.XUnitTest.Validators.Sources.SourceLinkCategory.GetCategory
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.streetcodeId)
-                  .WithErrorMessage("The streetcodeId must be positive.");
+                  .WithErrorMessage(ErrorMessages.StreetcodeIdMustBePositive);
         }
 
         [Theory]
@@ -39,7 +40,7 @@ namespace Streetcode.XUnitTest.Validators.Sources.SourceLinkCategory.GetCategory
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.categoryId)
-                  .WithErrorMessage("The categoryId must be positive.");
+                  .WithErrorMessage(ErrorMessages.CategoryIdMustBePositive);
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Streetcode.RelatedFigure.GetByTagId;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.RelatedFigure.GetByTagId;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedFigure.GetByTagId
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.tagId)
-                  .WithErrorMessage("The tagId must be positive.");
+                  .WithErrorMessage(ErrorMessages.TagIdMustBePositive);
         }
 
         [Fact]

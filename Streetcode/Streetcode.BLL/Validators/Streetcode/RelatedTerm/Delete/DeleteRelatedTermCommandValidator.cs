@@ -4,16 +4,10 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Streetcode.RelatedTerm.Delete
 {
-    /// <summary>
-    /// Validator for DeleteRelatedTermCommand.
-    /// </summary>
     public class DeleteRelatedTermCommandValidator : AbstractValidator<DeleteRelatedTermCommand>
     {
         private const int MaxWordLength = 255;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteRelatedTermCommandValidator"/> class.
-        /// </summary>
         public DeleteRelatedTermCommandValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

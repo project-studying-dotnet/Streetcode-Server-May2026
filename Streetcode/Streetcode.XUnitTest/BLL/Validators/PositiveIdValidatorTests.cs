@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Interface;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators;
 using Streetcode.XUnitTest.BLL.Validators;
 using Xunit;
@@ -26,7 +27,7 @@ namespace Streetcode.XUnitTest.Validators
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.Id)
-                  .WithErrorMessage("The identifier must be positive.");
+                  .WithErrorMessage(ErrorMessages.IdMustBePositive);
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.AdditionalContent.Subtitle;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Subtitle
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.SubtitleText)
-                  .WithErrorMessage("Subtitle text is required.");
+                  .WithErrorMessage(ErrorMessages.SubtitleTextIsRequired);
         }
 
         [Fact]
@@ -49,7 +50,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Subtitle
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.StreetcodeId)
-                  .WithErrorMessage("StreetcodeId must be greater than 0.");
+                   .WithErrorMessage(ErrorMessages.StreetcodeIdMustBePositive);
         }
 
         [Fact]

@@ -2,9 +2,6 @@
 
 namespace Streetcode.BLL.Validators.Toponyms.GetById
 {
-    /// <summary>
-    /// Validator for <see cref="GetToponymByIdQuery"/>.
-    /// </summary>
     public class GetToponymByIdQueryValidator : PositiveIdValidator<GetToponymByIdQuery>
     {
     }

@@ -2,6 +2,7 @@
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.DTO.Partners.Create;
 using Streetcode.BLL.DTO.Streetcode;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Partners.Create;
 using Xunit;
 
@@ -9,6 +10,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
 {
     public class CreatePartnerDtoValidatorTests
     {
+        private const int MaxDescriptionLength = 400;
         private readonly CreatePartnerDtoValidator _validator;
 
         public CreatePartnerDtoValidatorTests()
@@ -28,7 +30,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                  .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Fact]
@@ -40,7 +42,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Description)
-                  .WithErrorMessage("Description must not exceed 400 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength));
         }
 
         [Theory]
@@ -69,7 +71,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.TargetUrl)
-                  .WithErrorMessage("Target URL must be a valid URL");
+                  .WithErrorMessage(ErrorMessages.TargetUrlMustBeValid);
         }
 
         [Theory]
@@ -95,7 +97,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.UrlTitle)
-                  .WithErrorMessage("Url title is invalid");
+                 .WithErrorMessage(string.Format(ErrorMessages.UrlTitleMustNotExceedCharacters, 255));
         }
 
         [Theory]

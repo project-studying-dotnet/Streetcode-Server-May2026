@@ -5,14 +5,8 @@ using Streetcode.BLL.Validators.Partners.Create;
 
 namespace Streetcode.BLL.Validators.Partners.Update
 {
-    /// <summary>
-    /// Validator for UpdatePartnerQuery.
-    /// </summary>
     public class UpdatePartnerQueryValidator : AbstractValidator<UpdatePartnerQuery>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UpdatePartnerQueryValidator"/> class.
-        /// </summary>
         public UpdatePartnerQueryValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

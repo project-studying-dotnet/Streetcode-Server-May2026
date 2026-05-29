@@ -528,4 +528,7 @@
   <data name="PasswordMustNotExceedCharacters" xml:space="preserve">
     <value>Password must not exceed {0} characters.</value>
   </data>
+  <data name="TagIdMustBePositive" xml:space="preserve">
+    <value>The tagId must be positive.</value>
+  </data>
 </root>

@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Partners.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Partners.Create;
 using Streetcode.DAL.Enums;
 using Xunit;
@@ -65,7 +66,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.TargetUrl)
-                  .WithErrorMessage("TargetUrl must be a valid absolute URL");
+                  .WithErrorMessage(ErrorMessages.TargetUrlMustBeValidAbsoluteUrl);
         }
 
         [Fact]

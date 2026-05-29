@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
 using Streetcode.BLL.MediatR.AdditionalContent.Coordinate.Update;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.AdditionalContent.Coordinate.Update;
 using Xunit;
 
@@ -38,7 +39,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.AddtionalContent.Coordinate
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.StreetcodeCoordinate.Id)
-                  .WithErrorMessage("Coordinate Id must be greater than 0 for update operations.");
+                 .WithErrorMessage(ErrorMessages.CoordinateIdMustBePositive);
         }
 
         [Fact]

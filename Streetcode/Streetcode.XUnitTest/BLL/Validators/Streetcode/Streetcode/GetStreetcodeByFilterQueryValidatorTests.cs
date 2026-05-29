@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.AdditionalContent.Filter;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByFilter;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.Streetcode.GetByFilter;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByFilter
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.Filter)
-                  .WithErrorMessage("Filter is required");
+                  .WithErrorMessage(ErrorMessages.FilterIsRequired);
         }
 
         [Fact]

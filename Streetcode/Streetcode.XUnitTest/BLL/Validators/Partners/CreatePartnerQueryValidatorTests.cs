@@ -3,6 +3,7 @@ using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.DTO.Partners.Create;
 using Streetcode.BLL.DTO.Streetcode;
 using Streetcode.BLL.MediatR.Partners.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Partners.Create;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.newPartner)
-                  .WithErrorMessage("Partner is required");
+                  .WithErrorMessage(ErrorMessages.PartnerIsRequired);
         }
 
         [Fact]

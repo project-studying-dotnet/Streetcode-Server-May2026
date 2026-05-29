@@ -2,6 +2,7 @@
 using Streetcode.BLL.DTO.AdditionalContent;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.DTO.Streetcode;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Partners;
 using Xunit;
 
@@ -9,6 +10,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
 {
     public class PartnerDtoValidatorTests
     {
+        private const int MaxDescriptionLength = 400;
         private readonly PartnerDtoValidator _validator;
 
         public PartnerDtoValidatorTests()
@@ -27,7 +29,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Id)
-                  .WithErrorMessage("Id must be greater than or equal to 0");
+                  .WithErrorMessage(ErrorMessages.IdMustBeGreaterOrEqualToZero);
         }
 
         [Theory]
@@ -42,7 +44,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                  .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Fact]
@@ -54,7 +56,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Description)
-                  .WithErrorMessage("Description must not exceed 400 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength));
         }
 
         [Theory]
@@ -83,7 +85,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.LogoId)
-                  .WithErrorMessage("LogoId must be greater than 0");
+                  .WithErrorMessage(ErrorMessages.LogoIdMustBePositive);
         }
 
         [Fact]
@@ -95,7 +97,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.TargetUrl)
-                  .WithErrorMessage("Target URL is required");
+                  .WithErrorMessage(ErrorMessages.TargetUrlIsRequired);
         }
 
         [Fact]
@@ -107,7 +109,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.PartnerSourceLinks)
-                  .WithErrorMessage("Partner source links collection is required");
+                  .WithErrorMessage(ErrorMessages.PartnerSourceLinksRequired);
         }
 
         [Fact]
@@ -119,7 +121,7 @@ namespace Streetcode.XUnitTest.Validators.Partners
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Streetcodes)
-                  .WithErrorMessage("Streetcodes collection is required");
+                  .WithErrorMessage(ErrorMessages.StreetcodesRequired);
         }
 
         [Fact]

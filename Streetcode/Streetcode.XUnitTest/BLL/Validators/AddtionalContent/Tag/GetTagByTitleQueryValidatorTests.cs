@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetByStreetcodeId;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.AdditionalContent.Tag.GetTagByTitle;
 using Xunit;
 
@@ -7,8 +8,8 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.GetTagByTitle
 {
     public class GetTagByTitleQueryValidatorTests
     {
+        private const int MaxTitleLength = 100;
         private readonly GetTagByTitleQueryValidator _validator;
-
         public GetTagByTitleQueryValidatorTests()
         {
             _validator = new GetTagByTitleQueryValidator();
@@ -24,7 +25,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.GetTagByTitle
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                   .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Theory]
@@ -39,7 +40,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.GetTagByTitle
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                      .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Fact]
@@ -51,7 +52,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.GetTagByTitle
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title must not exceed 100 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.TitleMustNotExceedCharacters, MaxTitleLength));
         }
 
         [Theory]

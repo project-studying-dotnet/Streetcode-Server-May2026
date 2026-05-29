@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Media.Images;
 using Streetcode.BLL.MediatR.Media.Image.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Media.Image.Create;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace Streetcode.XUnitTest.Validators.Media.Image.Create
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.Image)
-                  .WithErrorMessage("Image is required");
+                  .WithErrorMessage(string.Format(ErrorMessages.ImageIsRequired));
         }
 
         [Fact]

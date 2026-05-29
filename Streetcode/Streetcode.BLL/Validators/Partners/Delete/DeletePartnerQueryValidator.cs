@@ -2,9 +2,6 @@
 
 namespace Streetcode.BLL.Validators.Partners.Delete
 {
-    /// <summary>
-    /// Validator for DeletePartnerQuery.
-    /// </summary>
     public class DeletePartnerQueryValidator : PositiveIdValidator<DeletePartnerQuery>
     {
     }

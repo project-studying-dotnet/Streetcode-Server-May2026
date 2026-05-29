@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Email;
 using Streetcode.BLL.MediatR.Email;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Email;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace Streetcode.XUnitTest.Validators.Email
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.Email)
-                  .WithErrorMessage("Email payload is required");
+                  .WithErrorMessage(ErrorMessages.EmailPayloadIsRequired);
         }
 
         [Fact]
@@ -35,7 +36,7 @@ namespace Streetcode.XUnitTest.Validators.Email
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.Email.Content)
-                  .WithErrorMessage("Content is required");
+                      .WithErrorMessage(ErrorMessages.ContentIsRequired);
         }
 
         [Fact]

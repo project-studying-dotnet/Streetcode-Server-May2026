@@ -4,16 +4,9 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.AdditionalContent.Tag.GetTagByTitle
 {
-    /// <summary>
-    /// Validator for GetTagByTitleQuery.
-    /// </summary>
     public class GetTagByTitleQueryValidator : AbstractValidator<GetTagByTitleQuery>
     {
         private const int MaxTitleLength = 100;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetTagByTitleQueryValidator"/> class.
-        /// </summary>
         public GetTagByTitleQueryValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

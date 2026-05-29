@@ -1051,6 +1051,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The tagId must be positive..
+        /// </summary>
+        public static string TagIdMustBePositive {
+            get {
+                return ResourceManager.GetString("TagIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tag is required..
         /// </summary>
         public static string TagIsRequired {

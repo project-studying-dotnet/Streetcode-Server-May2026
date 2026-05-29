@@ -1,23 +1,20 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.MediatR.Streetcode.RelatedFigure.Delete;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Streetcode.RelatedFigure.Delete
 {
-    /// <summary>
-    /// Validator for DeleteRelatedFigureCommand.
-    /// </summary>
     public class DeleteRelatedFigureCommandValidator : AbstractValidator<DeleteRelatedFigureCommand>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteRelatedFigureCommandValidator"/> class.
-        /// </summary>
         public DeleteRelatedFigureCommandValidator()
         {
             RuleFor(x => x.ObserverId)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .WithMessage(ErrorMessages.ObserverIdMustBePositive);
 
             RuleFor(x => x.TargetId)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .WithMessage(ErrorMessages.TargetIdMustBePositive);
         }
     }
 }

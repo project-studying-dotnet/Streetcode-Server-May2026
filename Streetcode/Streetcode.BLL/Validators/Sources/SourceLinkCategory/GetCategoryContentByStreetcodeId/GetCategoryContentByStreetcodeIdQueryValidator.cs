@@ -4,15 +4,9 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId
 {
-    /// <summary>
-    /// Validator for GetCategoryContentByStreetcodeIdQuery.
-    /// </summary>
     public class GetCategoryContentByStreetcodeIdQueryValidator
         : AbstractValidator<GetCategoryContentByStreetcodeIdQuery>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetCategoryContentByStreetcodeIdQueryValidator"/> class.
-        /// </summary>
         public GetCategoryContentByStreetcodeIdQueryValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Media.Audio;
 using Streetcode.BLL.MediatR.Media.Audio.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Media.Audio.Create;
 using Xunit;
 
@@ -8,6 +9,7 @@ namespace Streetcode.XUnitTest.Validators.Media.Audio.Create
 {
     public class CreateAudioCommandValidatorTests
     {
+        private const int MaxDescriptionLength = 2500;
         private readonly CreateAudioCommandValidator _validator;
 
         public CreateAudioCommandValidatorTests()
@@ -23,7 +25,7 @@ namespace Streetcode.XUnitTest.Validators.Media.Audio.Create
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.Audio)
-                  .WithErrorMessage("Audio is required");
+                  .WithErrorMessage(ErrorMessages.AudioIsRequired);
         }
 
         [Fact]
@@ -35,7 +37,7 @@ namespace Streetcode.XUnitTest.Validators.Media.Audio.Create
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.Audio.Description)
-                  .WithErrorMessage("Description must not exceed 1000 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength));
         }
 
         [Fact]

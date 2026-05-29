@@ -2,9 +2,6 @@
 
 namespace Streetcode.BLL.Validators.Partners.GetByStreetcodeId
 {
-    /// <summary>
-    /// Validator for GetPartnersByStreetcodeIdQuery.
-    /// </summary>
     public class GetPartnersByStreetcodeIdQueryValidator : PositiveStreetcodeIdValidator<GetPartnersByStreetcodeIdQuery>
     {
     }

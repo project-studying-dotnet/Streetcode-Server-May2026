@@ -2,9 +2,6 @@
 
 namespace Streetcode.BLL.Validators.Media.Video.GetByStreetcodeId
 {
-    /// <summary>
-    /// Validator for GetVideoByStreetcodeIdQuery.
-    /// </summary>
     public class GetVideoByStreetcodeIdValidator : PositiveStreetcodeIdValidator<GetVideoByStreetcodeIdQuery>
     {
     }

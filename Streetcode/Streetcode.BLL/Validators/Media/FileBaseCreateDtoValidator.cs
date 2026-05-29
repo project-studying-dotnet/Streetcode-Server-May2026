@@ -4,18 +4,12 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Media
 {
-    /// <summary>
-    /// Validator for FileBaseCreateDTO.
-    /// </summary>
     public class FileBaseCreateDtoValidator : AbstractValidator<FileBaseCreateDTO>
     {
         private const int MaxTitleLength = 255;
         private const int MaxMimeTypeLength = 100;
         private const int MaxExtensionLength = 10;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileBaseCreateDtoValidator"/> class.
-        /// </summary>
         public FileBaseCreateDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

@@ -4,14 +4,8 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Streetcode.RelatedTerm
 {
-    /// <summary>
-    /// Validator for RelatedTermDTO.
-    /// </summary>
     public class RelatedTermDtoValidator : AbstractValidator<RelatedTermDTO>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RelatedTermDtoValidator"/> class.
-        /// </summary>
         public RelatedTermDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

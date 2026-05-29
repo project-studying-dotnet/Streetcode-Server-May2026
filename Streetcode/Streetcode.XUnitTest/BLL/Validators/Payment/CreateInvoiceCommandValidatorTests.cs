@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Payment;
 using Streetcode.BLL.MediatR.Payment;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Payment;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace Streetcode.XUnitTest.Validators.Payment
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.Payment)
-                  .WithErrorMessage("Payment is required");
+                  .WithErrorMessage(ErrorMessages.PaymentIsRequired);
         }
 
         [Fact]

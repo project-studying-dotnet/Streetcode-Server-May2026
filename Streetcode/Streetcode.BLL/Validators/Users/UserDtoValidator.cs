@@ -4,17 +4,11 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Users
 {
-    /// <summary>
-    /// Validator for UserDTO.
-    /// </summary>
     public class UserDtoValidator : AbstractValidator<UserDto>
     {
         private const int MaxNameLength = 50;
         private const int MaxLoginLength = 20;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UserDtoValidator"/> class.
-        /// </summary>
         public UserDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

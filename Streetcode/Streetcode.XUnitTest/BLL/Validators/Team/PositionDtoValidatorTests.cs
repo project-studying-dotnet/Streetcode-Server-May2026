@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Team;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Team.Position.Create;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Streetcode.XUnitTest.Validators.Team.Position.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Position)
-                  .WithErrorMessage("Position name is required");
+                  .WithErrorMessage(ErrorMessages.PositionNameIsRequired);
         }
 
         [Fact]

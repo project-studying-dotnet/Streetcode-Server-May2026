@@ -4,14 +4,8 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Newss.Update
 {
-    /// <summary>
-    /// Validator for UpdateNewsCommand.
-    /// </summary>
     public class UpdateNewsCommandValidator : AbstractValidator<UpdateNewsCommand>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UpdateNewsCommandValidator"/> class.
-        /// </summary>
         public UpdateNewsCommandValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

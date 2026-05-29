@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Media.Audio;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Media.Audio.Create;
 using Xunit;
 
@@ -7,6 +8,7 @@ namespace Streetcode.XUnitTest.Validators.Media.Audio.Create
 {
     public class AudioFileBaseCreateDtoValidatorTests
     {
+        private const int MaxDescriptionLength = 2500;
         private readonly AudioFileBaseCreateDtoValidator _validator;
 
         public AudioFileBaseCreateDtoValidatorTests()
@@ -23,7 +25,7 @@ namespace Streetcode.XUnitTest.Validators.Media.Audio.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Description)
-                  .WithErrorMessage("Description must not exceed 1000 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.DescriptionMustNotExceedCharacters, MaxDescriptionLength));
         }
 
         [Fact]

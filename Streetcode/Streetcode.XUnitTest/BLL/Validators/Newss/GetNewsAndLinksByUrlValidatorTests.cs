@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Newss.GetNewsAndLinksByUrl;
 using Xunit;
 
@@ -39,7 +40,7 @@ namespace Streetcode.XUnitTest.Validators.Newss.GetNewsAndLinksByUrl
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.url)
-                  .WithErrorMessage("Url must be a valid absolute URL");
+                  .WithErrorMessage(ErrorMessages.UrlMustBeValidAbsoluteUrl);
         }
 
         [Theory]

@@ -5,9 +5,6 @@ using Streetcode.BLL.MediatR.AdditionalContent.Subtitle.GetByStreetcodeId;
 
 namespace Streetcode.BLL.Validators.AdditionalContent.Subtitle.GetById
 {
-    /// <summary>
-    /// Validator for GetSubtitlesByStreetcodeIdQuery.
-    /// </summary>
     public class GetSubtitleByStreetcodeIdValidator
         : PositiveStreetcodeIdValidator<GetSubtitlesByStreetcodeIdQuery>
     {

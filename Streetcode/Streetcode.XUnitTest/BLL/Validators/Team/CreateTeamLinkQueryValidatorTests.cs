@@ -2,6 +2,7 @@
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.DTO.Team;
 using Streetcode.BLL.MediatR.Team.TeamMembersLinks.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Team.TeamMembersLinks.Create;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace Streetcode.XUnitTest.Validators.Team.TeamMembersLinks.Create
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.teamMember)
-                  .WithErrorMessage("Team member link is required");
+                  .WithErrorMessage(ErrorMessages.TeamMemberLinkIsRequired);
         }
 
         [Fact]

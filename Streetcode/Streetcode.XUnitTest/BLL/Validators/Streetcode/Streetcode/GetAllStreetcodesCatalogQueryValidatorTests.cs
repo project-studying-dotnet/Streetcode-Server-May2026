@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.GetAllCatalog;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.Streetcode.GetAllCatalog;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetAllCatalog
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.page)
-                  .WithErrorMessage("The page number must be greater than 0.");
+                  .WithErrorMessage(ErrorMessages.PageNumberMustBePositive);
         }
 
         [Theory]
@@ -39,7 +40,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetAllCatalog
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.count)
-                  .WithErrorMessage("The page size (count) must be greater than 0.");
+                  .WithErrorMessage(ErrorMessages.PageSizeMustBePositive);
         }
 
         [Fact]

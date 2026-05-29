@@ -4,17 +4,11 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Timeline.TimelineItem
 {
-    /// <summary>
-    /// Validator for <see cref="TimelineItemDto"/>.
-    /// </summary>
     public class TimelineItemDtoValidator : AbstractValidator<TimelineItemDto>
     {
         private const int MaxTitleLength = 26;
         private const int MaxDescriptionLength = 400;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TimelineItemDtoValidator"/> class.
-        /// </summary>
         public TimelineItemDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;

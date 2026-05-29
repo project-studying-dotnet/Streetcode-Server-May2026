@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByTransliterationUrl;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.Streetcode.GetByTransliterationUrl;
 using Xunit;
 
@@ -7,6 +8,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByTranslitera
 {
     public class GetStreetcodeByTransliterationUrlQueryValidatorTests
     {
+        private const int MaxUrlLength = 255;
         private readonly GetStreetcodeByTransliterationUrlQueryValidator _validator;
 
         public GetStreetcodeByTransliterationUrlQueryValidatorTests()
@@ -25,7 +27,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByTranslitera
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.url)
-                  .WithErrorMessage("Transliteration url is required");
+                  .WithErrorMessage(ErrorMessages.TransliterationUrlIsRequired);
         }
 
         [Fact]
@@ -37,7 +39,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByTranslitera
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.url)
-                  .WithErrorMessage("Transliteration url must not exceed 255 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.TransliterationUrlMustNotExceedCharacters, MaxUrlLength));
         }
 
         [Fact]

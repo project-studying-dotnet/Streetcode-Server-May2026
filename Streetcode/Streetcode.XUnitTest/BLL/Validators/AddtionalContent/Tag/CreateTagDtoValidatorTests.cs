@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.AdditionalContent.Tag;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.AdditionalContent.Tag.Create;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title is required");
+                    .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Theory]
@@ -38,7 +39,7 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Tag.Create
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Title)
-                  .WithErrorMessage("Title cannot contain only whitespace");
+                    .WithErrorMessage(ErrorMessages.TitleIsRequired);
         }
 
         [Fact]

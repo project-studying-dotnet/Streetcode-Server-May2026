@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Streetcode.Text.GetParsed;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.Text.GetParsed;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Text.GetParsed
             var result = _validator.TestValidate(command);
 
             result.ShouldHaveValidationErrorFor(x => x.textToParse)
-                  .WithErrorMessage("Text to parse is required");
+                  .WithErrorMessage(ErrorMessages.TextToParseIsRequired);
         }
 
         [Fact]

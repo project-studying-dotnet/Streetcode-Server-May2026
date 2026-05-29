@@ -1,13 +1,16 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.DTO.Users;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Users;
-using Xunit;
 using Streetcode.DAL.Enums;
+using Xunit;
 
 namespace Streetcode.XUnitTest.Validators.Users
 {
     public class UserDtoValidatorTests
     {
+        private const int MaxNameLength = 50;
+
         private readonly UserDtoValidator _validator;
 
         public UserDtoValidatorTests()
@@ -26,7 +29,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Name)
-                  .WithErrorMessage("Name is required");
+                  .WithErrorMessage(ErrorMessages.NameIsRequired);
         }
 
         [Fact]
@@ -38,7 +41,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Name)
-                  .WithErrorMessage("Name must not exceed 50 characters");
+                  .WithErrorMessage(string.Format(ErrorMessages.NameMustNotExceedCharacters, MaxNameLength));
         }
 
         [Theory]
@@ -52,7 +55,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Email)
-                  .WithErrorMessage("Invalid email format");
+                  .WithErrorMessage(ErrorMessages.InvalidEmailFormat);
         }
 
         [Fact]

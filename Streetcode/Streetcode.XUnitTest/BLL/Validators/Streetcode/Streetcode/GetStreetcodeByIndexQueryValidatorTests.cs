@@ -1,5 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByIndex;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.Streetcode.GetByIndex;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.Streetcode.GetByIndex
             var result = _validator.TestValidate(query);
 
             result.ShouldHaveValidationErrorFor(x => x.Index)
-                  .WithErrorMessage("Index must be greater than or equal to 0");
+                  .WithErrorMessage(ErrorMessages.IndexMustBeGreaterOrEqualToZero);
         }
 
         [Theory]
