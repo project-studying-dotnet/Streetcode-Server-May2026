@@ -80,31 +80,31 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
             result.ShouldHaveValidationErrorFor(c => c.Longtitude);
         }
 
-        [Theory]
-        [InlineData(-90.00)]
-        [InlineData(90.00)]
-        public void Should_Not_Have_Error_When_Latitude_Is_On_Edge(decimal edgeLatitude)
-        {
-            var dto = new StreetcodeCoordinateDTO { Latitude = edgeLatitude, Longtitude = 0 };
-            var result = _validator.TestValidate(dto);
-            result.ShouldNotHaveValidationErrorFor(c => c.Latitude);
-        }
-
-        [Theory]
-        [InlineData(-180.00)]
-        [InlineData(180.00)]
-        public void Should_Not_Have_Error_When_Longitude_Is_On_Edge(decimal edgeLongitude)
-        {
-            var dto = new StreetcodeCoordinateDTO { Latitude = 0, Longtitude = edgeLongitude };
-            var result = _validator.TestValidate(dto);
-            result.ShouldNotHaveValidationErrorFor(c => c.Longtitude);
-        }
         [Fact]
-        public void Should_Not_Have_Any_Errors_When_Dto_Is_Valid()
+        public void Should_Not_Have_Error_When_Coordinates_Are_At_Maximum_Bounds()
         {
-            var dto = new StreetcodeCoordinateDTO { Latitude = 45.5m, Longtitude = 25.5m };
+            var dto = new StreetcodeCoordinateDTO { Latitude = 90, Longtitude = 180 };
             var result = _validator.TestValidate(dto);
             result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void Should_Not_Have_Error_When_Coordinates_Are_At_Minimum_Bounds()
+        {
+            var dto = new StreetcodeCoordinateDTO { Latitude = -90, Longtitude = -180 };
+            var result = _validator.TestValidate(dto);
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void Should_Have_Error_For_Latitude_When_Longtitude_Is_Also_Invalid()
+        {
+            var dto = new StreetcodeCoordinateDTO { Latitude = 100, Longtitude = 200 };
+
+            var result = _validator.TestValidate(dto);
+
+            result.ShouldHaveValidationErrorFor(c => c.Latitude)
+                  .WithErrorMessage(ErrorMessages.LatitudeMustBeBetweenMinus90And90);
         }
     }
 }
