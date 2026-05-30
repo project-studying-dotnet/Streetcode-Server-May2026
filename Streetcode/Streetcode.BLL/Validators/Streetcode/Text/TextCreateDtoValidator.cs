@@ -1,31 +1,23 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
+using Streetcode.BLL.Resources;
 
-namespace Streetcode.BLL.MediatR.Streetcode.Text
+namespace Streetcode.XUnitTest.Validators.Streetcode.Text
 {
-    /// <summary>
-    /// Validator for <see cref="TextCreateDTO"/>.
-    /// </summary>
     public class TextCreateDtoValidator : AbstractValidator<TextCreateDto>
     {
         private const int AdditionalTextMaxLength = 250;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TextCreateDtoValidator"/> class.
-        /// </summary>
         public TextCreateDtoValidator()
         {
             RuleFor(x => x.Title)
                 .NotEmpty()
-                .WithMessage("Title is required");
-
+                .WithMessage(ErrorMessages.TitleIsRequired);
             RuleFor(x => x.TextContent)
                 .NotEmpty()
-                .WithMessage("Text content is required");
-
+                .WithMessage(ErrorMessages.TextContentIsRequired);
             RuleFor(x => x.AdditionalText)
                 .MaximumLength(AdditionalTextMaxLength)
-                .WithMessage($"Additional text must not exceed {AdditionalTextMaxLength} characters")
+                .WithMessage(string.Format(ErrorMessages.AdditionalTextMustNotExceed, AdditionalTextMaxLength))
                 .When(x => !string.IsNullOrWhiteSpace(x.AdditionalText));
         }
     }

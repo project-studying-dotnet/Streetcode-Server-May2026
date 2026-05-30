@@ -68,5 +68,16 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
             result.ShouldHaveValidationErrorFor(c => c.Longtitude)
                   .WithErrorMessage(ErrorMessages.LongitudeMustBeBetweenMinus180And180);
         }
+
+        [Fact]
+        public void Should_Have_Errors_For_All_Fields_When_All_Are_Invalid()
+        {
+            var dto = new StreetcodeCoordinateDTO { Latitude = 200, Longtitude = 300 };
+
+            var result = _validator.TestValidate(dto);
+
+            result.ShouldHaveValidationErrorFor(c => c.Latitude);
+            result.ShouldHaveValidationErrorFor(c => c.Longtitude);
+        }
     }
 }

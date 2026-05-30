@@ -531,4 +531,43 @@
   <data name="TagIdMustBePositive" xml:space="preserve">
     <value>The tagId must be positive.</value>
   </data>
+  <data name="IdMustBeGreaterThanOrEqualToZero" xml:space="preserve">
+    <value>Id must be greater than or equal to 0</value>
+  </data>
+  <data name="IndexMustBeGreaterThanOrEqualToZero" xml:space="preserve">
+    <value>Index must be greater than or equal to 0</value>
+  </data>
+  <data name="DateStringIsRequired" xml:space="preserve">
+    <value>Date string is required</value>
+  </data>
+  <data name="ValueMustBeGreaterThanOrEqualTo" xml:space="preserve">
+    <value>{0} must be greater than or equal to {1}</value>
+  </data>
+  <data name="FieldIsRequired" xml:space="preserve">
+    <value>{0} is required</value>
+  </data>
+  <data name="FieldMustNotExceedCharacters" xml:space="preserve">
+    <value>{0} must not exceed {1} characters</value>
+  </data>
+  <data name="InvalidEnumValue" xml:space="preserve">
+    <value>Invalid {0}</value>
+  </data>
+  <data name="EndDateCannotBeEarlierThanStartDate" xml:space="preserve">
+    <value>End or death date cannot be earlier than start or birth date</value>
+  </data>
+  <data name="ValueCannotBeNegative" xml:space="preserve">
+    <value>{0} cannot be negative</value>
+  </data>
+  <data name="CollectionIsRequired" xml:space="preserve">
+    <value>{0} collection is required</value>
+  </data>
+  <data name="TeaserLengthIsInvalid" xml:space="preserve">
+    <value>Teaser must contain up to {0} characters with paragraph breaks or up to {1} characters without paragraph breaks</value>
+  </data>
+  <data name="TextContentIsRequired" xml:space="preserve">
+    <value>Text content is required.</value>
+  </data>
+  <data name="AdditionalTextMustNotExceed" xml:space="preserve">
+    <value>Additional text must not exceed {0} characters</value>
+  </data>
 </root>

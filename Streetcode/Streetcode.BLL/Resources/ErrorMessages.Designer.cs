@@ -61,6 +61,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional text must not exceed {0} characters.
+        /// </summary>
+        public static string AdditionalTextMustNotExceed {
+            get {
+                return ResourceManager.GetString("AdditionalTextMustNotExceed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alt text must not exceed {0} characters..
         /// </summary>
         public static string AltMustNotExceedCharacters {
@@ -367,6 +376,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} collection is required.
+        /// </summary>
+        public static string CollectionIsRequired {
+            get {
+                return ResourceManager.GetString("CollectionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Content is required..
         /// </summary>
         public static string ContentIsRequired {
@@ -408,6 +426,15 @@ namespace Streetcode.BLL.Resources {
         public static string DateIsRequired {
             get {
                 return ResourceManager.GetString("DateIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date string is required.
+        /// </summary>
+        public static string DateStringIsRequired {
+            get {
+                return ResourceManager.GetString("DateStringIsRequired", resourceCulture);
             }
         }
         
@@ -471,6 +498,15 @@ namespace Streetcode.BLL.Resources {
         public static string EmailPayloadIsRequired {
             get {
                 return ResourceManager.GetString("EmailPayloadIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End or death date cannot be earlier than start or birth date.
+        /// </summary>
+        public static string EndDateCannotBeEarlierThanStartDate {
+            get {
+                return ResourceManager.GetString("EndDateCannotBeEarlierThanStartDate", resourceCulture);
             }
         }
         
@@ -637,6 +673,24 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is required.
+        /// </summary>
+        public static string FieldIsRequired {
+            get {
+                return ResourceManager.GetString("FieldIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must not exceed {1} characters.
+        /// </summary>
+        public static string FieldMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("FieldMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filter is required..
         /// </summary>
         public static string FilterIsRequired {
@@ -669,6 +723,15 @@ namespace Streetcode.BLL.Resources {
         public static string IdMustBeGreaterOrEqualToZero {
             get {
                 return ResourceManager.GetString("IdMustBeGreaterOrEqualToZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id must be greater than or equal to 0.
+        /// </summary>
+        public static string IdMustBeGreaterThanOrEqualToZero {
+            get {
+                return ResourceManager.GetString("IdMustBeGreaterThanOrEqualToZero", resourceCulture);
             }
         }
         
@@ -709,6 +772,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Index must be greater than or equal to 0.
+        /// </summary>
+        public static string IndexMustBeGreaterThanOrEqualToZero {
+            get {
+                return ResourceManager.GetString("IndexMustBeGreaterThanOrEqualToZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid date view pattern..
         /// </summary>
         public static string InvalidDateViewPattern {
@@ -723,6 +795,15 @@ namespace Streetcode.BLL.Resources {
         public static string InvalidEmailFormat {
             get {
                 return ResourceManager.GetString("InvalidEmailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid {0}.
+        /// </summary>
+        public static string InvalidEnumValue {
+            get {
+                return ResourceManager.GetString("InvalidEnumValue", resourceCulture);
             }
         }
         
@@ -1141,11 +1222,29 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Teaser must contain up to {0} characters with paragraph breaks or up to {1} characters without paragraph breaks.
+        /// </summary>
+        public static string TeaserLengthIsInvalid {
+            get {
+                return ResourceManager.GetString("TeaserLengthIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Term ID must be greater than 0..
         /// </summary>
         public static string TermIdMustBePositive {
             get {
                 return ResourceManager.GetString("TermIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text content is required..
+        /// </summary>
+        public static string TextContentIsRequired {
+            get {
+                return ResourceManager.GetString("TextContentIsRequired", resourceCulture);
             }
         }
         
@@ -1281,6 +1380,24 @@ namespace Streetcode.BLL.Resources {
         public static string UrlTitleMustNotExceedCharacters {
             get {
                 return ResourceManager.GetString("UrlTitleMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} cannot be negative.
+        /// </summary>
+        public static string ValueCannotBeNegative {
+            get {
+                return ResourceManager.GetString("ValueCannotBeNegative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be greater than or equal to {1}.
+        /// </summary>
+        public static string ValueMustBeGreaterThanOrEqualTo {
+            get {
+                return ResourceManager.GetString("ValueMustBeGreaterThanOrEqualTo", resourceCulture);
             }
         }
         
