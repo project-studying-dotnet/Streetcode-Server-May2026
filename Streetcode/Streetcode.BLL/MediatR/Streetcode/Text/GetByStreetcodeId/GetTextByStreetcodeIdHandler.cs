@@ -27,12 +27,16 @@ public class GetTextByStreetcodeIdHandler : IRequestHandler<GetTextByStreetcodeI
     public async Task<Result<TextDto?>> Handle(GetTextByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
         var text = await _repositoryWrapper.TextRepository
-            .GetFirstOrDefaultAsync(text => text.StreetcodeId == request.StreetcodeId);
+            .GetFirstOrDefaultAsync(
+                predicate: text => text.StreetcodeId == request.StreetcodeId,
+                cancellationToken: cancellationToken);
 
         if (text is null)
         {
             if (await _repositoryWrapper.StreetcodeRepository
-                 .GetFirstOrDefaultAsync(s => s.Id == request.StreetcodeId) == null)
+                 .GetFirstOrDefaultAsync(
+                     predicate: s => s.Id == request.StreetcodeId,
+                     cancellationToken: cancellationToken) == null)
             {
                 string errorMsg = $"Cannot find a transaction link by a streetcode id: {request.StreetcodeId}, because such streetcode doesn`t exist";
                 _logger.LogError(request, errorMsg);

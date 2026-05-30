@@ -6,6 +6,8 @@ using Streetcode.BLL.MediatR.Streetcode.Fact.GetAll;
 using Streetcode.BLL.MediatR.Streetcode.Fact.GetById;
 using Streetcode.BLL.MediatR.Streetcode.Fact.GetByStreetcodeId;
 using Streetcode.BLL.MediatR.Streetcode.Fact.Update;
+using Streetcode.DAL.Enums;
+using Streetcode.WebApi.Attributes;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent;
 
@@ -29,18 +31,21 @@ public class FactController : BaseApiController
         return HandleResult(await Mediator.Send(new GetFactByStreetcodeIdQuery(streetcodeId)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] FactDto request, CancellationToken cancellationToken = default)
     {
         return HandleResult(await Mediator.Send(new CreateFactCommand(request), cancellationToken));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] FactDto fact, CancellationToken cancellationToken = default)
     {
         return HandleResult(await Mediator.Send(new UpdateFactCommand(fact), cancellationToken));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken = default)
     {

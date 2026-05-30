@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using System.Linq.Expressions;
+using AutoMapper;
 using FluentResults;
 using Moq;
 using FluentAssertions;
@@ -8,7 +9,6 @@ using Streetcode.BLL.MediatR.Partners.Delete;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
 using Streetcode.BLL.DTO.Partners;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
 using Streetcode.BLL.Resources;
@@ -18,7 +18,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
     public class DeletePartnersHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
-        private readonly Mock<IPartnersRepository> _PartnersRepositoryMock;
+        private readonly Mock<IPartnersRepository> _partnersRepositoryMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILoggerService> _loggerMock;
         private readonly DeletePartnerHandler _handler;
@@ -28,16 +28,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
             _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             _mapperMock = new Mock<IMapper>();
             _loggerMock = new Mock<ILoggerService>();
-            _PartnersRepositoryMock = new Mock<IPartnersRepository>();
+            _partnersRepositoryMock = new Mock<IPartnersRepository>();
 
             _repositoryWrapperMock
                 .Setup(wrapper => wrapper.PartnersRepository)
-                .Returns(_PartnersRepositoryMock.Object);
+                .Returns(_partnersRepositoryMock.Object);
             _handler = new DeletePartnerHandler(
                     _repositoryWrapperMock.Object,
                     _mapperMock.Object,
                     _loggerMock.Object);
-
         }
 
         [Fact]
@@ -46,7 +45,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
             int id = 1;
             var deletePartnerQuery = new DeletePartnerQuery(id);
 
-            _PartnersRepositoryMock
+            _partnersRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<Partner, bool>>>(),
                     null))
@@ -61,7 +60,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
                 logger => logger.LogError(deletePartnerQuery, ErrorMessages.NoPartnerWithSuchId),
                 Times.Once);
 
-            _PartnersRepositoryMock.Verify(
+            _partnersRepositoryMock.Verify(
                 repo => repo.Delete(It.IsAny<Partner>()),
                 Times.Never);
 
@@ -79,14 +78,18 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
         {
             int id = 1;
             var deletePartnerQuery = new DeletePartnerQuery(id);
-            var partner = new Partner { Id = 1, Title = "Title 1", LogoId = 1
-                , IsKeyPartner = true, IsVisibleEverywhere = true,
+            var partner = new Partner
+            {
+                Id = 1, Title = "Title 1", LogoId = 1,
+                IsKeyPartner = true, IsVisibleEverywhere = true,
             };
-            var dto = new PartnerDTO { Id = 1, Title = "Title 1", LogoId = 1,
+            var dto = new PartnerDTO
+            {
+                Id = 1, Title = "Title 1", LogoId = 1,
                 IsKeyPartner = true, IsVisibleEverywhere = true,
             };
 
-            _PartnersRepositoryMock
+            _partnersRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
                     It.IsAny<Expression<Func<Partner, bool>>>(),
                     null))
@@ -105,7 +108,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(dto);
 
-            _PartnersRepositoryMock.Verify(
+            _partnersRepositoryMock.Verify(
                 repo => repo.Delete(partner),
                 Times.Once);
 
@@ -121,6 +124,5 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
-
     }
 }

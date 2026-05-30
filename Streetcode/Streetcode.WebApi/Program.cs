@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var environment = builder.Environment.EnvironmentName;
 builder.Configuration.ConfigureCustom(environment);
+builder.Configuration
+    .AddUserSecrets<Program>();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
@@ -64,6 +66,3 @@ if (app.Environment.EnvironmentName != "Local")
 app.MapControllers();
 
 app.Run();
-public partial class Program
-{
-}

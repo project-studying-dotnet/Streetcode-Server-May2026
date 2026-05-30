@@ -60,12 +60,13 @@ namespace Streetcode.WebApi.Extensions
                 var repo = new RepositoryWrapper(dbContext);
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                IConfiguration configuration = app.Services.GetRequiredService<IConfiguration>();
                 var blobService = new BlobService(blobOptions, repo);
                 string initialDataImagePath = "../Streetcode.DAL/InitialData/images.json";
                 string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
 
                 await RoleSeeder.FillSeedAsync(roleManager);
-                await UserSeeder.FillSeedAsync(userManager);
+                await UserSeeder.FillSeedAsync(dbContext, configuration);
                 await PositionsSeeder.FillSeedAsync(dbContext);
 
                 if (!await dbContext.Images.AnyAsync())

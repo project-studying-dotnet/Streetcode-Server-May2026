@@ -10,10 +10,10 @@ namespace Streetcode.WebApi.InitialData.UserSeeder
     [ExcludeFromCodeCoverage]
     public static class UserSeeder
     {
-        public static async Task FillSeedAsync(UserManager<User> userManager)
+        public static async Task FillSeedAsync(UserManager<User> userManager, IConfiguration configuration)
         {
-            const string adminEmail = "admin@admin.com";
-            const string adminPassword = "admin@1234";
+            var adminEmail = configuration["AdminSettings:Email"];
+            var adminPassword = configuration["AdminSettings:Password"];
 
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 

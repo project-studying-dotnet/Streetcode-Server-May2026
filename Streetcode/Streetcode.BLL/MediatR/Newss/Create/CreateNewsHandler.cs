@@ -38,7 +38,9 @@ namespace Streetcode.BLL.MediatR.Newss.Create
             }
 
             var entity = await _repositoryWrapper.NewsRepository.CreateAsync(news);
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+
+            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
+
             if (resultIsSuccess)
             {
                 return Result.Ok(_mapper.Map<NewsDTO>(entity));
