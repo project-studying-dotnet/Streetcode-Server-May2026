@@ -6,10 +6,10 @@ namespace Streetcode.BLL.Validators.AdditionalContent.Coordinate
 {
     public class CoordinateDtoValidator : AbstractValidator<CoordinateDTO>
     {
-        private const decimal MinLatitude = -90;
-        private const decimal MaxLatitude = 90;
-        private const decimal MinLongitude = -180;
-        private const decimal MaxLongitude = 180;
+        private static readonly decimal MinLatitude = -90;
+        private static readonly decimal MaxLatitude = 90;
+        private static readonly decimal MinLongitude = -180;
+        private static readonly decimal MaxLongitude = 180;
         public CoordinateDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
