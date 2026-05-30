@@ -99,5 +99,12 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
             var result = _validator.TestValidate(dto);
             result.ShouldNotHaveValidationErrorFor(c => c.Longtitude);
         }
+        [Fact]
+        public void Should_Not_Have_Any_Errors_When_Dto_Is_Valid()
+        {
+            var dto = new StreetcodeCoordinateDTO { Latitude = 45.5m, Longtitude = 25.5m };
+            var result = _validator.TestValidate(dto);
+            result.ShouldNotHaveAnyValidationErrors();
+        }
     }
 }
