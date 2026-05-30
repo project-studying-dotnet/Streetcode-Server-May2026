@@ -15,6 +15,13 @@ namespace Streetcode.WebApi.InitialData.UserSeeder
             var adminEmail = configuration["AdminSettings:Email"];
             var adminPassword = configuration["AdminSettings:Password"];
 
+            if (string.IsNullOrWhiteSpace(adminEmail)
+            || string.IsNullOrWhiteSpace(adminPassword))
+            {
+                throw new InvalidOperationException(
+                    "Admin credentials are not configured.");
+            }
+
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)

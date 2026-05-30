@@ -66,7 +66,7 @@ namespace Streetcode.WebApi.Extensions
                 string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
 
                 await RoleSeeder.FillSeedAsync(roleManager);
-                await UserSeeder.FillSeedAsync(dbContext, configuration);
+                await UserSeeder.FillSeedAsync(userManager, configuration);
                 await PositionsSeeder.FillSeedAsync(dbContext);
 
                 if (!await dbContext.Images.AnyAsync())
