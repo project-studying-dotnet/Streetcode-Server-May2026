@@ -79,5 +79,25 @@ namespace Streetcode.XUnitTest.Validators.AdditionalContent.Coordinate
             result.ShouldHaveValidationErrorFor(c => c.Latitude);
             result.ShouldHaveValidationErrorFor(c => c.Longtitude);
         }
+
+        [Theory]
+        [InlineData(-90.00)]
+        [InlineData(90.00)]
+        public void Should_Not_Have_Error_When_Latitude_Is_On_Edge(decimal edgeLatitude)
+        {
+            var dto = new StreetcodeCoordinateDTO { Latitude = edgeLatitude, Longtitude = 0 };
+            var result = _validator.TestValidate(dto);
+            result.ShouldNotHaveValidationErrorFor(c => c.Latitude);
+        }
+
+        [Theory]
+        [InlineData(-180.00)]
+        [InlineData(180.00)]
+        public void Should_Not_Have_Error_When_Longitude_Is_On_Edge(decimal edgeLongitude)
+        {
+            var dto = new StreetcodeCoordinateDTO { Latitude = 0, Longtitude = edgeLongitude };
+            var result = _validator.TestValidate(dto);
+            result.ShouldNotHaveValidationErrorFor(c => c.Longtitude);
+        }
     }
 }
