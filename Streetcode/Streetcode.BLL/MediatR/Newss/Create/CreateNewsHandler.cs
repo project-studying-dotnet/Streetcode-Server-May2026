@@ -5,6 +5,7 @@ using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Entities.News;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Newss.Create
 {
@@ -22,28 +23,31 @@ namespace Streetcode.BLL.MediatR.Newss.Create
 
         public async Task<Result<NewsDTO>> Handle(CreateNewsCommand request, CancellationToken cancellationToken)
         {
-            var newNews = _mapper.Map<News>(request.newNews);
-            if (newNews is null)
+            var news = _mapper.Map<News>(request.newNews);
+
+            if (news is null)
             {
-                const string errorMsg = "Cannot convert null to news";
+                string errorMsg = ErrorMessages.CannotConvertNullToNews;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(errorMsg);
             }
 
-            if (newNews.ImageId == 0)
+            if (news.ImageId == 0)
             {
-                newNews.ImageId = null;
+                news.ImageId = null;
             }
 
-            var entity = _repositoryWrapper.NewsRepository.Create(newNews);
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+            var entity = await _repositoryWrapper.NewsRepository.CreateAsync(news);
+
+            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
+
             if (resultIsSuccess)
             {
                 return Result.Ok(_mapper.Map<NewsDTO>(entity));
             }
             else
             {
-                const string errorMsg = "Failed to create a news";
+                string errorMsg = ErrorMessages.FailedToCreateNews;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }

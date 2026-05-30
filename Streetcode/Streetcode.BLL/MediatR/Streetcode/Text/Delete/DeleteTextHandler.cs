@@ -24,7 +24,9 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Delete
         public async Task<Result<TextDto>> Handle(DeleteTextCommand request, CancellationToken cancellationToken)
         {
             var textEntity = await _repositoryWrapper.TextRepository
-                .GetFirstOrDefaultAsync(t => t.Id == request.Id);
+                .GetFirstOrDefaultAsync(
+                    predicate: t => t.Id == request.Id,
+                    cancellationToken: cancellationToken);
 
             if (textEntity == null)
             {
@@ -34,7 +36,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Delete
             }
 
             _repositoryWrapper.TextRepository.Delete(textEntity);
-            var saveResult = await _repositoryWrapper.SaveChangesAsync();
+            var saveResult = await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
             if (saveResult > 0)
             {

@@ -1,78 +1,110 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using FluentAssertions;
 using Moq;
+using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
 using Streetcode.BLL.MediatR.AdditionalContent.Coordinate.Update;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
+using Streetcode.DAL.Repositories.Interfaces.AdditionalContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Coordinate.Update
+namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Coordinate.Update;
+
+public class UpdateCoordinateHandlerTests
 {
-    public class UpdateCoordinateHandlerTests
+    private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly Mock<IStreetcodeCoordinateRepository> _coordinateRepositoryMock;
+    private readonly UpdateCoordinateHandler _handler;
+
+    public UpdateCoordinateHandlerTests()
     {
-        private readonly Mock<IMapper> _mapperMock;
-        private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
-        private readonly UpdateCoordinateHandler _handler;
+        _mapperMock = new Mock<IMapper>();
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _coordinateRepositoryMock = new Mock<IStreetcodeCoordinateRepository>();
 
-        public UpdateCoordinateHandlerTests()
-        {
-            _mapperMock = new Mock<IMapper>();
-            _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            _handler = new UpdateCoordinateHandler(_repositoryWrapperMock.Object, _mapperMock.Object);
-        }
+        _repositoryWrapperMock
+            .Setup(r => r.StreetcodeCoordinateRepository)
+            .Returns(_coordinateRepositoryMock.Object);
 
-        [Fact]
-        public async Task Handle_ValidRequest_ReturnsOkResult()
-        {
-            var command = new UpdateCoordinateCommand(null!);
-            var coordinate = new StreetcodeCoordinate();
+        _handler = new UpdateCoordinateHandler(
+            _repositoryWrapperMock.Object,
+            _mapperMock.Object);
+    }
 
-            _mapperMock.Setup(m => m.Map<StreetcodeCoordinate>(It.IsAny<object>()))
-                .Returns(coordinate);
+    [Fact]
+    public async Task Handle_ShouldReturnFail_WhenMapperReturnsNull()
+    {
+        var command = new UpdateCoordinateCommand(null!);
 
-            _repositoryWrapperMock.Setup(r => r.StreetcodeCoordinateRepository.Update(coordinate));
+        _mapperMock
+            .Setup(m => m.Map<StreetcodeCoordinate>(
+                command.StreetcodeCoordinate))
+            .Returns((StreetcodeCoordinate)null!);
 
-            _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
-                .ReturnsAsync(1);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            var result = await _handler.Handle(command, CancellationToken.None);
+        result.IsFailed.Should().BeTrue();
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.CannotConvertNullToStreetcodeCoordinate);
+    }
 
-            Assert.True(result.IsSuccess);
-        }
+    [Fact]
+    public async Task Handle_ShouldReturnFail_WhenUpdateFails()
+    {
+        var coordinateDto = new StreetcodeCoordinateDTO();
+        var command = new UpdateCoordinateCommand(coordinateDto);
+        var coordinate = new StreetcodeCoordinate();
 
-        [Fact]
-        public async Task Handle_MapperReturnsNull_ReturnsFailResult()
-        {
-            var command = new UpdateCoordinateCommand(null!);
+        _mapperMock
+            .Setup(m => m.Map<StreetcodeCoordinate>(coordinateDto))
+            .Returns(coordinate);
 
-            _mapperMock.Setup(m => m.Map<StreetcodeCoordinate>(It.IsAny<object>()))
-                .Returns((StreetcodeCoordinate)null!);
+        _repositoryWrapperMock
+            .Setup(r => r.SaveChangesAsync())
+            .ReturnsAsync(0);
 
-            var result = await _handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            Assert.False(result.IsSuccess);
-            Assert.Equal("Cannot convert null to streetcodeCoordinate", result.Errors.First().Message);
-        }
+        result.IsFailed.Should().BeTrue();
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.FailedToUpdateStreetcodeCoordinate);
 
-        [Fact]
-        public async Task Handle_SaveChangesFails_ReturnsFailResult()
-        {
-            var command = new UpdateCoordinateCommand(null!);
-            var coordinate = new StreetcodeCoordinate();
+        _coordinateRepositoryMock.Verify(
+            r => r.Update(coordinate),
+            Times.Once);
 
-            _mapperMock.Setup(m => m.Map<StreetcodeCoordinate>(It.IsAny<object>()))
-                .Returns(coordinate);
+        _repositoryWrapperMock.Verify(
+            r => r.SaveChangesAsync(),
+            Times.Once);
+    }
 
-            _repositoryWrapperMock.Setup(r => r.StreetcodeCoordinateRepository.Update(coordinate));
+    [Fact]
+    public async Task Handle_ShouldReturnSuccess_WhenCoordinateUpdated()
+    {
+        var coordinateDto = new StreetcodeCoordinateDTO();
+        var command = new UpdateCoordinateCommand(coordinateDto);
+        var coordinate = new StreetcodeCoordinate();
 
-            _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
-                .ReturnsAsync(0);
+        _mapperMock
+            .Setup(m => m.Map<StreetcodeCoordinate>(coordinateDto))
+            .Returns(coordinate);
 
-            var result = await _handler.Handle(command, CancellationToken.None);
+        _repositoryWrapperMock
+            .Setup(r => r.SaveChangesAsync())
+            .ReturnsAsync(1);
 
-            Assert.False(result.IsSuccess);
-        }
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+
+        _coordinateRepositoryMock.Verify(
+            r => r.Update(coordinate),
+            Times.Once);
+
+        _repositoryWrapperMock.Verify(
+            r => r.SaveChangesAsync(),
+            Times.Once);
     }
 }

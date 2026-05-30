@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Payment;
 using Streetcode.BLL.MediatR.Payment;
 

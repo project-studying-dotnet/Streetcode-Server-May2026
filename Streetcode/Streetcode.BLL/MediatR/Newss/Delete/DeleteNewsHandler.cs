@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using MediatR;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Newss.Delete
@@ -17,11 +18,14 @@ namespace Streetcode.BLL.MediatR.Newss.Delete
 
         public async Task<Result<Unit>> Handle(DeleteNewsCommand request, CancellationToken cancellationToken)
         {
-            int id = request.id;
-            var news = await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(n => n.Id == id);
+            int id = request.Id;
+            var news = await _repositoryWrapper.NewsRepository.GetFirstOrDefaultAsync(
+                predicate: n => n.Id == id,
+                cancellationToken: cancellationToken);
+
             if (news == null)
             {
-                string errorMsg = $"No news found by entered Id - {id}";
+                string errorMsg = string.Format(ErrorMessages.NoNewsFoundById, id);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(errorMsg);
             }
@@ -32,14 +36,16 @@ namespace Streetcode.BLL.MediatR.Newss.Delete
             }
 
             _repositoryWrapper.NewsRepository.Delete(news);
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+
+            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
+
             if (resultIsSuccess)
             {
                 return Result.Ok(Unit.Value);
             }
             else
             {
-                string errorMsg = "Failed to delete news";
+                string errorMsg = ErrorMessages.FailedToDeleteNews;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }

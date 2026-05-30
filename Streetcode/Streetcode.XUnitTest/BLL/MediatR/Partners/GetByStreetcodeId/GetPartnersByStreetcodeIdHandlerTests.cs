@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -10,8 +11,8 @@ using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
-using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
 {
@@ -61,10 +62,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot find any partners with corresponding streetcode id: " + streetcodeId);
+            result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindPartnersByStreetcodeId, streetcodeId));
 
             _loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot find any partners with corresponding streetcode id: " + streetcodeId),
+                logger => logger.LogError(query, string.Format(ErrorMessages.CannotFindPartnersByStreetcodeId, streetcodeId)),
                 Times.Once);
         }
 
@@ -90,10 +91,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot find a partners by a streetcode id: " + streetcodeId);
+            result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindPartnersByStreetcodeId, streetcodeId));
 
             _loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot find a partners by a streetcode id: " + streetcodeId),
+                logger => logger.LogError(query, string.Format(ErrorMessages.CannotFindPartnersByStreetcodeId, streetcodeId)),
                 Times.Once);
         }
 
@@ -105,7 +106,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
             var streetcode = new StreetcodeContent { Id = streetcodeId };
             var partners = new List<Partner>
             {
-                new Partner {
+                new Partner
+                {
                     Id = 1,
                     Title = "Title 1",
                     LogoId = 1,
@@ -116,10 +118,13 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
             };
             var partnerDTOs = new List<PartnerDTO>
             {
-                new PartnerDTO { Id = 1, 
-                    Title = "Title 1", 
-                    LogoId = 1, IsKeyPartner = true, 
-                    IsVisibleEverywhere = true },
+                new PartnerDTO
+                {
+                    Id = 1,
+                    Title = "Title 1",
+                    LogoId = 1, IsKeyPartner = true,
+                    IsVisibleEverywhere = true
+                },
             };
 
             _streetcodeRepositoryMock

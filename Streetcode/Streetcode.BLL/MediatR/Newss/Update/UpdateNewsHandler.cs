@@ -4,6 +4,7 @@ using MediatR;
 using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.News;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
@@ -28,7 +29,7 @@ namespace Streetcode.BLL.MediatR.Newss.Update
             var news = _mapper.Map<News>(request.news);
             if (news is null)
             {
-                const string errorMsg = $"Cannot convert null to news";
+                string errorMsg = ErrorMessages.CannotConvertNullToNews;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }
@@ -37,11 +38,14 @@ namespace Streetcode.BLL.MediatR.Newss.Update
 
             if (news.Image is not null)
             {
-                response.Image.Base64 = _blobSevice.FindFileInStorageAsBase64(response.Image.BlobName);
+                response.Image?.Base64 = _blobSevice.FindFileInStorageAsBase64(response.Image.BlobName!);
             }
             else
             {
-                var img = await _repositoryWrapper.ImageRepository.GetFirstOrDefaultAsync(x => x.Id == response.ImageId);
+                var img = await _repositoryWrapper.ImageRepository.GetFirstOrDefaultAsync(
+                    predicate: x => x.Id == response.ImageId,
+                    cancellationToken: cancellationToken);
+
                 if (img != null)
                 {
                     _repositoryWrapper.ImageRepository.Delete(img);
@@ -49,7 +53,7 @@ namespace Streetcode.BLL.MediatR.Newss.Update
             }
 
             _repositoryWrapper.NewsRepository.Update(news);
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
             if (resultIsSuccess)
             {
@@ -57,7 +61,7 @@ namespace Streetcode.BLL.MediatR.Newss.Update
             }
             else
             {
-                const string errorMsg = $"Failed to update news";
+                string errorMsg = ErrorMessages.FailedToUpdateNews;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }

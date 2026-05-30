@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentResults;
 using Moq;
 using FluentAssertions;
@@ -8,9 +9,9 @@ using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.RelatedTerm;
 
@@ -49,15 +50,15 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
 
             _mapperMock
                 .Setup(mapper => mapper.Map<Entity>(dto))
-                .Returns((Entity)null);
+                .Returns((Entity)null!);
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot create new related word for a term!");
+            result.Errors[0].Message.Should().Be(ErrorMessages.CannotCreateRelatedWordForTerm);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Cannot create new related word for a term!"),
+                logger => logger.LogError(command, ErrorMessages.CannotCreateRelatedWordForTerm),
                 Times.Once);
 
             _relatedTermRepositoryMock.Verify(
@@ -89,10 +90,10 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Слово з цим визначенням уже існує");
+            result.Errors[0].Message.Should().Be(ErrorMessages.RelatedWordAlreadyExists);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Слово з цим визначенням уже існує"),
+                logger => logger.LogError(command, ErrorMessages.RelatedWordAlreadyExists),
                 Times.Once);
 
             _relatedTermRepositoryMock.Verify(
@@ -119,15 +120,15 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
                 .Setup(repo => repo.GetAllAsync(
                     It.IsAny<Expression<Func<Entity, bool>>>(),
                     It.IsAny<Func<IQueryable<Entity>, IIncludableQueryable<Entity, object>>?>()))
-                .ReturnsAsync((IEnumerable<Entity>)null);
+                .ReturnsAsync((IEnumerable<Entity>)null!);
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Слово з цим визначенням уже існує");
+            result.Errors[0].Message.Should().Be(ErrorMessages.RelatedWordAlreadyExists);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Слово з цим визначенням уже існує"),
+                logger => logger.LogError(command, ErrorMessages.RelatedWordAlreadyExists),
                 Times.Once);
 
             _relatedTermRepositoryMock.Verify(
@@ -168,7 +169,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
 
             result.IsFailed.Should().BeTrue();
             result.Errors[0].Message.Should()
-                .Be("Cannot save changes in the database after related word creation!");
+                .Be(ErrorMessages.CannotSaveRelatedWordChanges);
 
             _relatedTermRepositoryMock.Verify(
                 repo => repo.Create(It.IsAny<Entity>()),
@@ -179,8 +180,9 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
                 Times.Once);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command,
-                "Cannot save changes in the database after related word creation!"),
+                logger => logger.LogError(
+                    command,
+                    ErrorMessages.CannotSaveRelatedWordChanges),
                 Times.Once);
         }
 
@@ -216,10 +218,12 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot map entity!");
+            result.Errors[0].Message.Should().Be(ErrorMessages.CannotMapEntity);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Cannot map entity!"),
+                logger => logger.LogError(
+                    command,
+                    ErrorMessages.CannotMapEntity),
                 Times.Once);
         }
 

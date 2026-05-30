@@ -28,7 +28,9 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
         public async Task<Result<StreetcodeDTO>> Handle(UpdateStreetcodeCommand request, CancellationToken cancellationToken)
         {
             var entity = await _repositoryWrapper.StreetcodeRepository
-                    .GetFirstOrDefaultAsync(s => s.Id == request.streetcode.Id);
+                    .GetFirstOrDefaultAsync(
+                        predicate: s => s.Id == request.streetcode.Id,
+                        cancellationToken: cancellationToken);
 
             if (entity is null)
             {
@@ -48,7 +50,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
 
             _repositoryWrapper.StreetcodeRepository.Update(streetcode);
 
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
             if (resultIsSuccess)
             {

@@ -3,6 +3,7 @@ using FluentResults;
 using MediatR;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Text.GetById;
@@ -22,11 +23,13 @@ public class GetTextByIdHandler : IRequestHandler<GetTextByIdQuery, Result<TextD
 
     public async Task<Result<TextDto>> Handle(GetTextByIdQuery request, CancellationToken cancellationToken)
     {
-        var text = await _repositoryWrapper.TextRepository.GetFirstOrDefaultAsync(f => f.Id == request.Id);
+        var text = await _repositoryWrapper.TextRepository.GetFirstOrDefaultAsync(
+            predicate: f => f.Id == request.Id,
+            cancellationToken: cancellationToken);
 
         if (text is null)
         {
-            string errorMsg = $"Cannot find any text with corresponding id: {request.Id}";
+            string errorMsg = string.Format(ErrorMessages.CannotFindTextById, request.Id);
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Streetcode.BLL.DTO.Media.Images;
@@ -7,8 +8,11 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Newss;
 using Streetcode.BLL.MediatR.Newss.GetByUrl;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
+
+using ImageEntity = global::Streetcode.DAL.Entities.Media.Images.Image;
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
 {
@@ -26,7 +30,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
             _mapper = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<NewsProfile>();
-                cfg.CreateMap<DAL.Entities.Media.Images.Image, ImageDTO>();
+                cfg.CreateMap<ImageEntity, ImageDTO>();
             }).CreateMapper();
 
             _repositoryWrapperMock = new Mock<IRepositoryWrapper> { DefaultValue = DefaultValue.Mock };
@@ -45,12 +49,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
         {
             string testUrl = "example-news-url";
             var request = new GetNewsByUrlQuery(testUrl);
-            var errorMsg = $"No news by entered Url - {testUrl}";
+            var errorMsg = string.Format(ErrorMessages.NoNewsFoundByUrl, testUrl);
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
-                .ReturnsAsync((DAL.Entities.News.News)null);
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
+                .ReturnsAsync((NewsEntity)null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -65,11 +69,18 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
             string testUrl = "example-news-url";
             var request = new GetNewsByUrlQuery(testUrl);
 
-            var newsEntity = new DAL.Entities.News.News { Id = 1, URL = testUrl, Image = null };
+            var newsEntity = new NewsEntity
+            {
+                Id = 1,
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = testUrl,
+                Image = null
+            };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
                 .ReturnsAsync(newsEntity);
 
             var result = await _handler.Handle(request, CancellationToken.None);
@@ -86,17 +97,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
             string testUrl = "example-news-url";
             var request = new GetNewsByUrlQuery(testUrl);
 
-            var newsEntity = new DAL.Entities.News.News
+            var newsEntity = new NewsEntity
             {
                 Id = 1,
+                Title = "Test News",
+                Text = "This is a test news.",
                 URL = testUrl,
-                Image = new DAL.Entities.Media.Images.Image { BlobName = "test-image.jpg" }
+                Image = new ImageEntity { BlobName = "test-image.jpg" }
             };
             var expectedBase64 = "base64-encoded-string";
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
                 .ReturnsAsync(newsEntity);
 
             _blobServiceMock.Setup(b => b.FindFileInStorageAsBase64("test-image.jpg"))
@@ -105,7 +118,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetByUrl
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal(expectedBase64, result.Value.Image.Base64);
+            Assert.Equal(expectedBase64, result.Value.Image?.Base64);
             _blobServiceMock.Verify(b => b.FindFileInStorageAsBase64("test-image.jpg"), Times.Once);
         }
     }

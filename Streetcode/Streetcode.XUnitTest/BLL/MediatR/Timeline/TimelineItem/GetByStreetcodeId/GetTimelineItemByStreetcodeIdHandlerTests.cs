@@ -2,183 +2,172 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetByStreetcodeId
+using System.Linq.Expressions;
+using AutoMapper;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Streetcode.BLL.DTO.Timeline;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Timeline;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem.GetByStreetcodeId;
+using Streetcode.DAL.Entities.Timeline;
+using Streetcode.DAL.Enums;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Timeline;
+using Xunit;
+using HistContext = Streetcode.DAL.Entities.Timeline.HistoricalContext;
+using TimelineItemEntity = Streetcode.DAL.Entities.Timeline.TimelineItem;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem.GetByStreetcodeId;
+
+public class GetTimelineItemByStreetcodeIdHandlerTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using FluentAssertions;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Streetcode.BLL.DTO.Timeline;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.Mapping.Timeline;
-    using Streetcode.BLL.MediatR.Timeline.TimelineItem.GetByStreetcodeId;
-    using Streetcode.DAL.Entities.Timeline;
-    using Streetcode.DAL.Enums;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Streetcode.DAL.Repositories.Interfaces.Timeline;
-    using Xunit;
+    private const string DatabaseFailureMessage = "Database failure";
 
-    /// <summary>
-    /// Unit tests for GetTimelineItemsByStreetcodeIdHandler.
-    /// </summary>
-    public class GetTimelineItemByStreetcodeIdHandlerTests
+    private readonly Mock<IRepositoryWrapper> _repoWrapperMock;
+    private readonly Mock<ITimelineRepository> _timelineRepoMock;
+    private readonly IMapper _mapper;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly GetTimelineItemsByStreetcodeIdHandler _handler;
+
+    public GetTimelineItemByStreetcodeIdHandlerTests()
     {
-        private readonly Mock<IRepositoryWrapper> repoWrapperMock;
-        private readonly Mock<ITimelineRepository> timelineRepoMock;
-        private readonly IMapper mapper;
-        private readonly Mock<ILoggerService> loggerMock;
-
-        private readonly GetTimelineItemsByStreetcodeIdHandler handler;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetTimelineItemByStreetcodeIdHandlerTests"/> class.
-        /// </summary>
-        public GetTimelineItemByStreetcodeIdHandlerTests()
+        var config = new MapperConfiguration(cfg =>
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<TimelineItemProfile>();
-            });
+            cfg.AddProfile<TimelineItemProfile>();
+        });
 
-            this.mapper = config.CreateMapper();
+        _mapper = config.CreateMapper();
 
-            this.repoWrapperMock = new Mock<IRepositoryWrapper>();
-            this.timelineRepoMock = new Mock<ITimelineRepository>();
-            this.loggerMock = new Mock<ILoggerService>();
+        _repoWrapperMock = new Mock<IRepositoryWrapper>();
+        _timelineRepoMock = new Mock<ITimelineRepository>();
+        _loggerMock = new Mock<ILoggerService>();
 
-            this.repoWrapperMock
-                .Setup(x => x.TimelineRepository)
-                .Returns(this.timelineRepoMock.Object);
+        _repoWrapperMock
+            .Setup(x => x.TimelineRepository)
+            .Returns(_timelineRepoMock.Object);
 
-            this.handler = new GetTimelineItemsByStreetcodeIdHandler(
-                this.repoWrapperMock.Object,
-                this.mapper,
-                this.loggerMock.Object);
-        }
+        _handler = new GetTimelineItemsByStreetcodeIdHandler(
+            _repoWrapperMock.Object,
+            _mapper,
+            _loggerMock.Object);
+    }
 
-        /// <summary>
-        /// Should return TimelineItemDTO when item exists.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnTimelineItemDTO_WhenItemExists()
+    [Fact]
+    public async Task Handle_ShouldReturnTimelineItemDTO_WhenItemExists()
+    {
+        var query = new GetTimelineItemsByStreetcodeIdQuery(1);
+
+        var timelineItems = new List<TimelineItemEntity>
         {
-            var query = new GetTimelineItemsByStreetcodeIdQuery(1);
-
-            var timelineItems = new List<TimelineItem>
+            new()
             {
-                new TimelineItem
-                {
-                    Id = 1,
-                    Title = "Test Title",
-                    Description = "Description",
-                    Date = new DateTime(2020, 01, 01),
-                    DateViewPattern = DateViewPattern.Year,
-                    StreetcodeId = 1,
-                    HistoricalContextTimelines = new List<HistoricalContextTimeline>
+                Id = 1,
+                Title = "Test Title",
+                Description = "Description",
+                Date = new DateTime(2020, 1, 1),
+                DateViewPattern = DateViewPattern.Year,
+                StreetcodeId = 1,
+                HistoricalContextTimelines = [
+                    new HistoricalContextTimeline()
                     {
-                        new HistoricalContextTimeline
+                        HistoricalContext = new HistContext
                         {
-                            HistoricalContext = new HistoricalContext
-                            {
-                                Id = 1,
-                                Title = "Historical Context 1",
-                            },
-                        },
-                    },
-                },
-            };
+                            Id = 1,
+                            Title = "Historical Context 1",
+                        }
+                    }
+                ]
+            },
+        };
 
-            this.timelineRepoMock
-                .Setup(r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
-                    It.IsAny<Func<IQueryable<TimelineItem>,
-                        IIncludableQueryable<TimelineItem, object>>>()))
-                .ReturnsAsync(timelineItems);
+        _timelineRepoMock
+            .Setup(r => r.GetAllAsync(
+                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<TimelineItemEntity>,
+                    IIncludableQueryable<TimelineItemEntity, object>>>()))
+            .ReturnsAsync(timelineItems);
 
-            var result = await this.handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().HaveCount(1);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().HaveCount(1);
 
-            var item = result.Value.First();
+        var item = result.Value.First();
 
-            item.Id.Should().Be(1);
-            item.Title.Should().Be("Test Title");
-            item.Description.Should().Be("Description");
-            item.DateViewPattern.Should().Be(DateViewPattern.Year);
+        item.Id.Should().Be(1);
+        item.Title.Should().Be("Test Title");
+        item.Description.Should().Be("Description");
+        item.DateViewPattern.Should().Be(DateViewPattern.Year);
 
-            item.HistoricalContexts.Should().HaveCount(1);
-            item.HistoricalContexts.First().Title.Should().Be("Historical Context 1");
-        }
+        item.HistoricalContexts.Should().HaveCount(1);
+        item.HistoricalContexts.First().Title.Should().Be("Historical Context 1");
 
-        /// <summary>
-        /// Should throw exception when repository fails.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldPropagateException_WhenRepositoryThrows()
-        {
-            var query = new GetTimelineItemsByStreetcodeIdQuery(1);
+        _timelineRepoMock.Verify(
+            r => r.GetAllAsync(
+                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<TimelineItemEntity>,
+                    IIncludableQueryable<TimelineItemEntity, object>>>()),
+            Times.Once);
+    }
 
-            this.timelineRepoMock
-                .Setup(r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
-                    It.IsAny<Func<IQueryable<TimelineItem>,
-                        IIncludableQueryable<TimelineItem, object>>>()))
-                .ThrowsAsync(new Exception("Database failure"));
+    [Fact]
+    public async Task Handle_ShouldPropagateException_WhenRepositoryThrows()
+    {
+        var query = new GetTimelineItemsByStreetcodeIdQuery(1);
 
-            var exception = await Assert.ThrowsAsync<Exception>(() =>
-                this.handler.Handle(query, CancellationToken.None));
+        _timelineRepoMock
+            .Setup(r => r.GetAllAsync(
+                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<TimelineItemEntity>,
+                    IIncludableQueryable<TimelineItemEntity, object>>>()))
+            .ThrowsAsync(new Exception(DatabaseFailureMessage));
 
-            exception.Message.Should().Be("Database failure");
+        Func<Task> act = () =>
+            _handler.Handle(query, CancellationToken.None);
 
-            this.loggerMock.Verify(
-                l => l.LogError(
-                    It.IsAny<object>(),
-                    It.IsAny<string>()),
-                Times.Never);
+        var exception = await act.Should()
+            .ThrowAsync<Exception>();
 
-            this.timelineRepoMock.Verify(
-                r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
-                    It.IsAny<Func<IQueryable<TimelineItem>,
-                        IIncludableQueryable<TimelineItem, object>>>()),
-                Times.Once);
-        }
+        exception.Which.Message.Should().Be(DatabaseFailureMessage);
 
-        /// <summary>
-        /// Should return empty collection when no timeline items exist.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnEmptyCollection_WhenNoItemsExist()
-        {
-            var query = new GetTimelineItemsByStreetcodeIdQuery(1);
+        _loggerMock.Verify(
+            l => l.LogError(
+                It.IsAny<object>(),
+                It.IsAny<string>()),
+            Times.Never);
 
-            this.timelineRepoMock
-                .Setup(r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
-                    It.IsAny<Func<IQueryable<TimelineItem>,
-                        IIncludableQueryable<TimelineItem, object>>>()))
-                .ReturnsAsync(new List<TimelineItem>());
+        _timelineRepoMock.Verify(
+            r => r.GetAllAsync(
+                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<TimelineItemEntity>,
+                    IIncludableQueryable<TimelineItemEntity, object>>>()),
+            Times.Once);
+    }
 
-            var result = await this.handler.Handle(query, CancellationToken.None);
+    [Fact]
+    public async Task Handle_ShouldReturnEmptyCollection_WhenNoItemsExist()
+    {
+        var query = new GetTimelineItemsByStreetcodeIdQuery(1);
 
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().BeEmpty();
+        _timelineRepoMock
+            .Setup(r => r.GetAllAsync(
+                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<TimelineItemEntity>,
+                    IIncludableQueryable<TimelineItemEntity, object>>>()))
+            .ReturnsAsync(new List<TimelineItemEntity>());
 
-            this.timelineRepoMock.Verify(
-                r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<TimelineItem, bool>>>(),
-                    It.IsAny<Func<IQueryable<TimelineItem>,
-                        IIncludableQueryable<TimelineItem, object>>>()),
-                Times.Once);
-        }
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEmpty();
+
+        _timelineRepoMock.Verify(
+            r => r.GetAllAsync(
+                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<TimelineItemEntity>,
+                    IIncludableQueryable<TimelineItemEntity, object>>>()),
+            Times.Once);
     }
 }

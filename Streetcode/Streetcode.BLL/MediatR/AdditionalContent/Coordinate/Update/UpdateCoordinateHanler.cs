@@ -2,6 +2,7 @@
 using FluentResults;
 using MediatR;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.AdditionalContent.Coordinate.Update;
 
@@ -22,12 +23,12 @@ public class UpdateCoordinateHandler : IRequestHandler<UpdateCoordinateCommand, 
 
         if (streetcodeCoordinate is null)
         {
-            return Result.Fail(new Error("Cannot convert null to streetcodeCoordinate"));
+            return Result.Fail(new Error(ErrorMessages.CannotConvertNullToStreetcodeCoordinate));
         }
 
         _repositoryWrapper.StreetcodeCoordinateRepository.Update(streetcodeCoordinate);
 
-        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
-        return resultIsSuccess ? Result.Ok(Unit.Value) : Result.Fail(new Error("Failed to update a streetcodeCoordinate"));
+        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
+        return resultIsSuccess ? Result.Ok(Unit.Value) : Result.Fail(new Error(ErrorMessages.FailedToUpdateStreetcodeCoordinate));
     }
 }
