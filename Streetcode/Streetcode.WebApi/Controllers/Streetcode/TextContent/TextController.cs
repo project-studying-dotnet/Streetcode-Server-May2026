@@ -8,6 +8,8 @@ using Streetcode.BLL.MediatR.Streetcode.Text.GetById;
 using Streetcode.BLL.MediatR.Streetcode.Text.GetByStreetcodeId;
 using Streetcode.BLL.MediatR.Streetcode.Text.GetParsed;
 using Streetcode.BLL.MediatR.Streetcode.Text.Update;
+using Streetcode.DAL.Enums;
+using Streetcode.WebApi.Attributes;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent;
 
@@ -37,18 +39,21 @@ public class TextController : BaseApiController
         return HandleResult(await Mediator.Send(new GetParsedTextForAdminPreviewCommand(text)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] TextCreateDto createTextRequest)
     {
         return HandleResult(await Mediator.Send(new CreateTextCommand(createTextRequest)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPut]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] TextUpdateDto updateTextRequest)
     {
         return HandleResult(await Mediator.Send(new UpdateTextCommand(updateTextRequest)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

@@ -1,204 +1,175 @@
-﻿// <copyright file="CreateAudioHandlerTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿using AutoMapper;
+using FluentAssertions;
+using Moq;
+using Repositories.Interfaces;
+using Streetcode.BLL.DTO.Media.Audio;
+using Streetcode.BLL.Interfaces.BlobStorage;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Media;
+using Streetcode.BLL.MediatR.Media.Audio.Create;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Xunit;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
+using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio;
+
+public class CreateAudioHandlerTests
 {
-    using AutoMapper;
-    using FluentAssertions;
-    using Moq;
-    using Repositories.Interfaces;
-    using Streetcode.BLL.DTO.Media.Audio;
-    using Streetcode.BLL.Interfaces.BlobStorage;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.Mapping.Media;
-    using Streetcode.BLL.MediatR.Media.Audio.Create;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Xunit;
-    using Streetcode.BLL.Resources;
-    using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
+    private const string HashBlobName = "abc123hash";
+    private const string Extension = "mp3";
+    private const string BaseFormat = "base64content";
+    private const string Title = "test-audio";
+    private const string MimeType = "audio/mpeg";
 
-    /// <summary>
-    /// Unit tests for the <see cref="CreateAudioHandler"/> class, which handles the creation of audio files in the system.
-    /// </summary>
-    public class CreateAudioHandlerTests
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly IMapper _mapper;
+    private readonly Mock<IBlobService> _blobServiceMock;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly Mock<IAudioRepository> _audioRepositoryMock;
+    private readonly CreateAudioHandler _handler;
+
+    public CreateAudioHandlerTests()
     {
-        private const string HashBlobName = "abc123hash";
-        private const string Extension = "mp3";
-        private const string BaseFormat = "base64content";
-        private const string Title = "test-audio";
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _audioRepositoryMock = new Mock<IAudioRepository>();
+        _mapper = new MapperConfiguration(cfg => cfg.AddProfile<AudioProfile>()).CreateMapper();
+        _blobServiceMock = new Mock<IBlobService>();
+        _loggerMock = new Mock<ILoggerService>();
 
-        private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly IMapper mapper;
-        private readonly Mock<IBlobService> blobServiceMock;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly Mock<IAudioRepository> audioRepositoryMock;
-        private readonly CreateAudioHandler handler;
+        _repositoryWrapperMock
+            .Setup(w => w.AudioRepository)
+            .Returns(_audioRepositoryMock.Object);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CreateAudioHandlerTests"/> class.
-        /// </summary>
-        public CreateAudioHandlerTests()
-        {
-            this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            this.audioRepositoryMock = new Mock<IAudioRepository>();
-            this.mapper = new MapperConfiguration(cfg => cfg.AddProfile<AudioProfile>()).CreateMapper();
-            this.blobServiceMock = new Mock<IBlobService>();
-            this.loggerMock = new Mock<ILoggerService>();
+        _handler = new CreateAudioHandler(
+            _blobServiceMock.Object,
+            _repositoryWrapperMock.Object,
+            _mapper,
+            _loggerMock.Object);
+    }
 
-            this.repositoryWrapperMock
-                .Setup(w => w.AudioRepository)
-                .Returns(this.audioRepositoryMock.Object);
+    [Fact]
+    public async Task Handle_WhenSaveSucceeds_ReturnsOkResultWithAudioDTO()
+    {
+        var command = new CreateAudioCommand(CreateDto());
 
-            this.handler = new CreateAudioHandler(
-                this.blobServiceMock.Object,
-                this.repositoryWrapperMock.Object,
-                this.mapper,
-                this.loggerMock.Object);
-        }
+        SetupSuccessScenario();
 
-        /// <summary>
-        /// Tests that when the save operation succeeds, the handler returns a successful result containing the expected <see cref="AudioDTO"/>.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveSucceeds_ReturnsOkResultWithAudioDTO()
-        {
-            var command = new CreateAudioCommand(CreateDto());
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            this.SetupSuccessScenario();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.BlobName.Should().Be($"{HashBlobName}.{Extension}");
+        result.Value.MimeType.Should().Be(MimeType);
+    }
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+    [Fact]
+    public async Task Handle_WhenSaveSucceeds_CallsSaveFileInStorage()
+    {
+        var command = new CreateAudioCommand(CreateDto());
 
-            result.IsSuccess.Should().BeTrue();
-            result.Value.BlobName.Should().Be($"{HashBlobName}.{Extension}");
-            result.Value.MimeType.Should().Be("audio/mpeg");
-        }
+        SetupSuccessScenario();
 
-        /// <summary>
-        /// Tests that when the save operation succeeds, the handler calls the <see cref="IBlobService.SaveFileInStorage"/> method with the correct parameters.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveSucceeds_CallsSaveFileInStorage()
-        {
-            var command = new CreateAudioCommand(CreateDto());
+        await _handler.Handle(command, CancellationToken.None);
 
-            this.SetupSuccessScenario();
+        _blobServiceMock.Verify(
+            b => b.SaveFileInStorage(BaseFormat, Title, Extension),
+            Times.Once);
+    }
 
-            await this.handler.Handle(command, CancellationToken.None);
+    [Fact]
+    public async Task Handle_WhenSaveSucceeds_SetsBlobNameCorrectly()
+    {
+        var command = new CreateAudioCommand(CreateDto());
+        AudioEntity? capturedEntity = null;
 
-            this.blobServiceMock.Verify(
-                b => b.SaveFileInStorage(BaseFormat, Title, Extension),
-                Times.Once);
-        }
+        _blobServiceMock
+            .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
+            .Returns(HashBlobName);
 
-        /// <summary>
-        /// Tests that when the save operation succeeds, the handler sets the BlobName property of the created <see cref="AudioEntity"/> correctly based on the returned hash from the blob service.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveSucceeds_SetsBlobNameCorrectly()
-        {
-            var command = new CreateAudioCommand(CreateDto());
-            AudioEntity? capturedEntity = null;
+        _audioRepositoryMock
+            .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
+            .Callback<AudioEntity>(a => capturedEntity = a)
+            .ReturnsAsync(new AudioEntity());
 
-            this.blobServiceMock
-                .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
-                .Returns(HashBlobName);
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(1);
 
-            this.audioRepositoryMock
-                .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
-                .Callback<AudioEntity>(a => capturedEntity = a)
-                .ReturnsAsync(new AudioEntity());
+        await _handler.Handle(command, CancellationToken.None);
 
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(1);
+        capturedEntity.Should().NotBeNull();
+        capturedEntity!.BlobName.Should().Be($"{HashBlobName}.{Extension}");
+    }
 
-            await this.handler.Handle(command, CancellationToken.None);
+    [Fact]
+    public async Task Handle_WhenSaveFails_ReturnsFailResult()
+    {
+        var command = new CreateAudioCommand(CreateDto());
 
-            capturedEntity.Should().NotBeNull();
-            capturedEntity!.BlobName.Should().Be($"{HashBlobName}.{Extension}");
-        }
+        _blobServiceMock
+            .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
+            .Returns(HashBlobName);
 
-        /// <summary>
-        /// Tests that when the save operation fails (i.e., SaveChangesAsync returns 0), the handler returns a failed result with the appropriate error message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveFails_ReturnsFailResult()
-        {
-            var command = new CreateAudioCommand(CreateDto());
+        _audioRepositoryMock
+            .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
+            .ReturnsAsync(new AudioEntity());
 
-            this.blobServiceMock
-                .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
-                .Returns(HashBlobName);
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(0);
 
-            this.audioRepositoryMock
-                .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
-                .ReturnsAsync(new AudioEntity());
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(0);
+        result.IsFailed.Should().BeTrue();
+        result.Errors[0].Message.Should().Be(ErrorMessages.FailedToCreateAudio);
+    }
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+    [Fact]
+    public async Task Handle_WhenSaveFails_LogsError()
+    {
+        var command = new CreateAudioCommand(CreateDto());
 
-            result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be(ErrorMessages.FailedToCreateAudio);
-        }
+        _blobServiceMock
+            .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
+            .Returns(HashBlobName);
 
-        /// <summary>
-        /// Tests that when the save operation fails (i.e., SaveChangesAsync returns 0), the handler logs an error with the appropriate message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveFails_LogsError()
-        {
-            var command = new CreateAudioCommand(CreateDto());
+        _audioRepositoryMock
+            .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
+            .ReturnsAsync(new AudioEntity());
 
-            this.blobServiceMock
-                .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
-                .Returns(HashBlobName);
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(0);
 
-            this.audioRepositoryMock
-                .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
-                .ReturnsAsync(new AudioEntity());
+        await _handler.Handle(command, CancellationToken.None);
 
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(0);
+        _loggerMock.Verify(
+            logger => logger.LogError(command, ErrorMessages.FailedToCreateAudio),
+            Times.Once);
+    }
 
-            await this.handler.Handle(command, CancellationToken.None);
+    private static AudioFileBaseCreateDTO CreateDto() => new()
+    {
+        BaseFormat = BaseFormat,
+        Title = Title,
+        Extension = Extension,
+        MimeType = MimeType,
+        Description = "Test description",
+    };
 
-            this.loggerMock.Verify(
-                logger => logger.LogError(command, ErrorMessages.FailedToCreateAudio),
-                Times.Once);
-        }
+    private void SetupSuccessScenario()
+    {
+        _blobServiceMock
+            .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
+            .Returns(HashBlobName);
 
-        private static AudioFileBaseCreateDTO CreateDto() => new AudioFileBaseCreateDTO
-        {
-            BaseFormat = BaseFormat,
-            Title = Title,
-            Extension = Extension,
-            MimeType = "audio/mpeg",
-            Description = "Test description",
-        };
+        _audioRepositoryMock
+            .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
+            .ReturnsAsync(new AudioEntity());
 
-        private void SetupSuccessScenario()
-        {
-            this.blobServiceMock
-                .Setup(b => b.SaveFileInStorage(BaseFormat, Title, Extension))
-                .Returns(HashBlobName);
-
-            this.audioRepositoryMock
-                .Setup(r => r.CreateAsync(It.IsAny<AudioEntity>()))
-                .ReturnsAsync(new AudioEntity());
-
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(1);
-        }
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(1);
     }
 }

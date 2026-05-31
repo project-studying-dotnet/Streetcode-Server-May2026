@@ -61,6 +61,51 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional text must not exceed {0} characters.
+        /// </summary>
+        public static string AdditionalTextMustNotExceed {
+            get {
+                return ResourceManager.GetString("AdditionalTextMustNotExceed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt text must not exceed {0} characters..
+        /// </summary>
+        public static string AltMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("AltMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Amount must be greater than 0..
+        /// </summary>
+        public static string AmountMustBeGreaterThanZero {
+            get {
+                return ResourceManager.GetString("AmountMustBeGreaterThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audio is required..
+        /// </summary>
+        public static string AudioIsRequired {
+            get {
+                return ResourceManager.GetString("AudioIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base format is required..
+        /// </summary>
+        public static string BaseFormatIsRequired {
+            get {
+                return ResourceManager.GetString("BaseFormatIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot convert null to news.
         /// </summary>
         public static string CannotConvertNullToNews {
@@ -97,6 +142,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any arts.
+        /// </summary>
+        public static string CannotFindAnyArts {
+            get {
+                return ResourceManager.GetString("CannotFindAnyArts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any audios.
         /// </summary>
         public static string CannotFindAnyAudios {
@@ -106,11 +160,56 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any partners.
+        /// </summary>
+        public static string CannotFindAnyPartners {
+            get {
+                return ResourceManager.GetString("CannotFindAnyPartners", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any team links.
+        /// </summary>
+        public static string CannotFindAnyTeamLinks {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTeamLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any term.
+        /// </summary>
+        public static string CannotFindAnyTerm {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTerm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any text.
         /// </summary>
         public static string CannotFindAnyText {
             get {
                 return ResourceManager.GetString("CannotFindAnyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find an art with corresponding id: {0}.
+        /// </summary>
+        public static string CannotFindArtById {
+            get {
+                return ResourceManager.GetString("CannotFindArtById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any art with corresponding streetcode id: {0}.
+        /// </summary>
+        public static string CannotFindArtByStreetcodeId {
+            get {
+                return ResourceManager.GetString("CannotFindArtByStreetcodeId", resourceCulture);
             }
         }
         
@@ -151,6 +250,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find one or more historical contexts.
+        /// </summary>
+        public static string CannotFindOneOrMoreHistoricalContexts {
+            get {
+                return ResourceManager.GetString("CannotFindOneOrMoreHistoricalContexts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any partner with corresponding id: {0}.
         /// </summary>
         public static string CannotFindPartnerById {
@@ -187,11 +295,29 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any term with corresponding id: {0}.
+        /// </summary>
+        public static string CannotFindTermById {
+            get {
+                return ResourceManager.GetString("CannotFindTermById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find any text with corresponding id: {0}.
         /// </summary>
         public static string CannotFindTextById {
             get {
                 return ResourceManager.GetString("CannotFindTextById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find a video with corresponding id: {0}.
+        /// </summary>
+        public static string CannotFindVideoById {
+            get {
+                return ResourceManager.GetString("CannotFindVideoById", resourceCulture);
             }
         }
         
@@ -214,11 +340,209 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot save historical context to database.
+        /// </summary>
+        public static string CannotSaveHistoricalContextToDatabase {
+            get {
+                return ResourceManager.GetString("CannotSaveHistoricalContextToDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot save changes in the database after related word creation!.
         /// </summary>
         public static string CannotSaveRelatedWordChanges {
             get {
                 return ResourceManager.GetString("CannotSaveRelatedWordChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot save timeline item to database.
+        /// </summary>
+        public static string CannotSaveTimelineItem {
+            get {
+                return ResourceManager.GetString("CannotSaveTimelineItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The category ID must be positive..
+        /// </summary>
+        public static string CategoryIdMustBePositive {
+            get {
+                return ResourceManager.GetString("CategoryIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} collection is required.
+        /// </summary>
+        public static string CollectionIsRequired {
+            get {
+                return ResourceManager.GetString("CollectionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Content is required..
+        /// </summary>
+        public static string ContentIsRequired {
+            get {
+                return ResourceManager.GetString("ContentIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Content length must be between {0} and {1} characters..
+        /// </summary>
+        public static string ContentLengthMustBeBetween {
+            get {
+                return ResourceManager.GetString("ContentLengthMustBeBetween", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Coordinate Id must be greater than 0.
+        /// </summary>
+        public static string CoordinateIdMustBePositive {
+            get {
+                return ResourceManager.GetString("CoordinateIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Coordinate is required.
+        /// </summary>
+        public static string CoordinateIsRequired {
+            get {
+                return ResourceManager.GetString("CoordinateIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date is required..
+        /// </summary>
+        public static string DateIsRequired {
+            get {
+                return ResourceManager.GetString("DateIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date string is required.
+        /// </summary>
+        public static string DateStringIsRequired {
+            get {
+                return ResourceManager.GetString("DateStringIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Connection is missing.
+        /// </summary>
+        public static string DefaultConnectionIsMissing {
+            get {
+                return ResourceManager.GetString("DefaultConnectionIsMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description is required..
+        /// </summary>
+        public static string DescriptionIsRequired {
+            get {
+                return ResourceManager.GetString("DescriptionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description must not exceed {0} characters..
+        /// </summary>
+        public static string DescriptionMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("DescriptionMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email Configuration is missing.
+        /// </summary>
+        public static string EmailConfigurationIsMissing {
+            get {
+                return ResourceManager.GetString("EmailConfigurationIsMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email &apos;From&apos; field must not exceed {0} characters..
+        /// </summary>
+        public static string EmailFromMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("EmailFromMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email is required..
+        /// </summary>
+        public static string EmailIsRequired {
+            get {
+                return ResourceManager.GetString("EmailIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email payload is required..
+        /// </summary>
+        public static string EmailPayloadIsRequired {
+            get {
+                return ResourceManager.GetString("EmailPayloadIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End or death date cannot be earlier than start or birth date.
+        /// </summary>
+        public static string EndDateCannotBeEarlierThanStartDate {
+            get {
+                return ResourceManager.GetString("EndDateCannotBeEarlierThanStartDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension is required..
+        /// </summary>
+        public static string ExtensionIsRequired {
+            get {
+                return ResourceManager.GetString("ExtensionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension must not exceed {0} characters..
+        /// </summary>
+        public static string ExtensionMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("ExtensionMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fact content is required..
+        /// </summary>
+        public static string FactContentIsRequired {
+            get {
+                return ResourceManager.GetString("FactContentIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fact content must not exceed {0} characters..
+        /// </summary>
+        public static string FactContentMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("FactContentMustNotExceedCharacters", resourceCulture);
             }
         }
         
@@ -237,6 +561,15 @@ namespace Streetcode.BLL.Resources {
         public static string FailedToCreateNews {
             get {
                 return ResourceManager.GetString("FailedToCreateNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to create a relation..
+        /// </summary>
+        public static string FailedToCreateRelation {
+            get {
+                return ResourceManager.GetString("FailedToCreateRelation", resourceCulture);
             }
         }
         
@@ -268,6 +601,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete historical context with id {0}.
+        /// </summary>
+        public static string FailedToDeleteHistoricalContextWithId {
+            get {
+                return ResourceManager.GetString("FailedToDeleteHistoricalContextWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to delete news.
         /// </summary>
         public static string FailedToDeleteNews {
@@ -282,6 +624,24 @@ namespace Streetcode.BLL.Resources {
         public static string FailedToDeleteRelatedTerm {
             get {
                 return ResourceManager.GetString("FailedToDeleteRelatedTerm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to delete timeline item with id {0}.
+        /// </summary>
+        public static string FailedToDeleteTimelineItemWithId {
+            get {
+                return ResourceManager.GetString("FailedToDeleteTimelineItemWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update historical context with id {0}.
+        /// </summary>
+        public static string FailedToUpdateHistoricalContextWithId {
+            get {
+                return ResourceManager.GetString("FailedToUpdateHistoricalContextWithId", resourceCulture);
             }
         }
         
@@ -304,6 +664,276 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to update timeline item with id {0}.
+        /// </summary>
+        public static string FailedToUpdateTimelineItemWithId {
+            get {
+                return ResourceManager.GetString("FailedToUpdateTimelineItemWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is required.
+        /// </summary>
+        public static string FieldIsRequired {
+            get {
+                return ResourceManager.GetString("FieldIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must not exceed {1} characters.
+        /// </summary>
+        public static string FieldMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("FieldMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter is required..
+        /// </summary>
+        public static string FilterIsRequired {
+            get {
+                return ResourceManager.GetString("FilterIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Historical contexts collection is required..
+        /// </summary>
+        public static string HistoricalContextsCollectionIsRequired {
+            get {
+                return ResourceManager.GetString("HistoricalContextsCollectionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Historical context with id {0} not found.
+        /// </summary>
+        public static string HistoricalContextWithIdNotFound {
+            get {
+                return ResourceManager.GetString("HistoricalContextWithIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id must be greater than or equal to 0..
+        /// </summary>
+        public static string IdMustBeGreaterOrEqualToZero {
+            get {
+                return ResourceManager.GetString("IdMustBeGreaterOrEqualToZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id must be greater than or equal to 0.
+        /// </summary>
+        public static string IdMustBeGreaterThanOrEqualToZero {
+            get {
+                return ResourceManager.GetString("IdMustBeGreaterThanOrEqualToZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id must be greater than 0..
+        /// </summary>
+        public static string IdMustBePositive {
+            get {
+                return ResourceManager.GetString("IdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image ID must be greater than 0..
+        /// </summary>
+        public static string ImageIdMustBePositive {
+            get {
+                return ResourceManager.GetString("ImageIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image is required..
+        /// </summary>
+        public static string ImageIsRequired {
+            get {
+                return ResourceManager.GetString("ImageIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Index must be greater than or equal to 0..
+        /// </summary>
+        public static string IndexMustBeGreaterOrEqualToZero {
+            get {
+                return ResourceManager.GetString("IndexMustBeGreaterOrEqualToZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Index must be greater than or equal to 0.
+        /// </summary>
+        public static string IndexMustBeGreaterThanOrEqualToZero {
+            get {
+                return ResourceManager.GetString("IndexMustBeGreaterThanOrEqualToZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid date view pattern..
+        /// </summary>
+        public static string InvalidDateViewPattern {
+            get {
+                return ResourceManager.GetString("InvalidDateViewPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid email format..
+        /// </summary>
+        public static string InvalidEmailFormat {
+            get {
+                return ResourceManager.GetString("InvalidEmailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid {0}.
+        /// </summary>
+        public static string InvalidEnumValue {
+            get {
+                return ResourceManager.GetString("InvalidEnumValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided logo type is invalid..
+        /// </summary>
+        public static string InvalidLogoType {
+            get {
+                return ResourceManager.GetString("InvalidLogoType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid user role..
+        /// </summary>
+        public static string InvalidUserRole {
+            get {
+                return ResourceManager.GetString("InvalidUserRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Latitude must be between -90 and 90..
+        /// </summary>
+        public static string LatitudeMustBeBetweenMinus90And90 {
+            get {
+                return ResourceManager.GetString("LatitudeMustBeBetweenMinus90And90", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login is required..
+        /// </summary>
+        public static string LoginIsRequired {
+            get {
+                return ResourceManager.GetString("LoginIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login must not exceed {0} characters..
+        /// </summary>
+        public static string LoginMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("LoginMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logo ID must be greater than 0..
+        /// </summary>
+        public static string LogoIdMustBePositive {
+            get {
+                return ResourceManager.GetString("LogoIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logo type must be a valid enum value..
+        /// </summary>
+        public static string LogoTypeMustBeValidEnum {
+            get {
+                return ResourceManager.GetString("LogoTypeMustBeValidEnum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Longitude must be between -180 and 180..
+        /// </summary>
+        public static string LongitudeMustBeBetweenMinus180And180 {
+            get {
+                return ResourceManager.GetString("LongitudeMustBeBetweenMinus180And180", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIME type is required..
+        /// </summary>
+        public static string MimeTypeIsRequired {
+            get {
+                return ResourceManager.GetString("MimeTypeIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIME type must not exceed {0} characters..
+        /// </summary>
+        public static string MimeTypeMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("MimeTypeMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name is required..
+        /// </summary>
+        public static string NameIsRequired {
+            get {
+                return ResourceManager.GetString("NameIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name must not exceed {0} characters..
+        /// </summary>
+        public static string NameMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("NameMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to News is required..
+        /// </summary>
+        public static string NewsIsRequired {
+            get {
+                return ResourceManager.GetString("NewsIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No existing streetcode with id: {0}.
+        /// </summary>
+        public static string NoExistingStreetcodeWithId {
+            get {
+                return ResourceManager.GetString("NoExistingStreetcodeWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No news found by entered Id - {0}.
         /// </summary>
         public static string NoNewsFoundById {
@@ -322,11 +952,110 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No partner with such id.
+        ///   Looks up a localized string similar to No partner with such id..
         /// </summary>
         public static string NoPartnerWithSuchId {
             get {
                 return ResourceManager.GetString("NoPartnerWithSuchId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Observer ID must be positive..
+        /// </summary>
+        public static string ObserverIdMustBePositive {
+            get {
+                return ResourceManager.GetString("ObserverIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The page number must be greater than 0..
+        /// </summary>
+        public static string PageNumberMustBePositive {
+            get {
+                return ResourceManager.GetString("PageNumberMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The page size must be greater than 0..
+        /// </summary>
+        public static string PageSizeMustBePositive {
+            get {
+                return ResourceManager.GetString("PageSizeMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partner is required..
+        /// </summary>
+        public static string PartnerIsRequired {
+            get {
+                return ResourceManager.GetString("PartnerIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partner source links collection is required..
+        /// </summary>
+        public static string PartnerSourceLinksRequired {
+            get {
+                return ResourceManager.GetString("PartnerSourceLinksRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password is required..
+        /// </summary>
+        public static string PasswordIsRequired {
+            get {
+                return ResourceManager.GetString("PasswordIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must not exceed {0} characters..
+        /// </summary>
+        public static string PasswordMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("PasswordMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Payment information is required..
+        /// </summary>
+        public static string PaymentIsRequired {
+            get {
+                return ResourceManager.GetString("PaymentIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Position is required..
+        /// </summary>
+        public static string PositionIsRequired {
+            get {
+                return ResourceManager.GetString("PositionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Position name is required..
+        /// </summary>
+        public static string PositionNameIsRequired {
+            get {
+                return ResourceManager.GetString("PositionNameIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Related term is required..
+        /// </summary>
+        public static string RelatedTermIsRequired {
+            get {
+                return ResourceManager.GetString("RelatedTermIsRequired", resourceCulture);
             }
         }
         
@@ -340,11 +1069,353 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search query is required..
+        /// </summary>
+        public static string SearchQueryIsRequired {
+            get {
+                return ResourceManager.GetString("SearchQueryIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search query must not exceed {0} characters..
+        /// </summary>
+        public static string SearchQueryMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("SearchQueryMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to StreetcodeId must be greater than 0.
+        /// </summary>
+        public static string StreetcodeIdMustBePositive {
+            get {
+                return ResourceManager.GetString("StreetcodeIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Streetcodes collection is required..
+        /// </summary>
+        public static string StreetcodesRequired {
+            get {
+                return ResourceManager.GetString("StreetcodesRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subtitle text is required..
+        /// </summary>
+        public static string SubtitleTextIsRequired {
+            get {
+                return ResourceManager.GetString("SubtitleTextIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Surname is required..
+        /// </summary>
+        public static string SurnameIsRequired {
+            get {
+                return ResourceManager.GetString("SurnameIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Surname must not exceed {0} characters..
+        /// </summary>
+        public static string SurnameMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("SurnameMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The tagId must be positive..
+        /// </summary>
+        public static string TagIdMustBePositive {
+            get {
+                return ResourceManager.GetString("TagIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tag is required..
+        /// </summary>
+        public static string TagIsRequired {
+            get {
+                return ResourceManager.GetString("TagIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test tag.
+        /// </summary>
+        public static string TagTitleIsEmpty {
+            get {
+                return ResourceManager.GetString("TagTitleIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Target ID must be positive..
+        /// </summary>
+        public static string TargetIdMustBePositive {
+            get {
+                return ResourceManager.GetString("TargetIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target URL is required..
+        /// </summary>
+        public static string TargetUrlIsRequired {
+            get {
+                return ResourceManager.GetString("TargetUrlIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target URL must be a valid URL..
+        /// </summary>
+        public static string TargetUrlMustBeValid {
+            get {
+                return ResourceManager.GetString("TargetUrlMustBeValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target URL must be a valid absolute URL..
+        /// </summary>
+        public static string TargetUrlMustBeValidAbsoluteUrl {
+            get {
+                return ResourceManager.GetString("TargetUrlMustBeValidAbsoluteUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target URL must not exceed {0} characters..
+        /// </summary>
+        public static string TargetUrlMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("TargetUrlMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TeamMemberId must be greater than 0..
+        /// </summary>
+        public static string TeamMemberIdMustBePositive {
+            get {
+                return ResourceManager.GetString("TeamMemberIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Team member link is required..
+        /// </summary>
+        public static string TeamMemberLinkIsRequired {
+            get {
+                return ResourceManager.GetString("TeamMemberLinkIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Teaser must contain up to {0} characters with paragraph breaks or up to {1} characters without paragraph breaks.
+        /// </summary>
+        public static string TeaserLengthIsInvalid {
+            get {
+                return ResourceManager.GetString("TeaserLengthIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Term ID must be greater than 0..
+        /// </summary>
+        public static string TermIdMustBePositive {
+            get {
+                return ResourceManager.GetString("TermIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text content is required..
+        /// </summary>
+        public static string TextContentIsRequired {
+            get {
+                return ResourceManager.GetString("TextContentIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text is required..
+        /// </summary>
+        public static string TextIsRequired {
+            get {
+                return ResourceManager.GetString("TextIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text must not exceed {0} characters..
+        /// </summary>
+        public static string TextMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("TextMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text to parse is required..
+        /// </summary>
+        public static string TextToParseIsRequired {
+            get {
+                return ResourceManager.GetString("TextToParseIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to text was not parsed successfully.
+        /// </summary>
+        public static string TextWasNotParsedSuccessfully {
+            get {
+                return ResourceManager.GetString("TextWasNotParsedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are no news in the database.
         /// </summary>
         public static string ThereAreNoNewsInDatabase {
             get {
                 return ResourceManager.GetString("ThereAreNoNewsInDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timeline item with id {0} not found.
+        /// </summary>
+        public static string TimelineItemWithIdNotFound {
+            get {
+                return ResourceManager.GetString("TimelineItemWithIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title cannot contain only whitespace..
+        /// </summary>
+        public static string TitleCannotBeWhitespace {
+            get {
+                return ResourceManager.GetString("TitleCannotBeWhitespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title is required..
+        /// </summary>
+        public static string TitleIsRequired {
+            get {
+                return ResourceManager.GetString("TitleIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title must not exceed {0} characters..
+        /// </summary>
+        public static string TitleMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("TitleMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transliteration URL is required..
+        /// </summary>
+        public static string TransliterationUrlIsRequired {
+            get {
+                return ResourceManager.GetString("TransliterationUrlIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transliteration URL must not exceed {0} characters..
+        /// </summary>
+        public static string TransliterationUrlMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("TransliterationUrlMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL is required..
+        /// </summary>
+        public static string UrlIsRequired {
+            get {
+                return ResourceManager.GetString("UrlIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL must be a valid absolute URL..
+        /// </summary>
+        public static string UrlMustBeValidAbsoluteUrl {
+            get {
+                return ResourceManager.GetString("UrlMustBeValidAbsoluteUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL must not exceed {0} characters..
+        /// </summary>
+        public static string UrlMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("UrlMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL title must not exceed {0} characters..
+        /// </summary>
+        public static string UrlTitleMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("UrlTitleMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} cannot be negative.
+        /// </summary>
+        public static string ValueCannotBeNegative {
+            get {
+                return ResourceManager.GetString("ValueCannotBeNegative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be greater than or equal to {1}.
+        /// </summary>
+        public static string ValueMustBeGreaterThanOrEqualTo {
+            get {
+                return ResourceManager.GetString("ValueMustBeGreaterThanOrEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Word is required..
+        /// </summary>
+        public static string WordIsRequired {
+            get {
+                return ResourceManager.GetString("WordIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Word must not exceed {0} characters..
+        /// </summary>
+        public static string WordMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("WordMustNotExceedCharacters", resourceCulture);
             }
         }
     }

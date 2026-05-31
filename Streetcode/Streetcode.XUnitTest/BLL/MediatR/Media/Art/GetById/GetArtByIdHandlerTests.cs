@@ -1,146 +1,110 @@
-﻿namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetById
+﻿using System.Linq.Expressions;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Repositories.Interfaces;
+using Streetcode.BLL.DTO.Media.Art;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Media.Art.GetById;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Xunit;
+
+using ArtEntity = Streetcode.DAL.Entities.Media.Images.Art;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetById;
+
+public class GetArtByIdHandlerTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Text;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Org.BouncyCastle.Asn1.Ocsp;
-    using Repositories.Interfaces;
-    using Streetcode.BLL.DTO.Media.Art;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.MediatR.Media.Art.GetById;
-    using Streetcode.DAL.Entities.Media.Images;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Xunit;
+    private readonly GetArtByIdHandler _handler;
+    private readonly Mock<IMapper> _mockMapper;
+    private readonly Mock<IRepositoryWrapper> _mockRepository;
+    private readonly Mock<IArtRepository> _mockArtRepository;
+    private readonly Mock<ILoggerService> _mockLoggerService;
 
-    /// <summary>
-    /// Checking class GetArtByIdHandler.
-    /// </summary>
-    public class GetArtByIdHandlerTests
+    public GetArtByIdHandlerTests()
     {
-        private GetArtByIdHandler handler;
+        _mockMapper = new Mock<IMapper>();
+        _mockArtRepository = new Mock<IArtRepository>();
+        _mockRepository = new Mock<IRepositoryWrapper>();
+        _mockLoggerService = new Mock<ILoggerService>();
 
-        private Mock<IMapper> mockMapper;
-        private Mock<IRepositoryWrapper> mockRepository;
-        private Mock<IArtRepository> mockArtRepository;
-        private Mock<ILoggerService> mockLoggerService;
+        _mockRepository
+            .Setup(r => r.ArtRepository)
+            .Returns(_mockArtRepository.Object);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetArtByIdHandlerTests"/> class.
-        /// </summary>
-        public GetArtByIdHandlerTests()
+        _handler = new GetArtByIdHandler(
+            _mockRepository.Object,
+            _mockMapper.Object,
+            _mockLoggerService.Object);
+    }
+
+    [Fact]
+    public async Task Handle_ValidId_ReturnArt()
+    {
+        var query = new GetArtByIdQuery(1);
+
+        var art = new ArtEntity
         {
-            this.mockMapper = new Mock<IMapper>();
-            this.mockArtRepository = new Mock<IArtRepository>();
-            this.mockRepository = new Mock<IRepositoryWrapper>();
-            this.mockLoggerService = new Mock<ILoggerService>();
+            Id = 1,
+            Description = "Description art 1",
+            ImageId = 1,
+            Title = "Title art 1",
+        };
 
-            this.mockRepository
-                .Setup(r => r.ArtRepository)
-                .Returns(this.mockArtRepository.Object);
-
-            this.handler = new GetArtByIdHandler(
-                    this.mockRepository.Object,
-                    this.mockMapper.Object,
-                    this.mockLoggerService.Object);
-        }
-
-        /// <summary>
-        /// Method returns correct art, if entered valid id.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task Handle_ValidId_ReturnArt()
+        var artDto = new ArtDTO
         {
-            // Arrange
-            var query = new GetArtByIdQuery(1);
+            Id = 1,
+            Description = "Description art 1",
+            ImageId = 1,
+            Title = "Title art 1",
+        };
 
-            var art = new Art()
-            {
-                Id = 1,
-                Description = "Description art 1",
-                ImageId = 1,
-                Title = "Title art 1",
-            };
+        _mockArtRepository
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>, IIncludableQueryable<ArtEntity, object>>>()))
+            .ReturnsAsync(art);
 
-            var artDTO = new ArtDTO()
-            {
-                Id = 1,
-                Description = "Description art 1",
-                ImageId = 1,
-                Title = "Title art 1",
-            };
+        _mockMapper
+            .Setup(m => m.Map<ArtDTO>(It.IsAny<ArtEntity>()))
+            .Returns(artDto);
 
-            this.mockArtRepository
-                    .Setup(r => r.GetFirstOrDefaultAsync(
-                        It.IsAny<Expression<Func<Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<Art>,
-                            IIncludableQueryable<Art, object>>>()))
-                    .ReturnsAsync(art);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            this.mockMapper
-                    .Setup(m => m.Map<ArtDTO>(
-                        It.IsAny<Art>()))
-                    .Returns(artDTO);
+        Assert.True(result.IsSuccess);
+        Assert.NotNull(result.Value);
+        Assert.Equal(artDto.Id, result.Value.Id);
+        Assert.Equal(artDto.Title, result.Value.Title);
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+        _mockArtRepository.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>, IIncludableQueryable<ArtEntity, object>>>()),
+            Times.Once);
+    }
 
-            // Assert
-            Assert.True(result.IsSuccess);
+    [Fact]
+    public async Task Handle_NotValidId_ReturnError()
+    {
+        var query = new GetArtByIdQuery(2);
+        var expectedErrorMsg = string.Format(ErrorMessages.CannotFindArtById, query.Id);
 
-            Assert.NotNull(result.Value);
+        _mockArtRepository
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>, IIncludableQueryable<ArtEntity, object>>>()))
+            .ReturnsAsync((ArtEntity)null!);
 
-            Assert.Equal(artDTO.Id, result.Value.Id);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            Assert.Equal(artDTO.Title, result.Value.Title);
+        Assert.True(result.IsFailed);
+        Assert.Equal(expectedErrorMsg, result.Errors.First().Message);
 
-            this.mockArtRepository
-                    .Verify(r => r.GetFirstOrDefaultAsync(
-                        It.IsAny<Expression<Func<Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<Art>,
-                            IIncludableQueryable<Art, object>>>()),
-                    Times.Once);
-        }
-
-        /// <summary>
-        /// Method returns error message, if entered not valid id.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task Handle_NotValidId_ReturnError()
-        {
-            // Arrange
-            var query = new GetArtByIdQuery(2);
-
-            string expectedErrorMsg = $"Cannot find an art with corresponding id: {query.Id}";
-
-            this.mockArtRepository
-                    .Setup(r => r.GetFirstOrDefaultAsync(
-                        It.IsAny<Expression<Func<Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<Art>,
-                            IIncludableQueryable<Art, object>>>()))
-                    .ReturnsAsync((Art?)null);
-
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            // Assert
-            Assert.True(result.IsFailed);
-
-            Assert.Equal(expectedErrorMsg, result.Errors.First().Message);
-
-            this.mockArtRepository
-                    .Verify(r => r.GetFirstOrDefaultAsync(
-                        It.IsAny<Expression<Func<Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<Art>,
-                            IIncludableQueryable<Art, object>>>()),
-                    Times.Once);
-        }
+        _mockArtRepository.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>, IIncludableQueryable<ArtEntity, object>>>()),
+            Times.Once);
     }
 }

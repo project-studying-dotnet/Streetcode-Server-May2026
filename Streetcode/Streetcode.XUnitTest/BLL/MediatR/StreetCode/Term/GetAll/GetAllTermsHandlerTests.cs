@@ -6,6 +6,7 @@ using Streetcode.BLL.Mapping.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.Term.GetAll;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.Term;
 
@@ -53,9 +54,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.GetAll
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenTermsAreNull()
         {
-            const string expectedErrorMsg = "Cannot find any term";
+            string expectedErrorMsg = ErrorMessages.CannotFindAnyTerm;
+
             _repositoryWrapperMock.Setup(r => r.TermRepository.GetAllAsync(null, null))
-                .ReturnsAsync((List<Entity>)null);
+                .ReturnsAsync((List<Entity>)null!);
 
             var handler = new GetAllTermsHandler(_repositoryWrapperMock.Object, _mapper, _loggerMock.Object);
             var query = new GetAllTermsQuery();

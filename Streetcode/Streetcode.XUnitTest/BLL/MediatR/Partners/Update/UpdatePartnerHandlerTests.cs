@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using FluentResults;
 using Microsoft.EntityFrameworkCore.Query;
@@ -12,7 +13,6 @@ using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
-using System.Linq.Expressions;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Update

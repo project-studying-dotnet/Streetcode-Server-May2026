@@ -58,7 +58,7 @@ public class CreateTextHandler : IRequestHandler<CreateTextCommand, Result<TextD
         }
 
         await _repositoryWrapper.TextRepository.CreateAsync(textEntity);
-        var saveResult = await _repositoryWrapper.SaveChangesAsync();
+        var saveResult = await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
         if (saveResult > 0)
         {
