@@ -55,7 +55,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
 
                 _repositoryWrapper.StreetcodeRepository.Update(streetcode);
 
-                _repositoryWrapper?.SaveChangesAsync(cancellationToken);
+                _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 var newTagIds = request.streetcode.Tags.Select(t => t.Id).ToList();
 
