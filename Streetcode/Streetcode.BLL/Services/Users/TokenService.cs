@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Streetcode.BLL.Interfaces.Users;
@@ -37,15 +38,43 @@ namespace Streetcode.BLL.Services.Users
                 signingCredentials: credentials);
         }
 
-        public JwtSecurityToken RefreshToken(string token)
+        public string GenerateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+
+            using var randomNumberGenerator = RandomNumberGenerator.Create();
+            randomNumberGenerator.GetBytes(randomBytes);
+
+            return Convert.ToBase64String(randomBytes);
+        }
+
+        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, GetTokenValidationParameters(validateLifetime: false), out _);
+
+            var principal = tokenHandler.ValidateToken(
+                token,
+                GetTokenValidationParameters(validateLifetime: false),
+                out SecurityToken securityToken);
+
+            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token.");
+            }
+
+            return principal;
+        }
+
+        public JwtSecurityToken RefreshToken(string token)
+        {
+            var principal = GetPrincipalFromExpiredToken(token);
 
             var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier)
                 ?? throw new SecurityTokenException("Token does not contain user identifier.");
 
             var userName = principal.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+
             var role = principal.FindFirstValue(ClaimTypes.Role)
                 ?? throw new SecurityTokenException("Token does not contain user role.");
 
