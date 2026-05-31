@@ -32,7 +32,9 @@ public class UpdateSourceLinkCategoryHandler
         var dto = request.Category;
 
         var category = await _repositoryWrapper.SourceCategoryRepository
-            .GetFirstOrDefaultAsync(c => c.Id == dto.Id);
+            .GetFirstOrDefaultAsync(
+            c => c.Id == dto.Id,
+            cancellationToken: cancellationToken);
 
         if (category is null)
         {

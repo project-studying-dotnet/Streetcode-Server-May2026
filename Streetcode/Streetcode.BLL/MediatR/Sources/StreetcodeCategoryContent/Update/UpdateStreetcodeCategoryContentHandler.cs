@@ -32,9 +32,10 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Update
             var dto = request.CategoryContent;
 
             var existingContent = await _repositoryWrapper.StreetcodeCategoryContentRepository
-                .GetFirstOrDefaultAsync(c =>
-                    c.StreetcodeId == dto.StreetcodeId &&
-                    c.SourceLinkCategoryId == dto.SourceLinkCategoryId);
+                .GetFirstOrDefaultAsync(
+                    c => c.StreetcodeId == dto.StreetcodeId
+                         && c.SourceLinkCategoryId == dto.SourceLinkCategoryId,
+                    cancellationToken: cancellationToken);
 
             if (existingContent is null)
             {

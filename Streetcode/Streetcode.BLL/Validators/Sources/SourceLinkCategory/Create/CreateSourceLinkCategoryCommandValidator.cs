@@ -22,9 +22,10 @@ namespace Streetcode.BLL.Validators.Sources.SourceLinkCategory.Create
                     .MaximumLength(MaxTitleLength)
                     .MustAsync(async (title, cancellationToken) =>
                         await repositoryWrapper.SourceCategoryRepository
-                            .GetFirstOrDefaultAsync(c =>
-                                c.Title != null &&
-                                c.Title.ToLower() == title.ToLower()) is null)
+                            .GetFirstOrDefaultAsync(
+                                c => c.Title != null
+                                     && c.Title.ToLower() == title.ToLower(),
+                                cancellationToken: cancellationToken) is null)
                     .WithMessage(ErrorMessages.SourceCategoryAlreadyExists);
 
                 RuleFor(x => x.Category.ImageId)

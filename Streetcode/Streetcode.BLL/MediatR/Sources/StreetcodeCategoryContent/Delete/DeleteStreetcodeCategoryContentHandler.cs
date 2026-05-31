@@ -30,9 +30,10 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete
             CancellationToken cancellationToken)
         {
             var content = await _repositoryWrapper.StreetcodeCategoryContentRepository
-                .GetFirstOrDefaultAsync(c =>
-                    c.StreetcodeId == request.StreetcodeId &&
-                    c.SourceLinkCategoryId == request.SourceLinkCategoryId);
+                .GetFirstOrDefaultAsync(
+                    c => c.StreetcodeId == request.StreetcodeId &&
+                         c.SourceLinkCategoryId == request.SourceLinkCategoryId,
+                    cancellationToken: cancellationToken);
 
             if (content is null)
             {

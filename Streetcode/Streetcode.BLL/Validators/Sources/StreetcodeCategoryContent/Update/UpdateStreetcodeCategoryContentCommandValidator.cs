@@ -28,9 +28,10 @@ namespace Streetcode.BLL.Validators.Sources.StreetcodeCategoryContent.Update
                 RuleFor(x => x.CategoryContent)
                     .MustAsync(async (dto, cancellationToken) =>
                         await repositoryWrapper.StreetcodeCategoryContentRepository
-                            .GetFirstOrDefaultAsync(c =>
-                                c.StreetcodeId == dto.StreetcodeId &&
-                                c.SourceLinkCategoryId == dto.SourceLinkCategoryId) is not null)
+                            .GetFirstOrDefaultAsync(
+                            c => c.StreetcodeId == dto.StreetcodeId &&
+                                c.SourceLinkCategoryId == dto.SourceLinkCategoryId,
+                            cancellationToken: cancellationToken) is not null)
                     .WithMessage(ErrorMessages.SourceCategoryNotFound);
             });
         }

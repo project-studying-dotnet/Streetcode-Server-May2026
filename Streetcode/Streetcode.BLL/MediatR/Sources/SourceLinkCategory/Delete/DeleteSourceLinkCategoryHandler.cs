@@ -25,7 +25,9 @@ public class DeleteSourceLinkCategoryHandler
         CancellationToken cancellationToken)
     {
         var category = await _repositoryWrapper.SourceCategoryRepository
-            .GetFirstOrDefaultAsync(c => c.Id == request.Id);
+            .GetFirstOrDefaultAsync(
+                c => c.Id == request.Id,
+                cancellationToken: cancellationToken);
 
         if (category is null)
         {

@@ -23,22 +23,27 @@ namespace Streetcode.BLL.Validators.Sources.StreetcodeCategoryContent.Create
                     .GreaterThan(0)
                     .MustAsync(async (streetcodeId, cancellationToken) =>
                         await repositoryWrapper.StreetcodeRepository
-                            .GetFirstOrDefaultAsync(s => s.Id == streetcodeId) is not null)
+                            .GetFirstOrDefaultAsync(
+                            s => s.Id == streetcodeId,
+                            cancellationToken: cancellationToken) is not null)
                     .WithMessage(ErrorMessages.StreetcodeNotFound);
 
                 RuleFor(x => x.CategoryContent.SourceLinkCategoryId)
                     .GreaterThan(0)
                     .MustAsync(async (categoryId, cancellationToken) =>
                         await repositoryWrapper.SourceCategoryRepository
-                            .GetFirstOrDefaultAsync(c => c.Id == categoryId) is not null)
+                            .GetFirstOrDefaultAsync(
+                            c => c.Id == categoryId,
+                            cancellationToken: cancellationToken) is not null)
                     .WithMessage(ErrorMessages.SourceCategoryNotFound);
 
                 RuleFor(x => x.CategoryContent)
                     .MustAsync(async (dto, cancellationToken) =>
                         await repositoryWrapper.StreetcodeCategoryContentRepository
-                            .GetFirstOrDefaultAsync(c =>
-                                c.StreetcodeId == dto.StreetcodeId &&
-                                c.SourceLinkCategoryId == dto.SourceLinkCategoryId) is null)
+                            .GetFirstOrDefaultAsync(
+                            c => c.StreetcodeId == dto.StreetcodeId &&
+                                c.SourceLinkCategoryId == dto.SourceLinkCategoryId,
+                            cancellationToken: cancellationToken) is null)
                     .WithMessage(ErrorMessages.SourceCategoryAlreadyExists);
             });
         }

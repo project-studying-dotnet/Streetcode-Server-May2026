@@ -19,9 +19,10 @@ namespace Streetcode.BLL.Validators.Sources.StreetcodeCategoryContent.Delete
             RuleFor(x => x)
                 .MustAsync(async (request, cancellationToken) =>
                     await repositoryWrapper.StreetcodeCategoryContentRepository
-                        .GetFirstOrDefaultAsync(c =>
-                            c.StreetcodeId == request.StreetcodeId &&
-                            c.SourceLinkCategoryId == request.SourceLinkCategoryId) is not null)
+                        .GetFirstOrDefaultAsync(
+                        c => c.StreetcodeId == request.StreetcodeId &&
+                            c.SourceLinkCategoryId == request.SourceLinkCategoryId,
+                        cancellationToken: cancellationToken) is not null)
                 .WithMessage(ErrorMessages.SourceCategoryNotFound);
         }
     }

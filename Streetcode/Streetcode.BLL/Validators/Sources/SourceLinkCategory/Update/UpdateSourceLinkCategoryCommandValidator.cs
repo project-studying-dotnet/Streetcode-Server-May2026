@@ -24,7 +24,9 @@ namespace Streetcode.BLL.Validators.Sources.SourceLinkCategory.Update
                 RuleFor(x => x.Category)
                     .MustAsync(async (dto, cancellationToken) =>
                         await repositoryWrapper.SourceCategoryRepository
-                            .GetFirstOrDefaultAsync(c => c.Id == dto.Id) is not null)
+                            .GetFirstOrDefaultAsync(
+                                c => c.Id == dto.Id,
+                                cancellationToken: cancellationToken) is not null)
                     .WithMessage(ErrorMessages.SourceCategoryNotFound);
 
                 RuleFor(x => x.Category.Title)
@@ -34,10 +36,11 @@ namespace Streetcode.BLL.Validators.Sources.SourceLinkCategory.Update
                 RuleFor(x => x.Category)
                     .MustAsync(async (dto, cancellationToken) =>
                         await repositoryWrapper.SourceCategoryRepository
-                            .GetFirstOrDefaultAsync(c =>
-                                c.Id != dto.Id &&
-                                c.Title != null &&
-                                c.Title.ToLower() == dto.Title.ToLower()) is null)
+                            .GetFirstOrDefaultAsync(
+                                c => c.Id != dto.Id &&
+                                    c.Title != null &&
+                                    c.Title.ToLower() == dto.Title.ToLower(),
+                                cancellationToken: cancellationToken) is null)
                     .WithMessage(ErrorMessages.SourceCategoryAlreadyExists);
 
                 RuleFor(x => x.Category.ImageId)
