@@ -1,6 +1,8 @@
 # Правила рев'ю PR
 
-PR знаходяться тут: https://github.com/project-studying-dotnet/Streetcode-Server-May2026/pulls. <br />
+Backend PR знаходяться тут: https://github.com/project-studying-dotnet/Streetcode-Server-May2026/pulls. <br />
+Frontend PR знаходяться тут: https://github.com/project-studying-dotnet/Streetcode-Client-May2026/pulls. <br />
+
 Якщо виникнуть питання, звертайтесь до скрам-майстра.
 
 ## Обирання PR для рев'ю
