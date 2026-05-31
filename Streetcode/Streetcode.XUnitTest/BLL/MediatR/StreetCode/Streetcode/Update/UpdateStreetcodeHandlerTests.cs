@@ -95,7 +95,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
             this.repositoryWrapperMock
                 .Setup(r => r.StreetcodeTagIndexRepository.GetAllAsync(
                     It.IsAny<Expression<Func<StreetcodeTagIndex, bool>>>(),
-                    It.IsAny<Func<IQueryable<StreetcodeTagIndex>, 
+                    It.IsAny<Func<IQueryable<StreetcodeTagIndex>,
                         IIncludableQueryable<StreetcodeTagIndex, object>>>()))
                 .ReturnsAsync(new List<StreetcodeTagIndex>());
 

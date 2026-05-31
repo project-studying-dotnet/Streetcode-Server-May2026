@@ -53,7 +53,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
 
                 _repositoryWrapper.StreetcodeRepository.Update(streetcode);
 
-                _repositoryWrapper.SaveChanges();
+                _repositoryWrapper?.SaveChangesAsync();
 
                 var newTagIds = request.streetcode.Tags.Select(t => t.Id).ToList();
 
@@ -72,7 +72,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
                 {
                     if (oldTags.FirstOrDefault(t => t.TagId == newTagId) == null)
                     {
-                        _repositoryWrapper.StreetcodeTagIndexRepository.Create(new StreetcodeTagIndex
+                        _repositoryWrapper?.StreetcodeTagIndexRepository.CreateAsync(new StreetcodeTagIndex
                         {
                             StreetcodeId = streetcode.Id,
                             TagId = newTagId
@@ -80,7 +80,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
                     }
                 }
 
-                _repositoryWrapper.SaveChanges();
+                _repositoryWrapper?.SaveChangesAsync();
 
                 var response = _mapper.Map<StreetcodeDTO>(streetcode);
                 response.Tags = request.streetcode.Tags;

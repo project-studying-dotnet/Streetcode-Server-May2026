@@ -41,7 +41,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Create
 
                 newStreetcode = await _repositoryWrapper.StreetcodeRepository.CreateAsync(newStreetcode);
 
-                _repositoryWrapper.SaveChanges();
+                _repositoryWrapper?.SaveChangesAsync();
 
                 var tagIds = request.newStreetcodeContent.Tags.Select(t => t.Id).ToList();
 
@@ -49,7 +49,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Create
                     .TagRepository
                     .GetAllAsync(t => tagIds.Contains(t.Id)));
 
-                _repositoryWrapper.SaveChanges();
+                _repositoryWrapper?.SaveChangesAsync();
 
                 return Result.Ok(_mapper.Map<StreetcodeDTO>(newStreetcode));
             }

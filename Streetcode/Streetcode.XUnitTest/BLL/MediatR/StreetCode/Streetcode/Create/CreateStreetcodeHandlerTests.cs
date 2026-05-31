@@ -4,6 +4,10 @@
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+    using System.Text;
     using AutoMapper;
     using global::Streetcode.BLL.DTO.AdditionalContent.Tag;
     using global::Streetcode.BLL.DTO.Streetcode;
@@ -17,10 +21,6 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
     using global::Streetcode.DAL.Repositories.Interfaces.Streetcode;
     using Microsoft.EntityFrameworkCore.Query;
     using Moq;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
-    using System.Text;
     using Xunit;
 
     /// <summary>
@@ -140,7 +140,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
                     Times.Once);
 
             this.repositoryWrapperMock.Verify(
-                    r => r.SaveChanges(),
+                    r => r.SaveChangesAsync(),
                     Times.Exactly(2));
         }
 
@@ -156,7 +156,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 
             var newStreetcodeContent = new StreetcodeDTO
             {
-                Id = 1, 
+                Id = 1,
                 Title = "Test Streetcode",
                 Tags = new List<StreetcodeTagDTO>
                 {
