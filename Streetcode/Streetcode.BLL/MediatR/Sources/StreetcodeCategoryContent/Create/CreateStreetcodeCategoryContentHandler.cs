@@ -10,9 +10,7 @@ using StreetcodeCategoryContentEntity = Streetcode.DAL.Entities.Sources.Streetco
 namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Create
 {
     public class CreateStreetcodeCategoryContentHandler
-    : IRequestHandler<
-        CreateStreetcodeCategoryContentCommand,
-        Result<StreetcodeCategoryContentDTO>>
+       : IRequestHandler<CreateStreetcodeCategoryContentCommand, Result<StreetcodeCategoryContentDTO>>
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IMapper _mapper;
@@ -29,44 +27,10 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Create
         }
 
         public async Task<Result<StreetcodeCategoryContentDTO>> Handle(
-        CreateStreetcodeCategoryContentCommand request,
-        CancellationToken cancellationToken)
+            CreateStreetcodeCategoryContentCommand request,
+            CancellationToken cancellationToken)
         {
-            var dto = request.CategoryContent;
-
-            var category = await _repositoryWrapper.SourceCategoryRepository
-                .GetFirstOrDefaultAsync(c => c.Id == dto.SourceLinkCategoryId);
-
-            if (category is null)
-            {
-                string errorMsg = ErrorMessages.SourceCategoryNotFound;
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
-            }
-
-            var streetcode = await _repositoryWrapper.StreetcodeRepository
-                .GetFirstOrDefaultAsync(s => s.Id == dto.StreetcodeId);
-
-            if (streetcode is null)
-            {
-                string errorMsg = ErrorMessages.StreetcodeNotFound;
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
-            }
-
-            var existingContent = await _repositoryWrapper.StreetcodeCategoryContentRepository
-                .GetFirstOrDefaultAsync(c =>
-                    c.StreetcodeId == dto.StreetcodeId &&
-                    c.SourceLinkCategoryId == dto.SourceLinkCategoryId);
-
-            if (existingContent is not null)
-            {
-                string errorMsg = ErrorMessages.SourceCategoryAlreadyExists;
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
-            }
-
-            var content = _mapper.Map<StreetcodeCategoryContentEntity>(dto);
+            var content = _mapper.Map<StreetcodeCategoryContentEntity>(request.CategoryContent);
 
             await _repositoryWrapper.StreetcodeCategoryContentRepository.CreateAsync(content);
 
@@ -74,13 +38,12 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Create
 
             if (!isSaved)
             {
-                string errorMsg = ErrorMessages.CannotSaveSourceCategory;
+                string errorMsg = ErrorMessages.CannotSaveSourceCategoryContent;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }
 
             return Result.Ok(_mapper.Map<StreetcodeCategoryContentDTO>(content));
         }
-
     }
 }

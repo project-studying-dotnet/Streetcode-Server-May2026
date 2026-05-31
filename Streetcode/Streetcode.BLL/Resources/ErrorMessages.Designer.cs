@@ -142,11 +142,20 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot delete source category..
+        ///   Looks up a localized string similar to Failed to delete source category.
         /// </summary>
         public static string CannotDeleteSourceCategory {
             get {
                 return ResourceManager.GetString("CannotDeleteSourceCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to delete source category content.
+        /// </summary>
+        public static string CannotDeleteSourceCategoryСontent {
+            get {
+                return ResourceManager.GetString("CannotDeleteSourceCategoryСontent", resourceCulture);
             }
         }
         
@@ -367,11 +376,20 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot save source category..
+        ///   Looks up a localized string similar to Failed to save source category.
         /// </summary>
         public static string CannotSaveSourceCategory {
             get {
                 return ResourceManager.GetString("CannotSaveSourceCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save source category content.
+        /// </summary>
+        public static string CannotSaveSourceCategoryContent {
+            get {
+                return ResourceManager.GetString("CannotSaveSourceCategoryContent", resourceCulture);
             }
         }
         
@@ -381,6 +399,24 @@ namespace Streetcode.BLL.Resources {
         public static string CannotSaveTimelineItem {
             get {
                 return ResourceManager.GetString("CannotSaveTimelineItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update streetcode category.
+        /// </summary>
+        public static string CannotUpdateSourceCategory {
+            get {
+                return ResourceManager.GetString("CannotUpdateSourceCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update streetcode category content.
+        /// </summary>
+        public static string CannotUpdateStreetcodeCategoryContent {
+            get {
+                return ResourceManager.GetString("CannotUpdateStreetcodeCategoryContent", resourceCulture);
             }
         }
         
@@ -1105,11 +1141,47 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Source category already exists for this streetcode.
+        /// </summary>
+        public static string SourceCategoryAlreadyExists {
+            get {
+                return ResourceManager.GetString("SourceCategoryAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source CategoryId is Required.
+        /// </summary>
+        public static string SourceCategoryIdRequired {
+            get {
+                return ResourceManager.GetString("SourceCategoryIdRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source category was not found.
+        /// </summary>
+        public static string SourceCategoryNotFound {
+            get {
+                return ResourceManager.GetString("SourceCategoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to StreetcodeId must be greater than 0.
         /// </summary>
         public static string StreetcodeIdMustBePositive {
             get {
                 return ResourceManager.GetString("StreetcodeIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Streetcode was not found.
+        /// </summary>
+        public static string StreetcodeNotFound {
+            get {
+                return ResourceManager.GetString("StreetcodeNotFound", resourceCulture);
             }
         }
         

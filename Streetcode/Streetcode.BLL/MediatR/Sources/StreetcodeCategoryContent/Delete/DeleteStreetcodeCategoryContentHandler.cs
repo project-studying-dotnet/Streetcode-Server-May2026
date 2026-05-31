@@ -9,9 +9,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete
 {
     public class DeleteStreetcodeCategoryContentHandler
-      : IRequestHandler<
-          DeleteStreetcodeCategoryContentCommand,
-          Result<StreetcodeCategoryContentDTO>>
+       : IRequestHandler<DeleteStreetcodeCategoryContentCommand, Result<StreetcodeCategoryContentDTO>>
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IMapper _mapper;
@@ -26,14 +24,15 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete
             _mapper = mapper;
             _logger = logger;
         }
+
         public async Task<Result<StreetcodeCategoryContentDTO>> Handle(
             DeleteStreetcodeCategoryContentCommand request,
             CancellationToken cancellationToken)
         {
             var content = await _repositoryWrapper.StreetcodeCategoryContentRepository
-            .GetFirstOrDefaultAsync(c =>
-               c.StreetcodeId == request.StreetcodeId &&
-               c.SourceLinkCategoryId == request.SourceLinkCategoryId);
+                .GetFirstOrDefaultAsync(c =>
+                    c.StreetcodeId == request.StreetcodeId &&
+                    c.SourceLinkCategoryId == request.SourceLinkCategoryId);
 
             if (content is null)
             {
@@ -50,13 +49,12 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete
 
             if (!isSaved)
             {
-                string errorMsg = ErrorMessages.CannotDeleteSourceCategory;
+                string errorMsg = ErrorMessages.CannotDeleteSourceCategoryСontent;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }
 
             return Result.Ok(contentDto);
-
         }
     }
 }
