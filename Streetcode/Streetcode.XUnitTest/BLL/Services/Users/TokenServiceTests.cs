@@ -92,6 +92,20 @@ namespace Streetcode.XUnitTest.BLL.Services.Users
                 .WithMessage("Token does not contain user role.");
         }
 
+        [Fact]
+        public void GenerateRefreshToken_ShouldGenerateUniqueTokens()
+        {
+            // Arrange
+            var service = new TokenService(_jwtSettings);
+
+            // Act
+            var token1 = service.GenerateRefreshToken();
+            var token2 = service.GenerateRefreshToken();
+
+            // Assert
+            token1.Should().NotBe(token2);
+        }
+
         private static User CreateUser()
         {
             return new User

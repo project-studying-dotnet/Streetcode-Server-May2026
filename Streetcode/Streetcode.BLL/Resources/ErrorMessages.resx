@@ -570,4 +570,13 @@
   <data name="AdditionalTextMustNotExceed" xml:space="preserve">
     <value>Additional text must not exceed {0} characters</value>
   </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid token.</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid refresh token.</value>
+  </data>
+  <data name="SuccessfulRefreshToken" xml:space="preserve">
+    <value>Token refreshed for user {0}</value>
+  </data>
 </root>
