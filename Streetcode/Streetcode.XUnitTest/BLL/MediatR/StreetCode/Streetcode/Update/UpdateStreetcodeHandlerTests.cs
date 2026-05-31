@@ -9,10 +9,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
     using System.Linq.Expressions;
     using System.Text;
     using AutoMapper;
+    using global::Streetcode.BLL.DTO.AdditionalContent.Tag;
     using global::Streetcode.BLL.DTO.Streetcode;
     using global::Streetcode.BLL.Interfaces.Logging;
     using global::Streetcode.BLL.Mapping.Streetcode;
     using global::Streetcode.BLL.MediatR.Streetcode.Streetcode.Update;
+    using global::Streetcode.DAL.Entities.AdditionalContent;
     using global::Streetcode.DAL.Entities.Media.Images;
     using global::Streetcode.DAL.Entities.Streetcode;
     using global::Streetcode.DAL.Repositories.Interfaces.Base;
@@ -25,7 +27,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
     /// </summary>
     public class UpdateStreetcodeHandlerTests
     {
-        private readonly IMapper mapper;
+        private readonly Mock<IMapper> mapperMock;
         private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
         private readonly Mock<ILoggerService> loggerMock;
 
@@ -36,16 +38,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
         /// </summary>
         public UpdateStreetcodeHandlerTests()
         {
-            this.mapper = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<StreetcodeProfile>();
-            }).CreateMapper();
-
+            this.mapperMock = new Mock<IMapper>();
             this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
             this.loggerMock = new Mock<ILoggerService>();
 
             this.handler = new UpdateStreetcodeHandler(
-                    this.mapper,
+                    this.mapperMock.Object,
                     this.repositoryWrapperMock.Object,
                     this.loggerMock.Object);
         }
@@ -62,21 +60,48 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
             {
                 Id = 1,
                 Title = "Updated Streetcode",
+                Tags = new List<StreetcodeTagDTO>()
+                {
+                    new StreetcodeTagDTO() { Id = 1, Title = "Test Tag" }
+                }
             };
 
-            var streetcodeEntity = this.mapper.Map<StreetcodeContent>(streetcodeDto);
+            var streetcode = new StreetcodeContent
+            {
+                Id = 1,
+                Title = "Updated Streetcode",
+                Tags = new List<Tag>()
+                {
+                    new Tag() { Id = 1, Title = "Test Tag" }
+                }
+            };
+
+            this.mapperMock
+                .Setup(m => m.Map<StreetcodeContent>(It.IsAny<StreetcodeDTO>()))
+                .Returns(streetcode);
 
             this.repositoryWrapperMock
                    .Setup(r => r.StreetcodeRepository.GetFirstOrDefaultAsync(
                        It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
                        It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>>()))
-                   .ReturnsAsync(streetcodeEntity);
+                   .ReturnsAsync(streetcode);
 
             this.repositoryWrapperMock
                     .Setup(r => r.StreetcodeRepository.Update(It.IsAny<StreetcodeContent>()));
 
             this.repositoryWrapperMock
                     .Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
+
+            this.repositoryWrapperMock
+                .Setup(r => r.StreetcodeTagIndexRepository.GetAllAsync(
+                    It.IsAny<Expression<Func<StreetcodeTagIndex, bool>>>(),
+                    It.IsAny<Func<IQueryable<StreetcodeTagIndex>, 
+                        IIncludableQueryable<StreetcodeTagIndex, object>>>()))
+                .ReturnsAsync(new List<StreetcodeTagIndex>());
+
+            this.mapperMock
+                .Setup(m => m.Map<StreetcodeDTO>(It.IsAny<StreetcodeContent>()))
+                .Returns(streetcodeDto);
 
             var command = new UpdateStreetcodeCommand(streetcodeDto);
 
@@ -89,6 +114,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
             Assert.Equal(streetcodeDto.Id, result.Value.Id);
 
             Assert.Equal(streetcodeDto.Title, result.Value.Title);
+
+            Assert.Equal(streetcodeDto.Tags.First().Id, result.Value.Tags.First().Id);
 
             this.repositoryWrapperMock.Verify(
                 r => r.StreetcodeRepository
@@ -107,24 +134,34 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
             {
                 Id = 1,
                 Title = "Updated Streetcode",
+                Tags = new List<StreetcodeTagDTO>()
+                {
+                    new StreetcodeTagDTO() { Id = 1, Title = "Test Tag" }
+                }
             };
 
-            string expectedErrorMessage = $"Failed to update streetcode with ID {streetcodeDto.Id}";
+            var streetcode = new StreetcodeContent
+            {
+                Id = 1,
+                Title = "Updated Streetcode",
+            };
 
-            var streetcodeEntity = this.mapper.Map<StreetcodeContent>(streetcodeDto);
+            this.mapperMock
+                .Setup(m => m.Map<StreetcodeContent>(It.IsAny<StreetcodeDTO>()))
+                .Returns(streetcode);
+
+            string expectedErrorMessage = $"Failed to update streetcode with ID {streetcodeDto.Id}";
 
             this.repositoryWrapperMock
                    .Setup(r => r.StreetcodeRepository.GetFirstOrDefaultAsync(
                        It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
                        It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>>()))
-                   .ReturnsAsync(streetcodeEntity);
+                   .ReturnsAsync(streetcode);
 
             this.repositoryWrapperMock
                     .Setup(r => r.StreetcodeRepository
-                        .Update(It.IsAny<StreetcodeContent>()));
-
-            this.repositoryWrapperMock
-                    .Setup(r => r.SaveChangesAsync()).ReturnsAsync(0);
+                        .Update(It.IsAny<StreetcodeContent>()))
+                    .Throws(new Exception(expectedErrorMessage));
 
             var request = new UpdateStreetcodeCommand(streetcodeDto);
 
