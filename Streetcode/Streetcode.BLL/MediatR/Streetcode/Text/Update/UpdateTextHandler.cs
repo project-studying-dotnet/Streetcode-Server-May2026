@@ -3,6 +3,7 @@ using FluentResults;
 using MediatR;
 using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using T = Streetcode.DAL.Entities.Streetcode.TextContent;
 
@@ -24,18 +25,20 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Update
         public async Task<Result<TextDto>> Handle(UpdateTextCommand request, CancellationToken cancellationToken)
         {
             var textEntity = await _repositoryWrapper.TextRepository
-                .GetFirstOrDefaultAsync(t => t.Id == request.updateTextRequest.Id);
+                .GetFirstOrDefaultAsync(
+                    predicate: t => t.Id == request.updateTextRequest.Id,
+                    cancellationToken: cancellationToken);
 
             if (textEntity == null)
             {
-                string errorMsg = $"Text with Id {request.updateTextRequest.Id} not found.";
+                string errorMsg = string.Format(ErrorMessages.TextWithIdNotFound, request.updateTextRequest.Id);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail<TextDto>(errorMsg);
             }
 
             if (textEntity.StreetcodeId != request.updateTextRequest.StreetcodeId)
             {
-                string errorMsg = "Changing StreetcodeId for an existing Text is not allowed.";
+                string errorMsg = string.Format(ErrorMessages.ChangingStreetcodeIdNotAllowed, request.updateTextRequest.Id);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail<TextDto>(errorMsg);
             }
@@ -43,7 +46,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Update
             _mapper.Map(request.updateTextRequest, textEntity);
 
             _repositoryWrapper.TextRepository.Update(textEntity);
-            var saveResult = await _repositoryWrapper.SaveChangesAsync();
+            var saveResult = await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
             if (saveResult > 0)
             {

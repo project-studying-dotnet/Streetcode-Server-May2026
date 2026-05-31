@@ -570,4 +570,19 @@
   <data name="AdditionalTextMustNotExceed" xml:space="preserve">
     <value>Additional text must not exceed {0} characters</value>
   </data>
+  <data name="CannotFindAnyTransactionLink" xml:space="preserve">
+    <value>Cannot find any transaction link</value>
+  </data>
+  <data name="CannotFindAnyTransactionLinkWithCorrespondingId" xml:space="preserve">
+    <value>Cannot find any transaction link with corresponding id: {0}</value>
+  </data>
+  <data name="CannotFindAnyTransactionLinkWithCorrespondingStreetcodeId" xml:space="preserve">
+    <value>Cannot find a transaction link by a streetcode id: {0}, because such streetcode doesn`t exist</value>
+  </data>
+  <data name="TextWithIdNotFound" xml:space="preserve">
+    <value>Text with Id {0} not found.</value>
+  </data>
+  <data name="ChangingStreetcodeIdNotAllowed" xml:space="preserve">
+    <value>Changing StreetcodeId for an existing Text is not allowed.</value>
+  </data>
 </root>
