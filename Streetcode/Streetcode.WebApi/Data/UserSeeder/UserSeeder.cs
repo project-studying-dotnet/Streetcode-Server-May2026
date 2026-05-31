@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Identity;
 using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Enums;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Streetcode.WebApi.InitialData.UserSeeder
 {
