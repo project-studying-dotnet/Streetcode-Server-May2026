@@ -14,11 +14,17 @@ namespace Streetcode.WebApi.Data.RoleSeeder
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(
+                    var result = await roleManager.CreateAsync(
                         new IdentityRole<int>
                         {
                             Name = role
                         });
+
+                    if (!result.Succeeded)
+                    {
+                        throw new InvalidOperationException(
+                            $"Failed to create role '{role}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    }
                 }
             }
         }
