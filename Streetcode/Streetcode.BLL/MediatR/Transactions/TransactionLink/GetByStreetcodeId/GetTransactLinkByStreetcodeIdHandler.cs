@@ -27,12 +27,16 @@ public class GetTransactLinkByStreetcodeIdHandler : IRequestHandler<GetTransactL
     public async Task<Result<TransactLinkDTO?>> Handle(GetTransactLinkByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
         var transactLink = await _repositoryWrapper.TransactLinksRepository
-            .GetFirstOrDefaultAsync(f => f.StreetcodeId == request.StreetcodeId);
+            .GetFirstOrDefaultAsync(
+                predicate: f => f.StreetcodeId == request.StreetcodeId,
+                cancellationToken: cancellationToken);
 
         if (transactLink is null)
         {
             if (await _repositoryWrapper.StreetcodeRepository
-                .GetFirstOrDefaultAsync(s => s.Id == request.StreetcodeId) == null)
+                .GetFirstOrDefaultAsync(
+                    predicate: s => s.Id == request.StreetcodeId,
+                    cancellationToken: cancellationToken) == null)
             {
                 string errorMsg = string.Format(ErrorMessages.CannotFindAnyTransactionLinkWithCorrespondingStreetcodeId, request.StreetcodeId);
                 _logger.LogError(request, errorMsg);

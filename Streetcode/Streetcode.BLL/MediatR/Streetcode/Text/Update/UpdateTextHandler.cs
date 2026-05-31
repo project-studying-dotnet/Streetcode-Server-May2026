@@ -53,7 +53,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Text.Update
                 return Result.Ok(_mapper.Map<TextDto>(textEntity));
             }
 
-            const string failMsg = "Failed to update Text.";
+            string failMsg = ErrorMessages.FailedToUpdateText;
             _logger.LogError(request, failMsg);
             return Result.Fail<TextDto>(failMsg);
         }

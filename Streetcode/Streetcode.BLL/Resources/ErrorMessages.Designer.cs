@@ -700,6 +700,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to update Text..
+        /// </summary>
+        public static string FailedToUpdateText {
+            get {
+                return ResourceManager.GetString("FailedToUpdateText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to update timeline item with id {0}.
         /// </summary>
         public static string FailedToUpdateTimelineItemWithId {
