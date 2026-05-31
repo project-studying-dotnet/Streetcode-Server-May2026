@@ -49,7 +49,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Create
                     .TagRepository
                     .GetAllAsync(t => tagIds.Contains(t.Id)));
 
-                _repositoryWrapper?.SaveChangesAsync(cancellationToken);
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 return Result.Ok(_mapper.Map<StreetcodeDTO>(newStreetcode));
             }
