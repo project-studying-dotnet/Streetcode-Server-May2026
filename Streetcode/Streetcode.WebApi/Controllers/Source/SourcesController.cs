@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoriesByStreetcodeId;
 using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoryById;
@@ -10,6 +11,7 @@ using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Update;
 using Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Create;
 using Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete;
 using Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Update;
+using Streetcode.DAL.Enums;
 
 namespace Streetcode.WebApi.Controllers.Source;
 

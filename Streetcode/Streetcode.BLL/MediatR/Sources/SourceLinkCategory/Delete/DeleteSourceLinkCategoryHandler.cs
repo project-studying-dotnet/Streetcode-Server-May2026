@@ -24,13 +24,6 @@ public class DeleteSourceLinkCategoryHandler
         DeleteSourceLinkCategoryCommand request,
         CancellationToken cancellationToken)
     {
-        if (request.Id <= 0)
-        {
-            string errorMsg = ErrorMessages.SourceCategoryIdRequired;
-            _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
-        }
-
         var category = await _repositoryWrapper.SourceCategoryRepository
             .GetFirstOrDefaultAsync(c => c.Id == request.Id);
 

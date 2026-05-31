@@ -5,10 +5,10 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.Validators.Sources.StreetcodeCategoryContent.Update
 {
-    public class UpdateStreetcodeCategoryContentValidator
+    public class UpdateStreetcodeCategoryContentCommandValidator
         : AbstractValidator<UpdateStreetcodeCategoryContentCommand>
     {
-        public UpdateStreetcodeCategoryContentValidator(IRepositoryWrapper repositoryWrapper)
+        public UpdateStreetcodeCategoryContentCommandValidator(IRepositoryWrapper repositoryWrapper)
         {
             RuleFor(x => x.CategoryContent)
                 .NotNull();

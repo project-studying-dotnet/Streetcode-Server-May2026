@@ -26,19 +26,10 @@ public class UpdateSourceLinkCategoryHandler
     }
 
     public async Task<Result<SourceLinkCategoryDTO>> Handle(
-     UpdateSourceLinkCategoryCommand request,
-     CancellationToken cancellationToken)
+        UpdateSourceLinkCategoryCommand request,
+        CancellationToken cancellationToken)
     {
         var dto = request.Category;
-
-        if (dto.Id <= 0)
-        {
-            string errorMsg = ErrorMessages.SourceCategoryIdRequired;
-
-            _logger.LogError(request, errorMsg);
-
-            return Result.Fail(new Error(errorMsg));
-        }
 
         var category = await _repositoryWrapper.SourceCategoryRepository
             .GetFirstOrDefaultAsync(c => c.Id == dto.Id);
@@ -46,24 +37,7 @@ public class UpdateSourceLinkCategoryHandler
         if (category is null)
         {
             string errorMsg = ErrorMessages.SourceCategoryNotFound;
-
             _logger.LogError(request, errorMsg);
-
-            return Result.Fail(new Error(errorMsg));
-        }
-
-        var sameTitleCategory = await _repositoryWrapper.SourceCategoryRepository
-            .GetFirstOrDefaultAsync(c =>
-                c.Id != dto.Id &&
-                c.Title != null &&
-                c.Title.ToLower() == dto.Title.ToLower());
-
-        if (sameTitleCategory is not null)
-        {
-            string errorMsg = ErrorMessages.SourceCategoryAlreadyExists;
-
-            _logger.LogError(request, errorMsg);
-
             return Result.Fail(new Error(errorMsg));
         }
 
@@ -73,14 +47,12 @@ public class UpdateSourceLinkCategoryHandler
         _repositoryWrapper.SourceCategoryRepository.Update(category);
 
         var isSaved =
-             await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
+            await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
         if (!isSaved)
         {
             string errorMsg = ErrorMessages.CannotUpdateSourceCategory;
-
             _logger.LogError(request, errorMsg);
-
             return Result.Fail(new Error(errorMsg));
         }
 

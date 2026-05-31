@@ -5,10 +5,10 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.Validators.Sources.StreetcodeCategoryContent.Delete
 {
-    public class DeleteStreetcodeCategoryContentValidator
+    public class DeleteStreetcodeCategoryContentCommandValidator
         : AbstractValidator<DeleteStreetcodeCategoryContentCommand>
     {
-        public DeleteStreetcodeCategoryContentValidator(IRepositoryWrapper repositoryWrapper)
+        public DeleteStreetcodeCategoryContentCommandValidator(IRepositoryWrapper repositoryWrapper)
         {
             RuleFor(x => x.StreetcodeId)
                 .GreaterThan(0);
