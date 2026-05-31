@@ -289,4 +289,7 @@
 	<data name="CannotUpdateSourceCategory" xml:space="preserve">
   <value>Cannot update source category.</value>
 </data>
+	<data name="StreetcodeNotFound" xml:space="preserve">
+  <value>StreetCode not found.</value>
+</data>
 </root>
