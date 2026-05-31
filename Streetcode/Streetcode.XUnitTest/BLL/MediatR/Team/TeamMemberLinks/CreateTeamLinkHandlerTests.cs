@@ -20,7 +20,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Team.TeamMemberLinks
         public CreateTeamLinkHandlerTests()
         {
             _mockRepo = new Mock<IRepositoryWrapper>();
-            this._mapper = new MapperConfiguration(cfg =>
+            _mapper = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<TeamMemberLink, TeamMemberLinkDTO>();
                 cfg.CreateMap<TeamMemberLinkDTO, TeamMemberLink>();
@@ -33,7 +33,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Team.TeamMemberLinks
         public async Task Handle_ReturnsOkResult_WhenTeamLinkIsCreated()
         {
             var teamLinkDTO = new TeamMemberLinkDTO { Id = 1, TargetUrl = "http://example.com", TeamMemberId = 1 };
-            var teamLinkEntity = this._mapper.Map<TeamMemberLink>(teamLinkDTO);
+            var teamLinkEntity = _mapper.Map<TeamMemberLink>(teamLinkDTO);
             _mockRepo.Setup(repo => repo.TeamLinkRepository.Create(It.IsAny<TeamMemberLink>())).Returns(teamLinkEntity);
             _mockRepo.Setup(repo => repo.SaveChangesAsync()).ReturnsAsync(1);
             var result = await _handler.Handle(new CreateTeamLinkQuery(teamLinkDTO), CancellationToken.None);
@@ -45,7 +45,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Team.TeamMemberLinks
         public async Task Handle_ReturnsFailResult_WhenTeamLinkCreationFails()
         {
             var teamLinkDTO = new TeamMemberLinkDTO { Id = 1, TargetUrl = "http://example.com", TeamMemberId = 1 };
-            _mockRepo.Setup(repo => repo.TeamLinkRepository.Create(It.IsAny<TeamMemberLink>())).Returns((TeamMemberLink)null);
+            _mockRepo.Setup(repo => repo.TeamLinkRepository.Create(It.IsAny<TeamMemberLink>())).Returns((TeamMemberLink)null!);
             var result = await _handler.Handle(new CreateTeamLinkQuery(teamLinkDTO), CancellationToken.None);
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message == "Cannot create team link");

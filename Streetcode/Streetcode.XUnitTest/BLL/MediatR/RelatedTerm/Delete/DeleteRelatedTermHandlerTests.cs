@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentResults;
 using Moq;
 using FluentAssertions;
@@ -8,7 +9,6 @@ using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
 using Streetcode.BLL.Resources;
@@ -16,7 +16,6 @@ using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.RelatedTerm;
 
 namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
 {
-
     public class DeleteRelatedTermHandlerTests
     {
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
@@ -24,7 +23,6 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILoggerService> _loggerMock;
         private readonly DeleteRelatedTermHandler _handler;
-
 
         public DeleteRelatedTermHandlerTests()
         {
@@ -40,8 +38,8 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                     _repositoryWrapperMock.Object,
                     _mapperMock.Object,
                     _loggerMock.Object);
-
         }
+
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenRelatedTermNotFound()
         {
@@ -195,6 +193,5 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
-
     }
 }

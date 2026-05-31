@@ -26,6 +26,7 @@ public class GetTimelineItemByIdHandler : IRequestHandler<GetTimelineItemByIdQue
         var timelineItem = await _repositoryWrapper.TimelineRepository
             .GetFirstOrDefaultAsync(
                 predicate: ti => ti.Id == request.Id,
+                cancellationToken: cancellationToken,
                 include: ti => ti
                     .Include(til => til.HistoricalContextTimelines)
                         .ThenInclude(x => x.HistoricalContext)!);

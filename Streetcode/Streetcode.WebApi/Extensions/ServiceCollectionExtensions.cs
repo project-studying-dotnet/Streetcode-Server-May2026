@@ -48,6 +48,8 @@ public static class ServiceCollectionExtensions
         services.AddAutoMapper(currentAssemblies);
         services.AddMediatR(currentAssemblies);
 
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Streetcode.BLL.MediatR.Behaviors.ValidationBehavior<,>));
+
         services.AddScoped<IBlobService, BlobService>();
         services.AddScoped<ILoggerService, LoggerService>();
         services.AddScoped<IEmailService, EmailService>();
@@ -183,9 +185,9 @@ public static class ServiceCollectionExtensions
 
     public class CorsConfiguration
     {
-        public List<string> AllowedOrigins { get; set; }
-        public List<string> AllowedHeaders { get; set; }
-        public List<string> AllowedMethods { get; set; }
+        public List<string> AllowedOrigins { get; set; } = new ();
+        public List<string> AllowedHeaders { get; set; } = new ();
+        public List<string> AllowedMethods { get; set; } = new ();
         public int PreflightMaxAge { get; set; }
     }
 }

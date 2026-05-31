@@ -23,7 +23,9 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.Update
         public async Task<Result<TermDto>> Handle(UpdateTermCommand request, CancellationToken cancellationToken)
         {
             var termToUpdate = await _repositoryWrapper.TermRepository
-                .GetFirstOrDefaultAsync(t => t.Id == request.Term.Id);
+                .GetFirstOrDefaultAsync(
+                    predicate: t => t.Id == request.Term.Id,
+                    cancellationToken: cancellationToken);
 
             if (termToUpdate is null)
             {
@@ -43,7 +45,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.Update
             }
 
             _repositoryWrapper.TermRepository.Update(termToUpdate);
-            var isSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+            var isSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
             if (isSuccess)
             {

@@ -18,7 +18,10 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.Delete
         public async Task<Result<Unit>> Handle(DeleteTermCommand request, CancellationToken cancellationToken)
         {
             int id = request.id;
-            var term = await _repositoryWrapper.TermRepository.GetFirstOrDefaultAsync(n => n.Id == id);
+            var term = await _repositoryWrapper.TermRepository.GetFirstOrDefaultAsync(
+                predicate: n => n.Id == id,
+                cancellationToken: cancellationToken);
+
             if (term == null)
             {
                 string errorMsg = $"No term found by entered Id - {id}";
@@ -27,7 +30,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Term.Delete
             }
 
             _repositoryWrapper.TermRepository.Delete(term);
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
             if (resultIsSuccess)
             {
                 return Result.Ok(Unit.Value);

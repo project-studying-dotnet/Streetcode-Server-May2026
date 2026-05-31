@@ -89,6 +89,9 @@ public class SortedByDateTimeHandlerTests
                 Id = 1,
                 CreationDate = new DateTime(2020, 1, 1),
                 Image = null,
+                Title = "Test News 1",
+                Text = "This is a test news 1.",
+                URL = "test-url-1",
             },
             new()
             {
@@ -98,6 +101,9 @@ public class SortedByDateTimeHandlerTests
                 {
                     BlobName = "test.jpg",
                 },
+                Title = "Test News 2",
+                Text = "This is a test news 2.",
+                URL = "test-url-2",
             },
         };
 
