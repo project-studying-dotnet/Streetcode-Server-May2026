@@ -1,14 +1,11 @@
-﻿using AutoMapper;
-using FluentResults;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using Moq;
 using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.AdditionalContent.Subtitle.GetByStreetcodeId;
+using Streetcode.DAL.Entities.AdditionalContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Subtitle.GetByStreetcodeId
@@ -30,14 +27,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Subtitle.GetByStree
         public async Task Handle_ReturnsOkResult_WhenSubtitleExistsForStreetcode()
         {
             int testStreetcodeId = 1;
-            var subtitle = new DAL.Entities.AdditionalContent.Subtitle { StreetcodeId = testStreetcodeId };
+            var subtitle = new global::Streetcode.DAL.Entities.AdditionalContent.Subtitle { StreetcodeId = testStreetcodeId };
             var subtitleDTO = new SubtitleDTO { StreetcodeId = testStreetcodeId };
 
             _mockRepository.Setup(r => r.SubtitleRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.AdditionalContent.Subtitle, bool>>>(), null))
+                It.IsAny<Expression<Func<global::Streetcode.DAL.Entities.AdditionalContent.Subtitle, bool>>>(), null))
                 .ReturnsAsync(subtitle);
 
-            _mockMapper.Setup(m => m.Map<SubtitleDTO>(It.IsAny<DAL.Entities.AdditionalContent.Subtitle>()))
+            _mockMapper.Setup(m => m.Map<SubtitleDTO>(It.IsAny<global::Streetcode.DAL.Entities.AdditionalContent.Subtitle>()))
                 .Returns(subtitleDTO);
 
             var handler = new GetSubtitlesByStreetcodeIdHandler(_mockRepository.Object, _mockMapper.Object, _mockLogger.Object);
@@ -54,10 +51,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Subtitle.GetByStree
             int testStreetcodeId = 1;
 
             _mockRepository.Setup(r => r.SubtitleRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.AdditionalContent.Subtitle, bool>>>(), null))
-                .ReturnsAsync((DAL.Entities.AdditionalContent.Subtitle)null);
+                It.IsAny<Expression<Func<global::Streetcode.DAL.Entities.AdditionalContent.Subtitle, bool>>>(), null))
+                .ReturnsAsync((global::Streetcode.DAL.Entities.AdditionalContent.Subtitle)null);
 
-            _mockMapper.Setup(m => m.Map<SubtitleDTO>(It.IsAny<DAL.Entities.AdditionalContent.Subtitle>()))
+            _mockMapper.Setup(m => m.Map<SubtitleDTO>(It.IsAny<global::Streetcode.DAL.Entities.AdditionalContent.Subtitle>()))
                 .Returns((SubtitleDTO)null);
 
             var handler = new GetSubtitlesByStreetcodeIdHandler(_mockRepository.Object, _mockMapper.Object, _mockLogger.Object);

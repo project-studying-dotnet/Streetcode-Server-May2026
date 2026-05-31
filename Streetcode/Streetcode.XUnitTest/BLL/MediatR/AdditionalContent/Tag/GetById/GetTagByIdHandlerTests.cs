@@ -5,10 +5,7 @@ using Streetcode.BLL.DTO.AdditionalContent.Tag;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetById;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System;
 using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Tag.GetById
@@ -32,11 +29,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Tag.GetById
         public async Task Handle_TagExists_ReturnsOkResult()
         {
             var query = new GetTagByIdQuery(1);
-            var tag = new Streetcode.DAL.Entities.AdditionalContent.Tag { Id = 1 };
+            var tag = new global::Streetcode.DAL.Entities.AdditionalContent.Tag { Id = 1, Title = "Test Tag" };
             var dto = new TagDTO { Id = 1 };
 
             _repositoryWrapperMock.Setup(r => r.TagRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.AdditionalContent.Tag, bool>>>(), null))
+                It.IsAny<Expression<Func<global::Streetcode.DAL.Entities.AdditionalContent.Tag, bool>>>(), null))
                 .ReturnsAsync(tag);
 
             _mapperMock.Setup(m => m.Map<TagDTO>(It.IsAny<object>()))
@@ -54,8 +51,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Tag.GetById
             var query = new GetTagByIdQuery(1);
 
             _repositoryWrapperMock.Setup(r => r.TagRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.AdditionalContent.Tag, bool>>>(), null))
-                .ReturnsAsync((Streetcode.DAL.Entities.AdditionalContent.Tag)null!);
+                It.IsAny<Expression<Func<global::Streetcode.DAL.Entities.AdditionalContent.Tag, bool>>>(), null))
+                .ReturnsAsync((global::Streetcode.DAL.Entities.AdditionalContent.Tag)null!);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 

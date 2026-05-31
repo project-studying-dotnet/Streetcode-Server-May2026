@@ -5,11 +5,7 @@ using Streetcode.BLL.DTO.AdditionalContent.Tag;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetAll;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Tag.GetAll
@@ -33,11 +29,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Tag.GetAll
         public async Task Handle_TagsExist_ReturnsOkResult()
         {
             var query = new GetAllTagsQuery();
-            var tags = new List<Streetcode.DAL.Entities.AdditionalContent.Tag> { new Streetcode.DAL.Entities.AdditionalContent.Tag() };
+            var tags = new List<global::Streetcode.DAL.Entities.AdditionalContent.Tag>
+            {
+                new() { Title = "SampleTagTitle" }
+            };
             var dtos = new List<TagDTO> { new TagDTO() };
 
             _repositoryWrapperMock.Setup(r => r.TagRepository.GetAllAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.AdditionalContent.Tag, bool>>>(), null))
+                It.IsAny<Expression<Func<global::Streetcode.DAL.Entities.AdditionalContent.Tag, bool>>>(), null))
                 .ReturnsAsync(tags);
 
             _mapperMock.Setup(m => m.Map<IEnumerable<TagDTO>>(It.IsAny<IEnumerable<object>>()))
@@ -55,8 +54,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Tag.GetAll
             var query = new GetAllTagsQuery();
 
             _repositoryWrapperMock.Setup(r => r.TagRepository.GetAllAsync(
-                It.IsAny<Expression<Func<Streetcode.DAL.Entities.AdditionalContent.Tag, bool>>>(), null))
-                .ReturnsAsync((IEnumerable<Streetcode.DAL.Entities.AdditionalContent.Tag>)null!);
+                It.IsAny<Expression<Func<global::Streetcode.DAL.Entities.AdditionalContent.Tag, bool>>>(), null))
+                .ReturnsAsync((IEnumerable<global::Streetcode.DAL.Entities.AdditionalContent.Tag>)null!);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 
