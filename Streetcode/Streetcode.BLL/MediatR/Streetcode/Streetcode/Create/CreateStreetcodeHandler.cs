@@ -41,15 +41,15 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Create
 
                 newStreetcode = await _repositoryWrapper.StreetcodeRepository.CreateAsync(newStreetcode);
 
-                _repositoryWrapper?.SaveChangesAsync();
+                _repositoryWrapper?.SaveChangesAsync(cancellationToken);
 
                 var tagIds = request.newStreetcodeContent.Tags.Select(t => t.Id).ToList();
 
-                newStreetcode.Tags.AddRange(await _repositoryWrapper
+                newStreetcode.Tags.AddRange(await _repositoryWrapper!
                     .TagRepository
                     .GetAllAsync(t => tagIds.Contains(t.Id)));
 
-                _repositoryWrapper?.SaveChangesAsync();
+                _repositoryWrapper?.SaveChangesAsync(cancellationToken);
 
                 return Result.Ok(_mapper.Map<StreetcodeDTO>(newStreetcode));
             }
