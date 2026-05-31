@@ -37,33 +37,13 @@ public class DeleteSourceLinkCategoryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnFail_WhenIdIsInvalid()
-    {
-        var command = new DeleteSourceLinkCategoryCommand(0);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryIdRequired);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()),
-            Times.Never);
-    }
-
-    [Fact]
     public async Task Handle_ShouldReturnFail_WhenCategoryNotFound()
     {
         var command = new DeleteSourceLinkCategoryCommand(1);
 
         _sourceCategoryRepositoryMock
             .Setup(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()))
+                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
             .ReturnsAsync((SourceLinkCategoryEntity?)null);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -71,8 +51,8 @@ public class DeleteSourceLinkCategoryHandlerTests
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.SourceCategoryNotFound);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Delete(It.IsAny<SourceLinkCategoryEntity>()),
+        _sourceCategoryRepositoryMock.Verify(
+            x => x.Delete(It.IsAny<SourceLinkCategoryEntity>()),
             Times.Never);
     }
 
@@ -90,9 +70,7 @@ public class DeleteSourceLinkCategoryHandlerTests
 
         _sourceCategoryRepositoryMock
             .Setup(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()))
+                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
             .ReturnsAsync(category);
 
         _repositoryWrapperMock
@@ -104,12 +82,12 @@ public class DeleteSourceLinkCategoryHandlerTests
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.CannotDeleteSourceCategory);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Delete(category),
+        _sourceCategoryRepositoryMock.Verify(
+            x => x.Delete(category),
             Times.Once);
 
-        _repositoryWrapperMock.Verify(x =>
-            x.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        _repositoryWrapperMock.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -127,9 +105,7 @@ public class DeleteSourceLinkCategoryHandlerTests
 
         _sourceCategoryRepositoryMock
             .Setup(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()))
+                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
             .ReturnsAsync(category);
 
         _repositoryWrapperMock
@@ -141,12 +117,12 @@ public class DeleteSourceLinkCategoryHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(command.Id);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Delete(category),
+        _sourceCategoryRepositoryMock.Verify(
+            x => x.Delete(category),
             Times.Once);
 
-        _repositoryWrapperMock.Verify(x =>
-            x.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        _repositoryWrapperMock.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

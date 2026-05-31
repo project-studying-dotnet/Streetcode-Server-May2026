@@ -17,7 +17,7 @@ namespace Streetcode.BLL.Validators.Sources.StreetcodeCategoryContent.Create
             {
                 RuleFor(x => x.CategoryContent.Text)
                     .NotEmpty()
-                    .MaximumLength(5);
+                    .MaximumLength(4000);
 
                 RuleFor(x => x.CategoryContent.StreetcodeId)
                     .GreaterThan(0)

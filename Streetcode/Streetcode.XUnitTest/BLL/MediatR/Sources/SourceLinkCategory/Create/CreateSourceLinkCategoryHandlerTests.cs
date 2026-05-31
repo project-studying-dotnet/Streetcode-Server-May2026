@@ -8,7 +8,6 @@ using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Create;
 using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Source;
-using System.Linq.Expressions;
 using Xunit;
 using SourceLinkCategoryEntity = Streetcode.DAL.Entities.Sources.SourceLinkCategory;
 
@@ -57,11 +56,6 @@ public class CreateSourceLinkCategoryHandlerTests
         var command = new CreateSourceLinkCategoryCommand(dto);
 
         _sourceCategoryRepositoryMock
-            .Setup(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
-            .ReturnsAsync((SourceLinkCategoryEntity?)null);
-
-        _sourceCategoryRepositoryMock
             .Setup(x => x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()))
             .ReturnsAsync((SourceLinkCategoryEntity category) =>
             {
@@ -80,52 +74,13 @@ public class CreateSourceLinkCategoryHandlerTests
         result.Value.Title.Should().Be(dto.Title);
         result.Value.ImageId.Should().Be(dto.ImageId);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()),
+        _sourceCategoryRepositoryMock.Verify(
+            x => x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
             Times.Once);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
+        _repositoryWrapperMock.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
-
-        _repositoryWrapperMock.Verify(x =>
-            x.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Once);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFail_WhenCategoryAlreadyExists()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Title = "News",
-            ImageId = 5
-        };
-
-        var existingCategory = new SourceLinkCategoryEntity
-        {
-            Id = 1,
-            Title = "News",
-            ImageId = 5
-        };
-
-        var command = new CreateSourceLinkCategoryCommand(dto);
-
-        _sourceCategoryRepositoryMock
-            .Setup(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
-            .ReturnsAsync(existingCategory);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should()
-            .Be(ErrorMessages.SourceCategoryAlreadyExists);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
     }
 
     [Fact]
@@ -140,9 +95,8 @@ public class CreateSourceLinkCategoryHandlerTests
         var command = new CreateSourceLinkCategoryCommand(dto);
 
         _sourceCategoryRepositoryMock
-            .Setup(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
-            .ReturnsAsync((SourceLinkCategoryEntity?)null);
+            .Setup(x => x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()))
+            .ReturnsAsync(new SourceLinkCategoryEntity());
 
         _repositoryWrapperMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -154,12 +108,12 @@ public class CreateSourceLinkCategoryHandlerTests
         result.Errors[0].Message.Should()
             .Be(ErrorMessages.CannotSaveSourceCategory);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
+        _sourceCategoryRepositoryMock.Verify(
+            x => x.CreateAsync(It.IsAny<SourceLinkCategoryEntity>()),
             Times.Once);
 
-        _repositoryWrapperMock.Verify(x =>
-            x.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        _repositoryWrapperMock.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

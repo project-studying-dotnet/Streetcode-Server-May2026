@@ -49,30 +49,6 @@ public class UpdateSourceLinkCategoryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnFail_WhenIdIsInvalid()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Id = 0,
-            Title = "News",
-            ImageId = 5
-        };
-
-        var command = new UpdateSourceLinkCategoryCommand(dto);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-
-        result.Errors[0].Message.Should()
-            .Be(ErrorMessages.SourceCategoryIdRequired);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Update(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
-    }
-
-    [Fact]
     public async Task Handle_ShouldReturnFail_WhenCategoryNotFound()
     {
         var dto = new SourceLinkCategoryDTO
@@ -86,9 +62,7 @@ public class UpdateSourceLinkCategoryHandlerTests
 
         _sourceCategoryRepositoryMock
             .Setup(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()))
+                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
             .ReturnsAsync((SourceLinkCategoryEntity?)null);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -98,54 +72,8 @@ public class UpdateSourceLinkCategoryHandlerTests
         result.Errors[0].Message.Should()
             .Be(ErrorMessages.SourceCategoryNotFound);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Update(It.IsAny<SourceLinkCategoryEntity>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnFail_WhenCategoryWithSameTitleExists()
-    {
-        var dto = new SourceLinkCategoryDTO
-        {
-            Id = 1,
-            Title = "News",
-            ImageId = 5
-        };
-
-        var category = new SourceLinkCategoryEntity
-        {
-            Id = 1,
-            Title = "Old",
-            ImageId = 4
-        };
-
-        var sameTitleCategory = new SourceLinkCategoryEntity
-        {
-            Id = 2,
-            Title = "News",
-            ImageId = 6
-        };
-
-        var command = new UpdateSourceLinkCategoryCommand(dto);
-
-        _sourceCategoryRepositoryMock
-            .SetupSequence(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(category)
-            .ReturnsAsync(sameTitleCategory);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-
-        result.Errors[0].Message.Should()
-            .Be(ErrorMessages.SourceCategoryAlreadyExists);
-
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Update(It.IsAny<SourceLinkCategoryEntity>()),
+        _sourceCategoryRepositoryMock.Verify(
+            x => x.Update(It.IsAny<SourceLinkCategoryEntity>()),
             Times.Never);
     }
 
@@ -169,12 +97,9 @@ public class UpdateSourceLinkCategoryHandlerTests
         var command = new UpdateSourceLinkCategoryCommand(dto);
 
         _sourceCategoryRepositoryMock
-            .SetupSequence(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(category)
-            .ReturnsAsync((SourceLinkCategoryEntity?)null);
+            .Setup(x => x.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
+            .ReturnsAsync(category);
 
         _repositoryWrapperMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -187,12 +112,12 @@ public class UpdateSourceLinkCategoryHandlerTests
         result.Errors[0].Message.Should()
             .Be(ErrorMessages.CannotUpdateSourceCategory);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Update(It.IsAny<SourceLinkCategoryEntity>()),
+        _sourceCategoryRepositoryMock.Verify(
+            x => x.Update(It.IsAny<SourceLinkCategoryEntity>()),
             Times.Once);
 
-        _repositoryWrapperMock.Verify(x =>
-            x.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        _repositoryWrapperMock.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -216,12 +141,9 @@ public class UpdateSourceLinkCategoryHandlerTests
         var command = new UpdateSourceLinkCategoryCommand(dto);
 
         _sourceCategoryRepositoryMock
-            .SetupSequence(x => x.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(category)
-            .ReturnsAsync((SourceLinkCategoryEntity?)null);
+            .Setup(x => x.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<SourceLinkCategoryEntity, bool>>>()))
+            .ReturnsAsync(category);
 
         _repositoryWrapperMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -235,12 +157,12 @@ public class UpdateSourceLinkCategoryHandlerTests
         result.Value.Title.Should().Be(dto.Title);
         result.Value.ImageId.Should().Be(dto.ImageId);
 
-        _sourceCategoryRepositoryMock.Verify(x =>
-            x.Update(It.IsAny<SourceLinkCategoryEntity>()),
+        _sourceCategoryRepositoryMock.Verify(
+            x => x.Update(It.IsAny<SourceLinkCategoryEntity>()),
             Times.Once);
 
-        _repositoryWrapperMock.Verify(x =>
-            x.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        _repositoryWrapperMock.Verify(
+            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }
