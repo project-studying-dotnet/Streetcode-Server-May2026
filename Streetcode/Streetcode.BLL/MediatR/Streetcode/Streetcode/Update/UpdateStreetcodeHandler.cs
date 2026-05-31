@@ -29,7 +29,9 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
         public async Task<Result<StreetcodeDTO>> Handle(UpdateStreetcodeCommand request, CancellationToken cancellationToken)
         {
             var entity = await _repositoryWrapper.StreetcodeRepository
-                    .GetFirstOrDefaultAsync(s => s.Id == request.streetcode.Id);
+                    .GetFirstOrDefaultAsync(
+                        predicate: s => s.Id == request.streetcode.Id,
+                        cancellationToken: cancellationToken);
 
             if (entity is null)
             {

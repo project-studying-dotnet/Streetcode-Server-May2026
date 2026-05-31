@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Streetcode.BLL.Interfaces.BlobStorage;
@@ -7,8 +8,10 @@ using Streetcode.BLL.Mapping.Media.Images;
 using Streetcode.BLL.Mapping.Newss;
 using Streetcode.BLL.MediatR.Newss.GetById;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Linq.Expressions;
 using Xunit;
+
+using ImageEntity = global::Streetcode.DAL.Entities.Media.Images.Image;
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.GetById
 {
@@ -48,9 +51,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetById
             var errorMsg = $"No news by entered Id - {id}";
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
-                .ReturnsAsync((DAL.Entities.News.News)null);
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
+                .ReturnsAsync((NewsEntity)null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -64,11 +67,18 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetById
         {
             var request = new GetNewsByIdQuery(1);
 
-            var newsEntity = new DAL.Entities.News.News { Id = 1, Image = null };
+            var newsEntity = new NewsEntity
+            {
+                Id = 1,
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = "test-url",
+                Image = null
+            };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
                 .ReturnsAsync(newsEntity);
 
             var result = await _handler.Handle(request, CancellationToken.None);
@@ -84,16 +94,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetById
         {
             var request = new GetNewsByIdQuery(1);
 
-            var newsEntity = new DAL.Entities.News.News
+            var newsEntity = new NewsEntity
             {
                 Id = 1,
-                Image = new DAL.Entities.Media.Images.Image { BlobName = "test-image.jpg" }
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = "test-url",
+                Image = new ImageEntity { BlobName = "test-image.jpg" }
             };
             var expectedBase64 = "base64-encoded-string";
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(),
-                It.IsAny<Func<IQueryable<DAL.Entities.News.News>, IIncludableQueryable<DAL.Entities.News.News, object>>>()))
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<NewsEntity>, IIncludableQueryable<NewsEntity, object>>>()))
                 .ReturnsAsync(newsEntity);
 
             _blobServiceMock.Setup(b => b.FindFileInStorageAsBase64("test-image.jpg"))
@@ -102,7 +115,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.GetById
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
-            Assert.Equal(expectedBase64, result.Value.Image.Base64);
+            Assert.Equal(expectedBase64, result.Value.Image?.Base64);
             _blobServiceMock.Verify(b => b.FindFileInStorageAsBase64("test-image.jpg"), Times.Once);
         }
     }

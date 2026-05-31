@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -10,7 +11,6 @@ using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
-using System.Linq.Expressions;
 using Xunit;
 using Streetcode.BLL.Resources;
 
@@ -106,7 +106,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
             var streetcode = new StreetcodeContent { Id = streetcodeId };
             var partners = new List<Partner>
             {
-                new Partner {
+                new Partner
+                {
                     Id = 1,
                     Title = "Title 1",
                     LogoId = 1,
@@ -117,10 +118,13 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
             };
             var partnerDTOs = new List<PartnerDTO>
             {
-                new PartnerDTO { Id = 1, 
-                    Title = "Title 1", 
-                    LogoId = 1, IsKeyPartner = true, 
-                    IsVisibleEverywhere = true },
+                new PartnerDTO
+                {
+                    Id = 1,
+                    Title = "Title 1",
+                    LogoId = 1, IsKeyPartner = true,
+                    IsVisibleEverywhere = true
+                },
             };
 
             _streetcodeRepositoryMock

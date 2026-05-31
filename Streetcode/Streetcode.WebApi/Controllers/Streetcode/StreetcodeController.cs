@@ -13,6 +13,8 @@ using Streetcode.BLL.MediatR.Streetcode.Streetcode.GetAllStreetcodesMainPage;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.Create;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.Update;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.Delete;
+using Streetcode.DAL.Enums;
+using Streetcode.WebApi.Attributes;
 
 namespace Streetcode.WebApi.Controllers.Streetcode;
 
@@ -72,18 +74,21 @@ public class StreetcodeController : BaseApiController
         return HandleResult(await Mediator.Send(new GetStreetcodeByIdQuery(id)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] StreetcodeDTO streetcode)
     {
         return HandleResult(await Mediator.Send(new CreateStreetcodeCommand(streetcode)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPut]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] StreetcodeDTO streetcode)
     {
         return HandleResult(await Mediator.Send(new UpdateStreetcodeCommand(streetcode)));
     }
 
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

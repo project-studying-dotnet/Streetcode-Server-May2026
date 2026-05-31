@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FluentResults;
-using Microsoft.EntityFrameworkCore;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.Media.Video;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
@@ -58,7 +58,7 @@ namespace Streetcode.BLL.MediatR.Media.Video.Create
             }
 
             await _repositoryWrapper.VideoRepository.CreateAsync(videoEntity);
-            var saveResult = await _repositoryWrapper.SaveChangesAsync();
+            var saveResult = await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
             if (saveResult > 0)
             {

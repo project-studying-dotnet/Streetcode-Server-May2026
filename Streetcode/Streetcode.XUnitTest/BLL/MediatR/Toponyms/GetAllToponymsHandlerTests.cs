@@ -1,202 +1,125 @@
-﻿namespace Streetcode.XUnitTest.BLL.MediatR.Toponyms
+﻿using AutoMapper;
+using FluentAssertions;
+using Moq;
+using Streetcode.BLL.DTO.Toponyms;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Toponyms.GetAll;
+using Streetcode.DAL.Entities.Toponyms;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Toponyms;
+using Xunit;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Toponyms;
+
+public sealed class GetAllToponymsHandlerTests
 {
-    using AutoMapper;
-    using FluentAssertions;
-    using Moq;
-    using Streetcode.BLL.DTO.Toponyms;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.MediatR.Toponyms.GetAll;
-    using Streetcode.DAL.Entities.Toponyms;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Streetcode.DAL.Repositories.Interfaces.Toponyms;
-    using Xunit;
+    private readonly IMapper _mapper;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly Mock<IToponymRepository> _toponymRepositoryMock;
+    private readonly GetAllToponymsHandler _handler;
 
-    /// <summary>
-    /// Contains tests for <see cref="GetAllToponymsHandler"/>.
-    /// </summary>
-    public sealed class GetAllToponymsHandlerTests
+    public GetAllToponymsHandlerTests()
     {
-        private readonly IMapper mapper;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly Mock<IToponymRepository> toponymRepositoryMock;
-        private readonly GetAllToponymsHandler handler;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetAllToponymsHandlerTests"/> class.
-        /// </summary>
-        public GetAllToponymsHandlerTests()
+        _mapper = new MapperConfiguration(cfg =>
         {
-            this.mapper = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Toponym, ToponymDTO>();
-            }).CreateMapper();
-            this.loggerMock = new Mock<ILoggerService>();
-            this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            this.toponymRepositoryMock = new Mock<IToponymRepository>();
-            this.repositoryWrapperMock.Setup(r => r.ToponymRepository).Returns(this.toponymRepositoryMock.Object);
-            this.handler = new GetAllToponymsHandler(this.repositoryWrapperMock.Object, this.mapper, this.loggerMock.Object);
-        }
+            cfg.CreateMap<Toponym, ToponymDTO>();
+        }).CreateMapper();
 
-        /// <summary>
-        /// Should return all toponyms when <see cref="GetAllToponymsRequestDTO.Title"/> <see langword="is null"/>.
-        /// </summary>
-        /// <returns>Awaitable task.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnAllToponyms_WhenNoTitleProvided()
+        _loggerMock = new Mock<ILoggerService>();
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _toponymRepositoryMock = new Mock<IToponymRepository>();
+
+        _repositoryWrapperMock
+            .Setup(r => r.ToponymRepository)
+            .Returns(_toponymRepositoryMock.Object);
+
+        _handler = new GetAllToponymsHandler(
+            _repositoryWrapperMock.Object,
+            _mapper,
+            _loggerMock.Object);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnAllToponyms_WhenNoTitleProvided()
+    {
+        IQueryable<Toponym> toponyms = new List<Toponym>
         {
-            // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>
+            new()
             {
-                new()
-                {
-                    Id = 1,
-                    StreetName = "Шевченка",
-                },
-                new()
-                {
-                    Id = 2,
-                    StreetName = "Бандери",
-                },
-            }.AsQueryable();
-            List<ToponymDTO> expected_toponyms = new()
+                Id = 1,
+                StreetName = "Шевченка",
+            },
+            new()
             {
-                this.mapper.Map<ToponymDTO>(toponyms.ElementAt(0)),
-                this.mapper.Map<ToponymDTO>(toponyms.ElementAt(1)),
-            };
-            GetAllToponymsQuery query = new(new GetAllToponymsRequestDTO
-            {
-                Title = null,
-            });
-            this.toponymRepositoryMock.Setup(r => r.FindAll(null)).Returns(toponyms);
+                Id = 2,
+                StreetName = "Бандери",
+            },
+        }.AsQueryable();
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll(null), Times.Once);
-        }
-
-        /// <summary>
-        /// Should return filtered toponyms when <see cref="GetAllToponymsRequestDTO.Title"/> <see langword="is not null"/>.
-        /// Must be case-insensitive.
-        /// </summary>
-        /// <returns>Awaitable task.</returns>
-        [Fact]
-        public async Task Handle_ShouldFilterToponyms_WhenTitleProvided_CaseInsensitive()
+        List<ToponymDTO> expectedToponyms = new()
         {
-            // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>
-            {
-                new()
-                {
-                    Id = 1,
-                    StreetName = "Шевченка",
-                },
-                new()
-                {
-                    Id = 2,
-                    StreetName = "Бандери",
-                },
-            }.AsQueryable();
-            List<ToponymDTO> expected_toponyms = new()
-            {
-                this.mapper.Map<ToponymDTO>(toponyms.ElementAt(1)),
-            };
-            GetAllToponymsQuery query = new(new GetAllToponymsRequestDTO
-            {
-                Title = "аНдЕр",
-            });
-            this.toponymRepositoryMock.Setup(r => r.FindAll(null)).Returns(toponyms);
+            _mapper.Map<ToponymDTO>(toponyms.ElementAt(0)),
+            _mapper.Map<ToponymDTO>(toponyms.ElementAt(1)),
+        };
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll(null), Times.Once);
-        }
-
-        /// <summary>
-        /// Should return unique toponyms when <see cref="GetAllToponymsRequestDTO.Title"/> <see langword="is not null"/>.
-        /// </summary>
-        /// <returns>Awaitable task.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnUniqueToponyms_WhenTitleProvided()
+        GetAllToponymsQuery query = new(new GetAllToponymsRequestDTO
         {
-            // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>
-            {
-                new()
-                {
-                    Id = 1,
-                    StreetName = "Шевченка",
-                    Oblast = "Київська",
-                },
-                new()
-                {
-                    Id = 2,
-                    StreetName = "Шевченка",
-                    Oblast = "Львівська",
-                },
-            }.AsQueryable();
-            List<ToponymDTO> expected_toponyms = new()
-            {
-                this.mapper.Map<ToponymDTO>(toponyms.ElementAt(0)),
-            };
-            GetAllToponymsQuery query = new(new GetAllToponymsRequestDTO
-            {
-                Title = "евч",
-            });
-            this.toponymRepositoryMock.Setup(r => r.FindAll(null)).Returns(toponyms);
+            Title = null,
+        });
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+        _toponymRepositoryMock
+            .Setup(r => r.FindAll(null))
+            .Returns(toponyms);
 
-            // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll(null), Times.Once);
-        }
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-        /// <summary>
-        /// Should return empty collection when no matches found.
-        /// </summary>
-        /// <returns>Awaitable task.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnEmptyCollection_WhenNoMatchesFound()
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Toponyms.Should().BeEquivalentTo(expectedToponyms);
+
+        _toponymRepositoryMock.Verify(
+            r => r.FindAll(null),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldFilterToponyms_WhenTitleProvided_CaseInsensitive()
+    {
+        IQueryable<Toponym> toponyms = new List<Toponym>
         {
-            // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>
+            new()
             {
-                new()
-                {
-                    Id = 1,
-                    StreetName = "Шевченка",
-                },
-                new()
-                {
-                    Id = 2,
-                    StreetName = "Бандери",
-                },
-            }.AsQueryable();
-            List<ToponymDTO> expected_toponyms = new();
-            GetAllToponymsQuery query = new(new GetAllToponymsRequestDTO
+                Id = 1,
+                StreetName = "Шевченка",
+            },
+            new()
             {
-                Title = "ийськ",
-            });
-            this.toponymRepositoryMock.Setup(r => r.FindAll(null)).Returns(toponyms);
+                Id = 2,
+                StreetName = "Бандери",
+            },
+        }.AsQueryable();
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+        List<ToponymDTO> expectedToponyms = new()
+        {
+            _mapper.Map<ToponymDTO>(toponyms.ElementAt(0)),
+        };
 
-            // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Toponyms.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(r => r.FindAll(null), Times.Once);
-        }
+        GetAllToponymsQuery query = new(new GetAllToponymsRequestDTO
+        {
+            Title = "шЕв",
+        });
+
+        _toponymRepositoryMock
+            .Setup(r => r.FindAll(null))
+            .Returns(toponyms);
+
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Toponyms.Should().BeEquivalentTo(expectedToponyms);
+
+        _toponymRepositoryMock.Verify(
+            r => r.FindAll(null),
+            Times.Once);
     }
 }

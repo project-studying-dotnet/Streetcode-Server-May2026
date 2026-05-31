@@ -5,7 +5,10 @@ namespace Streetcode.DAL.Entities.AdditionalContent;
 public class Tag
 {
     public int Id { get; set; }
-    public string Title { get; set; }
-    public IEnumerable<StreetcodeTagIndex> StreetcodeTagIndices { get; set; }
-    public IEnumerable<StreetcodeContent> Streetcodes { get; set; }
+    required public string Title { get; set; }
+    public ICollection<StreetcodeTagIndex> StreetcodeTagIndices { get; set; }
+        = new List<StreetcodeTagIndex>();
+
+    public ICollection<StreetcodeContent> Streetcodes { get; set; }
+        = new List<StreetcodeContent>();
 }
