@@ -74,7 +74,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
                 {
                     if (oldTags.FirstOrDefault(t => t.TagId == newTagId) == null)
                     {
-                        await _repositoryWrapper?.StreetcodeTagIndexRepository.CreateAsync(new StreetcodeTagIndex
+                        await _repositoryWrapper.StreetcodeTagIndexRepository.CreateAsync(new StreetcodeTagIndex
                         {
                             StreetcodeId = streetcode.Id,
                             TagId = newTagId
@@ -82,7 +82,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
                     }
                 }
 
-                await _repositoryWrapper?.SaveChangesAsync(cancellationToken);
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 var response = _mapper.Map<StreetcodeDTO>(streetcode);
                 response.Tags = request.streetcode.Tags;
