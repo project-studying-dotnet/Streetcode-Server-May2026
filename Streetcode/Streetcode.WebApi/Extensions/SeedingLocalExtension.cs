@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Streetcode.BLL.Services.BlobStorageService;
@@ -40,7 +41,6 @@ using Streetcode.WebApi.InitialData.TimelineItemsSeeder;
 using Streetcode.WebApi.InitialData.TransactionLinkSeeder;
 using Streetcode.WebApi.InitialData.UserSeeder;
 using Streetcode.WebApi.InitialData.VideosSeeder;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Streetcode.WebApi.Extensions
 {
