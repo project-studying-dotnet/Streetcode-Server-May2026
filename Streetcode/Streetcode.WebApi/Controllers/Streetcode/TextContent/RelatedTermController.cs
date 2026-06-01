@@ -32,11 +32,11 @@ namespace Streetcode.WebApi.Controllers.Streetcode.TextContent
             return HandleResult(await Mediator.Send(new UpdateRelatedTermCommand(id, relatedTerm)));
         }
 
-        [AuthorizeRoles(UserRole.MainAdministrator)]
-        [HttpDelete("{word}")]
-        public async Task<IActionResult> Delete([FromRoute] string word)
+        // [AuthorizeRoles(UserRole.MainAdministrator)]
+        [HttpDelete("{word}/{termId:int}")]
+        public async Task<IActionResult> Delete([FromRoute] string word, [FromRoute] int termId)
         {
-            return HandleResult(await Mediator.Send(new DeleteRelatedTermCommand(word)));
+            return HandleResult(await Mediator.Send(new DeleteRelatedTermCommand(word, termId)));
         }
     }
 }

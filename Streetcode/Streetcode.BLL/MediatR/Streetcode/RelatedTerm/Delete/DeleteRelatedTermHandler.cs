@@ -23,15 +23,18 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete
 
         public async Task<Result<RelatedTermDTO>> Handle(DeleteRelatedTermCommand request, CancellationToken cancellationToken)
         {
-            var word = request.word?.ToLower();
+            var word = request.Word?.ToLower();
 
             var relatedTerm = await _repository.RelatedTermRepository.GetFirstOrDefaultAsync(
-                predicate: rt => rt.Word != null && rt.Word.ToLower().Equals(word),
+                predicate: rt =>
+                    rt.Word != null &&
+                    rt.Word.ToLower().Equals(word) &&
+                    rt.TermId == request.TermId,
                 cancellationToken: cancellationToken);
 
             if (relatedTerm is null)
             {
-                string errorMsg = string.Format(ErrorMessages.CannotFindRelatedTerm, request.word);
+                string errorMsg = string.Format(ErrorMessages.CannotFindRelatedTerm, request.Word);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }
@@ -40,16 +43,15 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete
 
             var resultIsSuccess = await _repository.SaveChangesAsync(cancellationToken) > 0;
             var relatedTermDto = _mapper.Map<RelatedTermDTO>(relatedTerm);
-            if(resultIsSuccess && relatedTermDto != null)
+
+            if (resultIsSuccess && relatedTermDto != null)
             {
                 return Result.Ok(relatedTermDto);
             }
-            else
-            {
-                string errorMsg = ErrorMessages.FailedToDeleteRelatedTerm;
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
-            }
+
+            string failedErrorMsg = ErrorMessages.FailedToDeleteRelatedTerm;
+            _logger.LogError(request, failedErrorMsg);
+            return Result.Fail(new Error(failedErrorMsg));
         }
     }
 }
