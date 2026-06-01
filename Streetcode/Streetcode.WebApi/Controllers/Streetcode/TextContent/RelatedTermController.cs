@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
+using Streetcode.BLL.DTO.Streetcode.TextContent.RelatedTerm;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
@@ -19,9 +20,9 @@ namespace Streetcode.WebApi.Controllers.Streetcode.TextContent
 
         [AuthorizeRoles(UserRole.MainAdministrator)]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RelatedTermDTO relatedTerm)
+        public async Task<IActionResult> Create([FromBody] CreateRelatedTermDTO request)
         {
-            return HandleResult(await Mediator.Send(new CreateRelatedTermCommand(relatedTerm)));
+            return HandleResult(await Mediator.Send(new CreateRelatedTermCommand(request)));
         }
 
         [AuthorizeRoles(UserRole.MainAdministrator)]
