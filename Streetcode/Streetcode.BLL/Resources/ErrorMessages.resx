@@ -575,6 +575,14 @@
   </data>
   <data name="TermIdIsRequired" xml:space="preserve">
     <value>The Term ID is required and must be greater than zero.</value>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid token.</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid refresh token.</value>
+  </data>
+  <data name="SuccessfulRefreshToken" xml:space="preserve">
+    <value>Token refreshed for user {0}</value>
   </data>
   <data name="CannotFindAnyTransactionLink" xml:space="preserve">
     <value>Cannot find any transaction link</value>
