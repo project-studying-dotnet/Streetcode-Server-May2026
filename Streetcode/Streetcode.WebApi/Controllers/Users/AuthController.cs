@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
 using Streetcode.BLL.MediatR.Users.Login;
+using Streetcode.BLL.MediatR.Users.RefreshToken;
 
 namespace Streetcode.WebApi.Controllers.Users
 {
@@ -23,6 +24,13 @@ namespace Streetcode.WebApi.Controllers.Users
             {
                 return Unauthorized(ex.Message);
             }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
+        {
+            return HandleResult(await Mediator.Send(new RefreshTokenCommand(refreshTokenRequest)));
         }
     }
 }
