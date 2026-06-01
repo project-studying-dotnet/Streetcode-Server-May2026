@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
+using Streetcode.BLL.DTO.Streetcode.TextContent.RelatedTerm;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
@@ -67,20 +68,25 @@ public class RelatedTermControllerTests
     public async Task Create_ShouldReturnOk_WhenResultIsSuccess()
     {
         // Arrange
-        var relatedTerm = CreateRelatedTermDto();
+        var createRelatedTerm = new CreateRelatedTermDto
+        {
+            Word = RelatedTermWord,
+            TermId = TermId,
+        };
+        var expectedResult = CreateRelatedTermDto();
 
         mediatorMock
             .Setup(x => x.Send(
                 It.IsAny<CreateRelatedTermCommand>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Ok(relatedTerm));
+            .ReturnsAsync(Result.Ok(expectedResult));
 
         // Act
-        var result = await controller.Create(relatedTerm);
+        var result = await controller.Create(createRelatedTerm);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(relatedTerm, okResult.Value);
+        Assert.Equal(expectedResult, okResult.Value);
     }
 
     [Fact]
