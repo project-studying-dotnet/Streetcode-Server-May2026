@@ -578,6 +578,7 @@
   </data>
   <data name="SuccessfulRefreshToken" xml:space="preserve">
     <value>Token refreshed for user {0}</value>
+  </data>
   <data name="CannotFindAnyTransactionLink" xml:space="preserve">
     <value>Cannot find any transaction link</value>
   </data>
