@@ -27,6 +27,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
     /// </summary>
     public class UpdateStreetcodeHandlerTests
     {
+        private const string TAG_TITLE = "Test Tag";
+
         private readonly Mock<IMapper> mapperMock;
         private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
         private readonly Mock<ILoggerService> loggerMock;
@@ -62,7 +64,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
                 Title = "Updated Streetcode",
                 Tags = new List<StreetcodeTagDTO>()
                 {
-                    new StreetcodeTagDTO() { Id = 1, Title = "Test Tag" }
+                    new StreetcodeTagDTO() { Id = 1, Title = TAG_TITLE }
                 }
             };
 
@@ -72,7 +74,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
                 Title = "Updated Streetcode",
                 Tags = new List<Tag>()
                 {
-                    new Tag() { Id = 1, Title = "Test Tag" }
+                    new Tag() { Id = 1, Title = TAG_TITLE }
                 }
             };
 
@@ -136,7 +138,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Update
                 Title = "Updated Streetcode",
                 Tags = new List<StreetcodeTagDTO>()
                 {
-                    new StreetcodeTagDTO() { Id = 1, Title = "Test Tag" }
+                    new StreetcodeTagDTO() { Id = 1, Title = TAG_TITLE }
                 }
             };
 
