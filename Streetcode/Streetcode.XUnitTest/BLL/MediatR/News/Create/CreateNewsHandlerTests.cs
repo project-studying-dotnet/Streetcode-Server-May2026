@@ -9,6 +9,8 @@ using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
+
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
 {
     public class CreateNewsHandlerTests
@@ -39,7 +41,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenMapperReturnsNull()
         {
-            var request = new CreateNewsCommand(null);
+            var request = new CreateNewsCommand(null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -55,8 +57,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
             var newsDto = new NewsDTO { Title = "Test Title", ImageId = 1 };
             var request = new CreateNewsCommand(newsDto);
 
-            _repositoryWrapperMock.Setup(r => r.NewsRepository.CreateAsync(It.IsAny<DAL.Entities.News.News>()))
-                                  .Returns((DAL.Entities.News.News n) => Task.FromResult(n));
+            _repositoryWrapperMock.Setup(r => r.NewsRepository.CreateAsync(It.IsAny<NewsEntity>()))
+                                  .Returns((NewsEntity n) => Task.FromResult(n));
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
                                   .ReturnsAsync(1);
@@ -68,7 +70,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
             Assert.Equal(newsDto.Title, result.Value.Title);
             Assert.Equal(newsDto.ImageId, result.Value.ImageId);
 
-            _repositoryWrapperMock.Verify(r => r.NewsRepository.CreateAsync(It.IsAny<DAL.Entities.News.News>()), Times.Once);
+            _repositoryWrapperMock.Verify(r => r.NewsRepository.CreateAsync(It.IsAny<NewsEntity>()), Times.Once);
         }
 
         [Fact]
@@ -76,11 +78,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
         {
             var request = new CreateNewsCommand(new NewsDTO { ImageId = 0 });
 
-            DAL.Entities.News.News capturedEntity = null;
+            NewsEntity capturedEntity = null!;
 
-            _repositoryWrapperMock.Setup(r => r.NewsRepository.CreateAsync(It.IsAny<DAL.Entities.News.News>()))
-                                  .Callback<DAL.Entities.News.News>(n => capturedEntity = n)
-                                  .Returns((DAL.Entities.News.News n) => Task.FromResult(n));
+            _repositoryWrapperMock.Setup(r => r.NewsRepository.CreateAsync(It.IsAny<NewsEntity>()))
+                                  .Callback<NewsEntity>(n => capturedEntity = n)
+                                  .Returns((NewsEntity n) => Task.FromResult(n));
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
                                   .ReturnsAsync(0);

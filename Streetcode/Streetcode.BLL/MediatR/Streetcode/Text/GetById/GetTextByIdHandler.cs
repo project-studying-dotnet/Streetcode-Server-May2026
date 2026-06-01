@@ -23,7 +23,9 @@ public class GetTextByIdHandler : IRequestHandler<GetTextByIdQuery, Result<TextD
 
     public async Task<Result<TextDto>> Handle(GetTextByIdQuery request, CancellationToken cancellationToken)
     {
-        var text = await _repositoryWrapper.TextRepository.GetFirstOrDefaultAsync(f => f.Id == request.Id);
+        var text = await _repositoryWrapper.TextRepository.GetFirstOrDefaultAsync(
+            predicate: f => f.Id == request.Id,
+            cancellationToken: cancellationToken);
 
         if (text is null)
         {

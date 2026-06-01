@@ -35,19 +35,28 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Create
                 return Result.Fail(errorMsg);
             }
 
-            var entity = await _repositoryWrapper.StreetcodeRepository.CreateAsync(newStreetcode);
-
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
-
-            if (resultIsSuccess)
+            try
             {
-                return Result.Ok(_mapper.Map<StreetcodeDTO>(entity));
+                newStreetcode.Tags.Clear();
+
+                newStreetcode = await _repositoryWrapper.StreetcodeRepository.CreateAsync(newStreetcode);
+
+                _repositoryWrapper?.SaveChangesAsync(cancellationToken);
+
+                var tagIds = request.newStreetcodeContent.Tags.Select(t => t.Id).ToList();
+
+                newStreetcode.Tags.AddRange(await _repositoryWrapper!
+                    .TagRepository
+                    .GetAllAsync(t => tagIds.Contains(t.Id)));
+
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
+
+                return Result.Ok(_mapper.Map<StreetcodeDTO>(newStreetcode));
             }
-            else
+            catch (Exception ex)
             {
-                const string errorMsg = "Failed to create a streetcode";
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
+                _logger.LogError(request, ex.Message);
+                return Result.Fail(new Error(ex.Message));
             }
         }
     }

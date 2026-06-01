@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using FluentResults;
 using Microsoft.EntityFrameworkCore.Query;
@@ -9,7 +10,6 @@ using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
-using System.Linq.Expressions;
 using Xunit;
 using Streetcode.BLL.Resources;
 
@@ -72,7 +72,8 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
             int id = 1;
             var query = new GetPartnerByIdQuery(id);
 
-            var partner = new Partner {
+            var partner = new Partner
+            {
                 Id = 1,
                 Title = "Title 1",
                 LogoId = 1, IsKeyPartner = true,
@@ -92,7 +93,7 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
                 .Setup(repo => repo.GetSingleOrDefaultAsync(
                     It.IsAny<Expression<Func<Partner, bool>>>(),
                     It.IsAny<Func<IQueryable<Partner>, IIncludableQueryable<Partner, object>>?>()))
-                .Returns(Task.FromResult(partner));
+                .Returns(Task.FromResult<Partner?>(partner));
 
             _mapperMock
                 .Setup(mapper => mapper.Map<PartnerDTO>(partner))
@@ -107,6 +108,5 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
-
     }
 }

@@ -76,6 +76,14 @@ public class ExceptionMiddlewareTests
         Assert.Contains("Secret details", body);
     }
 
+    private static DefaultHttpContext CreateContext()
+    {
+        var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+        context.Request.Path = "/test";
+        context.TraceIdentifier = "trace-123";
+        return context;
+    }
     private ExceptionMiddleware CreateMiddleware(Exception ex, bool showDetails)
     {
         _configMock.Setup(c => c["ShowExceptionDetails"])
@@ -84,14 +92,5 @@ public class ExceptionMiddlewareTests
         RequestDelegate next = _ => throw ex;
 
         return new ExceptionMiddleware(next, _loggerMock.Object, _configMock.Object);
-    }
-
-    private static DefaultHttpContext CreateContext()
-    {
-        var context = new DefaultHttpContext();
-        context.Response.Body = new MemoryStream();
-        context.Request.Path = "/test";
-        context.TraceIdentifier = "trace-123";
-        return context;
     }
 }

@@ -1,46 +1,65 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Enums;
-using Streetcode.DAL.Persistence;
 
 namespace Streetcode.WebApi.InitialData.UserSeeder
 {
     [ExcludeFromCodeCoverage]
     public static class UserSeeder
     {
-        public static async Task FillSeedAsync(StreetcodeDbContext dbContext)
+        public static async Task FillSeedAsync(UserManager<User> userManager, IConfiguration configuration)
         {
-            const string AdminLiteral = "admin";
-            var identityPasswordHasher = new PasswordHasher<User>();
+            var adminEmail = configuration["AdminSettings:Email"];
+            var adminPassword = configuration["AdminSettings:Password"];
 
-            var adminUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == "admin");
+            if (string.IsNullOrWhiteSpace(adminEmail)
+            || string.IsNullOrWhiteSpace(adminPassword))
+            {
+                throw new InvalidOperationException(
+                    "Admin credentials are not configured.");
+            }
+
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
             {
-                var newAdmin = new User
+                adminUser = new User
                 {
-                    Email = "admin@admin.com",
-                    NormalizedEmail = "ADMIN@ADMIN.COM",
-                    UserName = AdminLiteral,
-                    NormalizedUserName = "ADMIN",
-                    Name = AdminLiteral,
-                    Surname = AdminLiteral,
+                    Email = adminEmail,
+                    UserName = adminEmail,
+                    Name = "admin",
+                    Surname = "adminovich",
                     Role = UserRole.MainAdministrator,
                     EmailConfirmed = true,
                 };
 
-                newAdmin.PasswordHash = identityPasswordHasher.HashPassword(newAdmin, AdminLiteral);
+                var result = await userManager.CreateAsync(
+                    adminUser,
+                    adminPassword);
 
-                await dbContext.Users.AddAsync(newAdmin);
-                await dbContext.SaveChangesAsync();
+                if (!result.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
             }
-            else if (string.IsNullOrEmpty(adminUser.PasswordHash) || adminUser.PasswordHash.Length < 20)
-            {
-                adminUser.PasswordHash = identityPasswordHasher.HashPassword(adminUser, AdminLiteral);
 
-                await dbContext.SaveChangesAsync();
+            var isInRole = await userManager.IsInRoleAsync(
+                adminUser,
+                UserRole.MainAdministrator.ToString());
+
+            if (!isInRole)
+            {
+                var roleResult = await userManager.AddToRoleAsync(
+                    adminUser,
+                    UserRole.MainAdministrator.ToString());
+
+                if (!roleResult.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to assign admin role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                }
             }
         }
     }

@@ -1,12 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using Moq;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.Term.GetById;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Linq.Expressions;
 using Xunit;
+using Streetcode.BLL.Resources;
 
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.Term;
 
@@ -55,12 +56,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.GetById
         public async Task Handle_ShouldReturnFail_WhenTermDoesNotExist()
         {
             int testId = 999;
-            string expectedErrorMsg = $"Cannot find any term with corresponding id: {testId}";
+            string expectedErrorMsg = string.Format(ErrorMessages.CannotFindTermById, testId);
 
             _repositoryWrapperMock.Setup(r => r.TermRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<Entity, bool>>>(),
                 null))
-                .ReturnsAsync((Entity)null);
+                .ReturnsAsync((Entity)null!);
 
             var handler = new GetTermByIdHandler(_repositoryWrapperMock.Object, _mapper, _loggerMock.Object);
             var query = new GetTermByIdQuery(testId);

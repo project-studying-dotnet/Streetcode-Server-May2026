@@ -21,8 +21,12 @@ public class CreateRelatedFigureHandler : IRequestHandler<CreateRelatedFigureCom
 
     public async Task<Result<Unit>> Handle(CreateRelatedFigureCommand request, CancellationToken cancellationToken)
     {
-        var observerEntity = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(rel => rel.Id == request.ObserverId);
-        var targetEntity = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(rel => rel.Id == request.TargetId);
+        var observerEntity = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
+            predicate: rel => rel.Id == request.ObserverId,
+            cancellationToken: cancellationToken);
+        var targetEntity = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
+            predicate: rel => rel.Id == request.TargetId,
+            cancellationToken: cancellationToken);
 
         if (observerEntity is null)
         {
@@ -46,7 +50,7 @@ public class CreateRelatedFigureHandler : IRequestHandler<CreateRelatedFigureCom
 
         _repositoryWrapper.RelatedFigureRepository.Create(relation);
 
-        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
         if(resultIsSuccess)
         {
             return Result.Ok(Unit.Value);

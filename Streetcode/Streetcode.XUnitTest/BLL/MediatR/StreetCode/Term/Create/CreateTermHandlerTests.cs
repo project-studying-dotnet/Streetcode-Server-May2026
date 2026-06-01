@@ -7,6 +7,9 @@ using Streetcode.BLL.MediatR.Streetcode.Term.Create;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
+using NewsEntity = global::Streetcode.DAL.Entities.News.News;
+using TermEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Term;
+
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Create
 {
     public class CreateTermHandlerTests
@@ -36,7 +39,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Create
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenMapperReturnsNull()
         {
-            var request = new CreateTermCommand(null);
+            var request = new CreateTermCommand(null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -52,11 +55,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Create
             var termDto = new CreateTermDto { Title = "Test Title", Description = "Test Description" };
             var request = new CreateTermCommand(termDto);
 
-            _repositoryWrapperMock.Setup(r => r.TermRepository.GetAllAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
-                                  .ReturnsAsync(new List<DAL.Entities.Streetcode.TextContent.Term>());
+            _repositoryWrapperMock.Setup(r => r.TermRepository.GetAllAsync(It.IsAny<System.Linq.Expressions.Expression<Func<TermEntity, bool>>>(), null))
+                                  .ReturnsAsync(new List<TermEntity>());
 
-            _repositoryWrapperMock.Setup(r => r.TermRepository.CreateAsync(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()))
-                                  .Returns((DAL.Entities.Streetcode.TextContent.Term n) => Task.FromResult(n));
+            _repositoryWrapperMock.Setup(r => r.TermRepository.CreateAsync(It.IsAny<TermEntity>()))
+                                  .Returns((TermEntity n) => Task.FromResult(n));
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
                                   .ReturnsAsync(1);
@@ -68,7 +71,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Create
             Assert.Equal(termDto.Title, result.Value.Title);
             Assert.Equal(termDto.Description, result.Value.Description);
 
-            _repositoryWrapperMock.Verify(r => r.TermRepository.CreateAsync(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()), Times.Once);
+            _repositoryWrapperMock.Verify(r => r.TermRepository.CreateAsync(It.IsAny<TermEntity>()), Times.Once);
         }
 
         [Fact]
@@ -76,14 +79,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Create
         {
             var request = new CreateTermCommand(new CreateTermDto { Title = "Test Title", Description = "Test Description" });
 
-            DAL.Entities.Streetcode.TextContent.Term capturedEntity = null;
+            TermEntity capturedEntity = null!;
 
-            _repositoryWrapperMock.Setup(r => r.TermRepository.GetAllAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DAL.Entities.Streetcode.TextContent.Term, bool>>>(), null))
-                                  .ReturnsAsync(new List<DAL.Entities.Streetcode.TextContent.Term>());
+            _repositoryWrapperMock.Setup(r => r.TermRepository.GetAllAsync(It.IsAny<System.Linq.Expressions.Expression<Func<TermEntity, bool>>>(), null))
+                                  .ReturnsAsync(new List<TermEntity>());
 
-            _repositoryWrapperMock.Setup(r => r.TermRepository.CreateAsync(It.IsAny<DAL.Entities.Streetcode.TextContent.Term>()))
-                                  .Callback<DAL.Entities.Streetcode.TextContent.Term>(n => capturedEntity = n)
-                                  .Returns((DAL.Entities.Streetcode.TextContent.Term n) => Task.FromResult(n));
+            _repositoryWrapperMock.Setup(r => r.TermRepository.CreateAsync(It.IsAny<TermEntity>()))
+                                  .Callback<TermEntity>(n => capturedEntity = n)
+                                  .Returns((TermEntity n) => Task.FromResult(n));
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
                                   .ReturnsAsync(0);

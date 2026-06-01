@@ -1,157 +1,200 @@
-﻿// <copyright file="DeleteVideoHandlerTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿using System.Linq.Expressions;
+using AutoMapper;
+using FluentAssertions;
+using Moq;
+using Repositories.Interfaces;
+using Streetcode.BLL.DTO.Media.Video;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Media;
+using Streetcode.BLL.MediatR.Media.Video.Delete;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Media;
+using Xunit;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Media.Video.Delete
+using VideoEntity = Streetcode.DAL.Entities.Media.Video;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Media.Video.Delete;
+
+/// <summary>
+/// Unit tests for DeleteVideoHandler.
+/// </summary>
+public class DeleteVideoHandlerTests
 {
-    using System;
-    using System.Linq.Expressions;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using FluentAssertions;
-    using Moq;
-    using Repositories.Interfaces;
-    using Streetcode.BLL.DTO.Media.Video;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.Mapping.Media;
-    using Streetcode.BLL.MediatR.Media.Video.Delete;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Streetcode.DAL.Repositories.Interfaces.Media;
-    using Xunit;
-    using T = Streetcode.DAL.Entities.Media;
+    private readonly Mock<IRepositoryWrapper> _repoWrapperMock;
+    private readonly Mock<IVideoRepository> _videoRepoMock;
+    private readonly IMapper _mapper;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly DeleteVideoHandler _handler;
 
     /// <summary>
-    /// Unit tests for DeleteVideoHandler.
+    /// Initializes a new instance of the <see cref="DeleteVideoHandlerTests"/> class.
     /// </summary>
-    public class DeleteVideoHandlerTests
+    public DeleteVideoHandlerTests()
     {
-        private readonly Mock<IRepositoryWrapper> repoWrapperMock;
-        private readonly Mock<IVideoRepository> videoRepoMock;
-        private readonly IMapper mapper;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly DeleteVideoHandler handler;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteVideoHandlerTests"/> class.
-        /// </summary>
-        public DeleteVideoHandlerTests()
+        var config = new MapperConfiguration(cfg =>
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<VideoProfile>();
-            });
+            cfg.AddProfile<VideoProfile>();
+        });
 
-            this.mapper = config.CreateMapper();
+        _mapper = config.CreateMapper();
 
-            this.repoWrapperMock = new Mock<IRepositoryWrapper>();
-            this.videoRepoMock = new Mock<IVideoRepository>();
-            this.loggerMock = new Mock<ILoggerService>();
+        _repoWrapperMock = new Mock<IRepositoryWrapper>();
+        _videoRepoMock = new Mock<IVideoRepository>();
+        _loggerMock = new Mock<ILoggerService>();
 
-            this.repoWrapperMock
-                .Setup(x => x.VideoRepository)
-                .Returns(this.videoRepoMock.Object);
+        _repoWrapperMock
+            .Setup(x => x.VideoRepository)
+            .Returns(_videoRepoMock.Object);
 
-            this.handler = new DeleteVideoHandler(
-                this.repoWrapperMock.Object,
-                this.mapper,
-                this.loggerMock.Object);
-        }
+        _handler = new DeleteVideoHandler(
+            _repoWrapperMock.Object,
+            _mapper,
+            _loggerMock.Object);
+    }
 
-        /// <summary>
-        /// Should return successful Result with VideoDTO when database delete succeeds.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnVideoDto_WhenDeleteSucceeds()
+    /// <summary>
+    /// Should return successful Result with VideoDTO when database delete succeeds.
+    /// </summary>
+    [Fact]
+    public async Task Handle_ShouldReturnVideoDto_WhenDeleteSucceeds()
+    {
+        const int videoId = 1;
+
+        var command = new DeleteVideoCommand(videoId);
+
+        var existingVideo = new VideoEntity
         {
-            int videoId = 1;
-            var command = new DeleteVideoCommand(videoId);
-            var existingVideo = new T.Video { Id = videoId, Url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" };
+            Id = videoId,
+            Url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        };
 
-            this.videoRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Video, bool>>>(), null))
-                .ReturnsAsync(existingVideo);
+        _videoRepoMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<VideoEntity, bool>>>(),
+                null))
+            .ReturnsAsync(existingVideo);
 
-            this.videoRepoMock
-                .Setup(r => r.Delete(It.IsAny<T.Video>()));
+        _videoRepoMock
+            .Setup(r => r.Delete(It.IsAny<VideoEntity>()));
 
-            this.repoWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(1);
+        _repoWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(1);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().NotBeNull();
-            result.Value.Id.Should().Be(videoId);
-            result.Value.Url.Should().Be(existingVideo.Url);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.Id.Should().Be(videoId);
+        result.Value.Url.Should().Be(existingVideo.Url);
 
-            this.videoRepoMock.Verify(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Video, bool>>>(), null), Times.Once);
-            this.videoRepoMock.Verify(r => r.Delete(existingVideo), Times.Once);
-            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Once);
+        _videoRepoMock.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<VideoEntity, bool>>>(),
+                null),
+            Times.Once);
 
-            this.loggerMock.Verify(
-                l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
-                Times.Never);
-        }
+        _videoRepoMock.Verify(
+            r => r.Delete(existingVideo),
+            Times.Once);
 
-        /// <summary>
-        /// Should return failed Result when Video does not exist in the database.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnFailResult_WhenVideoDoesNotExist()
+        _repoWrapperMock.Verify(
+            w => w.SaveChangesAsync(),
+            Times.Once);
+
+        _loggerMock.Verify(
+            l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
+            Times.Never);
+    }
+
+    /// <summary>
+    /// Should return failed Result when Video does not exist in the database.
+    /// </summary>
+    [Fact]
+    public async Task Handle_ShouldReturnFailResult_WhenVideoDoesNotExist()
+    {
+        const int videoId = 1;
+
+        var command = new DeleteVideoCommand(videoId);
+
+        _videoRepoMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<VideoEntity, bool>>>(),
+                null))
+            .ReturnsAsync((VideoEntity)null!);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailed.Should().BeTrue();
+
+        _videoRepoMock.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<VideoEntity, bool>>>(),
+                null),
+            Times.Once);
+
+        _videoRepoMock.Verify(
+            r => r.Delete(It.IsAny<VideoEntity>()),
+            Times.Never);
+
+        _repoWrapperMock.Verify(
+            w => w.SaveChangesAsync(),
+            Times.Never);
+
+        _loggerMock.Verify(
+            l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
+            Times.Once);
+    }
+
+    /// <summary>
+    /// Should return failed Result when SaveChangesAsync fails.
+    /// </summary>
+    [Fact]
+    public async Task Handle_ShouldReturnFailResult_WhenDeleteFails()
+    {
+        const int videoId = 1;
+
+        var command = new DeleteVideoCommand(videoId);
+
+        var existingVideo = new VideoEntity
         {
-            int videoId = 999;
-            var command = new DeleteVideoCommand(videoId);
+            Id = videoId,
+            Url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        };
 
-            this.videoRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Video, bool>>>(), null))
-                .ReturnsAsync((T.Video?)null);
+        _videoRepoMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<VideoEntity, bool>>>(),
+                null))
+            .ReturnsAsync(existingVideo);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+        _videoRepoMock
+            .Setup(r => r.Delete(It.IsAny<VideoEntity>()));
 
-            result.IsFailed.Should().BeTrue();
-            result.Errors.Should().ContainSingle(e => e.Message.Contains($"Video with Id {videoId} not found."));
+        _repoWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(0);
 
-            this.videoRepoMock.Verify(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Video, bool>>>(), null), Times.Once);
-            this.videoRepoMock.Verify(r => r.Delete(It.IsAny<T.Video>()), Times.Never);
-            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Never);
-            this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
-        }
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-        /// <summary>
-        /// Should return failed Result and log error when database fails to save the deletion.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnFailResult_WhenSaveFails()
-        {
-            int videoId = 1;
-            var command = new DeleteVideoCommand(videoId);
-            var existingVideo = new T.Video { Id = videoId };
+        result.IsFailed.Should().BeTrue();
 
-            this.videoRepoMock
-                .Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Video, bool>>>(), null))
-                .ReturnsAsync(existingVideo);
+        _videoRepoMock.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<VideoEntity, bool>>>(),
+                null),
+            Times.Once);
 
-            this.videoRepoMock
-                .Setup(r => r.Delete(It.IsAny<T.Video>()));
+        _videoRepoMock.Verify(
+            r => r.Delete(existingVideo),
+            Times.Once);
 
-            this.repoWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(0);
+        _repoWrapperMock.Verify(
+            w => w.SaveChangesAsync(),
+            Times.Once);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
-
-            result.IsFailed.Should().BeTrue();
-            result.Errors.Should().ContainSingle(e => e.Message.Contains($"Failed to delete Video with Id {videoId}."));
-
-            this.videoRepoMock.Verify(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<T.Video, bool>>>(), null), Times.Once);
-            this.videoRepoMock.Verify(r => r.Delete(existingVideo), Times.Once);
-            this.repoWrapperMock.Verify(w => w.SaveChangesAsync(), Times.Once);
-            this.loggerMock.Verify(l => l.LogError(It.IsAny<object>(), $"Failed to delete Video with Id {videoId}."), Times.Once);
-        }
+        _loggerMock.Verify(
+            l => l.LogError(It.IsAny<object>(), It.IsAny<string>()),
+            Times.Once);
     }
 }

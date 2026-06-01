@@ -27,10 +27,15 @@ public class GetVideoByStreetcodeIdHandler : IRequestHandler<GetVideoByStreetcod
     public async Task<Result<VideoDto>> Handle(GetVideoByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
         var video = await _repositoryWrapper.VideoRepository
-            .GetFirstOrDefaultAsync(video => video.StreetcodeId == request.StreetcodeId);
+            .GetFirstOrDefaultAsync(
+                video => video.StreetcodeId == request.StreetcodeId,
+                cancellationToken: cancellationToken);
+
         if(video == null)
         {
-            StreetcodeContent? streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(x => x.Id == request.StreetcodeId);
+            StreetcodeContent? streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
+                x => x.Id == request.StreetcodeId,
+                cancellationToken: cancellationToken);
             if (streetcode is null)
             {
                 string errorMsg = $"Streetcode with id: {request.StreetcodeId} doesn`t exist";
