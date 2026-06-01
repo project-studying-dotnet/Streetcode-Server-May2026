@@ -7,6 +7,7 @@ using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.DTO.Transactions;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.ResultVariations;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Transactions.TransactionLink.GetByStreetcodeId;
@@ -26,14 +27,18 @@ public class GetTransactLinkByStreetcodeIdHandler : IRequestHandler<GetTransactL
     public async Task<Result<TransactLinkDTO?>> Handle(GetTransactLinkByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
         var transactLink = await _repositoryWrapper.TransactLinksRepository
-            .GetFirstOrDefaultAsync(f => f.StreetcodeId == request.StreetcodeId);
+            .GetFirstOrDefaultAsync(
+                predicate: f => f.StreetcodeId == request.StreetcodeId,
+                cancellationToken: cancellationToken);
 
         if (transactLink is null)
         {
             if (await _repositoryWrapper.StreetcodeRepository
-                .GetFirstOrDefaultAsync(s => s.Id == request.StreetcodeId) == null)
+                .GetFirstOrDefaultAsync(
+                    predicate: s => s.Id == request.StreetcodeId,
+                    cancellationToken: cancellationToken) == null)
             {
-                string errorMsg = $"Cannot find a transaction link by a streetcode id: {request.StreetcodeId}, because such streetcode doesn`t exist";
+                string errorMsg = string.Format(ErrorMessages.CannotFindAnyTransactionLinkWithCorrespondingStreetcodeId, request.StreetcodeId);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }
