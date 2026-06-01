@@ -80,7 +80,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
                     });
                 }
 
-                _repositoryWrapper?.SaveChangesAsync(cancellationToken);
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 var response = _mapper.Map<StreetcodeDTO>(streetcode);
                 response.Tags = request.streetcode.Tags;
