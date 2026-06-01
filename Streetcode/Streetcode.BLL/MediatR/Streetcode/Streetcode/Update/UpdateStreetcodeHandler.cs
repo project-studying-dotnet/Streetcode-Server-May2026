@@ -62,24 +62,22 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
                 var oldTags = await _repositoryWrapper!.StreetcodeTagIndexRepository
                     .GetAllAsync(t => t.StreetcodeId == streetcode.Id);
 
-                foreach (var oldTag in oldTags)
+                var tagsToDelete = oldTags.Where(t => !newTagIds.Contains(t.TagId)).ToList();
+
+                var tagsToAdd = newTagIds.Where(newTagId => oldTags.All(t => t.TagId != newTagId)).ToList();
+
+                foreach (var tag in tagsToDelete)
                 {
-                    if (!newTagIds.Contains(oldTag.TagId))
-                    {
-                        _repositoryWrapper.StreetcodeTagIndexRepository.Delete(oldTag);
-                    }
+                    _repositoryWrapper.StreetcodeTagIndexRepository.Delete(tag);
                 }
 
-                foreach (var newTagId in newTagIds)
+                foreach(var tag in tagsToAdd)
                 {
-                    if (oldTags.FirstOrDefault(t => t.TagId == newTagId) == null)
+                    await _repositoryWrapper.StreetcodeTagIndexRepository.CreateAsync(new StreetcodeTagIndex
                     {
-                        _repositoryWrapper?.StreetcodeTagIndexRepository.CreateAsync(new StreetcodeTagIndex
-                        {
-                            StreetcodeId = streetcode.Id,
-                            TagId = newTagId
-                        });
-                    }
+                        StreetcodeId = streetcode.Id,
+                        TagId = tag
+                    });
                 }
 
                 _repositoryWrapper?.SaveChangesAsync(cancellationToken);
