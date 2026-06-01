@@ -30,7 +30,7 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm.Create
         [Fact]
         public void Should_Not_Have_Errors_When_Command_Is_Fully_Valid()
         {
-            var validRelatedTermDto = new CreateRelatedTermDTO
+            var validRelatedTermDto = new CreateRelatedTermDto
             {
                 Word = "Валідний термін",
                 TermId = 1,

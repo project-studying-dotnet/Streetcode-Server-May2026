@@ -4,7 +4,7 @@ using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.Validators.Streetcode.RelatedTerm.Create
 {
-    public class CreateRelatedTermDtoValidator : AbstractValidator<CreateRelatedTermDTO>
+    public class CreateRelatedTermDtoValidator : AbstractValidator<CreateRelatedTermDto>
     {
         public const int MaxWordLength = 50;
         public CreateRelatedTermDtoValidator()

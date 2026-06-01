@@ -20,7 +20,7 @@ namespace Streetcode.WebApi.Controllers.Streetcode.TextContent
 
         [AuthorizeRoles(UserRole.MainAdministrator)]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateRelatedTermDTO request)
+        public async Task<IActionResult> Create([FromBody] CreateRelatedTermDto request)
         {
             return HandleResult(await Mediator.Send(new CreateRelatedTermCommand(request)));
         }

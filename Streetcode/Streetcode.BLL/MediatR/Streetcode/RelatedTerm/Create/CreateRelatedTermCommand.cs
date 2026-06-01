@@ -5,7 +5,7 @@ using Streetcode.BLL.DTO.Streetcode.TextContent.RelatedTerm;
 
 namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create
 {
-    public record CreateRelatedTermCommand(CreateRelatedTermDTO CreateRelatedTerm) : IRequest<Result<RelatedTermDTO>>
+    public record CreateRelatedTermCommand(CreateRelatedTermDto CreateRelatedTerm) : IRequest<Result<RelatedTermDTO>>
     {
     }
 }

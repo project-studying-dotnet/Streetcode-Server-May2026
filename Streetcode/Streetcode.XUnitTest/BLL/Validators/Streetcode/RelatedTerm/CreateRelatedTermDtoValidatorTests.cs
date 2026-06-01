@@ -51,9 +51,9 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm
             result.ShouldNotHaveAnyValidationErrors();
         }
 
-        private static CreateRelatedTermDTO CreateValidDto()
+        private static CreateRelatedTermDto CreateValidDto()
         {
-            return new CreateRelatedTermDTO
+            return new CreateRelatedTermDto
             {
                 TermId = 1,
                 Word = "Термін"

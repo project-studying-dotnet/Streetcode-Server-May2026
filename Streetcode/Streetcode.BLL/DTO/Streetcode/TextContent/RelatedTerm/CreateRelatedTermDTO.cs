@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Streetcode.BLL.DTO.Streetcode.TextContent.RelatedTerm
 {
-    public class CreateRelatedTermDTO
+    public class CreateRelatedTermDto
     {
         required public string Word { get; set; }
         public int TermId { get; set; }

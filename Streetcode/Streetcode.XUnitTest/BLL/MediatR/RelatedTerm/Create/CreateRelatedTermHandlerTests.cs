@@ -47,7 +47,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenRelatedTermAlreadyExists()
         {
-            var dto = new CreateRelatedTermDTO { TermId = 1, Word = "test" };
+            var dto = new CreateRelatedTermDto { TermId = 1, Word = "test" };
             var command = new CreateRelatedTermCommand(dto);
 
             var existingData = new List<Entity> { new Entity { TermId = 1, Word = "test" } };
@@ -67,7 +67,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
         [Fact]
         public async Task Handle_ShouldReturnOk_WhenRelatedTermCreatedSuccessfully()
         {
-            var dto = new CreateRelatedTermDTO { TermId = 1, Word = "test" };
+            var dto = new CreateRelatedTermDto { TermId = 1, Word = "test" };
             var command = new CreateRelatedTermCommand(dto);
 
             var emptyData = new List<Entity>().AsQueryable().BuildMock();
@@ -88,14 +88,14 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenMapperReturnsNull()
         {
-            var command = new CreateRelatedTermCommand(new CreateRelatedTermDTO
+            var command = new CreateRelatedTermCommand(new CreateRelatedTermDto
             {
                 Word = "test",
                 TermId = 1
             });
 
             var mapperMock = new Mock<IMapper>();
-            mapperMock.Setup(m => m.Map<Entity>(It.IsAny<CreateRelatedTermDTO>())).Returns((Entity)null!);
+            mapperMock.Setup(m => m.Map<Entity>(It.IsAny<CreateRelatedTermDto>())).Returns((Entity)null!);
 
             var handler = new CreateRelatedTermHandler(_repositoryWrapperMock.Object, mapperMock.Object, _loggerMock.Object);
 
@@ -109,7 +109,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenSaveChangesAsyncReturnsZero()
         {
-            var dto = new CreateRelatedTermDTO { TermId = 1, Word = "test" };
+            var dto = new CreateRelatedTermDto { TermId = 1, Word = "test" };
             var command = new CreateRelatedTermCommand(dto);
 
             _relatedTermRepositoryMock.Setup(x => x.GetAllAsync(It.IsAny<Expression<Func<Entity, bool>>>(), null))
@@ -127,7 +127,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenCreatedRelatedTermDtoIsNull()
         {
-            var dto = new CreateRelatedTermDTO { TermId = 1, Word = "test" };
+            var dto = new CreateRelatedTermDto { TermId = 1, Word = "test" };
             var command = new CreateRelatedTermCommand(dto);
 
             _relatedTermRepositoryMock.Setup(x => x.GetAllAsync(It.IsAny<Expression<Func<Entity, bool>>>(), null))
@@ -136,7 +136,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
             _repositoryWrapperMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
             var mapperMock = new Mock<IMapper>();
-            mapperMock.Setup(m => m.Map<Entity>(It.IsAny<CreateRelatedTermDTO>())).Returns(new Entity());
+            mapperMock.Setup(m => m.Map<Entity>(It.IsAny<CreateRelatedTermDto>())).Returns(new Entity());
             mapperMock.Setup(m => m.Map<RelatedTermDTO>(It.IsAny<Entity>())).Returns((RelatedTermDTO)null!);
 
             var handler = new CreateRelatedTermHandler(_repositoryWrapperMock.Object, mapperMock.Object, _loggerMock.Object);

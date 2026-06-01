@@ -9,7 +9,7 @@ public class RelatedTermProfile : Profile
 {
     public RelatedTermProfile()
     {
-        CreateMap<CreateRelatedTermDTO, RelatedTerm>().ReverseMap();
+        CreateMap<CreateRelatedTermDto, RelatedTerm>().ReverseMap();
 
         CreateMap<RelatedTerm, RelatedTermDTO>().ReverseMap();
      }
