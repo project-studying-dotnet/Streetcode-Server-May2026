@@ -196,6 +196,33 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find any transaction link.
+        /// </summary>
+        public static string CannotFindAnyTransactionLink {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTransactionLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any transaction link with corresponding id: {0}.
+        /// </summary>
+        public static string CannotFindAnyTransactionLinkWithCorrespondingId {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTransactionLinkWithCorrespondingId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find a transaction link by a streetcode id: {0}, because such streetcode doesn`t exist.
+        /// </summary>
+        public static string CannotFindAnyTransactionLinkWithCorrespondingStreetcodeId {
+            get {
+                return ResourceManager.GetString("CannotFindAnyTransactionLinkWithCorrespondingStreetcodeId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find an art with corresponding id: {0}.
         /// </summary>
         public static string CannotFindArtById {
@@ -372,6 +399,15 @@ namespace Streetcode.BLL.Resources {
         public static string CategoryIdMustBePositive {
             get {
                 return ResourceManager.GetString("CategoryIdMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing StreetcodeId for an existing Text is not allowed..
+        /// </summary>
+        public static string ChangingStreetcodeIdNotAllowed {
+            get {
+                return ResourceManager.GetString("ChangingStreetcodeIdNotAllowed", resourceCulture);
             }
         }
         
@@ -660,6 +696,15 @@ namespace Streetcode.BLL.Resources {
         public static string FailedToUpdateStreetcodeCoordinate {
             get {
                 return ResourceManager.GetString("FailedToUpdateStreetcodeCoordinate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update Text..
+        /// </summary>
+        public static string FailedToUpdateText {
+            get {
+                return ResourceManager.GetString("FailedToUpdateText", resourceCulture);
             }
         }
         
@@ -1308,6 +1353,15 @@ namespace Streetcode.BLL.Resources {
         public static string TextWasNotParsedSuccessfully {
             get {
                 return ResourceManager.GetString("TextWasNotParsedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text with Id {0} not found..
+        /// </summary>
+        public static string TextWithIdNotFound {
+            get {
+                return ResourceManager.GetString("TextWithIdNotFound", resourceCulture);
             }
         }
         

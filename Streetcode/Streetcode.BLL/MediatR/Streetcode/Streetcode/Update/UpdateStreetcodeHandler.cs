@@ -9,6 +9,7 @@ using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Entities.Streetcode;
+using Streetcode.DAL.Entities.AdditionalContent;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
 {
@@ -48,20 +49,47 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Update
                 return Result.Fail(new Error(errorMsg));
             }
 
-            _repositoryWrapper.StreetcodeRepository.Update(streetcode);
-
-            var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
-
-            if (resultIsSuccess)
+            try
             {
+                streetcode.Tags.Clear();
+
+                _repositoryWrapper.StreetcodeRepository.Update(streetcode);
+
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
+
+                var newTagIds = request.streetcode.Tags.Select(t => t.Id).ToList();
+
+                var oldTags = await _repositoryWrapper!.StreetcodeTagIndexRepository
+                    .GetAllAsync(t => t.StreetcodeId == streetcode.Id);
+
+                var tagsToDelete = oldTags.Where(t => !newTagIds.Contains(t.TagId)).ToList();
+
+                var tagsToAdd = newTagIds.Where(newTagId => oldTags.All(t => t.TagId != newTagId)).ToList();
+
+                foreach (var tag in tagsToDelete)
+                {
+                    _repositoryWrapper.StreetcodeTagIndexRepository.Delete(tag);
+                }
+
+                foreach(var tag in tagsToAdd)
+                {
+                    await _repositoryWrapper.StreetcodeTagIndexRepository.CreateAsync(new StreetcodeTagIndex
+                    {
+                        StreetcodeId = streetcode.Id,
+                        TagId = tag
+                    });
+                }
+
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
+
                 var response = _mapper.Map<StreetcodeDTO>(streetcode);
+                response.Tags = request.streetcode.Tags;
                 return Result.Ok(response);
             }
-            else
+            catch(Exception ex)
             {
-                string errorMsg = $"Failed to update streetcode with ID {request.streetcode.Id}";
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
+                _logger.LogError(request, ex.Message);
+                return Result.Fail(new Error(ex.Message));
             }
         }
     }
