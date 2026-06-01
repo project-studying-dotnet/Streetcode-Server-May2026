@@ -282,4 +282,292 @@
   <data name="NoExistingStreetcodeWithId" xml:space="preserve">
     <value>No existing streetcode with id: {0}</value>
   </data>
+  <data name="CoordinateIsRequired" xml:space="preserve">
+    <value>Coordinate is required</value>
+  </data>
+  <data name="CoordinateIdMustBePositive" xml:space="preserve">
+    <value>Coordinate Id must be greater than 0</value>
+  </data>
+  <data name="LatitudeMustBeBetweenMinus90And90" xml:space="preserve">
+    <value>Latitude must be between -90 and 90.</value>
+  </data>
+  <data name="LongitudeMustBeBetweenMinus180And180" xml:space="preserve">
+    <value>Longitude must be between -180 and 180.</value>
+  </data>
+  <data name="StreetcodeIdMustBePositive" xml:space="preserve">
+    <value>StreetcodeId must be greater than 0</value>
+  </data>
+  <data name="SubtitleTextIsRequired" xml:space="preserve">
+    <value>Subtitle text is required.</value>
+  </data>
+  <data name="TitleIsRequired" xml:space="preserve">
+    <value>Title is required.</value>
+  </data>
+  <data name="TitleCannotBeWhitespace" xml:space="preserve">
+    <value>Title cannot contain only whitespace.</value>
+  </data>
+  <data name="TagIsRequired" xml:space="preserve">
+    <value>Tag is required.</value>
+  </data>
+  <data name="TitleMustNotExceedCharacters" xml:space="preserve">
+    <value>Title must not exceed {0} characters.</value>
+  </data>
+  <data name="EmailFromMustNotExceedCharacters" xml:space="preserve">
+    <value>Email 'From' field must not exceed {0} characters.</value>
+  </data>
+  <data name="ContentIsRequired" xml:space="preserve">
+    <value>Content is required.</value>
+  </data>
+  <data name="ContentLengthMustBeBetween" xml:space="preserve">
+    <value>Content length must be between {0} and {1} characters.</value>
+  </data>
+  <data name="EmailPayloadIsRequired" xml:space="preserve">
+    <value>Email payload is required.</value>
+  </data>
+  <data name="DescriptionMustNotExceedCharacters" xml:space="preserve">
+    <value>Description must not exceed {0} characters.</value>
+  </data>
+  <data name="AudioIsRequired" xml:space="preserve">
+    <value>Audio is required.</value>
+  </data>
+  <data name="ImageIsRequired" xml:space="preserve">
+    <value>Image is required.</value>
+  </data>
+  <data name="AltMustNotExceedCharacters" xml:space="preserve">
+    <value>Alt text must not exceed {0} characters.</value>
+  </data>
+  <data name="BaseFormatIsRequired" xml:space="preserve">
+    <value>Base format is required.</value>
+  </data>
+  <data name="MimeTypeIsRequired" xml:space="preserve">
+    <value>MIME type is required.</value>
+  </data>
+  <data name="ExtensionIsRequired" xml:space="preserve">
+    <value>Extension is required.</value>
+  </data>
+  <data name="MimeTypeMustNotExceedCharacters" xml:space="preserve">
+    <value>MIME type must not exceed {0} characters.</value>
+  </data>
+  <data name="ExtensionMustNotExceedCharacters" xml:space="preserve">
+    <value>Extension must not exceed {0} characters.</value>
+  </data>
+  <data name="NewsIsRequired" xml:space="preserve">
+    <value>News is required.</value>
+  </data>
+  <data name="UrlIsRequired" xml:space="preserve">
+    <value>URL is required.</value>
+  </data>
+  <data name="UrlMustNotExceedCharacters" xml:space="preserve">
+    <value>URL must not exceed {0} characters.</value>
+  </data>
+  <data name="UrlMustBeValidAbsoluteUrl" xml:space="preserve">
+    <value>URL must be a valid absolute URL.</value>
+  </data>
+  <data name="IdMustBePositive" xml:space="preserve">
+    <value>Id must be greater than 0.</value>
+  </data>
+  <data name="TextIsRequired" xml:space="preserve">
+    <value>Text is required.</value>
+  </data>
+  <data name="TextMustNotExceedCharacters" xml:space="preserve">
+    <value>Text must not exceed {0} characters.</value>
+  </data>
+  <data name="TargetUrlMustBeValid" xml:space="preserve">
+    <value>Target URL must be a valid URL.</value>
+  </data>
+  <data name="UrlTitleMustNotExceedCharacters" xml:space="preserve">
+    <value>URL title must not exceed {0} characters.</value>
+  </data>
+  <data name="LogoIdMustBePositive" xml:space="preserve">
+    <value>Logo ID must be greater than 0.</value>
+  </data>
+  <data name="PartnerIsRequired" xml:space="preserve">
+    <value>Partner is required.</value>
+  </data>
+  <data name="LogoTypeMustBeValidEnum" xml:space="preserve">
+    <value>Logo type must be a valid enum value.</value>
+  </data>
+  <data name="TargetUrlIsRequired" xml:space="preserve">
+    <value>Target URL is required.</value>
+  </data>
+  <data name="TargetUrlMustNotExceedCharacters" xml:space="preserve">
+    <value>Target URL must not exceed {0} characters.</value>
+  </data>
+  <data name="TargetUrlMustBeValidAbsoluteUrl" xml:space="preserve">
+    <value>Target URL must be a valid absolute URL.</value>
+  </data>
+  <data name="IdMustBeGreaterOrEqualToZero" xml:space="preserve">
+    <value>Id must be greater than or equal to 0.</value>
+  </data>
+  <data name="PartnerSourceLinksRequired" xml:space="preserve">
+    <value>Partner source links collection is required.</value>
+  </data>
+  <data name="StreetcodesRequired" xml:space="preserve">
+    <value>Streetcodes collection is required.</value>
+  </data>
+  <data name="PaymentIsRequired" xml:space="preserve">
+    <value>Payment information is required.</value>
+  </data>
+  <data name="AmountMustBeGreaterThanZero" xml:space="preserve">
+    <value>Amount must be greater than 0.</value>
+  </data>
+  <data name="CategoryIdMustBePositive" xml:space="preserve">
+    <value>The category ID must be positive.</value>
+  </data>
+  <data name="FactContentIsRequired" xml:space="preserve">
+    <value>Fact content is required.</value>
+  </data>
+  <data name="FactContentMustNotExceedCharacters" xml:space="preserve">
+    <value>Fact content must not exceed {0} characters.</value>
+  </data>
+  <data name="ImageIdMustBePositive" xml:space="preserve">
+    <value>Image ID must be greater than 0.</value>
+  </data>
+  <data name="ObserverIdMustBePositive" xml:space="preserve">
+    <value>The Observer ID must be positive.</value>
+  </data>
+  <data name="TargetIdMustBePositive" xml:space="preserve">
+    <value>The Target ID must be positive.</value>
+  </data>
+  <data name="RelatedTermIsRequired" xml:space="preserve">
+    <value>Related term is required.</value>
+  </data>
+  <data name="WordIsRequired" xml:space="preserve">
+    <value>Word is required.</value>
+  </data>
+  <data name="WordMustNotExceedCharacters" xml:space="preserve">
+    <value>Word must not exceed {0} characters.</value>
+  </data>
+  <data name="TermIdMustBePositive" xml:space="preserve">
+    <value>Term ID must be greater than 0.</value>
+  </data>
+  <data name="PageNumberMustBePositive" xml:space="preserve">
+    <value>The page number must be greater than 0.</value>
+  </data>
+  <data name="PageSizeMustBePositive" xml:space="preserve">
+    <value>The page size must be greater than 0.</value>
+  </data>
+  <data name="FilterIsRequired" xml:space="preserve">
+    <value>Filter is required.</value>
+  </data>
+  <data name="SearchQueryIsRequired" xml:space="preserve">
+    <value>Search query is required.</value>
+  </data>
+  <data name="SearchQueryMustNotExceedCharacters" xml:space="preserve">
+    <value>Search query must not exceed {0} characters.</value>
+  </data>
+  <data name="IndexMustBeGreaterOrEqualToZero" xml:space="preserve">
+    <value>Index must be greater than or equal to 0.</value>
+  </data>
+  <data name="TransliterationUrlIsRequired" xml:space="preserve">
+    <value>Transliteration URL is required.</value>
+  </data>
+  <data name="TransliterationUrlMustNotExceedCharacters" xml:space="preserve">
+    <value>Transliteration URL must not exceed {0} characters.</value>
+  </data>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>Description is required.</value>
+  </data>
+  <data name="TextToParseIsRequired" xml:space="preserve">
+    <value>Text to parse is required.</value>
+  </data>
+  <data name="PositionIsRequired" xml:space="preserve">
+    <value>Position is required.</value>
+  </data>
+  <data name="PositionNameIsRequired" xml:space="preserve">
+    <value>Position name is required.</value>
+  </data>
+  <data name="TeamMemberLinkIsRequired" xml:space="preserve">
+    <value>Team member link is required.</value>
+  </data>
+  <data name="TeamMemberIdMustBePositive" xml:space="preserve">
+    <value>TeamMemberId must be greater than 0.</value>
+  </data>
+  <data name="InvalidLogoType" xml:space="preserve">
+    <value>The provided logo type is invalid.</value>
+  </data>
+  <data name="DateIsRequired" xml:space="preserve">
+    <value>Date is required.</value>
+  </data>
+  <data name="InvalidDateViewPattern" xml:space="preserve">
+    <value>Invalid date view pattern.</value>
+  </data>
+  <data name="HistoricalContextsCollectionIsRequired" xml:space="preserve">
+    <value>Historical contexts collection is required.</value>
+  </data>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Name is required.</value>
+  </data>
+  <data name="NameMustNotExceedCharacters" xml:space="preserve">
+    <value>Name must not exceed {0} characters.</value>
+  </data>
+  <data name="SurnameIsRequired" xml:space="preserve">
+    <value>Surname is required.</value>
+  </data>
+  <data name="SurnameMustNotExceedCharacters" xml:space="preserve">
+    <value>Surname must not exceed {0} characters.</value>
+  </data>
+  <data name="EmailIsRequired" xml:space="preserve">
+    <value>Email is required.</value>
+  </data>
+  <data name="InvalidEmailFormat" xml:space="preserve">
+    <value>Invalid email format.</value>
+  </data>
+  <data name="LoginIsRequired" xml:space="preserve">
+    <value>Login is required.</value>
+  </data>
+  <data name="LoginMustNotExceedCharacters" xml:space="preserve">
+    <value>Login must not exceed {0} characters.</value>
+  </data>
+  <data name="InvalidUserRole" xml:space="preserve">
+    <value>Invalid user role.</value>
+  </data>
+  <data name="PasswordIsRequired" xml:space="preserve">
+    <value>Password is required.</value>
+  </data>
+  <data name="PasswordMustNotExceedCharacters" xml:space="preserve">
+    <value>Password must not exceed {0} characters.</value>
+  </data>
+  <data name="TagIdMustBePositive" xml:space="preserve">
+    <value>The tagId must be positive.</value>
+  </data>
+  <data name="IdMustBeGreaterThanOrEqualToZero" xml:space="preserve">
+    <value>Id must be greater than or equal to 0</value>
+  </data>
+  <data name="IndexMustBeGreaterThanOrEqualToZero" xml:space="preserve">
+    <value>Index must be greater than or equal to 0</value>
+  </data>
+  <data name="DateStringIsRequired" xml:space="preserve">
+    <value>Date string is required</value>
+  </data>
+  <data name="ValueMustBeGreaterThanOrEqualTo" xml:space="preserve">
+    <value>{0} must be greater than or equal to {1}</value>
+  </data>
+  <data name="FieldIsRequired" xml:space="preserve">
+    <value>{0} is required</value>
+  </data>
+  <data name="FieldMustNotExceedCharacters" xml:space="preserve">
+    <value>{0} must not exceed {1} characters</value>
+  </data>
+  <data name="InvalidEnumValue" xml:space="preserve">
+    <value>Invalid {0}</value>
+  </data>
+  <data name="EndDateCannotBeEarlierThanStartDate" xml:space="preserve">
+    <value>End or death date cannot be earlier than start or birth date</value>
+  </data>
+  <data name="ValueCannotBeNegative" xml:space="preserve">
+    <value>{0} cannot be negative</value>
+  </data>
+  <data name="CollectionIsRequired" xml:space="preserve">
+    <value>{0} collection is required</value>
+  </data>
+  <data name="TeaserLengthIsInvalid" xml:space="preserve">
+    <value>Teaser must contain up to {0} characters with paragraph breaks or up to {1} characters without paragraph breaks</value>
+  </data>
+  <data name="TextContentIsRequired" xml:space="preserve">
+    <value>Text content is required.</value>
+  </data>
+  <data name="AdditionalTextMustNotExceed" xml:space="preserve">
+    <value>Additional text must not exceed {0} characters</value>
+  </data>
 </root>

@@ -24,11 +24,11 @@ namespace Streetcode.BLL.MediatR.Partners.Delete
         public async Task<Result<PartnerDTO>> Handle(DeletePartnerQuery request, CancellationToken cancellationToken)
         {
             var partner = await _repositoryWrapper.PartnersRepository.GetFirstOrDefaultAsync(
-                predicate: p => p.Id == request.id,
+                predicate: p => p.Id == request.Id,
                 cancellationToken: cancellationToken);
             if (partner == null)
             {
-                string errorMsg = string.Format(ErrorMessages.NoPartnerWithSuchId, request.id);
+                string errorMsg = string.Format(ErrorMessages.NoPartnerWithSuchId, request.Id);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(errorMsg);
             }
