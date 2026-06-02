@@ -19,6 +19,25 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.StreetcodeCategoryContent.Upd
 
 public class UpdateStreetcodeCategoryContentHandlerTests
 {
+    private const string UpdatedContentText = "Updated content";
+    private const string OldContentText = "Old content";
+    private const int StreetcodeId = 1;
+    private const int SourceLinkCategoryId = 2;
+
+    private static CategoryContentUpdateDTO CreateDto() => new()
+    {
+        Text = UpdatedContentText,
+        StreetcodeId = StreetcodeId,
+        SourceLinkCategoryId = SourceLinkCategoryId
+    };
+
+    private static StreetcodeCategoryContentEntity CreateExistingContent() => new()
+    {
+        Text = OldContentText,
+        StreetcodeId = StreetcodeId,
+        SourceLinkCategoryId = SourceLinkCategoryId
+    };
+
     private readonly IMapper _mapper;
     private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
     private readonly Mock<IStreetcodeCategoryContentRepository> _streetcodeCategoryContentRepositoryMock;
@@ -51,12 +70,7 @@ public class UpdateStreetcodeCategoryContentHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenCategoryContentNotFound()
     {
-        var dto = new CategoryContentUpdateDTO
-        {
-            Text = "Updated content",
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2
-        };
+        var dto = CreateDto();
 
         var command = new UpdateStreetcodeCategoryContentCommand(dto);
 
@@ -80,19 +94,9 @@ public class UpdateStreetcodeCategoryContentHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenSaveChangesFails()
     {
-        var dto = new CategoryContentUpdateDTO
-        {
-            Text = "Updated content",
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2
-        };
+        var dto = CreateDto();
 
-        var existingContent = new StreetcodeCategoryContentEntity
-        {
-            Text = "Old content",
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2
-        };
+        var existingContent = CreateExistingContent;
 
         var command = new UpdateStreetcodeCategoryContentCommand(dto);
 
@@ -125,19 +129,9 @@ public class UpdateStreetcodeCategoryContentHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnSuccess_WhenCategoryContentUpdatedSuccessfully()
     {
-        var dto = new CategoryContentUpdateDTO
-        {
-            Text = "Updated content",
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2
-        };
+        var dto = CreateDto();
 
-        var existingContent = new StreetcodeCategoryContentEntity
-        {
-            Text = "Old content",
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2
-        };
+        var existingContent = CreateExistingContent();
 
         var command = new UpdateStreetcodeCategoryContentCommand(dto);
 

@@ -19,6 +19,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.Update;
 
 public class UpdateSourceLinkCategoryHandlerTests
 {
+    private const string NewsTitle = "News";
+    private const string OldTitle = "Old";
+    private const int NewImageId = 5;
+    private const int OldNewImageId = 4;
+
     private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
     private readonly Mock<ISourceCategoryRepository> _sourceCategoryRepositoryMock;
     private readonly Mock<ILoggerService> _loggerMock;
@@ -54,8 +59,8 @@ public class UpdateSourceLinkCategoryHandlerTests
         var dto = new SourceLinkCategoryDTO
         {
             Id = 1,
-            Title = "News",
-            ImageId = 5
+            Title = NewsTitle,
+            ImageId = NewImageId
         };
 
         var command = new UpdateSourceLinkCategoryCommand(dto);
@@ -83,15 +88,15 @@ public class UpdateSourceLinkCategoryHandlerTests
         var dto = new SourceLinkCategoryDTO
         {
             Id = 1,
-            Title = "News",
-            ImageId = 5
+            Title = NewsTitle,
+            ImageId = NewImageId
         };
 
         var category = new SourceLinkCategoryEntity
         {
             Id = 1,
-            Title = "Old",
-            ImageId = 4
+            Title = OldTitle,
+            ImageId = OldNewImageId
         };
 
         var command = new UpdateSourceLinkCategoryCommand(dto);
@@ -127,15 +132,15 @@ public class UpdateSourceLinkCategoryHandlerTests
         var dto = new SourceLinkCategoryDTO
         {
             Id = 1,
-            Title = "News",
-            ImageId = 5
+            Title = NewsTitle,
+            ImageId = NewImageId
         };
 
         var category = new SourceLinkCategoryEntity
         {
             Id = 1,
-            Title = "Old",
-            ImageId = 4
+            Title = OldTitle,
+            ImageId = OldNewImageId
         };
 
         var command = new UpdateSourceLinkCategoryCommand(dto);

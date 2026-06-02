@@ -17,6 +17,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.StreetcodeCategoryContent.Cre
 
 public class CreateStreetcodeCategoryContentHandlerTests
 {
+    private const string DtosText = "Some content";
+    private static CategoryContentCreateDTO CreateDto() => new()
+    {
+        Text = DtosText,
+        StreetcodeId = 1,
+        SourceLinkCategoryId = 2
+    };
+
     private readonly IMapper _mapper;
     private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
     private readonly Mock<IStreetcodeCategoryContentRepository> _streetcodeCategoryContentRepositoryMock;
@@ -49,12 +57,7 @@ public class CreateStreetcodeCategoryContentHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnSuccess_WhenCategoryContentCreatedSuccessfully()
     {
-        var dto = new CategoryContentCreateDTO
-        {
-            Text = "Some content",
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2
-        };
+        var dto = CreateDto();
 
         var command = new CreateStreetcodeCategoryContentCommand(dto);
 
@@ -86,12 +89,7 @@ public class CreateStreetcodeCategoryContentHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenSaveChangesFails()
     {
-        var dto = new CategoryContentCreateDTO
-        {
-            Text = "Some content",
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2
-        };
+        var dto = CreateDto();
 
         var command = new CreateStreetcodeCategoryContentCommand(dto);
 

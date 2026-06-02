@@ -15,6 +15,8 @@ namespace Streetcode.XUnitTest.BLL.Validators.Sources.StreetcodeCategoryContent.
 
 public class CreateStreetcodeCategoryContentCommandValidatorTests
 {
+    private const string CategoryText = "Some text";
+
     private readonly CreateStreetcodeCategoryContentCommandValidator _validator;
 
     public CreateStreetcodeCategoryContentCommandValidatorTests()
@@ -75,7 +77,7 @@ public class CreateStreetcodeCategoryContentCommandValidatorTests
     {
         var command = new CreateStreetcodeCategoryContentCommand(new CategoryContentCreateDTO
         {
-            Text = "Some text",
+            Text = CategoryText,
             StreetcodeId = 0,
             SourceLinkCategoryId = 1
         });
@@ -90,7 +92,7 @@ public class CreateStreetcodeCategoryContentCommandValidatorTests
     {
         var command = new CreateStreetcodeCategoryContentCommand(new CategoryContentCreateDTO
         {
-            Text = "Some text",
+            Text = CategoryText,
             StreetcodeId = 1,
             SourceLinkCategoryId = 1
         });

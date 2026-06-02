@@ -15,6 +15,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.Create;
 
 public class CreateSourceLinkCategoryHandlerTests
 {
+    private const string NewsTitle = "News";
+    private const int NewImageId = 5;
+
     private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
     private readonly Mock<ISourceCategoryRepository> _sourceCategoryRepositoryMock;
     private readonly Mock<ILoggerService> _loggerMock;
@@ -49,8 +52,8 @@ public class CreateSourceLinkCategoryHandlerTests
     {
         var dto = new SourceLinkCategoryDTO
         {
-            Title = "News",
-            ImageId = 5
+            Title = NewsTitle,
+            ImageId = NewImageId
         };
 
         var command = new CreateSourceLinkCategoryCommand(dto);
@@ -88,8 +91,8 @@ public class CreateSourceLinkCategoryHandlerTests
     {
         var dto = new SourceLinkCategoryDTO
         {
-            Title = "News",
-            ImageId = 5
+            Title = NewsTitle,
+            ImageId = NewImageId
         };
 
         var command = new CreateSourceLinkCategoryCommand(dto);

@@ -13,6 +13,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Sources.SourceLinkCategory.Create;
 
 public class CreateSourceLinkCategoryCommandValidatorTests
 {
+    private const string TitleName = "Books";
     private readonly CreateSourceLinkCategoryCommandValidator _validator;
 
     public CreateSourceLinkCategoryCommandValidatorTests()
@@ -58,7 +59,7 @@ public class CreateSourceLinkCategoryCommandValidatorTests
     {
         var command = new CreateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
         {
-            Title = "Books",
+            Title = TitleName,
             ImageId = 0
         });
 
@@ -72,7 +73,7 @@ public class CreateSourceLinkCategoryCommandValidatorTests
     {
         var command = new CreateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
         {
-            Title = "Books",
+            Title = TitleName,
             ImageId = 1
         });
 

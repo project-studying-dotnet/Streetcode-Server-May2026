@@ -13,6 +13,8 @@ namespace Streetcode.XUnitTest.BLL.Validators.Sources.SourceLinkCategory.Update;
 
 public class UpdateSourceLinkCategoryCommandValidatorTests
 {
+    private const string ValidTitle = "Books";
+    private const int ValidId = 1;
     private readonly UpdateSourceLinkCategoryCommandValidator _validator;
 
     public UpdateSourceLinkCategoryCommandValidatorTests()
@@ -46,7 +48,7 @@ public class UpdateSourceLinkCategoryCommandValidatorTests
         var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
         {
             Id = 0,
-            Title = "Books",
+            Title = ValidTitle,
             ImageId = 1
         });
 
@@ -60,7 +62,7 @@ public class UpdateSourceLinkCategoryCommandValidatorTests
     {
         var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
         {
-            Id = 1,
+            Id = ValidId,
             Title = string.Empty,
             ImageId = 1
         });
@@ -75,8 +77,8 @@ public class UpdateSourceLinkCategoryCommandValidatorTests
     {
         var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
         {
-            Id = 1,
-            Title = "Books",
+            Id = ValidId,
+            Title = ValidTitle,
             ImageId = 0
         });
 
@@ -90,8 +92,8 @@ public class UpdateSourceLinkCategoryCommandValidatorTests
     {
         var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
         {
-            Id = 1,
-            Title = "Books",
+            Id = ValidId,
+            Title = ValidTitle,
             ImageId = 1
         });
 

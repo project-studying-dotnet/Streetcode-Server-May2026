@@ -16,6 +16,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.SourceLinkCategory.Delete;
 
 public class DeleteSourceLinkCategoryHandlerTests
 {
+    private const string NewsTitle = "News";
+    private const int NewImageId = 5;
+
     private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
     private readonly Mock<ISourceCategoryRepository> _sourceCategoryRepositoryMock;
     private readonly Mock<ILoggerService> _loggerMock;
@@ -64,8 +67,8 @@ public class DeleteSourceLinkCategoryHandlerTests
         var category = new SourceLinkCategoryEntity
         {
             Id = 1,
-            Title = "News",
-            ImageId = 5
+            Title = NewsTitle,
+            ImageId = NewImageId
         };
 
         _sourceCategoryRepositoryMock
@@ -99,8 +102,8 @@ public class DeleteSourceLinkCategoryHandlerTests
         var category = new SourceLinkCategoryEntity
         {
             Id = 1,
-            Title = "News",
-            ImageId = 5
+            Title = NewsTitle,
+            ImageId = NewImageId
         };
 
         _sourceCategoryRepositoryMock

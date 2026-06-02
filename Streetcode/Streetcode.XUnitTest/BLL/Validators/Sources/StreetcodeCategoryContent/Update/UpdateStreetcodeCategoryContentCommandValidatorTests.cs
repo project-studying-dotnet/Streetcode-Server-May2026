@@ -13,6 +13,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Sources.StreetcodeCategoryContent.
 
 public class UpdateStreetcodeCategoryContentCommandValidatorTests
 {
+    private const string CategoryContentText = "Some text";
     private readonly UpdateStreetcodeCategoryContentCommandValidator _validator;
 
     public UpdateStreetcodeCategoryContentCommandValidatorTests()
@@ -59,7 +60,7 @@ public class UpdateStreetcodeCategoryContentCommandValidatorTests
     {
         var command = new UpdateStreetcodeCategoryContentCommand(new CategoryContentUpdateDTO
         {
-            Text = "Some text",
+            Text = CategoryContentText,
             StreetcodeId = 0,
             SourceLinkCategoryId = 1
         });
@@ -74,7 +75,7 @@ public class UpdateStreetcodeCategoryContentCommandValidatorTests
     {
         var command = new UpdateStreetcodeCategoryContentCommand(new CategoryContentUpdateDTO
         {
-            Text = "Some text",
+            Text = CategoryContentText,
             StreetcodeId = 1,
             SourceLinkCategoryId = 0
         });

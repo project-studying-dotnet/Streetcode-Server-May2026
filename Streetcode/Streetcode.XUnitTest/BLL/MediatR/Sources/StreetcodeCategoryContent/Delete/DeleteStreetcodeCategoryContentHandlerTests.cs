@@ -19,6 +19,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.StreetcodeCategoryContent.Del
 
 public class DeleteStreetcodeCategoryContentHandlerTests
 {
+    private const string ContentText = "Some content";
+    private const int StreetcodeId = 1;
+    private const int SourceLinkCategoryId = 2;
+
     private readonly IMapper _mapper;
     private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
     private readonly Mock<IStreetcodeCategoryContentRepository> _streetcodeCategoryContentRepositoryMock;
@@ -52,8 +56,8 @@ public class DeleteStreetcodeCategoryContentHandlerTests
     public async Task Handle_ShouldReturnFail_WhenCategoryContentNotFound()
     {
         var command = new DeleteStreetcodeCategoryContentCommand(
-            StreetcodeId: 1,
-            SourceLinkCategoryId: 2);
+            StreetcodeId: StreetcodeId,
+            SourceLinkCategoryId: SourceLinkCategoryId);
 
         _streetcodeCategoryContentRepositoryMock
             .Setup(x => x.GetFirstOrDefaultAsync(
@@ -81,9 +85,9 @@ public class DeleteStreetcodeCategoryContentHandlerTests
 
         var content = new StreetcodeCategoryContentEntity
         {
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2,
-            Text = "Some content"
+            StreetcodeId = StreetcodeId,
+            SourceLinkCategoryId = SourceLinkCategoryId,
+            Text = ContentText
         };
 
         _streetcodeCategoryContentRepositoryMock
@@ -120,9 +124,9 @@ public class DeleteStreetcodeCategoryContentHandlerTests
 
         var content = new StreetcodeCategoryContentEntity
         {
-            StreetcodeId = 1,
-            SourceLinkCategoryId = 2,
-            Text = "Some content"
+            StreetcodeId = StreetcodeId,
+            SourceLinkCategoryId = SourceLinkCategoryId,
+            Text = ContentText
         };
 
         _streetcodeCategoryContentRepositoryMock
