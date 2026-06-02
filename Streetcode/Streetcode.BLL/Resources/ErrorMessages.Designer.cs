@@ -493,6 +493,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email must not exceed {0} characters..
+        /// </summary>
+        public static string EmailMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("EmailMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email payload is required..
         /// </summary>
         public static string EmailPayloadIsRequired {
@@ -1006,6 +1015,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password Confirmation is required..
+        /// </summary>
+        public static string PasswordConfirmationIsRequired {
+            get {
+                return ResourceManager.GetString("PasswordConfirmationIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password is required..
         /// </summary>
         public static string PasswordIsRequired {
@@ -1017,9 +1035,27 @@ namespace Streetcode.BLL.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Password must not exceed {0} characters..
         /// </summary>
+        public static string PasswordMustBeAtLeastCharacters {
+            get {
+                return ResourceManager.GetString("PasswordMustBeAtLeastCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must not exceed {0} characters..
+        /// </summary>
         public static string PasswordMustNotExceedCharacters {
             get {
                 return ResourceManager.GetString("PasswordMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passwords did not match..
+        /// </summary>
+        public static string PasswordsDoNotMatch {
+            get {
+                return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
             }
         }
         

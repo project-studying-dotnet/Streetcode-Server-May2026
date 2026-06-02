@@ -2,14 +2,9 @@
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Streetcode.BLL.DTO.Users;
 using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.MediatR.Users.Login;
 using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Streetcode.BLL.MediatR.Users.Register
 {
