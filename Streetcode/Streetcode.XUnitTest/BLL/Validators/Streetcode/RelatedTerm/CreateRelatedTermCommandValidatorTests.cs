@@ -1,5 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using Streetcode.BLL.DTO.Streetcode.TextContent;
+using Streetcode.BLL.DTO.Streetcode.TextContent.RelatedTerm;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create;
 using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Streetcode.RelatedTerm.Create;
@@ -23,16 +23,15 @@ namespace Streetcode.XUnitTest.Validators.Streetcode.RelatedTerm.Create
 
             var result = _validator.TestValidate(command);
 
-            result.ShouldHaveValidationErrorFor(x => x.RelatedTerm)
+            result.ShouldHaveValidationErrorFor(x => x.CreateRelatedTerm)
                   .WithErrorMessage(ErrorMessages.RelatedTermIsRequired);
         }
 
         [Fact]
         public void Should_Not_Have_Errors_When_Command_Is_Fully_Valid()
         {
-            var validRelatedTermDto = new RelatedTermDTO
+            var validRelatedTermDto = new CreateRelatedTermDto
             {
-                Id = 1,
                 Word = "Валідний термін",
                 TermId = 1,
             };

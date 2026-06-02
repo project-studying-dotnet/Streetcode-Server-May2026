@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
+using Streetcode.BLL.DTO.Streetcode.TextContent.RelatedTerm;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
@@ -19,9 +20,9 @@ namespace Streetcode.WebApi.Controllers.Streetcode.TextContent
 
         [AuthorizeRoles(UserRole.MainAdministrator)]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RelatedTermDTO relatedTerm)
+        public async Task<IActionResult> Create([FromBody] CreateRelatedTermDto request)
         {
-            return HandleResult(await Mediator.Send(new CreateRelatedTermCommand(relatedTerm)));
+            return HandleResult(await Mediator.Send(new CreateRelatedTermCommand(request)));
         }
 
         [AuthorizeRoles(UserRole.MainAdministrator)]
@@ -31,11 +32,11 @@ namespace Streetcode.WebApi.Controllers.Streetcode.TextContent
             return HandleResult(await Mediator.Send(new UpdateRelatedTermCommand(id, relatedTerm)));
         }
 
-        [AuthorizeRoles(UserRole.MainAdministrator)]
-        [HttpDelete("{word}")]
-        public async Task<IActionResult> Delete([FromRoute] string word)
+        // [AuthorizeRoles(UserRole.MainAdministrator)]
+        [HttpDelete("{word}/{termId:int}")]
+        public async Task<IActionResult> Delete([FromRoute] string word, [FromRoute] int termId)
         {
-            return HandleResult(await Mediator.Send(new DeleteRelatedTermCommand(word)));
+            return HandleResult(await Mediator.Send(new DeleteRelatedTermCommand(word, termId)));
         }
     }
 }
