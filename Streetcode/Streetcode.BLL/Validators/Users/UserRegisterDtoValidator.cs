@@ -16,38 +16,20 @@ namespace Streetcode.BLL.Validators.Users
             RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.Name)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.NameIsRequired)
-                .MaximumLength(MaxNameLength)
-                .WithMessage(string.Format(ErrorMessages.NameMustNotExceedCharacters, MaxNameLength));
+                .RequiredWithMaxLength(MaxNameLength, ErrorMessages.NameIsRequired, ErrorMessages.NameMustNotExceedCharacters);
 
             RuleFor(x => x.Surname)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.SurnameIsRequired)
-                .MaximumLength(MaxNameLength)
-                .WithMessage(string.Format(ErrorMessages.SurnameMustNotExceedCharacters, MaxNameLength));
+                .RequiredWithMaxLength(MaxNameLength, ErrorMessages.SurnameIsRequired, ErrorMessages.SurnameMustNotExceedCharacters);
 
             RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.EmailIsRequired)
-                .EmailAddress()
-                .WithMessage(ErrorMessages.InvalidEmailFormat)
-                .MaximumLength(MaxEmailLength)
-                .WithMessage(string.Format(ErrorMessages.EmailMustNotExceedCharacters, MaxEmailLength));
+                .ValidEmail(MaxEmailLength, ErrorMessages.EmailIsRequired, ErrorMessages.InvalidEmailFormat, ErrorMessages.EmailMustNotExceedCharacters);
 
             RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.PasswordIsRequired)
-                .MinimumLength(MinPasswordLength)
-                .WithMessage(string.Format(ErrorMessages.PasswordMustBeAtLeastCharacters, MinPasswordLength))
-                .MaximumLength(MaxPasswordLength)
-                .WithMessage(string.Format(ErrorMessages.PasswordMustNotExceedCharacters, MaxPasswordLength));
+                .ValidPassword(MinPasswordLength, MaxPasswordLength, ErrorMessages.PasswordIsRequired, ErrorMessages.PasswordMustBeAtLeastCharacters, ErrorMessages.PasswordMustNotExceedCharacters);
 
             RuleFor(x => x.PasswordConfirmation)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.PasswordConfirmationIsRequired)
-                .Equal(x => x.Password)
-                .WithMessage(ErrorMessages.PasswordsDoNotMatch);
+                .NotEmpty().WithMessage(ErrorMessages.PasswordConfirmationIsRequired)
+                .Equal(x => x.Password).WithMessage(ErrorMessages.PasswordsDoNotMatch);
         }
     }
 }

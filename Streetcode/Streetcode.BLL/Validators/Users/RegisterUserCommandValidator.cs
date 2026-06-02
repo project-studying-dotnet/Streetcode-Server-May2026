@@ -2,6 +2,8 @@
 using Streetcode.BLL.MediatR.Users.Register;
 using Streetcode.BLL.Validators.Users;
 
+namespace Streetcode.BLL.Validators.Users;
+
 public class RegisterUserCommandValidator
     : AbstractValidator<RegisterUserCommand>
 {
