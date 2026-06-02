@@ -44,6 +44,7 @@ namespace Streetcode.BLL.Validators.Users
                 .WithMessage(string.Format(ErrorMessages.PasswordMustNotExceedCharacters, MaxPasswordLength));
 
             RuleFor(x => x.PasswordConfirmation)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage(ErrorMessages.PasswordConfirmationIsRequired)
                 .Equal(x => x.Password)

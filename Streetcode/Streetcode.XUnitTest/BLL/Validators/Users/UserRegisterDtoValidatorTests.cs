@@ -10,6 +10,8 @@ namespace Streetcode.XUnitTest.Validators.Users
     public class UserRegisterDtoValidatorTests
     {
         private const int MaxNameLength = 50;
+        private const int MaxPasswordLength = 20;
+        private const int MinPasswordLength = 8;
 
         private readonly UserRegisterDtoValidator _validator;
 
@@ -50,7 +52,7 @@ namespace Streetcode.XUnitTest.Validators.Users
         public void Should_Have_Error_When_Surname_Exceeds_50_Characters()
         {
             var dto = CreateValidDto();
-            dto.Name = new string('a', 51);
+            dto.Surname = new string('a', 51);
 
             var result = _validator.TestValidate(dto);
 
@@ -94,7 +96,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Password)
-                  .WithErrorMessage(ErrorMessages.PasswordMustNotExceedCharacters);
+                  .WithErrorMessage(string.Format(ErrorMessages.PasswordMustNotExceedCharacters, MaxPasswordLength));
         }
 
         [Theory]
@@ -107,7 +109,7 @@ namespace Streetcode.XUnitTest.Validators.Users
             var result = _validator.TestValidate(dto);
 
             result.ShouldHaveValidationErrorFor(x => x.Password)
-                  .WithErrorMessage(ErrorMessages.PasswordMustBeAtLeastCharacters);
+                  .WithErrorMessage(string.Format(ErrorMessages.PasswordMustBeAtLeastCharacters, MinPasswordLength));
         }
 
         [Theory]
@@ -130,7 +132,7 @@ namespace Streetcode.XUnitTest.Validators.Users
         public void Should_Have_Error_When_PasswordConfirmation_Is_Empty(string? invalidPasswordConfirmation)
         {
             var dto = CreateValidDto();
-            dto.Password = invalidPasswordConfirmation!;
+            dto.PasswordConfirmation = invalidPasswordConfirmation!;
 
             var result = _validator.TestValidate(dto);
 
