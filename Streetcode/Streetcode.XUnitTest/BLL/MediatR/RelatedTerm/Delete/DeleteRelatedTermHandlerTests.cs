@@ -18,6 +18,8 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
 {
     public class DeleteRelatedTermHandlerTests
     {
+        private const string TestWord = "test";
+        private const int TermId = 1;
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
         private readonly Mock<IRelatedTermRepository> _relatedTermRepositoryMock;
         private readonly Mock<IMapper> _mapperMock;
@@ -43,7 +45,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenRelatedTermNotFound()
         {
-            var command = new DeleteRelatedTermCommand("test");
+            var command = new DeleteRelatedTermCommand(TestWord, TermId);
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
@@ -52,7 +54,6 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                 .ReturnsAsync((Entity)null!);
 
             var result = await _handler.Handle(command, CancellationToken.None);
-            const string TestWord = "test";
 
             result.IsFailed.Should().BeTrue();
             result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindRelatedTerm, TestWord));
@@ -77,7 +78,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenSaveChangesFails()
         {
-            var command = new DeleteRelatedTermCommand("test");
+            var command = new DeleteRelatedTermCommand(TestWord, TermId);
             var entity = new Entity { Id = 1, TermId = 1, Word = "test" };
             var dto = new RelatedTermDTO { Id = 1, TermId = 1, Word = "test" };
 
@@ -116,8 +117,8 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenMappingToDtoFails()
         {
-            var command = new DeleteRelatedTermCommand("test");
-            var entity = new Entity { Id = 1, TermId = 1, Word = "test" };
+            var command = new DeleteRelatedTermCommand(TestWord, TermId);
+            var entity = new Entity { Id = 1, TermId = 1, Word = TestWord };
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
@@ -154,9 +155,9 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
         [Fact]
         public async Task Handle_ShouldReturnOk_WhenRelatedTermDeletedSuccessfully()
         {
-            var command = new DeleteRelatedTermCommand("test");
-            var entity = new Entity { Id = 1, TermId = 1, Word = "test" };
-            var dto = new RelatedTermDTO { Id = 1, TermId = 1, Word = "test" };
+            var command = new DeleteRelatedTermCommand(TestWord, TermId);
+            var entity = new Entity { Id = 1, TermId = 1, Word = TestWord };
+            var dto = new RelatedTermDTO { Id = 1, TermId = 1, Word = TestWord };
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(

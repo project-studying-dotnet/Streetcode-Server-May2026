@@ -600,4 +600,37 @@
 	<data name="CannotUpdateStreetcodeCategoryContent" xml:space="preserve">
   <value>Failed to update streetcode category content</value>
 </data>
+  <data name="WordLengthError" xml:space="preserve">
+    <value>The length of the word must not exceed {0} characters.</value>
+  </data>
+  <data name="TermIdIsRequired" xml:space="preserve">
+    <value>The Term ID is required and must be greater than zero.</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid token.</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid refresh token.</value>
+  </data>
+  <data name="SuccessfulRefreshToken" xml:space="preserve">
+    <value>Token refreshed for user {0}</value>
+  </data>
+  <data name="CannotFindAnyTransactionLink" xml:space="preserve">
+    <value>Cannot find any transaction link</value>
+  </data>
+  <data name="CannotFindAnyTransactionLinkWithCorrespondingId" xml:space="preserve">
+    <value>Cannot find any transaction link with corresponding id: {0}</value>
+  </data>
+  <data name="CannotFindAnyTransactionLinkWithCorrespondingStreetcodeId" xml:space="preserve">
+    <value>Cannot find a transaction link by a streetcode id: {0}, because such streetcode doesn`t exist</value>
+  </data>
+  <data name="TextWithIdNotFound" xml:space="preserve">
+    <value>Text with Id {0} not found.</value>
+  </data>
+  <data name="ChangingStreetcodeIdNotAllowed" xml:space="preserve">
+    <value>Changing StreetcodeId for an existing Text is not allowed.</value>
+  </data>
+  <data name="FailedToUpdateText" xml:space="preserve">
+    <value>Failed to update Text.</value>
+  </data>
 </root>

@@ -17,7 +17,7 @@ namespace Streetcode.DAL.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseCollation("SQL_Ukrainian_CP1251_CI_AS")
+                .UseCollation("SQL_Ukrainian_CP125bS")
                 .HasAnnotation("ProductVersion", "6.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -1151,6 +1151,12 @@ namespace Streetcode.DAL.Persistence.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
