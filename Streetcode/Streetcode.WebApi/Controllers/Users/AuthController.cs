@@ -26,7 +26,7 @@ namespace Streetcode.WebApi.Controllers.Users
                 return Unauthorized(ex.Message);
             }
         }
-        
+
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto registerRequest)
@@ -39,7 +39,8 @@ namespace Streetcode.WebApi.Controllers.Users
             {
                 return Unauthorized(ex.Message);
             }
-            
+         }
+
         [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)

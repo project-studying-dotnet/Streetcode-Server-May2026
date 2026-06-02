@@ -581,6 +581,7 @@
   </data>
   <data name="PasswordsDoNotMatch" xml:space="preserve">
     <value>Passwords did not match.</value>
+  </data>
   <data name="WordLengthError" xml:space="preserve">
     <value>The length of the word must not exceed {0} characters.</value>
   </data>
