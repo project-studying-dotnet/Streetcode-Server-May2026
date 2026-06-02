@@ -25,7 +25,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create
 
         public async Task<Result<RelatedTermDTO>> Handle(CreateRelatedTermCommand request, CancellationToken cancellationToken)
         {
-            var relatedTerm = _mapper.Map<Entity>(request.RelatedTerm);
+            var relatedTerm = _mapper.Map<Entity>(request.CreateRelatedTerm);
 
             if (relatedTerm is null)
             {
@@ -36,9 +36,9 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create
 
             var existingTerms = await _repository.RelatedTermRepository
                 .GetAllAsync(
-                predicate: rt => rt.TermId == request.RelatedTerm.TermId && rt.Word == request.RelatedTerm.Word);
+                predicate: rt => rt.TermId == request.CreateRelatedTerm.TermId && rt.Word == request.CreateRelatedTerm.Word);
 
-            if (existingTerms is null || existingTerms.Any())
+            if (existingTerms != null && existingTerms.Any())
             {
                 string errorMsg = ErrorMessages.RelatedWordAlreadyExists;
                 _logger.LogError(request, errorMsg);
