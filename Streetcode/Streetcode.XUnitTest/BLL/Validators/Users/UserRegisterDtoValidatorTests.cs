@@ -2,7 +2,6 @@
 using Streetcode.BLL.DTO.Users;
 using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Users;
-using Streetcode.DAL.Enums;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Validators.Users
