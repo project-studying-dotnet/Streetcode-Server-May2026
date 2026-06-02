@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
 using Streetcode.BLL.MediatR.Users.Login;
+using Streetcode.BLL.MediatR.Users.Logout;
 using Streetcode.BLL.MediatR.Users.RefreshToken;
 
 namespace Streetcode.WebApi.Controllers.Users
@@ -31,6 +33,20 @@ namespace Streetcode.WebApi.Controllers.Users
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
         {
             return HandleResult(await Mediator.Send(new RefreshTokenCommand(refreshTokenRequest)));
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            return HandleResult(await Mediator.Send(new LogoutUserCommand(userId)));
         }
     }
 }

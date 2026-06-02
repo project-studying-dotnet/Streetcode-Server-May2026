@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Streetcode.BLL.DTO.Users;
+using Streetcode.BLL.Extensions;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Interfaces.Users;
 using Streetcode.BLL.Settings;
@@ -55,6 +56,7 @@ namespace Streetcode.BLL.MediatR.Users.RefreshToken
 
             var refreshToken = _tokenService.GenerateRefreshToken();
 
+            user.EnsureSecurityStamp();
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeInDays);
 
