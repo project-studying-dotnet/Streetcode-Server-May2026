@@ -77,7 +77,7 @@ public class SourcesController : BaseApiController
 
     [HttpPost]
     public async Task<IActionResult> Create(
-        [FromBody] CategoryContentCreateDTO categoryContent)
+        [FromBody] CategoryContentCreateDto categoryContent)
     {
         return HandleResult(await Mediator.Send(
             new CreateStreetcodeCategoryContentCommand(categoryContent)));

@@ -4,5 +4,5 @@ using Streetcode.BLL.DTO.Sources;
 
 namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Create;
 
-public record CreateStreetcodeCategoryContentCommand(CategoryContentCreateDTO CategoryContent)
+public record CreateStreetcodeCategoryContentCommand(CategoryContentCreateDto CategoryContent)
     : IRequest<Result<StreetcodeCategoryContentDTO>>;

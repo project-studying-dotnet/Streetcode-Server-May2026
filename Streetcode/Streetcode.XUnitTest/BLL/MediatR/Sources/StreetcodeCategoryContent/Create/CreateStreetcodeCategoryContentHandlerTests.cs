@@ -18,7 +18,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Sources.StreetcodeCategoryContent.Cre
 public class CreateStreetcodeCategoryContentHandlerTests
 {
     private const string DtosText = "Some content";
-    private static CategoryContentCreateDTO CreateDto() => new()
+    private static CategoryContentCreateDto CreateDto() => new()
     {
         Text = DtosText,
         StreetcodeId = 1,

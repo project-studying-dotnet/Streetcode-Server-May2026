@@ -60,7 +60,7 @@ public class CreateStreetcodeCategoryContentCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_Text_Is_Empty()
     {
-        var command = new CreateStreetcodeCategoryContentCommand(new CategoryContentCreateDTO
+        var command = new CreateStreetcodeCategoryContentCommand(new CategoryContentCreateDto
         {
             Text = string.Empty,
             StreetcodeId = 1,
@@ -75,7 +75,7 @@ public class CreateStreetcodeCategoryContentCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_StreetcodeId_Is_Zero()
     {
-        var command = new CreateStreetcodeCategoryContentCommand(new CategoryContentCreateDTO
+        var command = new CreateStreetcodeCategoryContentCommand(new CategoryContentCreateDto
         {
             Text = CategoryText,
             StreetcodeId = 0,
@@ -90,7 +90,7 @@ public class CreateStreetcodeCategoryContentCommandValidatorTests
     [Fact]
     public async Task Should_Not_Have_Errors_When_Command_Is_Valid()
     {
-        var command = new CreateStreetcodeCategoryContentCommand(new CategoryContentCreateDTO
+        var command = new CreateStreetcodeCategoryContentCommand(new CategoryContentCreateDto
         {
             Text = CategoryText,
             StreetcodeId = 1,
