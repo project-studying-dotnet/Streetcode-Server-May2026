@@ -35,10 +35,10 @@ public class GetCategoryByIdHandler : IRequestHandler<GetCategoryByIdQuery, Resu
             .SourceCategoryRepository
             .GetFirstOrDefaultAsync(
                 predicate: sc => sc.Id == request.Id,
-                include: scl => scl
+                include: sc => sc
                     .Include(sc => sc.StreetcodeCategoryContents)
-                    .Include(sc => sc.Image) !);
-
+                    .Include(sc => sc.Image!),
+                cancellationToken: cancellationToken);
         if (srcCategories is null)
         {
             string errorMsg = $"Cannot find any srcCategory by the corresponding id: {request.Id}";
@@ -48,7 +48,8 @@ public class GetCategoryByIdHandler : IRequestHandler<GetCategoryByIdQuery, Resu
 
         var mappedSrcCategories = _mapper.Map<SourceLinkCategoryDto>(srcCategories);
 
-        mappedSrcCategories.Image.Base64 = _blobService.FindFileInStorageAsBase64(mappedSrcCategories.Image.BlobName);
+        var image = mappedSrcCategories.Image!;
+        image.Base64 = _blobService.FindFileInStorageAsBase64(image.BlobName!);
 
         return Result.Ok(mappedSrcCategories);
     }
