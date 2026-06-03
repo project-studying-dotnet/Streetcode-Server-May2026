@@ -1,18 +1,73 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Streetcode.BLL.Extensions;
 using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Enums;
-using Streetcode.DAL.Persistence;
 
 namespace Streetcode.WebApi.InitialData.UserSeeder
 {
     [ExcludeFromCodeCoverage]
     public static class UserSeeder
     {
-        public static async Task FillSeedAsync(StreetcodeDbContext dbContext, IConfiguration configuration)
+        public static async Task FillSeedAsync(UserManager<User> userManager, IConfiguration configuration)
         {
-            throw new NotSupportedException(); // Will be implemented in the future.
+            var adminEmail = configuration["AdminSettings:Email"];
+            var adminPassword = configuration["AdminSettings:Password"];
+
+            if (string.IsNullOrWhiteSpace(adminEmail)
+            || string.IsNullOrWhiteSpace(adminPassword))
+            {
+                throw new InvalidOperationException(
+                    "Admin credentials are not configured.");
+            }
+
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+            if (adminUser == null)
+            {
+                adminUser = new User
+                {
+                    Email = adminEmail,
+                    UserName = adminEmail,
+                    Name = "admin",
+                    Surname = "adminovich",
+                    Role = UserRole.MainAdministrator,
+                    EmailConfirmed = true,
+                };
+
+                var result = await userManager.CreateAsync(
+                    adminUser,
+                    adminPassword);
+
+                if (!result.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
+            }
+
+            if (string.IsNullOrEmpty(adminUser.SecurityStamp))
+            {
+                adminUser.EnsureSecurityStamp();
+                await userManager.UpdateAsync(adminUser);
+            }
+
+            var isInRole = await userManager.IsInRoleAsync(
+                adminUser,
+                UserRole.MainAdministrator.ToString());
+
+            if (!isInRole)
+            {
+                var roleResult = await userManager.AddToRoleAsync(
+                    adminUser,
+                    UserRole.MainAdministrator.ToString());
+
+                if (!roleResult.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to assign admin role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                }
+            }
         }
     }
 }

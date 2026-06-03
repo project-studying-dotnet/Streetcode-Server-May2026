@@ -10,10 +10,10 @@ namespace Streetcode.BLL.Validators.Streetcode.RelatedTerm.Create
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
 
-            RuleFor(x => x.RelatedTerm)
+            RuleFor(x => x.CreateRelatedTerm)
                 .NotNull()
                 .WithMessage(ErrorMessages.RelatedTermIsRequired)
-                .SetValidator(new RelatedTermDtoValidator());
+                .SetValidator(new CreateRelatedTermDtoValidator());
         }
     }
 }

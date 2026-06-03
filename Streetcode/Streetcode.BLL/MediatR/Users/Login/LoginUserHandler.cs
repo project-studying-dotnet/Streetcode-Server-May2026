@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Streetcode.BLL.DTO.Users;
+using Streetcode.BLL.Extensions;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Interfaces.Users;
 using Streetcode.DAL.Entities.Users;
@@ -55,6 +56,14 @@ namespace Streetcode.BLL.MediatR.Users.Login
             var jwtToken = _tokenService.GenerateJWTToken(user);
             var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
+            var refreshToken = _tokenService.GenerateRefreshToken();
+
+            user.EnsureSecurityStamp();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+            await _userManager.UpdateAsync(user);
+
             _logger.LogInformation($"User {user.Id} successfully logged in");
 
             var userDto = _mapper.Map<UserDto>(user);
@@ -63,6 +72,7 @@ namespace Streetcode.BLL.MediatR.Users.Login
             {
                 User = userDto,
                 Token = token,
+                RefreshToken = refreshToken,
                 ExpireAt = jwtToken.ValidTo,
             };
 

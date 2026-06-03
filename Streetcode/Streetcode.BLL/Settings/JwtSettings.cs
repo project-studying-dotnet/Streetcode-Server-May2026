@@ -9,5 +9,7 @@ namespace Streetcode.BLL.Settings
         public string Audience { get; set; } = string.Empty;
 
         public int AccessTokenLifetimeInMinutes { get; set; } = 120;
+
+        public int RefreshTokenLifetimeInDays { get; set; } = 7;
     }
 }
