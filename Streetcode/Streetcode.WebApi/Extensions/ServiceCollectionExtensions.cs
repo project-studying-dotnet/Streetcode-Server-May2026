@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using System.Text;
 using Hangfire;
 using MediatR;
@@ -128,6 +129,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(jwtSettings);
         services.AddScoped<ITokenService, TokenService>();
+        services.AddAuthorization();
 
         services.AddAuthentication(options =>
         {
@@ -145,6 +147,7 @@ public static class ServiceCollectionExtensions
                 ValidIssuer = jwtSettings.Issuer,
                 ValidAudience = jwtSettings.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                RoleClaimType = ClaimTypes.Role,
             };
         });
     }
