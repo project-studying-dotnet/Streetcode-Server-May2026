@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
+using Streetcode.BLL.Extensions;
 using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Enums;
 
@@ -43,6 +44,12 @@ namespace Streetcode.WebApi.InitialData.UserSeeder
                     throw new InvalidOperationException(
                         $"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                 }
+            }
+
+            if (string.IsNullOrEmpty(adminUser.SecurityStamp))
+            {
+                adminUser.EnsureSecurityStamp();
+                await userManager.UpdateAsync(adminUser);
             }
 
             var isInRole = await userManager.IsInRoleAsync(
