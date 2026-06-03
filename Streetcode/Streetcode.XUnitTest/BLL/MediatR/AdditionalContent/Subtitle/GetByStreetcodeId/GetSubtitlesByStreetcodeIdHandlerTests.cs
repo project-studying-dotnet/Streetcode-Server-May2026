@@ -4,7 +4,6 @@ using Moq;
 using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.AdditionalContent.Subtitle.GetByStreetcodeId;
-using Streetcode.DAL.Entities.AdditionalContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
@@ -52,10 +51,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Subtitle.GetByStree
 
             _mockRepository.Setup(r => r.SubtitleRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<global::Streetcode.DAL.Entities.AdditionalContent.Subtitle, bool>>>(), null))
-                .ReturnsAsync((global::Streetcode.DAL.Entities.AdditionalContent.Subtitle)null);
+                .ReturnsAsync((global::Streetcode.DAL.Entities.AdditionalContent.Subtitle?)null);
 
             _mockMapper.Setup(m => m.Map<SubtitleDTO>(It.IsAny<global::Streetcode.DAL.Entities.AdditionalContent.Subtitle>()))
-                .Returns((SubtitleDTO)null);
+                .Returns((SubtitleDTO)null!);
 
             var handler = new GetSubtitlesByStreetcodeIdHandler(_mockRepository.Object, _mockMapper.Object, _mockLogger.Object);
 

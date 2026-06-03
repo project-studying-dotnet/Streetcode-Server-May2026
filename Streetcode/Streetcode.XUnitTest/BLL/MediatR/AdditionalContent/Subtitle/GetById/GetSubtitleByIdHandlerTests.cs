@@ -49,7 +49,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Subtitle.GetById
             int testId = 1;
             _mockRepository.Setup(r => r.SubtitleRepository.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<global::Streetcode.DAL.Entities.AdditionalContent.Subtitle, bool>>>(), null))
-                .ReturnsAsync((global::Streetcode.DAL.Entities.AdditionalContent.Subtitle)null);
+                .ReturnsAsync((global::Streetcode.DAL.Entities.AdditionalContent.Subtitle?)null);
             var handler = new GetSubtitleByIdHandler(_mockRepository.Object, _mockMapper.Object, _mockLogger.Object);
 
             var result = await handler.Handle(new GetSubtitleByIdQuery(testId), CancellationToken.None);
