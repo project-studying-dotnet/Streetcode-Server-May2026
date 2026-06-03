@@ -115,7 +115,11 @@ public class RegisterUserHandlerTests
         // Arrange
         var dto = new UserRegisterDto
         {
-            Email = "john@test.com"
+            Name = "John",
+            Surname = "Doe",
+            Email = "john@test.com",
+            Password = "Password123!",
+            PasswordConfirmation = "Password123!"
         };
 
         var command = new RegisterUserCommand(dto);
