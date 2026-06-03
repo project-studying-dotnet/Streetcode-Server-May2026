@@ -56,7 +56,7 @@ public class UpdateSourceLinkCategoryHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenCategoryNotFound()
     {
-        var dto = new SourceLinkCategoryDTO
+        var dto = new SourceLinkCategoryDto
         {
             Id = 1,
             Title = NewsTitle,
@@ -85,7 +85,7 @@ public class UpdateSourceLinkCategoryHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenSaveChangesFails()
     {
-        var dto = new SourceLinkCategoryDTO
+        var dto = new SourceLinkCategoryDto
         {
             Id = 1,
             Title = NewsTitle,
@@ -129,7 +129,7 @@ public class UpdateSourceLinkCategoryHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnSuccess_WhenCategoryUpdatedSuccessfully()
     {
-        var dto = new SourceLinkCategoryDTO
+        var dto = new SourceLinkCategoryDto
         {
             Id = 1,
             Title = NewsTitle,

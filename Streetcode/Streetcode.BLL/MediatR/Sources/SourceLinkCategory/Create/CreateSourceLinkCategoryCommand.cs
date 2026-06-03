@@ -4,5 +4,5 @@ using Streetcode.BLL.DTO.Sources;
 
 namespace Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Create;
 
-public record CreateSourceLinkCategoryCommand(SourceLinkCategoryDTO Category)
-    : IRequest<Result<SourceLinkCategoryDTO>>;
+public record CreateSourceLinkCategoryCommand(SourceLinkCategoryDto Category)
+    : IRequest<Result<SourceLinkCategoryDto>>;

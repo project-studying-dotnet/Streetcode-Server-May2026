@@ -43,7 +43,7 @@ public class CreateSourceLinkCategoryCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_Title_Is_Empty()
     {
-        var command = new CreateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
+        var command = new CreateSourceLinkCategoryCommand(new SourceLinkCategoryDto
         {
             Title = string.Empty,
             ImageId = 1
@@ -57,7 +57,7 @@ public class CreateSourceLinkCategoryCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_ImageId_Is_Zero()
     {
-        var command = new CreateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
+        var command = new CreateSourceLinkCategoryCommand(new SourceLinkCategoryDto
         {
             Title = TitleName,
             ImageId = 0
@@ -71,7 +71,7 @@ public class CreateSourceLinkCategoryCommandValidatorTests
     [Fact]
     public async Task Should_Not_Have_Errors_When_Command_Is_Valid()
     {
-        var command = new CreateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
+        var command = new CreateSourceLinkCategoryCommand(new SourceLinkCategoryDto
         {
             Title = TitleName,
             ImageId = 1

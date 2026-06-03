@@ -9,7 +9,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Update
 {
     public class UpdateStreetcodeCategoryContentHandler
-        : IRequestHandler<UpdateStreetcodeCategoryContentCommand, Result<StreetcodeCategoryContentDTO>>
+        : IRequestHandler<UpdateStreetcodeCategoryContentCommand, Result<StreetcodeCategoryContentDto>>
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Update
             _logger = logger;
         }
 
-        public async Task<Result<StreetcodeCategoryContentDTO>> Handle(
+        public async Task<Result<StreetcodeCategoryContentDto>> Handle(
             UpdateStreetcodeCategoryContentCommand request,
             CancellationToken cancellationToken)
         {
@@ -57,7 +57,7 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Update
                 return Result.Fail(new Error(errorMsg));
             }
 
-            return Result.Ok(_mapper.Map<StreetcodeCategoryContentDTO>(existingContent));
+            return Result.Ok(_mapper.Map<StreetcodeCategoryContentDto>(existingContent));
         }
     }
 }

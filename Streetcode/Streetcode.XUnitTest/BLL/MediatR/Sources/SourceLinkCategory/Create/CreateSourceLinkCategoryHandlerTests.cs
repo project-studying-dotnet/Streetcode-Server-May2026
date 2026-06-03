@@ -50,7 +50,7 @@ public class CreateSourceLinkCategoryHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnSuccess_WhenCategoryCreatedSuccessfully()
     {
-        var dto = new SourceLinkCategoryDTO
+        var dto = new SourceLinkCategoryDto
         {
             Title = NewsTitle,
             ImageId = NewImageId
@@ -89,7 +89,7 @@ public class CreateSourceLinkCategoryHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenSaveChangesFails()
     {
-        var dto = new SourceLinkCategoryDTO
+        var dto = new SourceLinkCategoryDto
         {
             Title = NewsTitle,
             ImageId = NewImageId

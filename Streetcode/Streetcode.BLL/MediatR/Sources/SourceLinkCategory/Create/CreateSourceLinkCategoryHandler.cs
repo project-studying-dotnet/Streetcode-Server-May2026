@@ -10,7 +10,7 @@ using SourceLinkCategoryEntity = Streetcode.DAL.Entities.Sources.SourceLinkCateg
 namespace Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Create;
 
 public class CreateSourceLinkCategoryHandler
-    : IRequestHandler<CreateSourceLinkCategoryCommand, Result<SourceLinkCategoryDTO>>
+    : IRequestHandler<CreateSourceLinkCategoryCommand, Result<SourceLinkCategoryDto>>
 {
     private readonly IMapper _mapper;
     private readonly IRepositoryWrapper _repositoryWrapper;
@@ -26,7 +26,7 @@ public class CreateSourceLinkCategoryHandler
         _logger = logger;
     }
 
-    public async Task<Result<SourceLinkCategoryDTO>> Handle(
+    public async Task<Result<SourceLinkCategoryDto>> Handle(
         CreateSourceLinkCategoryCommand request,
         CancellationToken cancellationToken)
     {
@@ -45,6 +45,6 @@ public class CreateSourceLinkCategoryHandler
 
         _logger.LogInformation("Success! SourceLinkCategory was created.");
 
-        return Result.Ok(_mapper.Map<SourceLinkCategoryDTO>(category));
+        return Result.Ok(_mapper.Map<SourceLinkCategoryDto>(category));
     }
 }

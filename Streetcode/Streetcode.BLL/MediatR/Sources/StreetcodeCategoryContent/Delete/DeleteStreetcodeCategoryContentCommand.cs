@@ -7,4 +7,4 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete;
 public record DeleteStreetcodeCategoryContentCommand(
     int StreetcodeId,
     int SourceLinkCategoryId)
-    : IRequest<Result<StreetcodeCategoryContentDTO>>;
+    : IRequest<Result<StreetcodeCategoryContentDto>>;

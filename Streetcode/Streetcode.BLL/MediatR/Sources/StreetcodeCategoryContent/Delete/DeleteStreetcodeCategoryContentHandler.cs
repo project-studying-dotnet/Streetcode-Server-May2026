@@ -9,7 +9,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete
 {
     public class DeleteStreetcodeCategoryContentHandler
-       : IRequestHandler<DeleteStreetcodeCategoryContentCommand, Result<StreetcodeCategoryContentDTO>>
+       : IRequestHandler<DeleteStreetcodeCategoryContentCommand, Result<StreetcodeCategoryContentDto>>
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete
             _logger = logger;
         }
 
-        public async Task<Result<StreetcodeCategoryContentDTO>> Handle(
+        public async Task<Result<StreetcodeCategoryContentDto>> Handle(
             DeleteStreetcodeCategoryContentCommand request,
             CancellationToken cancellationToken)
         {
@@ -42,7 +42,7 @@ namespace Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete
                 return Result.Fail(new Error(errorMsg));
             }
 
-            var contentDto = _mapper.Map<StreetcodeCategoryContentDTO>(content);
+            var contentDto = _mapper.Map<StreetcodeCategoryContentDto>(content);
 
             _repositoryWrapper.StreetcodeCategoryContentRepository.Delete(content);
 

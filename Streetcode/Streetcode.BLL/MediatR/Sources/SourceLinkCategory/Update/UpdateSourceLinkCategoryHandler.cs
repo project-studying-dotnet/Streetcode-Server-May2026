@@ -9,7 +9,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 namespace Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Update;
 
 public class UpdateSourceLinkCategoryHandler
-    : IRequestHandler<UpdateSourceLinkCategoryCommand, Result<SourceLinkCategoryDTO>>
+    : IRequestHandler<UpdateSourceLinkCategoryCommand, Result<SourceLinkCategoryDto>>
 {
     private readonly IMapper _mapper;
     private readonly IRepositoryWrapper _repositoryWrapper;
@@ -25,7 +25,7 @@ public class UpdateSourceLinkCategoryHandler
         _logger = logger;
     }
 
-    public async Task<Result<SourceLinkCategoryDTO>> Handle(
+    public async Task<Result<SourceLinkCategoryDto>> Handle(
         UpdateSourceLinkCategoryCommand request,
         CancellationToken cancellationToken)
     {
@@ -58,6 +58,6 @@ public class UpdateSourceLinkCategoryHandler
             return Result.Fail(new Error(errorMsg));
         }
 
-        return Result.Ok(_mapper.Map<SourceLinkCategoryDTO>(category));
+        return Result.Ok(_mapper.Map<SourceLinkCategoryDto>(category));
     }
 }

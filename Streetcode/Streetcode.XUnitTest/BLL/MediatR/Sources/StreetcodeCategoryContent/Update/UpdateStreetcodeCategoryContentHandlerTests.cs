@@ -24,7 +24,7 @@ public class UpdateStreetcodeCategoryContentHandlerTests
     private const int StreetcodeId = 1;
     private const int SourceLinkCategoryId = 2;
 
-    private static CategoryContentUpdateDTO CreateDto() => new()
+    private static CategoryContentUpdateDto CreateDto() => new()
     {
         Text = UpdatedContentText,
         StreetcodeId = StreetcodeId,

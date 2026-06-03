@@ -54,7 +54,7 @@ public class SourcesController : BaseApiController
 
     [HttpPost("category")]
     public async Task<IActionResult> CreateCategory(
-        [FromBody] SourceLinkCategoryDTO category)
+        [FromBody] SourceLinkCategoryDto category)
     {
         return HandleResult(await Mediator.Send(
             new CreateSourceLinkCategoryCommand(category)));
@@ -62,7 +62,7 @@ public class SourcesController : BaseApiController
 
     [HttpPut("category")]
     public async Task<IActionResult> UpdateCategory(
-        [FromBody] SourceLinkCategoryDTO category)
+        [FromBody] SourceLinkCategoryDto category)
     {
         return HandleResult(await Mediator.Send(
             new UpdateSourceLinkCategoryCommand(category)));
@@ -85,7 +85,7 @@ public class SourcesController : BaseApiController
 
     [HttpPut]
     public async Task<IActionResult> Update(
-        [FromBody] CategoryContentUpdateDTO categoryContent)
+        [FromBody] CategoryContentUpdateDto categoryContent)
     {
         return HandleResult(await Mediator.Send(
             new UpdateStreetcodeCategoryContentCommand(categoryContent)));

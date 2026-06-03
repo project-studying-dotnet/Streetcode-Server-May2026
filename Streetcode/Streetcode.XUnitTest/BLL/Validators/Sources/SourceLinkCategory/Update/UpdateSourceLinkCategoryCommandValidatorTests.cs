@@ -45,7 +45,7 @@ public class UpdateSourceLinkCategoryCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_Id_Is_Zero()
     {
-        var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
+        var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDto
         {
             Id = 0,
             Title = ValidTitle,
@@ -60,7 +60,7 @@ public class UpdateSourceLinkCategoryCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_Title_Is_Empty()
     {
-        var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
+        var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDto
         {
             Id = ValidId,
             Title = string.Empty,
@@ -75,7 +75,7 @@ public class UpdateSourceLinkCategoryCommandValidatorTests
     [Fact]
     public async Task Should_Have_Error_When_ImageId_Is_Zero()
     {
-        var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
+        var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDto
         {
             Id = ValidId,
             Title = ValidTitle,
@@ -90,7 +90,7 @@ public class UpdateSourceLinkCategoryCommandValidatorTests
     [Fact]
     public async Task Should_Not_Have_Errors_When_Command_Is_Valid()
     {
-        var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDTO
+        var command = new UpdateSourceLinkCategoryCommand(new SourceLinkCategoryDto
         {
             Id = ValidId,
             Title = ValidTitle,
