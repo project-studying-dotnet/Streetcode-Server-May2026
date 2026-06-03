@@ -232,6 +232,53 @@ public class LoginUserHandlerTests
             Times.Once);
     }
 
+    [Fact]
+    public async Task Handle_ShouldSetSecurityStamp_WhenUserHasNullSecurityStamp()
+    {
+        var loginDto = new UserLoginDto
+        {
+            Login = "admin",
+            Password = "correctPassword",
+        };
+
+        var command = new LoginUserCommand(loginDto);
+
+        var dbUser = new User
+        {
+            Id = 1,
+            UserName = loginDto.Login,
+            Name = "John",
+            Surname = "Doe",
+            Email = "john.doe@gmail.com",
+            Role = UserRole.MainAdministrator,
+            SecurityStamp = null,
+        };
+
+        var token = CreateJwtToken(dbUser);
+
+        _userManagerMock
+            .Setup(m => m.FindByNameAsync(loginDto.Login))
+            .ReturnsAsync(dbUser);
+
+        _userManagerMock
+            .Setup(m => m.CheckPasswordAsync(dbUser, loginDto.Password))
+            .ReturnsAsync(true);
+
+        _tokenServiceMock
+            .Setup(service => service.GenerateJWTToken(dbUser))
+            .Returns(token);
+
+        _userManagerMock
+            .Setup(m => m.UpdateAsync(dbUser))
+            .ReturnsAsync(IdentityResult.Success);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        dbUser.SecurityStamp.Should().NotBeNullOrWhiteSpace();
+        _userManagerMock.Verify(m => m.UpdateAsync(dbUser), Times.Once);
+    }
+
     private static JwtSecurityToken CreateJwtToken(User user)
     {
         const string issuer = "Streetcode.WebApi";
