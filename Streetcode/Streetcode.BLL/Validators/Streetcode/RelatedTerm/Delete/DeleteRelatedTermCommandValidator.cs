@@ -12,11 +12,15 @@ namespace Streetcode.BLL.Validators.Streetcode.RelatedTerm.Delete
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
 
-            RuleFor(x => x.word)
+            RuleFor(x => x.Word)
                 .NotEmpty()
                 .WithMessage(ErrorMessages.WordIsRequired)
                 .MaximumLength(MaxWordLength)
                 .WithMessage(string.Format(ErrorMessages.WordMustNotExceedCharacters, MaxWordLength));
+
+            RuleFor(x => x.TermId)
+                .GreaterThan(0)
+                .WithMessage(ErrorMessages.TermIdMustBePositive);
         }
     }
 }
