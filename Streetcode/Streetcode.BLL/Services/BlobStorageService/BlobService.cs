@@ -34,7 +34,16 @@ public class BlobService : IBlobService
 
     public string FindFileInStorageAsBase64(string name)
     {
+        string extension = Path.GetExtension(name);
+
+        string nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
+
         string[] splitedName = name.Split('.');
+
+        if (splitedName.Length < 2)
+        {
+            return string.Empty;
+        }
 
         byte[] decodedBytes = DecryptFile(splitedName[0], splitedName[1]);
 
