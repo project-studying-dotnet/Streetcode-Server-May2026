@@ -145,7 +145,10 @@ public class BlobService : IBlobService
         byte[] keyBytes = Encoding.UTF8.GetBytes(_keyCrypt);
 
         byte[] iv = new byte[16];
-        RandomNumberGenerator.Fill(iv);
+        using (var rng = new RNGCryptoServiceProvider())
+        {
+            rng.GetBytes(iv);
+        }
 
         byte[] encryptedBytes;
         using (Aes aes = Aes.Create())
