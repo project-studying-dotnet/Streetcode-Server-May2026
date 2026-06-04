@@ -7,18 +7,16 @@ using Moq;
 using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.MediatR.Newss.Update;
 using Streetcode.WebApi.Controllers;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Controllers
 {
-    public class NewsControllerUpdateTests
+    public class Update
     {
         private readonly Mock<IMediator> _mediatorMock;
         private readonly NewsController _controller;
 
-        public NewsControllerUpdateTests()
+        public Update()
         {
             _mediatorMock = new Mock<IMediator>();
             _controller = new NewsController();

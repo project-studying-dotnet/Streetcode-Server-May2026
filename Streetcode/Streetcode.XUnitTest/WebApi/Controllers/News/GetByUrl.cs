@@ -11,12 +11,12 @@ using Xunit;
 
 namespace Streetcode.XUnitTest.Controllers
 {
-    public class NewsControllerGetByUrlTests
+    public class GetByUrl
     {
         private readonly Mock<IMediator> _mediatorMock;
         private readonly NewsController _controller;
 
-        public NewsControllerGetByUrlTests()
+        public GetByUrl()
         {
             _mediatorMock = new Mock<IMediator>();
             _controller = new NewsController();

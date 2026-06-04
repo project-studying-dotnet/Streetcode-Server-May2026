@@ -6,18 +6,16 @@ using MediatR;
 using Moq;
 using Streetcode.BLL.MediatR.Newss.Delete;
 using Streetcode.WebApi.Controllers;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Controllers
 {
-    public class NewsControllerDeleteTests
+    public class DeleteTests
     {
         private readonly Mock<IMediator> _mediatorMock;
         private readonly NewsController _controller;
 
-        public NewsControllerDeleteTests()
+        public DeleteTests()
         {
             _mediatorMock = new Mock<IMediator>();
             _controller = new NewsController();

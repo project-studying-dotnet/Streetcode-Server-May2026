@@ -11,12 +11,12 @@ using Xunit;
 
 namespace Streetcode.XUnitTest.Controllers
 {
-    public class NewsControllerGetSortedByDateTimeTests
+    public class GetSortedByDateTime
     {
         private readonly Mock<IMediator> _mediatorMock;
         private readonly NewsController _controller;
 
-        public NewsControllerGetSortedByDateTimeTests()
+        public GetSortedByDateTime()
         {
             _mediatorMock = new Mock<IMediator>();
             _controller = new NewsController();
