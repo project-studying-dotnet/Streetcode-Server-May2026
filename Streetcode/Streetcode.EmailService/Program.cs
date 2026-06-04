@@ -12,6 +12,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGet("/health", () => Results.Ok("EmailService is running"))
-    .WithName("HealthCheck");
+   .WithName("HealthCheck");
 
-app.Run();
+await app.RunAsync();
