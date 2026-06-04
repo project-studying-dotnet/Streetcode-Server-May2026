@@ -1,0 +1,6 @@
+@Streetcode.EmailService_HostAddress = http://localhost:5190
+
+GET {{Streetcode.EmailService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
