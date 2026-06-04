@@ -11,7 +11,7 @@ public class BlobService : IBlobService
     private readonly BlobEnvironmentVariables _envirovment;
     private readonly string _keyCrypt;
     private readonly string _blobPath;
-    private readonly IRepositoryWrapper _repositoryWrapper;
+    private readonly IRepositoryWrapper? _repositoryWrapper;
 
     public BlobService(IOptions<BlobEnvironmentVariables> environment, IRepositoryWrapper? repositoryWrapper = null)
     {
@@ -34,18 +34,20 @@ public class BlobService : IBlobService
 
     public string FindFileInStorageAsBase64(string name)
     {
-        string extension = Path.GetExtension(name);
-
-        string nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
-
-        string[] splitedName = name.Split('.');
-
-        if (splitedName.Length < 2)
+        if (string.IsNullOrEmpty(name))
         {
             return string.Empty;
         }
 
-        byte[] decodedBytes = DecryptFile(splitedName[0], splitedName[1]);
+        string extension = Path.GetExtension(name).TrimStart('.');
+        string nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
+
+        if (string.IsNullOrEmpty(extension) || string.IsNullOrEmpty(nameWithoutExtension))
+        {
+            return string.Empty;
+        }
+
+        byte[] decodedBytes = DecryptFile(nameWithoutExtension, extension);
 
         string base64 = Convert.ToBase64String(decodedBytes);
 
@@ -104,8 +106,13 @@ public class BlobService : IBlobService
         var existingAudiosInDatabase = await _repositoryWrapper.AudioRepository.GetAllAsync();
 
         List<string> existingMedia = new ();
-        existingMedia.AddRange(existingImagesInDatabase.Select(img => img.BlobName));
-        existingMedia.AddRange(existingAudiosInDatabase.Select(img => img.BlobName));
+        existingMedia.AddRange(existingImagesInDatabase
+            .Select(img => img.BlobName)
+            .Where(name => name != null)!);
+
+        existingMedia.AddRange(existingAudiosInDatabase
+            .Select(audio => audio.BlobName)
+            .Where(name => name != null)!);
 
         var filesToRemove = base64Files.Except(existingMedia).ToList();
 
@@ -138,10 +145,7 @@ public class BlobService : IBlobService
         byte[] keyBytes = Encoding.UTF8.GetBytes(_keyCrypt);
 
         byte[] iv = new byte[16];
-        using (var rng = new RNGCryptoServiceProvider())
-        {
-            rng.GetBytes(iv);
-        }
+        RandomNumberGenerator.Fill(iv);
 
         byte[] encryptedBytes;
         using (Aes aes = Aes.Create())

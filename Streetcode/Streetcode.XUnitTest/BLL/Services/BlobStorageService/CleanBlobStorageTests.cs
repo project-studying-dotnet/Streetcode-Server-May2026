@@ -9,13 +9,13 @@ using Xunit;
 
 namespace Streetcode.XUnitTest.Services.BlobStorageService
 {
-    public class BlobServiceCleanBlobStorageTests : IDisposable
+    public class CleanBlobStorageTests : IDisposable
     {
         private readonly string _testBlobPath;
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
         private readonly BlobService _blobService;
 
-        public BlobServiceCleanBlobStorageTests()
+        public CleanBlobStorageTests()
         {
             _testBlobPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + "/");
             Directory.CreateDirectory(_testBlobPath);
@@ -62,6 +62,7 @@ namespace Streetcode.XUnitTest.Services.BlobStorageService
             {
                 Directory.Delete(_testBlobPath, true);
             }
+            GC.SuppressFinalize(this);
         }
     }
 }

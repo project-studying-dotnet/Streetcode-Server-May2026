@@ -1,20 +1,18 @@
-﻿using FluentAssertions;
+﻿using System.Text;
+using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Streetcode.BLL.Services.BlobStorageService;
-using System;
-using System.IO;
-using System.Text;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Services.BlobStorageService
 {
-    public class BlobServiceUpdateFileInStorageTests : IDisposable
+    public class UpdateFileInStorageTests : IDisposable
     {
         private readonly string _testBlobPath;
         private readonly BlobService _blobService;
 
-        public BlobServiceUpdateFileInStorageTests()
+        public UpdateFileInStorageTests()
         {
             _testBlobPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + "/");
             Directory.CreateDirectory(_testBlobPath);
@@ -60,6 +58,7 @@ namespace Streetcode.XUnitTest.Services.BlobStorageService
             {
                 Directory.Delete(_testBlobPath, true);
             }
+            GC.SuppressFinalize(this);
         }
     }
 }

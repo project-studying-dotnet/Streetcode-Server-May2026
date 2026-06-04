@@ -1,20 +1,18 @@
-﻿using FluentAssertions;
+﻿using System.Text;
+using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Streetcode.BLL.Services.BlobStorageService;
-using System;
-using System.IO;
-using System.Text;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Services.BlobStorageService
 {
-    public class BlobServiceFindFileInStorageAsBase64Tests : IDisposable
+    public class FindFileInStorageAsBase64Tests : IDisposable
     {
         private readonly string _testBlobPath;
         private readonly BlobService _blobService;
 
-        public BlobServiceFindFileInStorageAsBase64Tests()
+        public FindFileInStorageAsBase64Tests()
         {
             _testBlobPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + "/");
             Directory.CreateDirectory(_testBlobPath);
@@ -40,6 +38,30 @@ namespace Streetcode.XUnitTest.Services.BlobStorageService
         }
 
         [Fact]
+        public void FindFileInStorageAsBase64_WhenFileNameIsEmptyOrNull_ReturnsEmptyString()
+        {
+            var resultNull = _blobService.FindFileInStorageAsBase64(null!);
+            var resultEmpty = _blobService.FindFileInStorageAsBase64(string.Empty);
+
+            resultNull.Should().BeEmpty();
+            resultEmpty.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void FindFileInStorageAsBase64_WhenFileHasMultipleDots_ReturnsCorrectBase64String()
+        {
+            var fileName = "my.cool.photo.png";
+            var rawData = "MultipleDotsData";
+            var expectedBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(rawData));
+
+            _blobService.SaveFileInStorageBase64(expectedBase64, "my.cool.photo", "png");
+
+            var result = _blobService.FindFileInStorageAsBase64(fileName);
+
+            result.Should().Be(expectedBase64);
+        }
+
+        [Fact]
         public void FindFileInStorageAsBase64_WhenFileExists_ReturnsCorrectBase64String()
         {
             var fileName = "image.png";
@@ -59,6 +81,7 @@ namespace Streetcode.XUnitTest.Services.BlobStorageService
             {
                 Directory.Delete(_testBlobPath, true);
             }
+            GC.SuppressFinalize(this);
         }
     }
 }
