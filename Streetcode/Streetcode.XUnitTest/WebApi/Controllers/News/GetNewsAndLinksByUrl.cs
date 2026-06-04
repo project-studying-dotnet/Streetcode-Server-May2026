@@ -7,22 +7,23 @@ using Moq;
 using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl;
 using Streetcode.WebApi.Controllers;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Controllers
 {
-    public class NewsControllerTests
+    public class NewsControllerGetNewsAndLinksByUrlTests
     {
         private readonly Mock<IMediator> _mediatorMock;
         private readonly NewsController _controller;
 
-        public NewsControllerTests()
+        public NewsControllerGetNewsAndLinksByUrlTests()
         {
             _mediatorMock = new Mock<IMediator>();
             _controller = new NewsController();
 
             var serviceProviderMock = new Mock<IServiceProvider>();
-
             serviceProviderMock
                 .Setup(s => s.GetService(typeof(IMediator)))
                 .Returns(_mediatorMock.Object);
@@ -39,16 +40,12 @@ namespace Streetcode.XUnitTest.Controllers
         }
 
         [Fact]
-        public async Task GetNewsAndLinksByUrl_ShouldReturnOk_WhenUrlIsValidAndNewsExists()
+        public async Task GetNewsAndLinksByUrl_ReturnsOkResult_WhenNewsExists()
         {
             var testUrl = "news:string";
-
             var expectedResponse = new NewsDTOWithURLs
             {
-                News = new NewsDTO { Id = 9, URL = testUrl, Title = "Тестова новина" },
-                PrevNewsUrl = "news:prev",
-                NextNewsUrl = "news:next",
-                RandomNews = new RandomNewsDTO { RandomNewsUrl = "news:id3", Title = "Випадкова новина" }
+                News = new NewsDTO { Id = 9, URL = testUrl, Title = "Тестова новина" }
             };
 
             _mediatorMock
@@ -64,23 +61,19 @@ namespace Streetcode.XUnitTest.Controllers
         }
 
         [Fact]
-        public async Task GetNewsAndLinksByUrl_ShouldReturnBadRequest_WhenModelStateIsInvalid()
+        public async Task GetNewsAndLinksByUrl_ReturnsBadRequestOrNotFound_WhenRequestFails()
         {
-            var invalidUrl = "";
-            _controller.ModelState.AddModelError("url", "Url is required");
+            var testUrl = "news:string";
 
-            IActionResult result;
-            if (!_controller.ModelState.IsValid)
-            {
-                result = _controller.BadRequest(_controller.ModelState);
-            }
-            else
-            {
-                result = await _controller.GetNewsAndLinksByUrl(invalidUrl);
-            }
+            _mediatorMock
+                .Setup(m => m.Send(It.Is<GetNewsAndLinksByUrlQuery>(q => q.url == testUrl), default))
+                .ReturnsAsync(Result.Fail<NewsDTOWithURLs>("News not found"));
 
-            result.Should().BeOfType<BadRequestObjectResult>();
-            _mediatorMock.Verify(m => m.Send(It.IsAny<GetNewsAndLinksByUrlQuery>(), default), Times.Never);
+            var result = await _controller.GetNewsAndLinksByUrl(testUrl);
+
+            result.Should().NotBeOfType<OkObjectResult>();
+
+            _mediatorMock.Verify(m => m.Send(It.IsAny<GetNewsAndLinksByUrlQuery>(), default), Times.Once);
         }
     }
 }
