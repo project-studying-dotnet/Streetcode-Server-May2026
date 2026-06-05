@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Update;
 using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
@@ -9,6 +10,7 @@ namespace Streetcode.BLL.Validators.Sources.SourceLinkCategory.Update
         : AbstractValidator<UpdateSourceLinkCategoryCommand>
     {
         private const int MaxTitleLength = 23;
+        private const string CaseInsensitiveCollation = "Ukrainian_CI_AS";
 
         public UpdateSourceLinkCategoryCommandValidator(IRepositoryWrapper repositoryWrapper)
         {
@@ -38,8 +40,7 @@ namespace Streetcode.BLL.Validators.Sources.SourceLinkCategory.Update
                         await repositoryWrapper.SourceCategoryRepository
                             .GetFirstOrDefaultAsync(
                                 c => c.Id != dto.Id &&
-                                    c.Title != null &&
-                                    c.Title.ToLower() == dto.Title.ToLower(),
+                                     EF.Functions.Collate(c.Title!, CaseInsensitiveCollation) == dto.Title,
                                 cancellationToken: cancellationToken) is null)
                     .WithMessage(ErrorMessages.SourceCategoryAlreadyExists);
 
