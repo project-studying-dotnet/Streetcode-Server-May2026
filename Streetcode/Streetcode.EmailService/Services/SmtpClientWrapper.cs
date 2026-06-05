@@ -25,9 +25,11 @@ public class SmtpClientWrapper : ISmtpClientWrapper
     public Task DisconnectAsync(bool quit) =>
         _client.DisconnectAsync(quit);
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         _client.Dispose();
-        await ValueTask.CompletedTask;
+        GC.SuppressFinalize(this);
+
+        return ValueTask.CompletedTask;
     }
 }
