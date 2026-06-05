@@ -6,24 +6,32 @@ using Streetcode.EmailService.Controllers;
 using Streetcode.EmailService.Interfaces;
 using Streetcode.EmailService.Models;
 using Streetcode.XUnitTest.EmailService.Constants;
+using Streetcode.EmailService.Models.Requests;
 
 namespace Streetcode.EmailService.XUnitTest.Controllers;
 
 public class EmailControllerTests
 {
     private readonly Mock<IEmailService> _emailServiceMock = new();
+    private static SendEmailRequest CreateRequest() => new()
+    {
+        To = [EmailTestConstants.TestEmail],
+        From = EmailTestConstants.FromEmail,
+        Subject = EmailTestConstants.Subject,
+        Content = EmailTestConstants.Content,
+    };
 
     [Fact]
     public async Task Send_ShouldReturnOk_WhenEmailSentSuccessfully()
     {
         var controller = new EmailController(_emailServiceMock.Object);
-        var message = CreateMessage();
+        var request = CreateRequest();
 
         _emailServiceMock
-            .Setup(x => x.SendEmailAsync(message))
+            .Setup(x => x.SendEmailAsync(It.IsAny<Message>()))
             .ReturnsAsync(true);
 
-        var result = await controller.Send(message);
+        var result = await controller.Send(request);
 
         result.Should().BeOfType<OkObjectResult>();
     }
@@ -32,13 +40,13 @@ public class EmailControllerTests
     public async Task Send_ShouldReturnBadRequest_WhenEmailSendingFails()
     {
         var controller = new EmailController(_emailServiceMock.Object);
-        var message = CreateMessage();
+        var request = CreateRequest();
 
         _emailServiceMock
-            .Setup(x => x.SendEmailAsync(message))
+            .Setup(x => x.SendEmailAsync(It.IsAny<Message>()))
             .ReturnsAsync(false);
 
-        var result = await controller.Send(message);
+        var result = await controller.Send(request);
 
         result.Should().BeOfType<BadRequestObjectResult>();
     }
