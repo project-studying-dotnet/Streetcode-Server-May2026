@@ -7,7 +7,7 @@ using Streetcode.DAL.Entities.Media.Images;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Services.BlobStorageService
+namespace Streetcode.XUnitTest.BLL.Services.BlobStorageService
 {
     public class CleanBlobStorageTests : IDisposable
     {

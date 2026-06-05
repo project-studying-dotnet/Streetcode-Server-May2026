@@ -4,7 +4,7 @@ using Moq;
 using Streetcode.BLL.Services.BlobStorageService;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Services.BlobStorageService
+namespace Streetcode.XUnitTest.BLL.Services.BlobStorageService
 {
     public class DeleteFileInStorageTests : IDisposable
     {

@@ -4,7 +4,7 @@ using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Newss.GetByUrl;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Validators.Newss.GetByUrl
+namespace Streetcode.XUnitTest.BLL.Validators.Newss
 {
     public class GetNewsByUrlValidatorTests
     {

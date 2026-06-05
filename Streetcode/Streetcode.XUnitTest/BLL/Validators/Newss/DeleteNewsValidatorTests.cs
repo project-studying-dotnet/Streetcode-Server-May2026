@@ -3,7 +3,7 @@ using Streetcode.BLL.MediatR.Newss.Delete;
 using Streetcode.BLL.Validators.Newss.Delete;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Validators.Newss.Delete
+namespace Streetcode.XUnitTest.BLL.Validators.Newss
 {
     public class DeleteNewsValidatorTests
     {

@@ -5,7 +5,7 @@ using Moq;
 using Streetcode.BLL.Services.BlobStorageService;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Services.BlobStorageService
+namespace Streetcode.XUnitTest.BLL.Services.BlobStorageService
 {
     public class FindFileInStorageAsBase64Tests : IDisposable
     {
@@ -65,8 +65,8 @@ namespace Streetcode.XUnitTest.Services.BlobStorageService
         public void FindFileInStorageAsBase64_WhenFileExists_ReturnsCorrectBase64String()
         {
             var fileName = "image.png";
-            var rawData = "FakeImageBytes";
-            var expectedBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(rawData));
+            var rawData = Encoding.UTF8.GetBytes("FakeImageBytes");
+            var expectedBase64 = Convert.ToBase64String(rawData);
 
             _blobService.SaveFileInStorageBase64(expectedBase64, "image", "png");
 

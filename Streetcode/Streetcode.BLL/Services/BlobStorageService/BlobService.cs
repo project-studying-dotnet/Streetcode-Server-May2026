@@ -167,7 +167,8 @@ public class BlobService : IBlobService
     private byte[] DecryptFile(string fileName, string type)
     {
         byte[] encryptedData = File.ReadAllBytes($"{_blobPath}{fileName}.{type}");
-        byte[] keyBytes = Encoding.UTF8.GetBytes(_keyCrypt);
+
+        byte[] keyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(_keyCrypt));
 
         byte[] iv = new byte[16];
         Buffer.BlockCopy(encryptedData, 0, iv, 0, iv.Length);
@@ -178,8 +179,11 @@ public class BlobService : IBlobService
             aes.KeySize = 256;
             aes.Key = keyBytes;
             aes.IV = iv;
-            ICryptoTransform decryptor = aes.CreateDecryptor();
-            decryptedBytes = decryptor.TransformFinalBlock(encryptedData, iv.Length, encryptedData.Length - iv.Length);
+
+            using (ICryptoTransform decryptor = aes.CreateDecryptor())
+            {
+                decryptedBytes = decryptor.TransformFinalBlock(encryptedData, iv.Length, encryptedData.Length - iv.Length);
+            }
         }
 
         return decryptedBytes;
