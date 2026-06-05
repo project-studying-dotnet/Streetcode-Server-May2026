@@ -140,19 +140,24 @@ public class BlobService : IBlobService
     private void EncryptFile(byte[] imageBytes, string type, string name)
     {
         byte[] keyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(_keyCrypt));
-
         byte[] iv = new byte[16];
         RandomNumberGenerator.Fill(iv);
 
-        using Aes aes = Aes.Create();
-        aes.KeySize = 256;
-        aes.Key = keyBytes;
-        aes.IV = iv;
-
         byte[] encryptedBytes;
-        using (ICryptoTransform encryptor = aes.CreateEncryptor())
+
+        using (Aes aes = Aes.Create())
         {
-            encryptedBytes = encryptor.TransformFinalBlock(imageBytes, 0, imageBytes.Length);
+            aes.KeySize = 256;
+            aes.BlockSize = 128;
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+            aes.Key = keyBytes;
+            aes.IV = iv;
+
+            using (ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
+            {
+                encryptedBytes = encryptor.TransformFinalBlock(imageBytes, 0, imageBytes.Length);
+            }
         }
 
         byte[] encryptedData = new byte[iv.Length + encryptedBytes.Length];
