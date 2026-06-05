@@ -18,7 +18,6 @@ using T = Streetcode.DAL.Entities.Streetcode.TextContent;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
 {
-
     /// <summary>
     /// Unit tests for CreateTextHandler.
     /// </summary>

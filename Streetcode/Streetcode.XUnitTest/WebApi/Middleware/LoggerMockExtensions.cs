@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using Moq;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Streetcode.XUnitTest.WebApi.Middleware
 {

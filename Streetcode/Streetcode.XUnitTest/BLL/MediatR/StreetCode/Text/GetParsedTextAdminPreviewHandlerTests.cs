@@ -9,7 +9,6 @@ using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 {
-
     /// <summary>
     /// Unit tests for <see cref="GetParsedTextAdminPreviewHandler"/>.
     /// </summary>
