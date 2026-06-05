@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -6,17 +7,21 @@ using RabbitMQ.Client.Events;
 using Streetcode.EmailService.Contracts;
 using Streetcode.EmailService.Interfaces;
 using Streetcode.EmailService.Models;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Streetcode.EmailService.Services;
 
-// RabbitMqEmailConsumer is an infrastructure component that requires 
-// a running RabbitMQ broker and connection lifecycle management. 
+// RabbitMqEmailConsumer is an infrastructure component that requires
+// a running RabbitMQ broker and connection lifecycle management.
 // Unit testing it would require heavy mocking of external dependencies
 // and provide limited value, therefore it is excluded from code coverage.
 [ExcludeFromCodeCoverage]
 public class RabbitMqEmailConsumer : BackgroundService
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     private readonly RabbitMqSettings _rabbitMqSettings;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ILogger<RabbitMqEmailConsumer> _logger;
@@ -42,7 +47,7 @@ public class RabbitMqEmailConsumer : BackgroundService
 
         consumer.Received += async (_, eventArgs) =>
         {
-            await ProcessMessageAsync(eventArgs, stoppingToken);
+            await ProcessMessageAsync(eventArgs);
         };
 
         _channel.BasicConsume(
@@ -74,21 +79,14 @@ public class RabbitMqEmailConsumer : BackgroundService
             autoDelete: false);
     }
 
-    private async Task ProcessMessageAsync(
-        BasicDeliverEventArgs eventArgs,
-        CancellationToken cancellationToken)
+    private async Task ProcessMessageAsync(BasicDeliverEventArgs eventArgs)
     {
         try
         {
             _logger.LogInformation("RabbitMQ email message received.");
-            var json = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
 
-            var contract = JsonSerializer.Deserialize<EmailMessageContract>(
-                json,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                });
+            var json = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
+            var contract = JsonSerializer.Deserialize<EmailMessageContract>(json, JsonOptions);
 
             if (contract is null)
             {
@@ -114,12 +112,11 @@ public class RabbitMqEmailConsumer : BackgroundService
             {
                 _logger.LogInformation("RabbitMQ email message processed successfully.");
                 _channel?.BasicAck(eventArgs.DeliveryTag, false);
+                return;
             }
-            else
-            {
-                _logger.LogWarning("RabbitMQ email message processing failed.");
-                _channel?.BasicNack(eventArgs.DeliveryTag, false, false);
-            }
+
+            _logger.LogWarning("RabbitMQ email message processing failed.");
+            _channel?.BasicNack(eventArgs.DeliveryTag, false, false);
         }
         catch (Exception ex)
         {
@@ -133,6 +130,7 @@ public class RabbitMqEmailConsumer : BackgroundService
         _channel?.Close();
         _connection?.Close();
 
+        GC.SuppressFinalize(this);
         base.Dispose();
     }
 }
