@@ -4,7 +4,7 @@ using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Validators.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId
+namespace Streetcode.XUnitTest.BLL.Validators.Sources.SourceLinkCategory
 {
     public class GetCategoryContentByStreetcodeIdQueryValidatorTests
     {
