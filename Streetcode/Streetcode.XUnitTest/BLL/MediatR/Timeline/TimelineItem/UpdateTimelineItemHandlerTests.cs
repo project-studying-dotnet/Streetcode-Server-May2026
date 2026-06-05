@@ -1,18 +1,19 @@
 using System.Linq.Expressions;
-using Moq;
-using Xunit;
 using AutoMapper;
-using FluentResults;
 using FluentAssertions;
-using Streetcode.DAL.Enums;
-using Streetcode.BLL.Resources;
-using Streetcode.BLL.DTO.Timeline;
-using Streetcode.DAL.Entities.Timeline;
-using Streetcode.BLL.Interfaces.Logging;
+using FluentResults;
 using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Streetcode.BLL.DTO.Timeline;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem.Update;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Entities.Timeline;
+using Streetcode.DAL.Enums;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Timeline;
-using Streetcode.BLL.MediatR.Timeline.TimelineItem.Update;
+using Xunit;
+
 using HistContext = Streetcode.DAL.Entities.Timeline.HistoricalContext;
 using TimelineItemEntity = Streetcode.DAL.Entities.Timeline.TimelineItem;
 

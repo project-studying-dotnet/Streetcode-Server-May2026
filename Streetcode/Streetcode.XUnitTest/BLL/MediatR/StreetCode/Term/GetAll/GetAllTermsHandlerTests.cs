@@ -4,9 +4,9 @@ using Moq;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.Term.GetAll;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
-using Streetcode.BLL.Resources;
 
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.Term;
 

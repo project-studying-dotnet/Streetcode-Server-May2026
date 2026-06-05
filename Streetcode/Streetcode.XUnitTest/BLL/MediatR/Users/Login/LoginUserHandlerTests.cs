@@ -1,10 +1,9 @@
 ﻿// <copyright file="LoginUserHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-
-using System.Text;
-using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;

@@ -1,27 +1,23 @@
 ﻿// <copyright file="CreateTextHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using AutoMapper;
+using FluentAssertions;
+using MockQueryable.Moq;
+using Moq;
+using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Streetcode.TextContent;
+using Streetcode.BLL.MediatR.Streetcode.Text.Create;
+using Streetcode.DAL.Entities.Streetcode;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Streetcode;
+using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+using Xunit;
+using T = Streetcode.DAL.Entities.Streetcode.TextContent;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
 {
-    using System;
-    using System.Linq.Expressions;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using FluentAssertions;
-    using global::Streetcode.BLL.DTO.Streetcode.TextContent.Text;
-    using global::Streetcode.BLL.Interfaces.Logging;
-    using global::Streetcode.BLL.Mapping.Streetcode.TextContent;
-    using global::Streetcode.BLL.MediatR.Streetcode.Text.Create;
-    using global::Streetcode.DAL.Entities.Streetcode;
-    using global::Streetcode.DAL.Repositories.Interfaces.Base;
-    using global::Streetcode.DAL.Repositories.Interfaces.Streetcode;
-    using global::Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-    using MockQueryable.Moq;
-    using Moq;
-    using Xunit;
-    using T = global::Streetcode.DAL.Entities.Streetcode.TextContent;
 
     /// <summary>
     /// Unit tests for CreateTextHandler.

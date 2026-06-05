@@ -1,20 +1,19 @@
 // <copyright file="WebParsingUtilsTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Streetcode.DAL.Entities.Toponyms;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.WebApi.Utils;
+using Xunit;
 
 namespace Streetcode.XUnitTest.WebApi.Utils
 {
-    using System.Linq.Expressions;
-    using System.Reflection;
-    using System.Text;
-    using FluentAssertions;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Streetcode.DAL.Entities.Toponyms;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Streetcode.WebApi.Utils;
-    using Xunit;
-
     /// <summary>
     /// Contains tests for <see cref="WebParsingUtils"/>.
     /// </summary>
@@ -687,24 +686,24 @@ namespace Streetcode.XUnitTest.WebApi.Utils
         {
             var method = typeof(WebParsingUtils).GetMethod(
                 "OptimizeStreetname",
-                BindingFlags.NonPublic | BindingFlags.Static) !;
-            return ((string, string))method.Invoke(null, new object[] { streetname }) !;
+                BindingFlags.NonPublic | BindingFlags.Static)!;
+            return ((string, string))method.Invoke(null, new object[] { streetname })!;
         }
 
         private static List<string> InvokeGetDistinctRows(IEnumerable<string> rows, byte beforeColumn = 7)
         {
             var method = typeof(WebParsingUtils).GetMethod(
                 "GetDistinctRows",
-                BindingFlags.NonPublic | BindingFlags.Static) !;
-            return (List<string>)method.Invoke(null, new object[] { rows, beforeColumn }) !;
+                BindingFlags.NonPublic | BindingFlags.Static)!;
+            return (List<string>)method.Invoke(null, new object[] { rows, beforeColumn })!;
         }
 
         private static (string?, string?) InvokeParseJsonToCoordinateTuple(string json)
         {
             var method = typeof(WebParsingUtils).GetMethod(
                 "ParseJsonToCoordinateTuple",
-                BindingFlags.NonPublic | BindingFlags.Static) !;
-            return ((string?, string?))method.Invoke(null, new object[] { json }) !;
+                BindingFlags.NonPublic | BindingFlags.Static)!;
+            return ((string?, string?))method.Invoke(null, new object[] { json })!;
         }
     }
 }

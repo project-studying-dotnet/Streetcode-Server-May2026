@@ -6,7 +6,7 @@ using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
-using StreetcodeCoordinateEntity = global::Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate;
+using StreetcodeCoordinateEntity = Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types.StreetcodeCoordinate;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.AdditionalContent.Coordinate.Create;
 

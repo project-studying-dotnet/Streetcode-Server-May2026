@@ -1,7 +1,6 @@
 ﻿// <copyright file="GetTimelineItemByIdHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-
 using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
@@ -16,6 +15,7 @@ using Streetcode.DAL.Enums;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Timeline;
 using Xunit;
+
 using HistContext = Streetcode.DAL.Entities.Timeline.HistoricalContext;
 using TimelineItemEntity = Streetcode.DAL.Entities.Timeline.TimelineItem;
 

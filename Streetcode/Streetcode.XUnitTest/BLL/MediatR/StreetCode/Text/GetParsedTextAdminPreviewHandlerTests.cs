@@ -1,15 +1,14 @@
 ﻿// <copyright file="GetParsedTextAdminPreviewHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using FluentAssertions;
+using Streetcode.BLL.Interfaces.Text;
+using Streetcode.BLL.MediatR.Streetcode.Text.GetParsed;
+using Moq;
+using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 {
-    using FluentAssertions;
-    using global::Streetcode.BLL.Interfaces.Text;
-    using global::Streetcode.BLL.MediatR.Streetcode.Text.GetParsed;
-    using Moq;
-    using Xunit;
-    using global::Streetcode.BLL.Resources;
 
     /// <summary>
     /// Unit tests for <see cref="GetParsedTextAdminPreviewHandler"/>.
