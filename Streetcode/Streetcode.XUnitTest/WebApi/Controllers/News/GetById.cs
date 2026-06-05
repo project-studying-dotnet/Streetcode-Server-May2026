@@ -9,7 +9,7 @@ using Streetcode.BLL.MediatR.Newss.GetById;
 using Streetcode.WebApi.Controllers;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Controllers
+namespace Streetcode.XUnitTest.WebApi.Controllers.News
 {
     public class GetById
     {
@@ -40,7 +40,7 @@ namespace Streetcode.XUnitTest.Controllers
         [Fact]
         public async Task GetById_ReturnsOkResult_WithNews_WhenNewsExists()
         {
-            int testId = 9; 
+            int testId = 9;
             var expectedNews = new NewsDTO
             {
                 Id = testId,

@@ -49,7 +49,7 @@ namespace Streetcode.XUnitTest.Controllers
             };
 
             _mediatorMock
-                .Setup(m => m.Send(It.Is<GetNewsByUrlQuery>(q => q.url == testUrl), default))
+                .Setup(m => m.Send(It.Is<GetNewsByUrlQuery>(q => q.Url == testUrl), default))
                 .ReturnsAsync(Result.Ok(expectedNews));
 
             var result = await _controller.GetByUrl(testUrl);
@@ -66,7 +66,7 @@ namespace Streetcode.XUnitTest.Controllers
             var testUrl = "non-existing-url";
 
             _mediatorMock
-                .Setup(m => m.Send(It.Is<GetNewsByUrlQuery>(q => q.url == testUrl), default))
+                .Setup(m => m.Send(It.Is<GetNewsByUrlQuery>(q => q.Url == testUrl), default))
                 .ReturnsAsync(Result.Fail<NewsDTO>("News with this URL was not found"));
 
             var result = await _controller.GetByUrl(testUrl);

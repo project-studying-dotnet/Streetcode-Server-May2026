@@ -47,7 +47,7 @@ namespace Streetcode.XUnitTest.Controllers
             };
 
             _mediatorMock
-                .Setup(m => m.Send(It.Is<GetNewsAndLinksByUrlQuery>(q => q.url == testUrl), default))
+                .Setup(m => m.Send(It.Is<GetNewsAndLinksByUrlQuery>(q => q.Url == testUrl), default))
                 .ReturnsAsync(Result.Ok(expectedResponse));
 
             var result = await _controller.GetNewsAndLinksByUrl(testUrl);
@@ -64,7 +64,7 @@ namespace Streetcode.XUnitTest.Controllers
             var testUrl = "news:string";
 
             _mediatorMock
-                .Setup(m => m.Send(It.Is<GetNewsAndLinksByUrlQuery>(q => q.url == testUrl), default))
+                .Setup(m => m.Send(It.Is<GetNewsAndLinksByUrlQuery>(q => q.Url == testUrl), default))
                 .ReturnsAsync(Result.Fail<NewsDTOWithURLs>("News not found"));
 
             var result = await _controller.GetNewsAndLinksByUrl(testUrl);
