@@ -1,5 +1,4 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MimeKit;
 using Streetcode.EmailService.Interfaces;
 using Streetcode.EmailService.Models;
@@ -8,15 +7,21 @@ namespace Streetcode.EmailService.Services;
 
 public class EmailService : IEmailService
 {
+    private const string XOAuth2 = "XOAUTH2";
+    private const string FailedToSendEmailMessage = "Failed to send email.";
+
     private readonly EmailConfiguration _emailConfig;
     private readonly ILogger<EmailService> _logger;
+    private readonly ISmtpClientFactory _smtpClientFactory;
 
     public EmailService(
         IOptions<EmailConfiguration> emailConfig,
-        ILogger<EmailService> logger)
+        ILogger<EmailService> logger,
+        ISmtpClientFactory smtpClientFactory)
     {
         _emailConfig = emailConfig.Value;
         _logger = logger;
+        _smtpClientFactory = smtpClientFactory;
     }
 
     public async Task<bool> SendEmailAsync(Message message)
@@ -53,13 +58,13 @@ public class EmailService : IEmailService
 
     private async Task<bool> SendAsync(MimeMessage mailMessage)
     {
-        using var client = new SmtpClient();
+        await using var client = _smtpClientFactory.CreateClient();
 
         try
         {
             await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, true);
 
-            client.AuthenticationMechanisms.Remove("XOAUTH2");
+            client.RemoveAuthenticationMechanism(XOAuth2);
 
             await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
             await client.SendAsync(mailMessage);
@@ -68,7 +73,7 @@ public class EmailService : IEmailService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email.");
+            _logger.LogError(ex, FailedToSendEmailMessage);
             return false;
         }
         finally

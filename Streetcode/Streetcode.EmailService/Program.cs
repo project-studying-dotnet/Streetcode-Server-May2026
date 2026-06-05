@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.Configure<EmailConfiguration>(
     builder.Configuration.GetSection("EmailConfiguration"));
 
+builder.Services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddEndpointsApiExplorer();
