@@ -10,4 +10,10 @@ public static class EmailTestConstants
     public const string Password = "password";
     public const string Subject = "Subject";
     public const string Content = "Content";
+
+    public const string RabbitMqHostName = "localhost";
+    public const int RabbitMqPort = 5672;
+    public const string RabbitMqUserName = "guest";
+    public const string RabbitMqPassword = "guest";
+    public const string RabbitMqQueueName = "email-queue";
 }
