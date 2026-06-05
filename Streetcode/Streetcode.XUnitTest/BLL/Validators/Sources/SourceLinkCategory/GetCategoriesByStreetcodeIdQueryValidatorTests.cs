@@ -3,7 +3,7 @@ using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoriesByStreetcodeId;
 using Streetcode.BLL.Validators.Sources.SourceLinkCategory.GetCategoriesByStreetcodeId;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Validators.Sources.SourceLinkCategory.GetCategoriesByStreetcodeId
+namespace Streetcode.XUnitTest.BLL.Validators.Sources.SourceLinkCategory
 {
     public class GetCategoriesByStreetcodeIdQueryValidatorTests
     {
