@@ -1,0 +1,30 @@
+@Streetcode.EmailService_HostAddress = http://localhost:5190
+
+GET {{Streetcode.EmailService_HostAddress}}/health
+Accept: application/json
+
+###
+
+POST {{Streetcode.EmailService_HostAddress}}/api/email/send
+Content-Type: application/json
+
+{
+  "to": [
+    "test@gmail.com"
+  ],
+  "from": "sender@gmail.com",
+  "subject": "Hangfire test",
+  "content": "Hello Hangfire"
+}
+
+###
+
+POST {{Streetcode.EmailService_HostAddress}}/api/email/send
+Content-Type: application/json
+
+{
+  "to": [],
+  "from": "not-email",
+  "subject": "",
+  "content": ""
+}

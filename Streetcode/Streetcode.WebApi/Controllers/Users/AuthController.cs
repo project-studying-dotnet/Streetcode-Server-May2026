@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
 using Streetcode.BLL.MediatR.Users.Login;
+using Streetcode.BLL.MediatR.Users.Register;
 using Streetcode.BLL.MediatR.Users.Logout;
 using Streetcode.BLL.MediatR.Users.RefreshToken;
 
@@ -27,6 +28,20 @@ namespace Streetcode.WebApi.Controllers.Users
                 return Unauthorized(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserRegisterDto registerRequest)
+        {
+            try
+            {
+                return HandleResult(await Mediator.Send(new RegisterUserCommand(registerRequest)));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+         }
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
