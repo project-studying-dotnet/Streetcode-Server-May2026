@@ -144,24 +144,22 @@ public class BlobService : IBlobService
         byte[] iv = new byte[16];
         RandomNumberGenerator.Fill(iv);
 
-        byte[] encryptedBytes;
-        using (Aes aes = Aes.Create())
-        {
-            aes.KeySize = 256;
-            aes.Key = keyBytes;
-            aes.IV = iv;
+        using Aes aes = Aes.Create();
+        aes.KeySize = 256;
+        aes.Key = keyBytes;
+        aes.IV = iv;
 
-            using (ICryptoTransform encryptor = aes.CreateEncryptor())
-            {
-                encryptedBytes = encryptor.TransformFinalBlock(imageBytes, 0, imageBytes.Length);
-            }
+        byte[] encryptedBytes;
+        using (ICryptoTransform encryptor = aes.CreateEncryptor())
+        {
+            encryptedBytes = encryptor.TransformFinalBlock(imageBytes, 0, imageBytes.Length);
         }
 
         byte[] encryptedData = new byte[iv.Length + encryptedBytes.Length];
         Buffer.BlockCopy(iv, 0, encryptedData, 0, iv.Length);
         Buffer.BlockCopy(encryptedBytes, 0, encryptedData, iv.Length, encryptedBytes.Length);
 
-        File.WriteAllBytes($"{_blobPath}{name}.{type}", encryptedData);
+        File.WriteAllBytes(Path.Combine(_blobPath, $"{name}.{type}"), encryptedData);
     }
 
     private byte[] DecryptFile(string fileName, string type)
