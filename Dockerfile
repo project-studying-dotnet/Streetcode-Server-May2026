@@ -34,7 +34,7 @@ COPY ./Streetcode/ ./
 
 RUN dotnet build \
     Streetcode.WebApi/Streetcode.WebApi.csproj \
-    -c $Configuration \
+    -c "$Configuration" \
     --no-restore
 
 # Publish
@@ -42,7 +42,7 @@ FROM build AS publish
 
 RUN dotnet publish \
     Streetcode.WebApi/Streetcode.WebApi.csproj \
-    -c $Configuration \
+    -c "$Configuration" \
     -o /app/publish \
     --no-build
 
