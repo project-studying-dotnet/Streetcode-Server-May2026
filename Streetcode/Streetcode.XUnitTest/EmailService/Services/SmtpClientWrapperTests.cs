@@ -20,11 +20,10 @@ public class SmtpClientWrapperTests
     }
 
     [Fact]
-    public async void IsConnected_ShouldBeFalse_WhenClientIsNotConnected()
+    public void IsConnected_ShouldBeFalse_WhenClientIsNotConnected()
     {
         // Arrange
         var wrapper = new SmtpClientWrapper();
-        await wrapper.DisposeAsync();
 
         // Act
         var result = wrapper.IsConnected;
