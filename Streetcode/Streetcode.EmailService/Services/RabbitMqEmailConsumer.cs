@@ -17,6 +17,8 @@ namespace Streetcode.EmailService.Services;
 [ExcludeFromCodeCoverage]
 public class RabbitMqEmailConsumer : BackgroundService
 {
+    private const int RetryDelayMilliseconds = 5000;
+
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -39,9 +41,14 @@ public class RabbitMqEmailConsumer : BackgroundService
         _logger = logger;
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        InitializeRabbitMq();
+        await WaitForRabbitMqAsync(stoppingToken);
+
+        if (stoppingToken.IsCancellationRequested || _channel is null)
+        {
+            return;
+        }
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
 
@@ -55,7 +62,30 @@ public class RabbitMqEmailConsumer : BackgroundService
             autoAck: false,
             consumer: consumer);
 
-        return Task.CompletedTask;
+        _logger.LogInformation("RabbitMQ email consumer started.");
+    }
+
+    private async Task WaitForRabbitMqAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                InitializeRabbitMq();
+
+                _logger.LogInformation("RabbitMQ connection established.");
+                return;
+            }
+            catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "RabbitMQ is not available yet. Retrying in {DelaySeconds} seconds.",
+                    RetryDelayMilliseconds / 1000);
+
+                await Task.Delay(RetryDelayMilliseconds, stoppingToken);
+            }
+        }
     }
 
     private void InitializeRabbitMq()
