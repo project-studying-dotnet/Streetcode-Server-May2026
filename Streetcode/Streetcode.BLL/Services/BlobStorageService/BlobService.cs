@@ -139,7 +139,7 @@ public class BlobService : IBlobService
 
     private void EncryptFile(byte[] imageBytes, string type, string name)
     {
-        byte[] keyBytes = Encoding.UTF8.GetBytes(_keyCrypt);
+        byte[] keyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(_keyCrypt));
 
         byte[] iv = new byte[16];
         RandomNumberGenerator.Fill(iv);
@@ -157,7 +157,7 @@ public class BlobService : IBlobService
             }
         }
 
-        byte[] encryptedData = new byte[encryptedBytes.Length + iv.Length];
+        byte[] encryptedData = new byte[iv.Length + encryptedBytes.Length];
         Buffer.BlockCopy(iv, 0, encryptedData, 0, iv.Length);
         Buffer.BlockCopy(encryptedBytes, 0, encryptedData, iv.Length, encryptedBytes.Length);
 

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Streetcode.BLL.Resources;
 
+namespace Streetcode.BLL.Validators.Newss;
 public abstract class BaseNewsUrlValidator<T> : AbstractValidator<T> where T : IUrlQuery
 {
     protected BaseNewsUrlValidator()

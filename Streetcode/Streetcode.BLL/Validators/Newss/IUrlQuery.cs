@@ -2,7 +2,10 @@
 using MediatR;
 using Streetcode.BLL.DTO.News;
 
-public interface IUrlQuery
+namespace Streetcode.BLL.Validators.Newss
 {
-    string Url { get; }
+    public interface IUrlQuery
+    {
+        string Url { get; }
+    }
 }
