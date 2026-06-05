@@ -4,6 +4,11 @@ using Streetcode.EmailService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
 builder.Services.AddControllers();
 
 builder.Services.Configure<EmailConfiguration>(
