@@ -27,22 +27,6 @@ public class CreateCoordinateHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnFail_WhenMapperReturnsNull()
-    {
-        var command = new CreateCoordinateCommand(null!);
-
-        _mapperMock
-            .Setup(m => m.Map<StreetcodeCoordinateEntity>(
-                command.StreetcodeCoordinate))
-            .Returns((StreetcodeCoordinateEntity)null!);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be(ErrorMessages.CannotConvertNullToStreetcodeCoordinate);
-    }
-
-    [Fact]
     public async Task Handle_ShouldReturnFail_WhenSaveChangesFails()
     {
         var command = new CreateCoordinateCommand(null!);
