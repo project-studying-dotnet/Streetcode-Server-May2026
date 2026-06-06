@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Streetcode.DAL.Entities.Comments;
+using Streetcode.DAL.Entities.Streetcode;
 using Xunit;
 
 namespace Streetcode.XUnitTest.DAL.Entities.Comments;
@@ -7,17 +8,27 @@ namespace Streetcode.XUnitTest.DAL.Entities.Comments;
 public class CommentTests
 {
     [Fact]
-    public void Comment_ShouldInitializeWithDefaultValues()
+    public void Comment_Properties_ShouldBeSetAndRetrievedCorrectly()
     {
-        // Act
+        // Arrange
         var comment = new Comment();
+        var streetcode = new StreetcodeContent();
+        var parentComment = new Comment { Id = 1 };
+        var now = DateTime.UtcNow;
+
+        // Act
+        comment.UpdatedAt = now;
+        comment.UserId = 10;
+        comment.Streetcode = streetcode;
+        comment.ParentCommentId = 1;
+        comment.ParentComment = parentComment;
 
         // Assert
-        comment.Id.Should().Be(0);
-        comment.Text.Should().Be(string.Empty);
-        comment.CreatedAt.Should().BeBefore(DateTime.UtcNow.AddSeconds(1));
-        comment.Replies.Should().NotBeNull();
-        comment.Replies.Should().BeEmpty();
+        comment.UpdatedAt.Should().Be(now);
+        comment.UserId.Should().Be(10);
+        comment.Streetcode.Should().Be(streetcode);
+        comment.ParentCommentId.Should().Be(1);
+        comment.ParentComment.Should().Be(parentComment);
     }
 
     [Fact]
