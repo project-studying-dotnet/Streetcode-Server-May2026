@@ -9,6 +9,8 @@ using Streetcode.BLL.MediatR.Newss.GetByUrl;
 using Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl;
 using Streetcode.BLL.MediatR.Newss.SortedByDateTime;
 using Streetcode.BLL.MediatR.Newss.Update;
+using Streetcode.DAL.Enums;
+using Streetcode.WebApi.Attributes;
 
 namespace Streetcode.WebApi.Controllers
 {
@@ -44,12 +46,14 @@ namespace Streetcode.WebApi.Controllers
             return HandleResult(await Mediator.Send(new GetNewsAndLinksByUrlQuery(url)));
         }
 
+        [AuthorizeRoles(UserRole.Administrator)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] NewsDTO newsDto)
         {
             return HandleResult(await Mediator.Send(new CreateNewsCommand(newsDto)));
         }
 
+        [AuthorizeRoles(UserRole.Administrator)]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] NewsDTO newsDto)
         {
@@ -58,6 +62,7 @@ namespace Streetcode.WebApi.Controllers
             return HandleResult(await Mediator.Send(new UpdateNewsCommand(newsDto)));
         }
 
+        [AuthorizeRoles(UserRole.Administrator)]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
