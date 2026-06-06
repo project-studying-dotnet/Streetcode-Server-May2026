@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using FluentAssertions;
-using global::MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Repositories.Interfaces;

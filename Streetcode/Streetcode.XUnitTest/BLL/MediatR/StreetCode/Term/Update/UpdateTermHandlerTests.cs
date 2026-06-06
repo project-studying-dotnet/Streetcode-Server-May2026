@@ -9,8 +9,7 @@ using Streetcode.BLL.MediatR.Streetcode.Term.Update;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
-using NewsEntity = global::Streetcode.DAL.Entities.News.News;
-using TermEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Term;
+using TermEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Term;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Term.Update
 {

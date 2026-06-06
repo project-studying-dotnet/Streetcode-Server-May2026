@@ -1,19 +1,18 @@
 ﻿// <copyright file="AddTermsToTextServiceTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using System.Linq.Expressions;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Streetcode.BLL.Services.Text;
+using Streetcode.DAL.Entities.Streetcode.TextContent;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.Services.Text
 {
-    using System.Linq.Expressions;
-    using FluentAssertions;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Streetcode.BLL.Services.Text;
-    using Streetcode.DAL.Entities.Streetcode.TextContent;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-    using Xunit;
-
     /// <summary>
     /// Unit tests for <see cref="AddTermsToTextService"/>.
     /// </summary>
