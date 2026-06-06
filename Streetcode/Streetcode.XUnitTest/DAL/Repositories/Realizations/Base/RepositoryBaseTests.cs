@@ -6,7 +6,7 @@ using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Realizations.Base;
 using Xunit;
 
-namespace Streetcode.XUnitTest.DAL.Repositories;
+namespace Streetcode.XUnitTest.DAL.Repositories.Realizations.Base;
 
 public class RepositoryBaseTests
 {
