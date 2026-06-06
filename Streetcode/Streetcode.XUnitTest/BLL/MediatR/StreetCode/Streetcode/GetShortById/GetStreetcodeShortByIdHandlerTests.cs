@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using FluentResults;
-using MediatR;
 using Moq;
 using Streetcode.BLL.DTO.Streetcode;
 using Streetcode.BLL.Interfaces.Logging;

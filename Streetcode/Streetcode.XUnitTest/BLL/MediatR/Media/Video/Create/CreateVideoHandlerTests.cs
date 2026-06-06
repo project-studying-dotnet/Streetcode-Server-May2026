@@ -9,7 +9,6 @@ using Streetcode.BLL.Mapping.Media;
 using Streetcode.BLL.MediatR.Media.Video.Create;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Media;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
 using Xunit;
 

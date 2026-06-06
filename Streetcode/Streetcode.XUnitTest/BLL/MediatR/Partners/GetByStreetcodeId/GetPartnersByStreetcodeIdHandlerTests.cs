@@ -6,13 +6,13 @@ using Moq;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Partners.GetByStreetcodeId;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
 using Xunit;
-using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
 {

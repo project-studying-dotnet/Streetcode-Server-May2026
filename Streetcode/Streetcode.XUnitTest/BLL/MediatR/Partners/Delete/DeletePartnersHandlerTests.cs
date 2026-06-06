@@ -1,17 +1,15 @@
 using System.Linq.Expressions;
 using AutoMapper;
-using FluentResults;
-using Moq;
 using FluentAssertions;
-using Streetcode.DAL.Entities.Partners;
+using Moq;
+using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Partners.Delete;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
-using Streetcode.BLL.DTO.Partners;
-using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
-using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
 {
@@ -80,13 +78,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
             var deletePartnerQuery = new DeletePartnerQuery(id);
             var partner = new Partner
             {
-                Id = 1, Title = "Title 1", LogoId = 1,
-                IsKeyPartner = true, IsVisibleEverywhere = true,
+                Id = 1,
+                Title = "Title 1",
+                LogoId = 1,
+                IsKeyPartner = true,
+                IsVisibleEverywhere = true,
             };
             var dto = new PartnerDTO
             {
-                Id = 1, Title = "Title 1", LogoId = 1,
-                IsKeyPartner = true, IsVisibleEverywhere = true,
+                Id = 1,
+                Title = "Title 1",
+                LogoId = 1,
+                IsKeyPartner = true,
+                IsVisibleEverywhere = true,
             };
 
             _partnersRepositoryMock

@@ -1,17 +1,18 @@
-﻿using Moq;
-using Xunit;
-using MediatR;
-using AutoMapper;
-using FluentResults;
+﻿using AutoMapper;
 using FluentAssertions;
-using Streetcode.DAL.Enums;
-using Streetcode.BLL.Resources;
+using FluentResults;
+using MediatR;
+using Moq;
 using Streetcode.BLL.DTO.Timeline;
 using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Timeline;
 using Streetcode.BLL.MediatR.Timeline.TimelineItem.Create;
 using Streetcode.BLL.MediatR.Timeline.TimelineItem.Update;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Enums;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Timeline;
+using Xunit;
+
 using TimelineItemEntity = Streetcode.DAL.Entities.Timeline.TimelineItem;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem;

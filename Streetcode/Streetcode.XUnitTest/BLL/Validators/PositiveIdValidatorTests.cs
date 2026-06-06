@@ -1,7 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using Streetcode.BLL.MediatR.Interface;
 using Streetcode.BLL.Resources;
-using Streetcode.BLL.Validators;
 using Streetcode.XUnitTest.BLL.Validators;
 using Xunit;
 

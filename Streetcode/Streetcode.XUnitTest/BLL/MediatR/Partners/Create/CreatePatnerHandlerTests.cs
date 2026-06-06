@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
-using FluentResults;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Streetcode.BLL.DTO.Partners;
@@ -57,23 +56,37 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Create
         {
             var dto = new PartnerDTO
             {
-                Id = 1, Title = "Title 1", LogoId = 1,
-                IsKeyPartner = true, IsVisibleEverywhere = true,
+                Id = 1,
+                Title = "Title 1",
+                LogoId = 1,
+                IsKeyPartner = true,
+                IsVisibleEverywhere = true,
             };
             var createdDto = new PartnerDTO
             {
-                Id = 1, Title = "Title 1", LogoId = 1,
-                IsKeyPartner = true, IsVisibleEverywhere = true,
+                Id = 1,
+                Title = "Title 1",
+                LogoId = 1,
+                IsKeyPartner = true,
+                IsVisibleEverywhere = true,
             };
             var partner = new Partner
             {
-                Id = 1, Title = "Title 1", LogoId = 1,
-                IsKeyPartner = true, IsVisibleEverywhere = true, Streetcodes = new List<StreetcodeContent>(),
+                Id = 1,
+                Title = "Title 1",
+                LogoId = 1,
+                IsKeyPartner = true,
+                IsVisibleEverywhere = true,
+                Streetcodes = new List<StreetcodeContent>(),
             };
             var createPartnerQuery = new CreatePartnerQuery(new CreatePartnerDTO
             {
-                Id = 1, Title = "Title 1", LogoId = 1,
-                IsKeyPartner = true, IsVisibleEverywhere = true, Streetcodes = new List<StreetcodeShortDTO>(),
+                Id = 1,
+                Title = "Title 1",
+                LogoId = 1,
+                IsKeyPartner = true,
+                IsVisibleEverywhere = true,
+                Streetcodes = new List<StreetcodeShortDTO>(),
             });
 
             _mapperMock

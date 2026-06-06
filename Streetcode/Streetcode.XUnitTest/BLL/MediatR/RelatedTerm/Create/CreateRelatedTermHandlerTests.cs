@@ -12,6 +12,7 @@ using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
 using Xunit;
+
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.RelatedTerm;
 
 namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Create
