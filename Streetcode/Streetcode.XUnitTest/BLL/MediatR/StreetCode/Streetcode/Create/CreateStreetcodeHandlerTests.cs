@@ -1,28 +1,21 @@
 ﻿// <copyright file="CreateStreetcodeHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using System.Linq.Expressions;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Streetcode.BLL.DTO.AdditionalContent.Tag;
+using Streetcode.BLL.DTO.Streetcode;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Streetcode.Streetcode.Create;
+using Streetcode.DAL.Entities.AdditionalContent;
+using Streetcode.DAL.Entities.Streetcode;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.Create
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
-    using System.Text;
-    using AutoMapper;
-    using global::Streetcode.BLL.DTO.AdditionalContent.Tag;
-    using global::Streetcode.BLL.DTO.Streetcode;
-    using global::Streetcode.BLL.Interfaces.Logging;
-    using global::Streetcode.BLL.Mapping.Streetcode;
-    using global::Streetcode.BLL.MediatR.Streetcode.Streetcode.Create;
-    using global::Streetcode.DAL.Entities.AdditionalContent;
-    using global::Streetcode.DAL.Entities.Partners;
-    using global::Streetcode.DAL.Entities.Streetcode;
-    using global::Streetcode.DAL.Repositories.Interfaces.Base;
-    using global::Streetcode.DAL.Repositories.Interfaces.Streetcode;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Xunit;
-
     /// <summary>
     /// Tests for CreateStreetcodeHandler, which handles the creation of a new streetcode entity in the system.
     /// </summary>

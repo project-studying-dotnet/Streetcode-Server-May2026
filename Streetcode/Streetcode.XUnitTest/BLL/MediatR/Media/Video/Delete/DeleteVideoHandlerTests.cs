@@ -3,14 +3,11 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using Repositories.Interfaces;
-using Streetcode.BLL.DTO.Media.Video;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Media;
 using Streetcode.BLL.MediatR.Media.Video.Delete;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Media;
 using Xunit;
-
 using VideoEntity = Streetcode.DAL.Entities.Media.Video;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Media.Video.Delete;
