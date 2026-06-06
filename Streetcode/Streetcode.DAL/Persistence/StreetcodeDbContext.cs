@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Streetcode.DAL.Entities.AdditionalContent;
 using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
 using Streetcode.DAL.Entities.Analytics;
+using Streetcode.DAL.Entities.Comments;
 using Streetcode.DAL.Entities.Feedback;
 using Streetcode.DAL.Entities.Media;
 using Streetcode.DAL.Entities.Media.Images;
@@ -34,6 +35,7 @@ public class StreetcodeDbContext : IdentityDbContext<User, IdentityRole<int>, in
 
     public DbSet<Art> Arts { get; set; } = null!;
     public DbSet<Audio> Audios { get; set; } = null!;
+    public DbSet<Comment> Comments { get; set; }
     public DbSet<ToponymCoordinate> ToponymCoordinates { get; set; } = null!;
     public DbSet<StreetcodeCoordinate> StreetcodeCoordinates { get; set; } = null!;
     public DbSet<Fact> Facts { get; set; } = null!;
@@ -112,5 +114,6 @@ public class StreetcodeDbContext : IdentityDbContext<User, IdentityRole<int>, in
         builder.ApplyConfiguration(new UserConfiguration());
         builder.ApplyConfiguration(new ResponseConfiguration());
         builder.ApplyConfiguration(new ArtConfiguration());
+        builder.ApplyConfiguration(new CommentConfiguration());
     }
 }

@@ -1,6 +1,7 @@
 using Streetcode.DAL.Entities.AdditionalContent;
 using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
 using Streetcode.DAL.Entities.Analytics;
+using Streetcode.DAL.Entities.Comments;
 using Streetcode.DAL.Entities.Media;
 using Streetcode.DAL.Entities.Media.Images;
 using Streetcode.DAL.Entities.Partners;
@@ -32,6 +33,7 @@ public class StreetcodeContent
     public Text? Text { get; set; }
     public Audio? Audio { get; set; }
     public List<StatisticRecord> StatisticRecords { get; set; } = new();
+    public List<Comment> Comments { get; set; } = new();
     public List<StreetcodeCoordinate> Coordinates { get; set; } = new();
     public TransactionLink? TransactionLink { get; set; }
     public List<Toponym> Toponyms { get; set; } = new ();
