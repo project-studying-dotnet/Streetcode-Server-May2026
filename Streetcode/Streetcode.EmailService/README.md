@@ -106,6 +106,8 @@ Available services:
 | EmailService Health  | http://localhost:5190/health  |
 | RabbitMQ Management  | http://localhost:15672        |
 
+RabbitMQ credentials are configured through .env
+and are shared by both RabbitMQ and EmailService.
 RabbitMQ default credentials:
 
 ```text
