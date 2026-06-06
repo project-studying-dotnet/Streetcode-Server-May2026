@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
 using Moq;
-using Streetcode.BLL.DTO.Streetcode.TextContent.Fact;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.Fact.Delete;

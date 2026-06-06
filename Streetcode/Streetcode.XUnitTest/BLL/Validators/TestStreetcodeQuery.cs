@@ -1,5 +1,4 @@
 ﻿using Streetcode.BLL.MediatR.Interface;
-using Streetcode.BLL.Validators;
 
 namespace Streetcode.XUnitTest.BLL.Validators
 {

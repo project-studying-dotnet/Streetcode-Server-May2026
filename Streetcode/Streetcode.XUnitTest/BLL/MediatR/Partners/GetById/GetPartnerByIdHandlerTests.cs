@@ -1,17 +1,16 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
-using FluentResults;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
 using Xunit;
-using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Partners.GetById
 {
@@ -76,7 +75,8 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
             {
                 Id = 1,
                 Title = "Title 1",
-                LogoId = 1, IsKeyPartner = true,
+                LogoId = 1,
+                IsKeyPartner = true,
                 IsVisibleEverywhere = true,
                 Streetcodes = new List<StreetcodeContent>(),
             };

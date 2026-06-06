@@ -1,7 +1,6 @@
 ﻿// <copyright file="DeleteTextHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-
 using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
