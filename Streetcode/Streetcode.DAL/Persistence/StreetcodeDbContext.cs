@@ -35,7 +35,7 @@ public class StreetcodeDbContext : IdentityDbContext<User, IdentityRole<int>, in
 
     public DbSet<Art> Arts { get; set; } = null!;
     public DbSet<Audio> Audios { get; set; } = null!;
-    public DbSet<Comment> Comments { get; set; }
+    public DbSet<Comment> Comments { get; set; } = null!;
     public DbSet<ToponymCoordinate> ToponymCoordinates { get; set; } = null!;
     public DbSet<StreetcodeCoordinate> StreetcodeCoordinates { get; set; } = null!;
     public DbSet<Fact> Facts { get; set; } = null!;
