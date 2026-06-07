@@ -12,21 +12,21 @@ public sealed class HistoricalContextTimelineProfile : Profile
         {
             if(hct.HistoricalContext is null)
             {
-                throw new Exception($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.HistoricalContext)}' must not be null");
+                throw new NullReferenceException($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.HistoricalContext)}' must not be null");
             }
         }).ConvertUsing(hct => hct.HistoricalContext!);
         base.CreateMap<HistoricalContextTimeline, TimelineItem>().BeforeMap(static(hct, ti) =>
         {
             if(hct.Timeline is null)
             {
-                throw new Exception($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.Timeline)}' must not be null");
+                throw new NullReferenceException($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.Timeline)}' must not be null");
             }
         }).ConvertUsing(hct => hct.Timeline!);
         base.CreateMap<HistoricalContextTimeline, HistoricalContextDto>().BeforeMap(static(hct, ti) =>
         {
             if(hct.HistoricalContext is null)
             {
-                throw new Exception($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.HistoricalContext)}' must not be null");
+                throw new NullReferenceException($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.HistoricalContext)}' must not be null");
             }
         }).ConvertUsing(static(HistoricalContextTimeline hct, HistoricalContextDto dto, ResolutionContext ctx) =>
         {
@@ -36,7 +36,7 @@ public sealed class HistoricalContextTimelineProfile : Profile
         {
             if (hct.Timeline is null)
             {
-                throw new Exception($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.Timeline)}' must not be null");
+                throw new NullReferenceException($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.Timeline)}' must not be null");
             }
         }).ConvertUsing(static(HistoricalContextTimeline hct, TimelineItemDto dto, ResolutionContext ctx) =>
         {

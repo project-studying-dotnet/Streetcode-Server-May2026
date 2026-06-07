@@ -1,9 +1,9 @@
-﻿using Moq;
+﻿using System.Linq.Expressions;
+using Moq;
 using Xunit;
 using AutoMapper;
 using FluentResults;
 using FluentAssertions;
-using System.Linq.Expressions;
 using Streetcode.BLL.Resources;
 using Streetcode.BLL.DTO.Timeline;
 using Streetcode.BLL.Interfaces.Logging;
