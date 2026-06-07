@@ -91,7 +91,7 @@ public class CreateCommentHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
-        result.Errors[0].Message.Should().Be($"Streetcode with Id {dto.StreetcodeId} does not exist.");
+        result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.StreetcodeWithIdNotFound, dto.StreetcodeId));
         _loggerMock.Verify(logger => logger.LogError(command, It.IsAny<string>()), Times.Once);
     }
 

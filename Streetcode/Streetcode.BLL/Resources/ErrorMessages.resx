@@ -297,6 +297,9 @@
   <data name="StreetcodeIdMustBePositive" xml:space="preserve">
     <value>StreetcodeId must be greater than 0</value>
   </data>
+  <data name="StreetcodeWithIdNotFound" xml:space="preserve">
+    <value>Streetcode with Id {0} does not exist.</value>
+  </data>
   <data name="SubtitleTextIsRequired" xml:space="preserve">
     <value>Subtitle text is required.</value>
   </data>

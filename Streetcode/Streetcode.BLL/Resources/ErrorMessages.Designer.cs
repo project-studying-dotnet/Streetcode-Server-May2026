@@ -1366,6 +1366,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Streetcode with Id {0} does not exist..
+        /// </summary>
+        public static string StreetcodeWithIdNotFound {
+            get {
+                return ResourceManager.GetString("StreetcodeWithIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Streetcode was not found.
         /// </summary>
         public static string StreetcodeNotFound {
