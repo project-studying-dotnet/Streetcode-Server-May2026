@@ -1,36 +1,31 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Streetcode.BLL.Contracts;
 using Streetcode.BLL.Interfaces.Email;
 using Streetcode.BLL.Settings;
+using Microsoft.Extensions.Options;
 
 namespace Streetcode.BLL.Services.Email;
 
 public class RabbitMqEmailPublisher : IEmailPublisher
 {
     private readonly RabbitMqSettings _settings;
+    private readonly IRabbitMqConnectionFactory _connectionFactory;
 
     public RabbitMqEmailPublisher(
-        IOptions<RabbitMqSettings> settings)
+        IOptions<RabbitMqSettings> settings,
+        IRabbitMqConnectionFactory connectionFactory)
     {
         _settings = settings.Value;
+        _connectionFactory = connectionFactory;
     }
 
     public Task PublishAsync(
         EmailMessageContract message,
         CancellationToken cancellationToken = default)
     {
-        var factory = new ConnectionFactory
-        {
-            HostName = _settings.HostName,
-            Port = _settings.Port,
-            UserName = _settings.UserName,
-            Password = _settings.Password,
-        };
-
-        using var connection = factory.CreateConnection();
+        using var connection = _connectionFactory.CreateConnection();
         using var channel = connection.CreateModel();
 
         channel.QueueDeclare(
@@ -39,8 +34,7 @@ public class RabbitMqEmailPublisher : IEmailPublisher
             exclusive: false,
             autoDelete: false);
 
-        var body = Encoding.UTF8.GetBytes(
-            JsonSerializer.Serialize(message));
+        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
 
         channel.BasicPublish(
             exchange: string.Empty,
