@@ -1,18 +1,18 @@
 ﻿using FluentValidation.TestHelper;
-using Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl;
+using Streetcode.BLL.MediatR.Newss.GetByUrl;
 using Streetcode.BLL.Resources;
-using Streetcode.BLL.Validators.Newss.GetNewsAndLinksByUrl;
+using Streetcode.BLL.Validators.Newss.GetByUrl;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.Validators.Newss
 {
-    public class GetNewsAndLinksByUrlValidatorTests
+    public class GetNewsByUrlValidatorTests
     {
-        private readonly GetNewsAndLinksByUrlValidator _validator;
+        private readonly GetNewsByUrlValidator _validator;
 
-        public GetNewsAndLinksByUrlValidatorTests()
+        public GetNewsByUrlValidatorTests()
         {
-            _validator = new GetNewsAndLinksByUrlValidator();
+            _validator = new GetNewsByUrlValidator();
         }
 
         [Theory]
@@ -21,7 +21,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Newss
         [InlineData("   ")]
         public void Should_Have_Error_When_Url_Is_Empty(string? invalidUrl)
         {
-            var query = new GetNewsAndLinksByUrlQuery(invalidUrl!);
+            var query = new GetNewsByUrlQuery(invalidUrl!);
 
             var result = _validator.TestValidate(query);
 
@@ -33,7 +33,7 @@ namespace Streetcode.XUnitTest.BLL.Validators.Newss
         public void Should_Have_Error_When_Url_Exceeds_Max_Length()
         {
             var longUrl = new string('a', 2049);
-            var query = new GetNewsAndLinksByUrlQuery(longUrl);
+            var query = new GetNewsByUrlQuery(longUrl);
 
             var result = _validator.TestValidate(query);
 
@@ -42,12 +42,11 @@ namespace Streetcode.XUnitTest.BLL.Validators.Newss
         }
 
         [Theory]
-        [InlineData("lol")]
-        [InlineData("some-valid-news-slug")]
-        [InlineData("https://streetcode.ua")]
+        [InlineData("valid-news-slug")]
+        [InlineData("news-item-123")]
         public void Should_Not_Have_Errors_When_Url_Is_Valid(string validUrl)
         {
-            var query = new GetNewsAndLinksByUrlQuery(validUrl);
+            var query = new GetNewsByUrlQuery(validUrl);
 
             var result = _validator.TestValidate(query);
 
