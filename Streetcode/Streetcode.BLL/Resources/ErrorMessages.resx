@@ -615,4 +615,34 @@
   <data name="FailedToUpdateText" xml:space="preserve">
     <value>Failed to update Text.</value>
   </data>
+  <data name="PropertyMustBeGreaterThanOrEqualToValue" xml:space="preserve">
+    <value>Property '{0}' must be greater than or equal to '{1}'</value>
+  </data>
+  <data name="StringPropertyIsRequired" xml:space="preserve">
+    <value>String property '{0}' must be not null, not empty, and not contain only whitespace characters</value>
+  </data>
+  <data name="StringPropertyMustNotExceedCharacters" xml:space="preserve">
+    <value>String property '{0}' must not exceed '{1}' characters</value>
+  </data>
+  <data name="FailedToCreateType" xml:space="preserve">
+    <value>Failed to create '{0}'</value>
+  </data>
+  <data name="FailedToDeleteType" xml:space="preserve">
+    <value>Failed to delete '{0}'</value>
+  </data>
+  <data name="FailedToUpdateType" xml:space="preserve">
+    <value>Failed to update '{0}'</value>
+  </data>
+  <data name="FailedToFindAnyType" xml:space="preserve">
+    <value>Failed to find any '{0}'</value>
+  </data>
+  <data name="TypeWithIdNotFound" xml:space="preserve">
+    <value>'{0}' with property 'Id' equals to '{1}' not found</value>
+  </data>
+  <data name="StructPropertyIsRequired" xml:space="preserve">
+    <value>Struct property '{0}' must not be a default value</value>
+  </data>
+  <data name="PropertyMustBeValidEnumValue" xml:space="preserve">
+    <value>Property '{0}' must be valid enum '{1}'</value>
+  </data>
 </root>

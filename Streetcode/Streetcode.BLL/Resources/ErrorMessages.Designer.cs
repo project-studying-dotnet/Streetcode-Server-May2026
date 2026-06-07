@@ -628,6 +628,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to create &apos;{0}&apos;.
+        /// </summary>
+        public static string FailedToCreateType {
+            get {
+                return ResourceManager.GetString("FailedToCreateType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to delete an audio.
         /// </summary>
         public static string FailedToDeleteAnAudio {
@@ -682,6 +691,24 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete &apos;{0}&apos;.
+        /// </summary>
+        public static string FailedToDeleteType {
+            get {
+                return ResourceManager.GetString("FailedToDeleteType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to find any &apos;{0}&apos;.
+        /// </summary>
+        public static string FailedToFindAnyType {
+            get {
+                return ResourceManager.GetString("FailedToFindAnyType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to update historical context with id {0}.
         /// </summary>
         public static string FailedToUpdateHistoricalContextWithId {
@@ -723,6 +750,15 @@ namespace Streetcode.BLL.Resources {
         public static string FailedToUpdateTimelineItemWithId {
             get {
                 return ResourceManager.GetString("FailedToUpdateTimelineItemWithId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update &apos;{0}&apos;.
+        /// </summary>
+        public static string FailedToUpdateType {
+            get {
+                return ResourceManager.GetString("FailedToUpdateType", resourceCulture);
             }
         }
         
@@ -1150,6 +1186,24 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Property &apos;{0}&apos; must be greater than or equal to &apos;{1}&apos;.
+        /// </summary>
+        public static string PropertyMustBeGreaterThanOrEqualToValue {
+            get {
+                return ResourceManager.GetString("PropertyMustBeGreaterThanOrEqualToValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property &apos;{0}&apos; must be valid enum &apos;{1}&apos;.
+        /// </summary>
+        public static string PropertyMustBeValidEnumValue {
+            get {
+                return ResourceManager.GetString("PropertyMustBeValidEnumValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Related term is required..
         /// </summary>
         public static string RelatedTermIsRequired {
@@ -1200,6 +1254,33 @@ namespace Streetcode.BLL.Resources {
         public static string StreetcodesRequired {
             get {
                 return ResourceManager.GetString("StreetcodesRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to String property &apos;{0}&apos; must be not null, not empty, and not contain only whitespace characters.
+        /// </summary>
+        public static string StringPropertyIsRequired {
+            get {
+                return ResourceManager.GetString("StringPropertyIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to String property &apos;{0}&apos; must not exceed &apos;{1}&apos; characters.
+        /// </summary>
+        public static string StringPropertyMustNotExceedCharacters {
+            get {
+                return ResourceManager.GetString("StringPropertyMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Struct property &apos;{0}&apos; must not be a default value.
+        /// </summary>
+        public static string StructPropertyIsRequired {
+            get {
+                return ResourceManager.GetString("StructPropertyIsRequired", resourceCulture);
             }
         }
         
@@ -1470,6 +1551,15 @@ namespace Streetcode.BLL.Resources {
         public static string TransliterationUrlMustNotExceedCharacters {
             get {
                 return ResourceManager.GetString("TransliterationUrlMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; with property &apos;Id&apos; equals to &apos;{1}&apos; not found.
+        /// </summary>
+        public static string TypeWithIdNotFound {
+            get {
+                return ResourceManager.GetString("TypeWithIdNotFound", resourceCulture);
             }
         }
         
