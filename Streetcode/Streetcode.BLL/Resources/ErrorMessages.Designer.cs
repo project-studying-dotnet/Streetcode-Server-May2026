@@ -394,6 +394,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot save comment to database..
+        /// </summary>
+        public static string CannotSaveCommentToDatabase {
+            get {
+                return ResourceManager.GetString("CannotSaveCommentToDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot save changes in the database after related word creation!.
         /// </summary>
         public static string CannotSaveRelatedWordChanges {
@@ -480,6 +489,15 @@ namespace Streetcode.BLL.Resources {
         public static string ContentIsRequired {
             get {
                 return ResourceManager.GetString("ContentIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment is required..
+        /// </summary>
+        public static string CommentIsRequired {
+            get {
+                return ResourceManager.GetString("CommentIsRequired", resourceCulture);
             }
         }
         
@@ -1146,6 +1164,24 @@ namespace Streetcode.BLL.Resources {
         public static string PageSizeMustBePositive {
             get {
                 return ResourceManager.GetString("PageSizeMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parent comment with Id {0} not found..
+        /// </summary>
+        public static string ParentCommentNotFound {
+            get {
+                return ResourceManager.GetString("ParentCommentNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parent comment must belong to the same streetcode..
+        /// </summary>
+        public static string ParentCommentMustBelongToSameStreetcode {
+            get {
+                return ResourceManager.GetString("ParentCommentMustBelongToSameStreetcode", resourceCulture);
             }
         }
         

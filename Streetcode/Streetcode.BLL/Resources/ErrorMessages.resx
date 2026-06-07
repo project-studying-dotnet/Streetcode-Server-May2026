@@ -675,4 +675,16 @@
   <data name="PropertyMustBeValidEnumValue" xml:space="preserve">
     <value>Property '{0}' must be valid enum '{1}'</value>
   </data>
+  <data name="CommentIsRequired" xml:space="preserve">
+    <value>Comment is required.</value>
+  </data>
+  <data name="CannotSaveCommentToDatabase" xml:space="preserve">
+    <value>Cannot save comment to database.</value>
+  </data>
+  <data name="ParentCommentNotFound" xml:space="preserve">
+    <value>Parent comment with Id {0} not found.</value>
+  </data>
+  <data name="ParentCommentMustBelongToSameStreetcode" xml:space="preserve">
+    <value>Parent comment must belong to the same streetcode.</value>
+  </data>
 </root>
