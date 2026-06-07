@@ -54,7 +54,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBlobService, BlobService>();
         services.AddScoped<ILoggerService, LoggerService>();
         services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped<IRabbitMqConnectionFactory, RabbitMqConnectionFactory>();
         services.AddScoped<IEmailPublisher, RabbitMqEmailPublisher>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IInstagramService, InstagramService>();
