@@ -8,39 +8,19 @@ public sealed class HistoricalContextTimelineProfile : Profile
 {
     public HistoricalContextTimelineProfile()
     {
-        base.CreateMap<HistoricalContextTimeline, HistoricalContext>().BeforeMap(static(hct, ti) =>
-        {
-            if(hct.HistoricalContext is null)
+        base.CreateMap<HistoricalContextTimeline, HistoricalContext>().ConvertUsing(hct => hct.HistoricalContext!);
+        base.CreateMap<HistoricalContextTimeline, TimelineItem>().ConvertUsing(hct => hct.Timeline!);
+        base.CreateMap<HistoricalContextTimeline, HistoricalContextDto>().ConvertUsing(
+            static(HistoricalContextTimeline hct, HistoricalContextDto dto, ResolutionContext ctx) =>
             {
-                throw new NullReferenceException($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.HistoricalContext)}' must not be null");
+                return ctx.Mapper.Map<HistoricalContext, HistoricalContextDto>(hct.HistoricalContext!);
             }
-        }).ConvertUsing(hct => hct.HistoricalContext!);
-        base.CreateMap<HistoricalContextTimeline, TimelineItem>().BeforeMap(static(hct, ti) =>
-        {
-            if(hct.Timeline is null)
+        );
+        base.CreateMap<HistoricalContextTimeline, TimelineItemDto>().ConvertUsing(
+            static(HistoricalContextTimeline hct, TimelineItemDto dto, ResolutionContext ctx) =>
             {
-                throw new NullReferenceException($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.Timeline)}' must not be null");
+                return ctx.Mapper.Map<TimelineItem, TimelineItemDto>(hct.Timeline!);
             }
-        }).ConvertUsing(hct => hct.Timeline!);
-        base.CreateMap<HistoricalContextTimeline, HistoricalContextDto>().BeforeMap(static(hct, ti) =>
-        {
-            if(hct.HistoricalContext is null)
-            {
-                throw new NullReferenceException($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.HistoricalContext)}' must not be null");
-            }
-        }).ConvertUsing(static(HistoricalContextTimeline hct, HistoricalContextDto dto, ResolutionContext ctx) =>
-        {
-            return ctx.Mapper.Map<HistoricalContext, HistoricalContextDto>(hct.HistoricalContext!);
-        });
-        base.CreateMap<HistoricalContextTimeline, TimelineItemDto>().BeforeMap(static(hct, ti) =>
-        {
-            if (hct.Timeline is null)
-            {
-                throw new NullReferenceException($"Property '{nameof(HistoricalContextTimeline)}.{nameof(HistoricalContextTimeline.Timeline)}' must not be null");
-            }
-        }).ConvertUsing(static(HistoricalContextTimeline hct, TimelineItemDto dto, ResolutionContext ctx) =>
-        {
-            return ctx.Mapper.Map<TimelineItem, TimelineItemDto>(hct.Timeline!);
-        });
+        );
     }
 }
