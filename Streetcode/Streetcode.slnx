@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Project Path="../build/_build.csproj">
+    <Build Solution="*|Any CPU" Project="false" />
+  </Project>
+  <Project Path="DbUpdate/DbUpdate.csproj" />
+  <Project Path="Streetcode.BLL/Streetcode.BLL.csproj" />
+  <Project Path="Streetcode.DAL/Streetcode.DAL.csproj" />
+  <Project Path="Streetcode.EmailService/Streetcode.EmailService.csproj" />
+  <Project Path="Streetcode.WebApi/Streetcode.WebApi.csproj" />
+  <Project Path="Streetcode.XIntegrationTest/Streetcode.XIntegrationTest.csproj" />
+  <Project Path="Streetcode.XUnitTest/Streetcode.XUnitTest.csproj" />
+</Solution>
