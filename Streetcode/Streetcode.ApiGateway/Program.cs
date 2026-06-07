@@ -11,4 +11,4 @@ var app = builder.Build();
 
 await app.UseOcelot();
 
-app.Run();
+await app.RunAsync();
