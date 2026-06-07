@@ -1038,7 +1038,7 @@ namespace Streetcode.DAL.Persistence.Migrations
                         .HasMaxLength(600)
                         .HasColumnType("nvarchar(600)");
 
-                    b.Property<int>("StreetcodeId")
+                    b.Property<int?>("StreetcodeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -1683,8 +1683,7 @@ namespace Streetcode.DAL.Persistence.Migrations
                     b.HasOne("Streetcode.DAL.Entities.Streetcode.StreetcodeContent", "Streetcode")
                         .WithMany("TimelineItems")
                         .HasForeignKey("StreetcodeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Streetcode");
                 });

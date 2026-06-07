@@ -4,10 +4,14 @@ using Streetcode.DAL.Entities.Timeline;
 
 namespace Streetcode.BLL.Mapping.Timeline;
 
-public class HistoricalContextProfile : Profile
+public sealed class HistoricalContextProfile : Profile
 {
     public HistoricalContextProfile()
     {
-        CreateMap<HistoricalContext, HistoricalContextDto>().ReverseMap();
+        base.CreateMap<HistoricalContext, HistoricalContextDto>();
+        base.CreateMap<HistoricalContextDto, HistoricalContext>().ForMember(
+            dest => dest.HistoricalContextTimelines,
+            opt => opt.Ignore()
+        );
     }
 }

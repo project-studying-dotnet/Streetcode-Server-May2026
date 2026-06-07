@@ -1,10 +1,12 @@
-namespace Streetcode.DAL.Entities.Timeline
+namespace Streetcode.DAL.Entities.Timeline;
+
+public sealed class HistoricalContextTimeline
 {
-    public class HistoricalContextTimeline
-    {
-        public int HistoricalContextId { get; set; }
-        public int TimelineId { get; set; }
-        public HistoricalContext? HistoricalContext { get; set; }
-        public TimelineItem? Timeline { get; set; }
-    }
+    // Value properties
+    public int HistoricalContextId { get; set; }
+    public int TimelineId { get; set; }
+
+    // Navigation properties
+    public HistoricalContext? HistoricalContext { get; set; }
+    public TimelineItem? Timeline { get; set; }
 }
