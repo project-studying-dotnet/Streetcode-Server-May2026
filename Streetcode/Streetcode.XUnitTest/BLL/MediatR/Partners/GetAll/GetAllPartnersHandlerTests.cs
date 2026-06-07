@@ -42,18 +42,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetAll
         [Fact]
         public async Task Handle_ShouldReturnPartners_WhenPositionsExist()
         {
+            // Arrange
             var partners = new List<Partner>
             {
-                new Partner
-                {
-                    Id = 1, Title = "Title 1", LogoId = 1,
-                    IsKeyPartner = true, IsVisibleEverywhere = true,
-                },
-                new Partner
-                {
-                    Id = 2, Title = "Title 2", LogoId = 2,
-                    IsKeyPartner = false, IsVisibleEverywhere = false,
-                },
+                CreatePartnerEntity(id: 1, title: "Title 1", logoId: 1, isKey: true, isVisible: true),
+                CreatePartnerEntity(id: 2, title: "Title 2", logoId: 2, isKey: false, isVisible: false),
             };
 
             _mockPartnersRepo.Setup(repo => repo.GetAllAsync(
@@ -61,8 +54,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetAll
                 It.IsAny<Func<IQueryable<Partner>,
                 IIncludableQueryable<Partner, object>>>())).ReturnsAsync(partners);
 
+            // Act
             var result = await _handler.Handle(new GetAllPartnersQuery(), CancellationToken.None);
 
+            // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().HaveCount(2);
             result.Value.Should().BeEquivalentTo(_mapper.Map<IEnumerable<PartnerDTO>>(partners));
@@ -71,15 +66,36 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetAll
         [Fact]
         public async Task Handle_ShouldReturnFailure_WhenNoPartnersExist()
         {
+            // Arrange
             _mockPartnersRepo.Setup(repo => repo.GetAllAsync(
                 It.IsAny<Expression<Func<Partner, bool>>>(),
                 It.IsAny<Func<IQueryable<Partner>,
                 IIncludableQueryable<Partner, object>>>())).ReturnsAsync((IEnumerable<Partner>)null!);
 
+            // Act
             var result = await _handler.Handle(new GetAllPartnersQuery(), CancellationToken.None);
 
+            // Assert
             result.IsFailed.Should().BeTrue();
             result.Errors.Should().ContainSingle(e => e.Message == ErrorMessages.CannotFindAnyPartners);
         }
+
+        #region Test Data Factories
+
+        private static Partner CreatePartnerEntity(
+            int id,
+            string title,
+            int logoId,
+            bool isKey,
+            bool isVisible) => new()
+            {
+                Id = id,
+                Title = title,
+                LogoId = logoId,
+                IsKeyPartner = isKey,
+                IsVisibleEverywhere = isVisible,
+            };
+
+        #endregion
     }
 }

@@ -251,6 +251,130 @@ Some fixes will be needed due to the nature of Gitflow. You would have to do a '
 
 ---
 
+## Running the Application with Docker
+
+### Prerequisites
+
+* Docker Desktop
+* Docker Compose
+* `.env` file in the repository root directory
+
+Example `.env` file:
+
+```env
+DB_PASSWORD=Admin@1234
+
+EMAIL_FROM=
+EMAIL_SMTP_SERVER=
+EMAIL_SMTP_PORT=587
+EMAIL_USERNAME=
+EMAIL_PASSWORD=
+
+RABBITMQ_USERNAME=guest
+RABBITMQ_PASSWORD=guest
+```
+
+### Start all services
+
+From the `Streetcode` directory run:
+
+```bash
+docker compose --env-file ../.env up --build -d
+```
+
+### Stop all services
+
+```bash
+docker compose --env-file ../.env down
+```
+
+### Remove containers, network and database volume
+
+```bash
+docker compose --env-file ../.env down --remove-orphans -v
+```
+
+### Available services
+
+| Service             | URL                           |
+| ------------------- | ----------------------------- |
+| Web API Swagger     | http://localhost:5000/swagger |
+| Email Service       | http://localhost:5190         |
+| RabbitMQ Management | http://localhost:15672        |
+
+### RabbitMQ Credentials
+
+Default credentials:
+
+```text
+Username: guest
+Password: guest
+```
+
+### Verify containers
+
+```bash
+docker ps
+```
+
+Expected containers:
+
+```text
+streetcode-db
+streetcode-rabbitmq
+streetcode-api
+streetcode-email-service
+```
+
+### View logs
+
+Web API:
+
+```bash
+docker logs streetcode-api --tail 100
+```
+
+Email Service:
+
+```bash
+docker logs streetcode-email-service --tail 100
+```
+
+RabbitMQ:
+
+```bash
+docker logs streetcode-rabbitmq --tail 100
+```
+
+## Local Development
+
+### Start Web API
+
+```bash
+dotnet run --project Streetcode.WebApi
+```
+
+Swagger:
+
+```text
+https://localhost:5001/swagger
+```
+
+### Start Email Service
+
+```bash
+dotnet run --project Streetcode.EmailService
+```
+
+### RabbitMQ
+
+For local Email Service development RabbitMQ can be started separately:
+
+```bash
+docker compose --env-file ../.env up rabbitmq -d
+```
+
+
 ## Support
 
 Reach out to us at one of the following places!
