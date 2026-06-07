@@ -2,13 +2,16 @@
 using Moq;
 using Xunit;
 using AutoMapper;
-using FluentResults;
 using FluentAssertions;
 using MockQueryable.Moq;
 using Streetcode.BLL.Resources;
 using Streetcode.BLL.DTO.Timeline;
 using Streetcode.DAL.Entities.Timeline;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem.Create;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem.Update;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Enums;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.BLL.MediatR.Timeline.TimelineItem;
 using Streetcode.DAL.Repositories.Interfaces.Timeline;

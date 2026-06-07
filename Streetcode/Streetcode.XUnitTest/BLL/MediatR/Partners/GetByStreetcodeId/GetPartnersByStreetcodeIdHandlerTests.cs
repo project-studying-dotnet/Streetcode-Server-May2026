@@ -6,13 +6,13 @@ using Moq;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Partners.GetByStreetcodeId;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
 using Xunit;
-using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
 {
@@ -50,6 +50,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenStreetcodeNotFound()
         {
+            // Arrange
             int streetcodeId = 1;
             var query = new GetPartnersByStreetcodeIdQuery(streetcodeId);
 
@@ -59,8 +60,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
                     null))
                 .ReturnsAsync((StreetcodeContent)null!);
 
+            // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
+            // Assert
             result.IsFailed.Should().BeTrue();
             result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindPartnersByStreetcodeId, streetcodeId));
 
@@ -72,6 +75,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenPartnersNotFound()
         {
+            // Arrange
             int streetcodeId = 1;
             var query = new GetPartnersByStreetcodeIdQuery(streetcodeId);
             var streetcode = new StreetcodeContent { Id = streetcodeId };
@@ -88,8 +92,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
                     It.IsAny<Func<IQueryable<Partner>, IIncludableQueryable<Partner, object>>>()))
                 .ReturnsAsync((IEnumerable<Partner>)null!);
 
+            // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
+            // Assert
             result.IsFailed.Should().BeTrue();
             result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindPartnersByStreetcodeId, streetcodeId));
 
@@ -101,31 +107,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
         [Fact]
         public async Task Handle_ShouldReturnOk_WhenPartnersExist()
         {
+            // Arrange
             int streetcodeId = 1;
             var query = new GetPartnersByStreetcodeIdQuery(streetcodeId);
             var streetcode = new StreetcodeContent { Id = streetcodeId };
-            var partners = new List<Partner>
-            {
-                new Partner
-                {
-                    Id = 1,
-                    Title = "Title 1",
-                    LogoId = 1,
-                    IsKeyPartner = true,
-                    IsVisibleEverywhere = true,
-                    Streetcodes = new List<StreetcodeContent> { streetcode }
-                },
-            };
-            var partnerDTOs = new List<PartnerDTO>
-            {
-                new PartnerDTO
-                {
-                    Id = 1,
-                    Title = "Title 1",
-                    LogoId = 1, IsKeyPartner = true,
-                    IsVisibleEverywhere = true
-                },
-            };
+            var partners = new List<Partner> { GetDefaultPartnerEntity(streetcode) };
+            var partnerDTOs = new List<PartnerDTO> { GetDefaultPartnerDto() };
 
             _streetcodeRepositoryMock
                 .Setup(repo => repo.GetSingleOrDefaultAsync(
@@ -143,10 +130,35 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.GetByStreetcodeId
                 .Setup(mapper => mapper.Map<IEnumerable<PartnerDTO>>(It.IsAny<IEnumerable<Partner>>()))
                 .Returns(partnerDTOs);
 
+            // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
+            // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(partnerDTOs);
         }
+
+        #region Test Data Factories
+
+        private static Partner GetDefaultPartnerEntity(StreetcodeContent streetcode) => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+            Streetcodes = new List<StreetcodeContent> { streetcode }
+        };
+
+        private static PartnerDTO GetDefaultPartnerDto() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true
+        };
+
+        #endregion
     }
 }

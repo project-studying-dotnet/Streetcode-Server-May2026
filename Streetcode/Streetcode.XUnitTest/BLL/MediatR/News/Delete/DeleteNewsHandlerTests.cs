@@ -2,13 +2,11 @@
 using Moq;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Newss.Delete;
-using Streetcode.DAL.Entities.Media.Images;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
-using Streetcode.BLL.Resources;
-
-using ImageEntity = global::Streetcode.DAL.Entities.Media.Images.Image;
-using NewsEntity = global::Streetcode.DAL.Entities.News.News;
+using ImageEntity = Streetcode.DAL.Entities.Media.Images.Image;
+using NewsEntity = Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
 {

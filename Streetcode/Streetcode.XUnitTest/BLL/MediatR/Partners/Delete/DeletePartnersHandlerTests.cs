@@ -1,17 +1,15 @@
 using System.Linq.Expressions;
 using AutoMapper;
-using FluentResults;
-using Moq;
 using FluentAssertions;
-using Streetcode.DAL.Entities.Partners;
+using Moq;
+using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Partners.Delete;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
-using Streetcode.BLL.DTO.Partners;
-using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
-using Streetcode.BLL.Resources;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
 {
@@ -33,15 +31,17 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
             _repositoryWrapperMock
                 .Setup(wrapper => wrapper.PartnersRepository)
                 .Returns(_partnersRepositoryMock.Object);
+
             _handler = new DeletePartnerHandler(
-                    _repositoryWrapperMock.Object,
-                    _mapperMock.Object,
-                    _loggerMock.Object);
+                _repositoryWrapperMock.Object,
+                _mapperMock.Object,
+                _loggerMock.Object);
         }
 
         [Fact]
         public async Task Handle_ShouldReturnFail_PartnerNotFound()
         {
+            // Arrange
             int id = 1;
             var deletePartnerQuery = new DeletePartnerQuery(id);
 
@@ -51,8 +51,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
                     null))
                 .ReturnsAsync((Partner)null!);
 
+            // Act
             var result = await _handler.Handle(deletePartnerQuery, CancellationToken.None);
 
+            // Assert
             result.IsFailed.Should().BeTrue();
             result.Errors[0].Message.Should().Be(ErrorMessages.NoPartnerWithSuchId);
 
@@ -76,18 +78,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
         [Fact]
         public async Task Handle_ShouldReturnOk_WhenPartnerDeletedSuccessfully()
         {
+            // Arrange
             int id = 1;
             var deletePartnerQuery = new DeletePartnerQuery(id);
-            var partner = new Partner
-            {
-                Id = 1, Title = "Title 1", LogoId = 1,
-                IsKeyPartner = true, IsVisibleEverywhere = true,
-            };
-            var dto = new PartnerDTO
-            {
-                Id = 1, Title = "Title 1", LogoId = 1,
-                IsKeyPartner = true, IsVisibleEverywhere = true,
-            };
+            var partner = GetDefaultPartnerEntity();
+            var dto = GetDefaultPartnerDto();
 
             _partnersRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
@@ -103,8 +98,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
                 .Setup(mapper => mapper.Map<PartnerDTO>(partner))
                 .Returns(dto);
 
+            // Act
             var result = await _handler.Handle(deletePartnerQuery, CancellationToken.None);
 
+            // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(dto);
 
@@ -124,5 +121,27 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
+
+        #region Test Data Factories
+
+        private static Partner GetDefaultPartnerEntity() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+        };
+
+        private static PartnerDTO GetDefaultPartnerDto() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+        };
+
+        #endregion
     }
 }
