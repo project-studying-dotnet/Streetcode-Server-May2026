@@ -8,7 +8,7 @@ using Streetcode.BLL.Settings;
 using Microsoft.Extensions.Options;
 namespace Streetcode.BLL.Services.Email;
 
-// RabbitMqEmailPublisher depends on a real RabbitMQ 
+// RabbitMqEmailPublisher depends on a real RabbitMQ
 // broker and is intended to be covered by integration tests in task #199.
 [ExcludeFromCodeCoverage]
 public class RabbitMqEmailPublisher : IEmailPublisher
