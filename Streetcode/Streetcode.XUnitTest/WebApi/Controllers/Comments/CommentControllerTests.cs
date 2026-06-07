@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Streetcode.BLL.DTO.Comments;
 using Streetcode.BLL.MediatR.Comments.Create;
+using Streetcode.BLL.MediatR.Comments.Update;
 using Streetcode.WebApi.Controllers.Comments;
 using Xunit;
 
@@ -54,6 +55,30 @@ public class CommentControllerTests
             .ReturnsAsync(Result.Ok(expectedResult));
 
         var result = await _controller.Create(createComment);
+
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(expectedResult, okResult.Value);
+    }
+
+    [Fact]
+    public async Task Update_ShouldReturnOk_WhenResultIsSuccess()
+    {
+        var updateComment = new UpdateCommentDto
+        {
+            Id = CommentId,
+            Text = "Updated comment",
+            StreetcodeId = StreetcodeId,
+        };
+        var expectedResult = CreateCommentDto();
+        expectedResult.Text = "Updated comment";
+
+        _mediatorMock
+            .Setup(x => x.Send(
+                It.IsAny<UpdateCommentCommand>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Ok(expectedResult));
+
+        var result = await _controller.Update(updateComment);
 
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(expectedResult, okResult.Value);

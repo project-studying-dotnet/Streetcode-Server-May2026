@@ -475,6 +475,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing StreetcodeId for an existing comment is not allowed..
+        /// </summary>
+        public static string ChangingCommentStreetcodeIdNotAllowed {
+            get {
+                return ResourceManager.GetString("ChangingCommentStreetcodeIdNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} collection is required.
         /// </summary>
         public static string CollectionIsRequired {
@@ -498,6 +507,24 @@ namespace Streetcode.BLL.Resources {
         public static string CommentIsRequired {
             get {
                 return ResourceManager.GetString("CommentIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment cannot be its own parent..
+        /// </summary>
+        public static string CommentCannotBeItsOwnParent {
+            get {
+                return ResourceManager.GetString("CommentCannotBeItsOwnParent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment with Id {0} not found..
+        /// </summary>
+        public static string CommentWithIdNotFound {
+            get {
+                return ResourceManager.GetString("CommentWithIdNotFound", resourceCulture);
             }
         }
         
@@ -813,6 +840,15 @@ namespace Streetcode.BLL.Resources {
         public static string FailedToUpdateText {
             get {
                 return ResourceManager.GetString("FailedToUpdateText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update comment..
+        /// </summary>
+        public static string FailedToUpdateComment {
+            get {
+                return ResourceManager.GetString("FailedToUpdateComment", resourceCulture);
             }
         }
         

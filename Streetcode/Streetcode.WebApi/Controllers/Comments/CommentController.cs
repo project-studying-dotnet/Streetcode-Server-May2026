@@ -3,6 +3,7 @@ using Streetcode.BLL.DTO.Comments;
 using Streetcode.BLL.MediatR.Comments.Create;
 using Streetcode.DAL.Enums;
 using Streetcode.WebApi.Attributes;
+using Streetcode.BLL.MediatR.Comments.Update;
 
 namespace Streetcode.WebApi.Controllers.Comments;
 
@@ -13,5 +14,11 @@ public class CommentController : BaseApiController
     public async Task<IActionResult> Create([FromBody] CreateCommentDto request, CancellationToken cancellationToken = default)
     {
         return HandleResult(await Mediator.Send(new CreateCommentCommand(request), cancellationToken));
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] UpdateCommentDto request, CancellationToken cancellationToken = default)
+    {
+        return HandleResult(await Mediator.Send(new UpdateCommentCommand(request), cancellationToken));
     }
 }
