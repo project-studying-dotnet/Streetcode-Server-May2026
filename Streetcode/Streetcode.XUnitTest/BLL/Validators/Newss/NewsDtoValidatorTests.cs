@@ -4,7 +4,7 @@ using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Newss;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Validators.Newss
+namespace Streetcode.XUnitTest.BLL.Validators.Newss
 {
     public class NewsDtoValidatorTests
     {
