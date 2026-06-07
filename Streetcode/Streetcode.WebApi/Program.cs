@@ -8,9 +8,14 @@ using Streetcode.WebApi.Utils;
 var builder = WebApplication.CreateBuilder(args);
 
 var environment = builder.Environment.EnvironmentName;
+
 builder.Configuration.ConfigureCustom(environment);
-builder.Configuration
-    .AddUserSecrets<Program>();
+builder.Configuration.AddEnvironmentVariables();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
@@ -24,7 +29,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(BllAssemblyMarker).Assembly);
 
 var app = builder.Build();
 
-if (app.Environment.EnvironmentName == "Local")
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
 {
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPIv5 v1"));
@@ -49,7 +54,11 @@ app.UseAuthorization();
 
 app.UseHangfireDashboard("/dash");
 
-if (app.Environment.EnvironmentName != "Local")
+var shouldRegisterBackgroundJobs =
+    !app.Environment.IsDevelopment() &&
+    app.Environment.EnvironmentName != "Local";
+
+if (shouldRegisterBackgroundJobs)
 {
     BackgroundJob.Schedule<WebParsingUtils>(
         wp => wp.ParseZipFileFromWebAsync(),
