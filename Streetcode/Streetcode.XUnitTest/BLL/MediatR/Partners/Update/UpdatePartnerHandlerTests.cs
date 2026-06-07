@@ -55,37 +55,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Update
         [Fact]
         public async Task Handle_ShouldReturnOk_WhenPartnerUpdatedSuccessfully()
         {
-            var partner = new Partner
-            {
-                Id = 1,
-                Title = "Title 1",
-                LogoId = 1,
-                IsKeyPartner = true,
-                IsVisibleEverywhere = true,
-                Streetcodes = new List<StreetcodeContent>(),
-                PartnerSourceLinks = new List<PartnerSourceLink>()
-            };
-
-            var partnerDto = new PartnerDTO
-            {
-                Id = 1,
-                Title = "Title 1",
-                LogoId = 1,
-                IsKeyPartner = true,
-                IsVisibleEverywhere = true,
-                Streetcodes = new List<StreetcodeShortDTO>()
-            };
-
-            var query = new UpdatePartnerQuery(
-                new CreatePartnerDTO
-                {
-                    Id = 1,
-                    Title = "Title 1",
-                    LogoId = 1,
-                    IsKeyPartner = true,
-                    IsVisibleEverywhere = true,
-                    Streetcodes = new List<StreetcodeShortDTO>()
-                });
+            // Arrange
+            var partner = GetDefaultPartnerEntity();
+            var partnerDto = GetDefaultPartnerDto();
+            var query = new UpdatePartnerQuery(GetDefaultCreatePartnerDto());
 
             _mapperMock
                 .Setup(m => m.Map<Partner>(It.IsAny<CreatePartnerDTO>()))
@@ -109,8 +82,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Update
                 .Setup(m => m.Map<PartnerDTO>(It.IsAny<Partner>()))
                 .Returns(partnerDto);
 
+            // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
+            // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(partnerDto);
 
@@ -126,24 +101,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Update
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenExceptionThrown()
         {
-            var partner = new Partner
-            {
-                Id = 1,
-                Title = "Title 1",
-                Streetcodes = new List<StreetcodeContent>(),
-                PartnerSourceLinks = new List<PartnerSourceLink>()
-            };
-
-            var query = new UpdatePartnerQuery(
-                new CreatePartnerDTO
-                {
-                    Id = 1,
-                    Title = "Title 1",
-                    LogoId = 1,
-                    IsKeyPartner = true,
-                    IsVisibleEverywhere = true,
-                    Streetcodes = new List<StreetcodeShortDTO>()
-                });
+            // Arrange
+            var partner = GetDefaultPartnerEntity();
+            var query = new UpdatePartnerQuery(GetDefaultCreatePartnerDto());
 
             _mapperMock
                 .Setup(m => m.Map<Partner>(It.IsAny<CreatePartnerDTO>()))
@@ -156,8 +116,10 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Update
                     IIncludableQueryable<PartnerSourceLink, object>>?>()))
                 .ThrowsAsync(new Exception("Test exception"));
 
+            // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
+            // Assert
             result.IsFailed.Should().BeTrue();
             result.Errors[0].Message.Should().Be("Test exception");
 
@@ -165,5 +127,40 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Update
                 l => l.LogError(query, "Test exception"),
                 Times.Once);
         }
+
+        #region Test Data Factories
+
+        private static Partner GetDefaultPartnerEntity() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+            Streetcodes = new List<StreetcodeContent>(),
+            PartnerSourceLinks = new List<PartnerSourceLink>()
+        };
+
+        private static PartnerDTO GetDefaultPartnerDto() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+            Streetcodes = new List<StreetcodeShortDTO>()
+        };
+
+        private static CreatePartnerDTO GetDefaultCreatePartnerDto() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+            Streetcodes = new List<StreetcodeShortDTO>()
+        };
+
+        #endregion
     }
 }
