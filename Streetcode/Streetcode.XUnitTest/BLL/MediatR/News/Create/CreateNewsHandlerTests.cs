@@ -9,7 +9,7 @@ using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
-using NewsEntity = global::Streetcode.DAL.Entities.News.News;
+using NewsEntity = Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
 {

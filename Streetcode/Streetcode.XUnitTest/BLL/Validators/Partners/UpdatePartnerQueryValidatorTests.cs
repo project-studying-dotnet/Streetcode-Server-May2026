@@ -5,7 +5,6 @@ using Streetcode.BLL.DTO.Streetcode;
 using Streetcode.BLL.MediatR.Partners.Update;
 using Streetcode.BLL.Validators.Partners.Update;
 using Xunit;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Streetcode.XUnitTest.Validators.Partners.Update
 {

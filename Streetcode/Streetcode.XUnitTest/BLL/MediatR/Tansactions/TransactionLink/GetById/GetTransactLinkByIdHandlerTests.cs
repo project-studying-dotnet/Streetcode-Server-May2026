@@ -4,8 +4,8 @@ using FluentAssertions;
 using Moq;
 using Streetcode.BLL.DTO.Transactions;
 using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.Resources;
 using Streetcode.BLL.MediatR.Transactions.TransactionLink.GetById;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 

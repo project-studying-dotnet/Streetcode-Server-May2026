@@ -29,7 +29,7 @@ public class ExceptionMiddlewareTests
         Type exceptionType,
         HttpStatusCode expectedStatus)
     {
-        var exception = (Exception)Activator.CreateInstance(exceptionType, "Error message") !;
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Error message")!;
         var middleware = CreateMiddleware(exception, false);
         var context = CreateContext();
 

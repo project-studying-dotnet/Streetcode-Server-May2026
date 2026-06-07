@@ -1,24 +1,24 @@
 ﻿// <copyright file="GetTextByIdHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using System.Linq.Expressions;
+using AutoMapper;
+using FluentAssertions;
+using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Mapping.Streetcode.TextContent;
+using Streetcode.BLL.MediatR.Streetcode.Text.GetById;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Xunit;
+
+using TextEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Text;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 {
-    using System.Linq.Expressions;
-    using AutoMapper;
-    using FluentAssertions;
-    using global::Streetcode.BLL.DTO.Streetcode.TextContent.Text;
-    using global::Streetcode.BLL.Interfaces.Logging;
-    using global::Streetcode.BLL.Mapping.Streetcode.TextContent;
-    using global::Streetcode.BLL.MediatR.Streetcode.Text.GetById;
-    using global::Streetcode.DAL.Repositories.Interfaces.Base;
-    using global::Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Xunit;
-    using global::Streetcode.BLL.Resources;
-    using TextEntity = global::Streetcode.DAL.Entities.Streetcode.TextContent.Text;
-
     /// <summary>
     /// Unit tests for <see cref="GetTextByIdHandler"/>.
     /// </summary>

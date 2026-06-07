@@ -8,7 +8,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId
 {
-    public class GetCategoryContentByStreetcodeIdHandler : IRequestHandler<GetCategoryContentByStreetcodeIdQuery, Result<StreetcodeCategoryContentDTO>>
+    public class GetCategoryContentByStreetcodeIdHandler : IRequestHandler<GetCategoryContentByStreetcodeIdQuery, Result<StreetcodeCategoryContentDto>>
     {
         private readonly IMapper _mapper;
         private readonly IRepositoryWrapper _repositoryWrapper;
@@ -21,10 +21,14 @@ namespace Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentBy
             _logger = logger;
         }
 
-        public async Task<Result<StreetcodeCategoryContentDTO>> Handle(GetCategoryContentByStreetcodeIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<StreetcodeCategoryContentDto>> Handle(
+            GetCategoryContentByStreetcodeIdQuery request,
+            CancellationToken cancellationToken)
         {
-            if((await _repositoryWrapper.StreetcodeRepository
-                .GetFirstOrDefaultAsync(s => s.Id == request.streetcodeId)) == null)
+            if (await _repositoryWrapper.StreetcodeRepository
+                    .GetFirstOrDefaultAsync(
+                        predicate: s => s.Id == request.streetcodeId,
+                        cancellationToken: cancellationToken) is null)
             {
                 string errorMsg = $"No such streetcode with id = {request.streetcodeId}";
                 _logger.LogError(request, errorMsg);
@@ -33,16 +37,18 @@ namespace Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentBy
 
             var streetcodeContent = await _repositoryWrapper.StreetcodeCategoryContentRepository
                 .GetFirstOrDefaultAsync(
-                    sc => sc.StreetcodeId == request.streetcodeId && sc.SourceLinkCategoryId == request.categoryId);
+                    predicate: sc => sc.StreetcodeId == request.streetcodeId &&
+                                     sc.SourceLinkCategoryId == request.categoryId,
+                    cancellationToken: cancellationToken);
 
-            if (streetcodeContent == null)
+            if (streetcodeContent is null)
             {
                 string errorMsg = "The streetcode content is null";
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }
 
-            return Result.Ok(_mapper.Map<StreetcodeCategoryContentDTO>(streetcodeContent));
+            return Result.Ok(_mapper.Map<StreetcodeCategoryContentDto>(streetcodeContent));
         }
     }
 }
