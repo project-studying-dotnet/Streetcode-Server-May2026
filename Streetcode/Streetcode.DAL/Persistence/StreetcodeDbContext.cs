@@ -74,7 +74,7 @@ public class StreetcodeDbContext : IdentityDbContext<User, IdentityRole<int>, in
     {
         base.OnModelCreating(builder);
 
-        builder.UseCollation("SQL_Ukrainian_CP125bS");
+        builder.UseCollation("SQL_Ukrainian_CP1251_CI_AS");
 
         builder.ApplyConfiguration(new StatisticRecordConfiguration());
         builder.ApplyConfiguration(new NewsConfiguration());
