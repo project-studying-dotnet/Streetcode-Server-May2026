@@ -34,7 +34,7 @@ public class CreateCommentHandler : IRequestHandler<CreateCommentCommand, Result
 
         if (!streetcodeExists)
         {
-            string errorMsg = $"Streetcode with Id {streetcodeId} does not exist.";
+            string errorMsg = string.Format(ErrorMessages.StreetcodeWithIdNotFound, streetcodeId);
             _logger.LogError(request, errorMsg);
             return Result.Fail<CommentDto>(errorMsg);
         }
