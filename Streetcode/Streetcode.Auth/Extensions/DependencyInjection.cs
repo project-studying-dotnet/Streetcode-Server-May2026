@@ -8,7 +8,6 @@ using Streetcode.Auth.Services.Interfaces.Logging;
 using Streetcode.Auth.Services.Interfaces.Users;
 using Streetcode.Auth.Services.Services.Logging;
 using Streetcode.Auth.Services.Users;
-using Streetcode.Auth.Settings;
 
 namespace Streetcode.Auth.Extensions
 {
@@ -16,8 +15,9 @@ namespace Streetcode.Auth.Extensions
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtSettings = new JwtSettings();
-            configuration.GetSection("JwtSettings").Bind(jwtSettings);
+            // Измените "JwtSettings" на "Jwt"
+            var jwtSettings = configuration.GetSection("Jwt").Get<Common.Configuration.JwtSettings>()
+                              ?? throw new Exception("JwtSettings is missing in configuration!");
             services.AddSingleton(jwtSettings);
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -36,7 +36,9 @@ namespace Streetcode.Auth.Extensions
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ILoggerService, LoggerService>();
             services.AddHostedService<TokenCleanupService>();
 

@@ -1,14 +1,15 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Streetcode.Auth.Extensions;
+using Streetcode.Auth.MediatR.Users.Login;
 using Streetcode.Auth.Models.DTO;
 using Streetcode.Auth.Models.Entities;
 using Streetcode.Auth.Services.Interfaces.Logging;
-using Streetcode.Auth.Extensions;
-using Streetcode.Auth.MediatR.Users.Login;
 using Streetcode.Auth.Services.Interfaces.Users;
+using Streetcode.Auth.Services.Users;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Streetcode.BLL.MediatR.Users.Login
 {
@@ -17,18 +18,18 @@ namespace Streetcode.BLL.MediatR.Users.Login
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILoggerService _logger;
-        private readonly ITokenService _tokenService;
+        private readonly IAuthService _authService;
 
         public LoginUserHandler(
             UserManager<User> userManager,
             IMapper mapper,
             ILoggerService logger,
-            ITokenService tokenService)
+            IAuthService authService)
         {
             _userManager = userManager;
             _mapper = mapper;
             _logger = logger;
-            _tokenService = tokenService;
+            _authService = authService;
         }
 
         public async Task<Result<LoginResultDto>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -43,26 +44,9 @@ namespace Streetcode.BLL.MediatR.Users.Login
                 return Result.Fail<LoginResultDto>("Invalid login or password.");
             }
 
-            var jwtToken = _tokenService.GenerateJWTToken(user);
-            var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            var refreshToken = _tokenService.GenerateRefreshToken();
-
-            await _tokenService.SaveRefreshTokenAsync(user.Id, refreshToken);
-
-            user.EnsureSecurityStamp();
-            await _userManager.UpdateAsync(user);
+            var loginResult = await _authService.CreateLoginResultAsync(user);
 
             _logger.LogInformation($"User {user.Id} successfully logged in");
-
-            var userDto = _mapper.Map<UserDto>(user);
-
-            var loginResult = new LoginResultDto
-            {
-                User = userDto,
-                Token = token,
-                RefreshToken = refreshToken,
-                ExpireAt = jwtToken.ValidTo,
-            };
 
             return Result.Ok(loginResult);
         }

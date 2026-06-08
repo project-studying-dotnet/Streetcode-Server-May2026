@@ -1,4 +1,8 @@
-namespace Streetcode.Auth.Settings
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Streetcode.Common.Configuration
 {
     public class JwtSettings
     {

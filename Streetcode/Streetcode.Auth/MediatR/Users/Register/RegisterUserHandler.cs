@@ -3,33 +3,39 @@ using FluentResults;
 using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Streetcode.Auth.Models.DTO;
 using Streetcode.Auth.Models.Entities;
 using Streetcode.Auth.Services.Interfaces.Logging;
+using Streetcode.Auth.Services.Interfaces.Users;
+using Streetcode.Auth.Services.Users;
 using Streetcode.Common.Enums;
 using Streetcode.Common.Events;
 
 namespace Streetcode.Auth.MediatR.Users.Register
 {
-    public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<Unit>>
+    public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<LoginResultDto>>
     {
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILoggerService _logger;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly IAuthService _authService;
 
         public RegisterUserHandler(
          UserManager<User> userManager,
          IMapper mapper,
          ILoggerService logger,
-         IPublishEndpoint publishEndpoint)
+         IPublishEndpoint publishEndpoint,
+         IAuthService authService)
         {
             _userManager = userManager;
             _mapper = mapper;
             _logger = logger;
             _publishEndpoint = publishEndpoint;
+            _authService = authService;
         }
 
-        public async Task<Result<Unit>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<LoginResultDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Register attempt for {request.registerRequest.Email}");
 
@@ -40,7 +46,7 @@ namespace Streetcode.Auth.MediatR.Users.Register
                 string errorMsg = $"User with email: {request.registerRequest.Email} already exist.";
                 _logger.LogError(request, errorMsg);
 
-                return Result.Fail<Unit>("User already exists");
+                return Result.Fail<LoginResultDto>("User already exists");
             }
 
             var user = _mapper.Map<User>(request.registerRequest);
@@ -51,28 +57,32 @@ namespace Streetcode.Auth.MediatR.Users.Register
 
             if (!result.Succeeded)
             {
-                return Result.Fail<Unit>(result.Errors.Select(e => e.Description));
+                return Result.Fail<LoginResultDto>(result.Errors.Select(e => e.Description));
             }
 
             var roleResult = await _userManager.AddToRoleAsync(user, UserRole.Moderator.ToString());
 
             if (!roleResult.Succeeded)
             {
-                return Result.Fail<Unit>(
+                return Result.Fail<LoginResultDto>(
                     roleResult.Errors.Select(e => e.Description));
             }
-
-            await _publishEndpoint.Publish(new UserRegisteredEvent(
-                user.Id,
-                user.Email!,
-                user.UserName,
-                user.Name,
-                user.Surname
-            ), cancellationToken);
+          
+            var registrResult = await _authService.CreateLoginResultAsync(user);
 
             _logger.LogInformation($"User {user.Id} registered successfully.");
 
-            return Result.Ok(Unit.Value);
+            var userDto = _mapper.Map<UserDto>(user);
+
+            await _publishEndpoint.Publish(new UserRegisteredEvent(
+                  user.Id,
+                  user.Email!,
+                  user.UserName,
+                  user.Name,
+                  user.Surname
+              ), cancellationToken);
+
+            return Result.Ok(registrResult);
         }
     }
 }
