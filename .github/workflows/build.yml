@@ -37,6 +37,9 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      - name: Check Docker
+        run: docker version
+
       - name: Install SonarScanner
         run: dotnet tool update --global dotnet-sonarscanner
 
@@ -52,7 +55,7 @@ jobs:
           /o:"project-studying-dotnet"
           /d:sonar.token="$env:SONAR_TOKEN"
           /d:sonar.host.url="https://sonarcloud.io"
-          /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\coverage\coverage.opencover.xml"
+          /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\coverage\**\*.opencover.xml"
           /d:sonar.coverage.exclusions="**/Program.cs,**/Streetcode.DAL/Persistence/Configurations/**/*.cs,**/Streetcode.DAL/Persistence/StreetcodeDbContext.cs"
           /d:sonar.exclusions="**/.github/**,**/*.yml,**/*.yaml,**/Streetcode.DAL/Persistence/Configurations/**/*.cs,**/Streetcode.DAL/Persistence/Migrations/**/*.cs"
 
@@ -63,14 +66,23 @@ jobs:
           --no-restore
           /p:TreatWarningsAsErrors=false
 
-      - name: Run tests with coverage
+      - name: Run unit tests with coverage
         run: >
           dotnet test ./Streetcode/Streetcode.XUnitTest/Streetcode.XUnitTest.csproj
           --configuration Release
           --no-build
           /p:CollectCoverage=true
           /p:CoverletOutputFormat=opencover
-          /p:CoverletOutput="${{ github.workspace }}\coverage\coverage.opencover.xml"
+          /p:CoverletOutput="${{ github.workspace }}\coverage\unit\coverage.opencover.xml"
+
+      - name: Run integration tests with coverage
+        run: >
+          dotnet test ./Streetcode/Streetcode.XIntegrationTest/Streetcode.XIntegrationTest.csproj
+          --configuration Release
+          --no-build
+          /p:CollectCoverage=true
+          /p:CoverletOutputFormat=opencover
+          /p:CoverletOutput="${{ github.workspace }}\coverage\integration\coverage.opencover.xml"
 
       - name: End SonarCloud analysis
         env:
