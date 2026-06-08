@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
@@ -14,7 +14,7 @@ namespace Streetcode.EmailService.Services;
 // a running RabbitMQ broker and connection lifecycle management.
 // Unit testing it would require heavy mocking of external dependencies
 // and provide limited value, therefore it is excluded from code coverage.
-[ExcludeFromCodeCoverage]
+// [ExcludeFromCodeCoverage]
 public class RabbitMqEmailConsumer : BackgroundService
 {
     private const int RetryDelayMilliseconds = 5000;
@@ -31,6 +31,7 @@ public class RabbitMqEmailConsumer : BackgroundService
     private IConnection? _connection;
     private IModel? _channel;
 
+    // [ExcludeFromCodeCoverage]
     public RabbitMqEmailConsumer(
         IOptions<RabbitMqSettings> rabbitMqSettings,
         IServiceScopeFactory serviceScopeFactory,
