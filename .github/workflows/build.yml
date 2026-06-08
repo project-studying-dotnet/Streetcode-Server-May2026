@@ -53,9 +53,9 @@ jobs:
           dotnet sonarscanner begin
           /k:"project-studying-dotnet_Streetcode-Server-May2026"
           /o:"project-studying-dotnet"
-          /d:sonar.token="$env:SONAR_TOKEN"
+          /d:sonar.token="${SONAR_TOKEN}"
           /d:sonar.host.url="https://sonarcloud.io"
-          /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\coverage\**\*.opencover.xml"
+          /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}/coverage/**/*.opencover.xml"
           /d:sonar.coverage.exclusions="**/Program.cs,**/Streetcode.DAL/Persistence/Configurations/**/*.cs,**/Streetcode.DAL/Persistence/StreetcodeDbContext.cs"
           /d:sonar.exclusions="**/.github/**,**/*.yml,**/*.yaml,**/Streetcode.DAL/Persistence/Configurations/**/*.cs,**/Streetcode.DAL/Persistence/Migrations/**/*.cs"
 
@@ -73,7 +73,7 @@ jobs:
           --no-build
           /p:CollectCoverage=true
           /p:CoverletOutputFormat=opencover
-          /p:CoverletOutput="${{ github.workspace }}\coverage\unit\coverage.opencover.xml"
+          /p:CoverletOutput="${{ github.workspace }}/coverage/unit/coverage.opencover.xml"
 
       - name: Run integration tests with coverage
         run: >
@@ -82,14 +82,14 @@ jobs:
           --no-build
           /p:CollectCoverage=true
           /p:CoverletOutputFormat=opencover
-          /p:CoverletOutput="${{ github.workspace }}\coverage\integration\coverage.opencover.xml"
+          /p:CoverletOutput="${{ github.workspace }}/coverage/integration/coverage.opencover.xml"
 
       - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           dotnet sonarscanner end
-          /d:sonar.token="$env:SONAR_TOKEN"
+          /d:sonar.token="${SONAR_TOKEN}"
 
       - name: Upload coverage artifact
         if: always()
