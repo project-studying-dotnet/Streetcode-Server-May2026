@@ -21,6 +21,11 @@ public sealed class RabbitMqEmailPublisherIntegrationTests : IAsyncLifetime
     private const string EmailSubject = "Integration test";
     private const string EmailContent = "Hello from RabbitMQ integration test";
 
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder("rabbitmq:3.13-management")
         .WithUsername(RabbitMqUserName)
         .WithPassword(RabbitMqPassword)
@@ -93,9 +98,6 @@ public sealed class RabbitMqEmailPublisherIntegrationTests : IAsyncLifetime
 
         return JsonSerializer.Deserialize<EmailMessageContract>(
             json,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            });
+            JsonOptions);
     }
 }
