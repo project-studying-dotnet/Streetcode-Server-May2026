@@ -374,6 +374,66 @@ For local Email Service development RabbitMQ can be started separately:
 docker compose --env-file ../.env up rabbitmq -d
 ```
 
+## API Gateway
+
+The project uses Ocelot as an API Gateway to provide a single entry point for all microservices.
+
+### Run services locally
+
+Start WebApi:
+
+```bash
+dotnet run --project Streetcode/Streetcode.WebApi --launch-profile Streetcode_Local
+```
+
+Start EmailService:
+
+```bash
+dotnet run --project Streetcode/Streetcode.EmailService --launch-profile https
+```
+
+Start ApiGateway:
+
+```bash
+dotnet run --project Streetcode/Streetcode.ApiGateway
+```
+
+### Local endpoints
+
+| Service      | URL                    |
+| ------------ | ---------------------- |
+| WebApi       | https://localhost:5001 |
+| EmailService | https://localhost:7163 |
+| ApiGateway   | https://localhost:7001 |
+
+### Gateway routes
+
+| Gateway Route     | Destination               |
+| ----------------- | ------------------------- |
+| /api/webapi/*     | Streetcode.WebApi         |
+| /api/email/*      | Streetcode.EmailService   |
+| /api/email/health | EmailService Health Check |
+
+### Frontend configuration
+
+Frontend applications should communicate with the API Gateway instead of accessing individual services directly.
+
+Example:
+
+```text
+https://localhost:7001/api/webapi
+```
+
+### Swagger
+
+Swagger is available directly on each service:
+
+```text
+https://localhost:5001/swagger
+https://localhost:7163/swagger
+```
+
+
 
 ## Support
 
