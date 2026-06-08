@@ -139,7 +139,7 @@ public class BlobService : IBlobService
 
     private void EncryptFile(byte[] imageBytes, string type, string name)
     {
-        byte[] keyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(_keyCrypt));
+        byte[] keyBytes = Encoding.UTF8.GetBytes(_keyCrypt);
 
         using Aes aes = Aes.Create();
         aes.KeySize = 256;
@@ -167,7 +167,7 @@ public class BlobService : IBlobService
     {
         byte[] encryptedData = File.ReadAllBytes($"{_blobPath}{fileName}.{type}");
 
-        byte[] keyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(_keyCrypt));
+        byte[] keyBytes = Encoding.UTF8.GetBytes(_keyCrypt);
 
         byte[] iv = new byte[16];
         Buffer.BlockCopy(encryptedData, 0, iv, 0, iv.Length);
