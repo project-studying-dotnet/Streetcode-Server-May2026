@@ -1,99 +1,118 @@
-﻿using AutoMapper;
-using FluentAssertions;
-using FluentResults;
-using MediatR;
+﻿using System.Linq.Expressions;
 using Moq;
-using Streetcode.BLL.DTO.Timeline;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.MediatR.Timeline.TimelineItem.Create;
-using Streetcode.BLL.MediatR.Timeline.TimelineItem.Update;
-using Streetcode.BLL.Resources;
-using Streetcode.DAL.Enums;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Timeline;
 using Xunit;
-
+using AutoMapper;
+using FluentResults;
+using FluentAssertions;
+using MockQueryable.Moq;
+using Streetcode.BLL.Resources;
+using Streetcode.BLL.DTO.Timeline;
+using Streetcode.DAL.Entities.Timeline;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem;
+using Streetcode.DAL.Repositories.Interfaces.Timeline;
+using HistContext = Streetcode.DAL.Entities.Timeline.HistoricalContext;
 using TimelineItemEntity = Streetcode.DAL.Entities.Timeline.TimelineItem;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem;
 
 public sealed class CreateTimelineItemHandlerTests
 {
-    private readonly Mock<IRepositoryWrapper> _mockRepositoryWrapper;
-    private readonly Mock<ITimelineRepository> _mockTimelineRepository;
-    private readonly Mock<ILoggerService> _mockLogger;
-    private readonly Mock<IMediator> _mockMediator;
-    private readonly IMapper _mapper;
-    private readonly CreateTimelineItemHandler _handler;
+    private Mock<IRepositoryWrapper> RepositoryWrapperMock { get; }
+    private Mock<ITimelineRepository> TimelineRepositoryMock { get; }
+    private Mock<IHistoricalContextTimelineRepository> HistoricalContextTimelineRepositoryMock { get; }
+    private Mock<ILoggerService> LoggerMock { get; }
+    private IMapper Mapper { get; }
+    private CreateTimelineItemHandler Handler { get; }
 
     public CreateTimelineItemHandlerTests()
     {
-        _mockRepositoryWrapper = new Mock<IRepositoryWrapper>();
-        _mockTimelineRepository = new Mock<ITimelineRepository>();
-        _mockRepositoryWrapper.Setup(r => r.TimelineRepository).Returns(_mockTimelineRepository.Object);
+        RepositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        TimelineRepositoryMock = new Mock<ITimelineRepository>();
+        HistoricalContextTimelineRepositoryMock = new Mock<IHistoricalContextTimelineRepository>();
+        RepositoryWrapperMock.Setup(r => r.TimelineRepository).Returns(TimelineRepositoryMock.Object);
+        RepositoryWrapperMock.Setup(r => r.HistoricalContextTimelineRepository).Returns(HistoricalContextTimelineRepositoryMock.Object);
 
-        _mockLogger = new Mock<ILoggerService>();
-        _mockMediator = new Mock<IMediator>();
-        MapperConfiguration config = new(cfg =>
+        LoggerMock = new Mock<ILoggerService>();
+        Mapper = new MapperConfiguration(cfg =>
         {
             cfg.AddMaps(typeof(CreateTimelineItemHandler).Assembly);
-        });
-        _mapper = config.CreateMapper();
-        _handler = new CreateTimelineItemHandler(_mockRepositoryWrapper.Object, _mapper, _mockMediator.Object, _mockLogger.Object);
+        }).CreateMapper();
+        Handler = new CreateTimelineItemHandler(RepositoryWrapperMock.Object, Mapper, LoggerMock.Object);
     }
 
     [Fact]
-    public async Task Handle_ReturnsCreatedTimelineItem_WhenCreatedSuccessfully()
+    public async Task Handle_ReturnsTimelineItem_WhenCreatedSuccessfully()
     {
         // Arrange
-        TimelineItemDto dto = new()
+        List<HistoricalContextTimeline> hcts = [
+            new HistoricalContextTimeline()
+            {
+                HistoricalContext = new HistContext()
+                {
+                    Id = 0,
+                    Title = "Title"
+                },
+                HistoricalContextId = 2,
+                Timeline = new TimelineItemEntity()
+                {
+                    Id = 1,
+                    Title = "Title"
+                },
+                TimelineId = 0
+            }
+        ];
+        TimelineItemEntity timeline_item = new()
         {
             Id = 0,
             Title = "Test Timeline Item",
-            Description = "Description of the test timeline item.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = [
-                new HistoricalContextDto()
-                {
-                    Id = 1,
-                    Title = "Context 1",
-                }
-            ]
+            HistoricalContextTimelines = hcts
         };
+        TimelineItemDto dto = Mapper.Map<TimelineItemDto>(timeline_item);
         CreateTimelineItemCommand command = new(dto);
-
-        // This makes handler return the dto, regardless of the input.
-        // So we will only verify calls of the mocked methods
-        _mockMediator.Setup(
-            m => m.Send(It.IsAny<UpdateTimelineItemCommand>(), It.IsAny<CancellationToken>())
-        ).ReturnsAsync(Result.Ok(dto));
-        _mockTimelineRepository.Setup(
+        TimelineRepositoryMock.Setup(
             r => r.CreateAsync(It.IsAny<TimelineItemEntity>())
         ).ReturnsAsync(static (TimelineItemEntity ti) =>
         {
             ti.Id = 1; // Simulate database assigning an ID
             return ti;
         });
-        _mockRepositoryWrapper.Setup(
+        HistoricalContextTimelineRepositoryMock.Setup(
+            r => r.CreateRangeAsync(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
+        );
+        RepositoryWrapperMock.Setup(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(1);
+        HistoricalContextTimelineRepositoryMock.Setup(
+            r => r.FindAll(
+                It.IsAny<Expression<Func<HistoricalContextTimeline, bool>>>()
+            )
+        ).Returns(hcts.BuildMock());
 
         // Act
-        await _handler.Handle(command, CancellationToken.None);
+        Result<TimelineItemDto> result = await Handler.Handle(command, CancellationToken.None);
 
         // Assert
-        _mockTimelineRepository.Verify(
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(dto, opt => opt.Excluding(dto => dto.Id));
+        result.Value.Id.Should().Be(1);
+        TimelineRepositoryMock.Verify(
             r => r.CreateAsync(It.IsAny<TimelineItemEntity>()),
             Times.Once
         );
-        _mockRepositoryWrapper.Verify(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.AtLeastOnce
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.CreateRangeAsync(It.IsAny<IEnumerable<HistoricalContextTimeline>>()),
+            Times.Once
         );
-        _mockMediator.Verify(
-            m => m.Send(It.IsAny<UpdateTimelineItemCommand>(), It.IsAny<CancellationToken>()),
+        RepositoryWrapperMock.Verify(
+            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Exactly(2)
+        );
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.FindAll(
+                It.IsAny<Expression<Func<HistoricalContextTimeline, bool>>>()
+            ),
             Times.Once
         );
     }
@@ -102,110 +121,109 @@ public sealed class CreateTimelineItemHandlerTests
     public async Task Handle_ReturnsError_WhenCreateFails()
     {
         // Arrange
-        TimelineItemDto dto = new()
+        string error_msg = string.Format(ErrorMessages.FailedToCreateType, nameof(TimelineItemEntity));
+        TimelineItemEntity timeline_item = new()
         {
             Id = 0,
             Title = "Test Timeline Item",
-            Description = "Description of the test timeline item.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = [
-                new HistoricalContextDto()
-                {
-                    Id = 1,
-                    Title = "Context 1",
-                }
-            ]
         };
+        TimelineItemDto dto = Mapper.Map<TimelineItemDto>(timeline_item);
         CreateTimelineItemCommand command = new(dto);
-        _mockTimelineRepository.Setup(
+        TimelineRepositoryMock.Setup(
             r => r.CreateAsync(It.IsAny<TimelineItemEntity>())
         ).ReturnsAsync(static (TimelineItemEntity ti) =>
         {
             ti.Id = 1; // Simulate database assigning an ID
             return ti;
         });
-        _mockRepositoryWrapper.Setup(
+        RepositoryWrapperMock.Setup(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(0);
-        _mockLogger.Setup(
-            l => l.LogError(command, ErrorMessages.CannotSaveTimelineItem)
-        );
+        LoggerMock.Setup(l => l.LogError(command, error_msg));
 
         // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
+        Result<TimelineItemDto> result = await Handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Errors.Should().BeEquivalentTo([new Error(ErrorMessages.CannotSaveTimelineItem)]);
-        _mockTimelineRepository.Verify(
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().BeEquivalentTo([
+            new Error(error_msg)
+        ]);
+        TimelineRepositoryMock.Verify(
             r => r.CreateAsync(It.IsAny<TimelineItemEntity>()),
             Times.Once
         );
-        _mockRepositoryWrapper.Verify(
+        RepositoryWrapperMock.Verify(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once
         );
-        _mockLogger.Verify(
-            l => l.LogError(command, ErrorMessages.CannotSaveTimelineItem),
-            Times.Once
-        );
+        LoggerMock.Verify(l => l.LogError(command, error_msg), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_ReturnsError_WhenExceptionOccurs()
+    public async Task Handle_ReturnsError_WhenHistoricalContextTimelineCreateFails()
     {
         // Arrange
-        const string exception_message = "Database exception";
-        TimelineItemDto dto = new()
+        string error_msg = string.Format(ErrorMessages.FailedToCreateType, nameof(HistoricalContextTimeline));
+        TimelineItemEntity timeline_item = new()
         {
             Id = 0,
             Title = "Test Timeline Item",
-            Description = "Description of the test timeline item.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = [
-                new HistoricalContextDto()
+            HistoricalContextTimelines = [
+                new HistoricalContextTimeline()
                 {
-                    Id = 1,
-                    Title = "Context 1",
+                    HistoricalContext = new HistContext()
+                    {
+                        Id = 0,
+                        Title = "Title"
+                    },
+                    HistoricalContextId = 2,
+                    Timeline = new TimelineItemEntity()
+                    {
+                        Id = 1,
+                        Title = "Title"
+                    },
+                    TimelineId = 0
                 }
             ]
         };
+        TimelineItemDto dto = Mapper.Map<TimelineItemDto>(timeline_item);
         CreateTimelineItemCommand command = new(dto);
-        _mockTimelineRepository.Setup(
+        TimelineRepositoryMock.Setup(
             r => r.CreateAsync(It.IsAny<TimelineItemEntity>())
         ).ReturnsAsync(static (TimelineItemEntity ti) =>
         {
             ti.Id = 1; // Simulate database assigning an ID
             return ti;
         });
-        _mockRepositoryWrapper.Setup(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
-        ).ThrowsAsync(new Exception(exception_message));
-        _mockLogger.Setup(
-            l => l.LogError(command, exception_message)
+        HistoricalContextTimelineRepositoryMock.Setup(
+            r => r.CreateRangeAsync(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
         );
+        RepositoryWrapperMock.SetupSequence(
+            r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
+        ).ReturnsAsync(1).ReturnsAsync(0);
+        LoggerMock.Setup(l => l.LogError(command, error_msg));
 
         // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
+        Result<TimelineItemDto> result = await Handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Errors.Should().BeEquivalentTo([new Error(exception_message)]);
-        _mockTimelineRepository.Verify(
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().BeEquivalentTo([
+            new Error(error_msg)
+        ]);
+        TimelineRepositoryMock.Verify(
             r => r.CreateAsync(It.IsAny<TimelineItemEntity>()),
             Times.Once
         );
-        _mockRepositoryWrapper.Verify(
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.CreateRangeAsync(It.IsAny<IEnumerable<HistoricalContextTimeline>>()),
+            Times.Once
+        );
+        RepositoryWrapperMock.Verify(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Once
+            Times.Exactly(2)
         );
-        _mockLogger.Verify(
-            l => l.LogError(command, exception_message),
-            Times.Once
-        );
+        LoggerMock.Verify(l => l.LogError(command, error_msg), Times.Once);
     }
 }
