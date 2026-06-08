@@ -1,22 +1,19 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Streetcode.DAL.Entities.Timeline;
+using Streetcode.DAL.Persistence.Constants;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Streetcode.DAL.Persistence.Configurations;
 
-public class HistoricalContextConfiguration : IEntityTypeConfiguration<HistoricalContext>
+public sealed class HistoricalContextConfiguration : IEntityTypeConfiguration<HistoricalContext>
 {
+    #region IEntityTypeConfiguration<HistoricalContext>
     public void Configure(EntityTypeBuilder<HistoricalContext> builder)
     {
         builder.ToTable("historical_contexts", "timeline");
-
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd();
-
-        builder.Property(x => x.Title)
-            .IsRequired()
-            .HasMaxLength(50);
+        builder.HasKey(hc => hc.Id);
+        builder.Property(hc => hc.Id).ValueGeneratedOnAdd();
+        builder.Property(hc => hc.Title).IsRequired().HasMaxLength(HistoricalContextConstants.TitleMaxLength);
     }
+    #endregion
 }

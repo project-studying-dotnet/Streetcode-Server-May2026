@@ -54,6 +54,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBlobService, BlobService>();
         services.AddScoped<ILoggerService, LoggerService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IEmailPublisher, RabbitMqEmailPublisher>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IInstagramService, InstagramService>();
         services.AddScoped<ITextService, AddTermsToTextService>();
@@ -69,6 +70,9 @@ public static class ServiceCollectionExtensions
             ?? throw new InvalidOperationException(ErrorMessages.EmailConfigurationIsMissing);
 
         services.AddSingleton(emailConfig);
+
+        services.Configure<RabbitMqSettings>(
+            configuration.GetSection("RabbitMq"));
 
         services.AddDbContext<StreetcodeDbContext>(options =>
         {
