@@ -1,19 +1,18 @@
 using System.Linq.Expressions;
-using AutoMapper;
-using FluentAssertions;
-using FluentResults;
-using Microsoft.EntityFrameworkCore.Query;
 using Moq;
-using Streetcode.BLL.DTO.Timeline;
-using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.MediatR.Timeline.TimelineItem.Update;
-using Streetcode.BLL.Resources;
-using Streetcode.DAL.Entities.Timeline;
-using Streetcode.DAL.Enums;
-using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Timeline;
 using Xunit;
-
+using AutoMapper;
+using FluentResults;
+using FluentAssertions;
+using MockQueryable.Moq;
+using Streetcode.BLL.Resources;
+using Streetcode.BLL.DTO.Timeline;
+using Streetcode.DAL.Entities.Timeline;
+using Streetcode.BLL.Interfaces.Logging;
+using Microsoft.EntityFrameworkCore.Query;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.MediatR.Timeline.TimelineItem;
+using Streetcode.DAL.Repositories.Interfaces.Timeline;
 using HistContext = Streetcode.DAL.Entities.Timeline.HistoricalContext;
 using TimelineItemEntity = Streetcode.DAL.Entities.Timeline.TimelineItem;
 
@@ -21,93 +20,106 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Timeline.TimelineItem;
 
 public sealed class UpdateTimelineItemHandlerTests
 {
-    private readonly Mock<IRepositoryWrapper> _mockRepositoryWrapper;
-    private readonly Mock<ITimelineRepository> _mockTimelineRepository;
-    private readonly Mock<IHistoricalContextRepository> _mockHistoricalContextRepository;
-    private readonly Mock<IHistoricalContextTimelineRepository> _mockHistoricalContextTimelineRepository;
-    private readonly Mock<ILoggerService> _mockLogger;
-    private readonly IMapper _mapper;
-    private readonly UpdateTimelineItemHandler _handler;
+    private Mock<IRepositoryWrapper> RepositoryWrapperMock { get; }
+    private Mock<ITimelineRepository> TimelineRepositoryMock { get; }
+    private Mock<IHistoricalContextTimelineRepository> HistoricalContextTimelineRepositoryMock { get; }
+    private Mock<ILoggerService> LoggerMock { get; }
+    private IMapper Mapper { get; }
+    private UpdateTimelineItemHandler Handler { get; }
 
     public UpdateTimelineItemHandlerTests()
     {
-        _mockRepositoryWrapper = new Mock<IRepositoryWrapper>();
-        _mockTimelineRepository = new Mock<ITimelineRepository>();
-        _mockHistoricalContextRepository = new Mock<IHistoricalContextRepository>();
-        _mockHistoricalContextTimelineRepository = new Mock<IHistoricalContextTimelineRepository>();
+        RepositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        TimelineRepositoryMock = new Mock<ITimelineRepository>();
+        HistoricalContextTimelineRepositoryMock = new Mock<IHistoricalContextTimelineRepository>();
+        RepositoryWrapperMock.Setup(r => r.TimelineRepository).Returns(TimelineRepositoryMock.Object);
+        RepositoryWrapperMock.Setup(r => r.HistoricalContextTimelineRepository).Returns(HistoricalContextTimelineRepositoryMock.Object);
 
-        _mockRepositoryWrapper.Setup(r => r.TimelineRepository).Returns(_mockTimelineRepository.Object);
-        _mockRepositoryWrapper.Setup(r => r.HistoricalContextRepository).Returns(_mockHistoricalContextRepository.Object);
-        _mockRepositoryWrapper.Setup(r => r.HistoricalContextTimelineRepository).Returns(_mockHistoricalContextTimelineRepository.Object);
-
-        _mockLogger = new Mock<ILoggerService>();
-        MapperConfiguration config = new(cfg =>
+        LoggerMock = new Mock<ILoggerService>();
+        Mapper = new MapperConfiguration(cfg =>
         {
             cfg.AddMaps(typeof(UpdateTimelineItemHandler).Assembly);
-        });
-        _mapper = config.CreateMapper();
-        _handler = new UpdateTimelineItemHandler(_mockRepositoryWrapper.Object, _mapper, _mockLogger.Object);
+        }).CreateMapper();
+        Handler = new UpdateTimelineItemHandler(RepositoryWrapperMock.Object, Mapper, LoggerMock.Object);
     }
 
     [Fact]
-    public async Task Handle_ReturnsUpdatedTimelineItem_WhenUpdatedSuccessfully()
+    public async Task Handle_ReturnsTimelineItem_WhenUpdatedSuccessfully()
     {
         // Arrange
-        TimelineItemDto dto = new()
-        {
-            Id = 1,
-            Title = "Updated Timeline Item",
-            Description = "Updated description of the timeline item.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = [
-                new HistoricalContextDto()
+        List<HistoricalContextTimeline> hcts = [
+            new HistoricalContextTimeline()
+            {
+                HistoricalContext = new HistContext()
+                {
+                    Id = 0,
+                    Title = "Title"
+                },
+                HistoricalContextId = 2,
+                Timeline = new TimelineItemEntity()
                 {
                     Id = 1,
-                    Title = "Context 1"
+                    Title = "Title"
+                },
+                TimelineId = 0
+            }
+        ];
+        TimelineItemEntity timeline_item = new()
+        {
+            Id = 0,
+            Title = "Test Timeline Item",
+            HistoricalContextTimelines = [
+                new HistoricalContextTimeline()
+                {
+                    HistoricalContext = new HistContext()
+                    {
+                        Id = 0,
+                        Title = "Title"
+                    },
+                    HistoricalContextId = 3,
+                    Timeline = new TimelineItemEntity()
+                    {
+                        Id = 1,
+                        Title = "Title"
+                    },
+                    TimelineId = 0
                 }
             ]
         };
-        TimelineItemEntity timeline_item_entity = _mapper.Map<TimelineItemEntity>(dto);
-        timeline_item_entity.HistoricalContextTimelines = [];
-        HistContext historical_context = new()
-        {
-            Id = 1,
-            Title = "Context 1"
-        };
+        TimelineItemDto dto = Mapper.Map<TimelineItemDto>(timeline_item);
         UpdateTimelineItemCommand command = new(dto);
-
-        _mockTimelineRepository.Setup(
+        TimelineRepositoryMock.Setup(
             r => r.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
                 It.IsAny<CancellationToken>()
             )
-        ).ReturnsAsync(timeline_item_entity);
-        _mockHistoricalContextTimelineRepository.Setup(
+        ).ReturnsAsync(timeline_item);
+        TimelineRepositoryMock.Setup(
+            r => r.Update(It.IsAny<TimelineItemEntity>())
+        );
+        HistoricalContextTimelineRepositoryMock.Setup(
             r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
         );
-        _mockRepositoryWrapper.Setup(
+        HistoricalContextTimelineRepositoryMock.Setup(
+            r => r.CreateRangeAsync(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
+        );
+        RepositoryWrapperMock.Setup(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(1);
-        _mockHistoricalContextRepository.Setup(
-            r => r.GetAllAsync(
-                It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
+        HistoricalContextTimelineRepositoryMock.Setup(
+            r => r.FindAll(
+                It.IsAny<Expression<Func<HistoricalContextTimeline, bool>>>()
             )
-        ).ReturnsAsync([historical_context]);
-        _mockTimelineRepository.Setup(
-            r => r.Update(timeline_item_entity)
-        );
+        ).Returns(hcts.BuildMock());
 
         // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
+        Result<TimelineItemDto> result = await Handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(dto, options => options.Excluding(t => t.HistoricalContexts));
-        _mockTimelineRepository.Verify(
+        result.Value.Should().BeEquivalentTo(dto);
+        TimelineRepositoryMock.Verify(
             r => r.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
@@ -115,64 +127,94 @@ public sealed class UpdateTimelineItemHandlerTests
             ),
             Times.Once
         );
-        _mockHistoricalContextTimelineRepository.Verify(
-            r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>()),
-            Times.Once
-        );
-        _mockHistoricalContextRepository.Verify(
-            r => r.GetAllAsync(
-                It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
-            ),
-            Times.Once
-        );
-        _mockTimelineRepository.Verify(
+        TimelineRepositoryMock.Verify(
             r => r.Update(It.IsAny<TimelineItemEntity>()),
             Times.Once
         );
-        _mockRepositoryWrapper.Verify(
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>()),
+            Times.Once
+        );
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.CreateRangeAsync(It.IsAny<IEnumerable<HistoricalContextTimeline>>()),
+            Times.Once
+        );
+        RepositoryWrapperMock.Verify(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Exactly(3)
+        );
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.FindAll(
+                It.IsAny<Expression<Func<HistoricalContextTimeline, bool>>>()
+            ),
             Times.Exactly(2)
         );
     }
 
     [Fact]
-    public async Task Handle_ReturnsError_WhenTimelineItemNotFound()
+    public async Task Handle_ReturnsError_WhenItemNotFound()
     {
         // Arrange
-        TimelineItemDto dto = new()
+        List<HistoricalContextTimeline> hcts = [
+            new HistoricalContextTimeline()
+            {
+                HistoricalContext = new HistContext()
+                {
+                    Id = 0,
+                    Title = "Title"
+                },
+                HistoricalContextId = 2,
+                Timeline = new TimelineItemEntity()
+                {
+                    Id = 1,
+                    Title = "Title"
+                },
+                TimelineId = 0
+            }
+        ];
+        TimelineItemEntity timeline_item = new()
         {
-            Id = 999,
+            Id = 0,
             Title = "Test Timeline Item",
-            Description = "Description of the test timeline item.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = []
+            HistoricalContextTimelines = [
+                new HistoricalContextTimeline()
+                {
+                    HistoricalContext = new HistContext()
+                    {
+                        Id = 0,
+                        Title = "Title"
+                    },
+                    HistoricalContextId = 3,
+                    Timeline = new TimelineItemEntity()
+                    {
+                        Id = 1,
+                        Title = "Title"
+                    },
+                    TimelineId = 0
+                }
+            ]
         };
+        TimelineItemDto dto = Mapper.Map<TimelineItemDto>(timeline_item);
+        string error_msg = string.Format(ErrorMessages.TypeWithIdNotFound, nameof(TimelineItemEntity), dto.Id);
         UpdateTimelineItemCommand command = new(dto);
-
-        _mockTimelineRepository.Setup(
+        TimelineRepositoryMock.Setup(
             r => r.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
                 It.IsAny<CancellationToken>()
             )
         ).ReturnsAsync((TimelineItemEntity?)null);
-        _mockLogger.Setup(
-            l => l.LogError(command, string.Format(ErrorMessages.TimelineItemWithIdNotFound, dto.Id))
-        );
+        LoggerMock.Setup(l => l.LogError(command, error_msg));
 
         // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
+        Result<TimelineItemDto> result = await Handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsFailed.Should().BeTrue();
         result.Errors.Should().BeEquivalentTo([
-            new Error(string.Format(ErrorMessages.TimelineItemWithIdNotFound, dto.Id))
+            new Error(error_msg)
         ]);
-
-        _mockTimelineRepository.Verify(
+        TimelineRepositoryMock.Verify(
             r => r.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
@@ -180,166 +222,175 @@ public sealed class UpdateTimelineItemHandlerTests
             ),
             Times.Once
         );
-        _mockLogger.Verify(
-            l => l.LogError(command, string.Format(ErrorMessages.TimelineItemWithIdNotFound, dto.Id)),
-            Times.Once
-        );
-    }
-
-    [Fact]
-    public async Task Handle_ReturnsError_WhenHistoricalContextNotFound()
-    {
-        // Arrange
-        TimelineItemDto dto = new()
-        {
-            Id = 1,
-            Title = "Test Timeline Item",
-            Description = "Description of the test timeline item.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = [
-                new HistoricalContextDto()
-                {
-                    Id = 999,
-                    Title = "Non-existent Context"
-                }
-            ]
-        };
-        TimelineItemEntity timeline_item_entity = new()
-        {
-            Id = 1,
-            Title = "Test Timeline Item",
-            Description = "Description of the test timeline item.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContextTimelines = []
-        };
-        UpdateTimelineItemCommand command = new(dto);
-
-        _mockTimelineRepository.Setup(
-            r => r.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
-                It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
-                It.IsAny<CancellationToken>()
-            )
-        ).ReturnsAsync(timeline_item_entity);
-        _mockHistoricalContextTimelineRepository.Setup(
-            r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
-        );
-        _mockRepositoryWrapper.Setup(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
-        ).ReturnsAsync(1);
-        _mockHistoricalContextRepository.Setup(
-            r => r.GetAllAsync(
-                It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
-            )
-        ).ReturnsAsync(Array.Empty<HistContext>());
-        _mockLogger.Setup(
-            l => l.LogError(command, ErrorMessages.CannotFindOneOrMoreHistoricalContexts)
-        );
-
-        // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Errors.Should().ContainSingle().Which.Message.Should().Be(ErrorMessages.CannotFindOneOrMoreHistoricalContexts);
-        _mockTimelineRepository.Verify(
-            r => r.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
-                It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
-                It.IsAny<CancellationToken>()
-            ),
-            Times.Once
-        );
-        _mockHistoricalContextRepository.Verify(
-            r => r.GetAllAsync(
-                It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
-            ),
-            Times.Once
-        );
-        _mockLogger.Verify(
-            l => l.LogError(command, ErrorMessages.CannotFindOneOrMoreHistoricalContexts),
-            Times.Once
-        );
+        LoggerMock.Verify(l => l.LogError(command, error_msg), Times.Once);
     }
 
     [Fact]
     public async Task Handle_ReturnsError_WhenUpdateFails()
     {
         // Arrange
-        TimelineItemDto dto = new()
-        {
-            Id = 1,
-            Title = "Updated Timeline Item",
-            Description = "Updated description.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = [
-                new HistoricalContextDto()
+        List<HistoricalContextTimeline> hcts = [
+            new HistoricalContextTimeline()
+            {
+                HistoricalContext = new HistContext()
+                {
+                    Id = 0,
+                    Title = "Title"
+                },
+                HistoricalContextId = 2,
+                Timeline = new TimelineItemEntity()
                 {
                     Id = 1,
-                    Title = "Context 1"
+                    Title = "Title"
+                },
+                TimelineId = 0
+            }
+        ];
+        TimelineItemEntity timeline_item = new()
+        {
+            Id = 0,
+            Title = "Test Timeline Item",
+            HistoricalContextTimelines = [
+                new HistoricalContextTimeline()
+                {
+                    HistoricalContext = new HistContext()
+                    {
+                        Id = 0,
+                        Title = "Title"
+                    },
+                    HistoricalContextId = 3,
+                    Timeline = new TimelineItemEntity()
+                    {
+                        Id = 1,
+                        Title = "Title"
+                    },
+                    TimelineId = 0
                 }
             ]
         };
-        TimelineItemEntity timeline_item_entity = new()
-        {
-            Id = 1,
-            Title = "Original Title",
-            Description = "Original description.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContextTimelines = []
-        };
-        HistContext historical_context = new()
-        {
-            Id = 1,
-            Title = "Context 1"
-        };
+        TimelineItemDto dto = Mapper.Map<TimelineItemDto>(timeline_item);
+        string error_msg = string.Format(ErrorMessages.FailedToUpdateType, nameof(TimelineItemEntity));
         UpdateTimelineItemCommand command = new(dto);
-
-        _mockTimelineRepository.Setup(
+        TimelineRepositoryMock.Setup(
             r => r.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
                 It.IsAny<CancellationToken>()
             )
-        ).ReturnsAsync(timeline_item_entity);
-        _mockHistoricalContextTimelineRepository.Setup(
+        ).ReturnsAsync(timeline_item);
+        TimelineRepositoryMock.Setup(
+            r => r.Update(It.IsAny<TimelineItemEntity>())
+        );
+        RepositoryWrapperMock.Setup(
+            r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
+        ).ReturnsAsync(0);
+        LoggerMock.Setup(l => l.LogError(command, error_msg));
+
+        // Act
+        Result<TimelineItemDto> result = await Handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().BeEquivalentTo([
+            new Error(error_msg)
+        ]);
+        TimelineRepositoryMock.Verify(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
+                It.IsAny<CancellationToken>()
+            ),
+            Times.Once
+        );
+        TimelineRepositoryMock.Verify(
+            r => r.Update(It.IsAny<TimelineItemEntity>()),
+            Times.Once
+        );
+        RepositoryWrapperMock.Verify(
+            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Once
+        );
+        LoggerMock.Verify(l => l.LogError(command, error_msg), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ReturnsError_WhenDeleteHistoricalContextTimelineFails()
+    {
+        // Arrange
+        List<HistoricalContextTimeline> hcts = [
+            new HistoricalContextTimeline()
+            {
+                HistoricalContext = new HistContext()
+                {
+                    Id = 0,
+                    Title = "Title"
+                },
+                HistoricalContextId = 2,
+                Timeline = new TimelineItemEntity()
+                {
+                    Id = 1,
+                    Title = "Title"
+                },
+                TimelineId = 0
+            }
+        ];
+        TimelineItemEntity timeline_item = new()
+        {
+            Id = 0,
+            Title = "Test Timeline Item",
+            HistoricalContextTimelines = [
+                new HistoricalContextTimeline()
+                {
+                    HistoricalContext = new HistContext()
+                    {
+                        Id = 0,
+                        Title = "Title"
+                    },
+                    HistoricalContextId = 3,
+                    Timeline = new TimelineItemEntity()
+                    {
+                        Id = 1,
+                        Title = "Title"
+                    },
+                    TimelineId = 0
+                }
+            ]
+        };
+        TimelineItemDto dto = Mapper.Map<TimelineItemDto>(timeline_item);
+        string error_msg = string.Format(ErrorMessages.FailedToDeleteType, nameof(HistoricalContextTimeline));
+        UpdateTimelineItemCommand command = new(dto);
+        TimelineRepositoryMock.Setup(
+            r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
+                It.IsAny<CancellationToken>()
+            )
+        ).ReturnsAsync(timeline_item);
+        TimelineRepositoryMock.Setup(
+            r => r.Update(It.IsAny<TimelineItemEntity>())
+        );
+        HistoricalContextTimelineRepositoryMock.Setup(
             r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
         );
-        _mockRepositoryWrapper.SetupSequence(
+        HistoricalContextTimelineRepositoryMock.Setup(
+            r => r.FindAll(
+                It.IsAny<Expression<Func<HistoricalContextTimeline, bool>>>()
+            )
+        ).Returns(hcts.BuildMock());
+        RepositoryWrapperMock.SetupSequence(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
         ).ReturnsAsync(1).ReturnsAsync(0);
-        _mockHistoricalContextRepository.Setup(
-            r => r.GetAllAsync(
-                It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
-            )
-        ).ReturnsAsync([historical_context]);
-        _mockTimelineRepository.Setup(
-            r => r.Update(timeline_item_entity)
-        );
-        _mockLogger.Setup(
-            l => l.LogError(command, string.Format(ErrorMessages.FailedToUpdateTimelineItemWithId, dto.Id))
-        );
+        LoggerMock.Setup(l => l.LogError(command, error_msg));
 
         // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
+        Result<TimelineItemDto> result = await Handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsFailed.Should().BeTrue();
         result.Errors.Should().BeEquivalentTo([
-            new Error(string.Format(ErrorMessages.FailedToUpdateTimelineItemWithId, dto.Id))
+            new Error(error_msg)
         ]);
-        _mockTimelineRepository.Verify(
+        TimelineRepositoryMock.Verify(
             r => r.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
@@ -347,246 +398,108 @@ public sealed class UpdateTimelineItemHandlerTests
             ),
             Times.Once
         );
-        _mockTimelineRepository.Verify(
+        TimelineRepositoryMock.Verify(
             r => r.Update(It.IsAny<TimelineItemEntity>()),
             Times.Once
         );
-        _mockRepositoryWrapper.Verify(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Exactly(2)
-        );
-        _mockLogger.Verify(
-            l => l.LogError(command, string.Format(ErrorMessages.FailedToUpdateTimelineItemWithId, dto.Id)),
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>()),
             Times.Once
         );
-    }
-
-    [Fact]
-    public async Task Handle_ReturnsError_WhenExceptionOccurs()
-    {
-        // Arrange
-        const string exception_message = "Database exception";
-        TimelineItemDto dto = new()
-        {
-            Id = 1,
-            Title = "Updated Timeline Item",
-            Description = "Updated description.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = [
-                new HistoricalContextDto()
-                {
-                    Id = 1,
-                    Title = "Context 1"
-                }
-            ]
-        };
-        TimelineItemEntity timeline_item_entity = new()
-        {
-            Id = 1,
-            Title = "Original Title",
-            Description = "Original description.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContextTimelines = []
-        };
-        HistContext historical_context = new()
-        {
-            Id = 1,
-            Title = "Context 1"
-        };
-        UpdateTimelineItemCommand command = new(dto);
-
-        _mockTimelineRepository.Setup(
-            r => r.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
-                It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
-                It.IsAny<CancellationToken>()
-            )
-        ).ReturnsAsync(timeline_item_entity);
-        _mockHistoricalContextTimelineRepository.Setup(
-            r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
-        );
-        _mockRepositoryWrapper.SetupSequence(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
-        ).ReturnsAsync(1).ThrowsAsync(new Exception(exception_message));
-        _mockHistoricalContextRepository.Setup(
-            r => r.GetAllAsync(
-                It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
-            )
-        ).ReturnsAsync([historical_context]);
-        _mockTimelineRepository.Setup(
-            r => r.Update(timeline_item_entity)
-        );
-        _mockLogger.Setup(
-            l => l.LogError(command, exception_message)
-        );
-
-        // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Errors.Should().BeEquivalentTo([new Error(exception_message)]);
-        _mockTimelineRepository.Verify(
-            r => r.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
-                It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
-                It.IsAny<CancellationToken>()
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.FindAll(
+                It.IsAny<Expression<Func<HistoricalContextTimeline, bool>>>()
             ),
             Times.Once
         );
-        _mockRepositoryWrapper.Verify(
+        RepositoryWrapperMock.Verify(
             r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Exactly(2)
         );
-        _mockLogger.Verify(
-            l => l.LogError(command, exception_message),
-            Times.Once
-        );
+        LoggerMock.Verify(l => l.LogError(command, error_msg), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_ReturnsSuccess_WhenMultipleHistoricalContextsAdded()
+    public async Task Handle_ReturnsError_WhenCreateHistoricalContextTimelineFails()
     {
         // Arrange
-        TimelineItemDto dto = new()
-        {
-            Id = 1,
-            Title = "Updated Timeline Item",
-            Description = "Updated description with multiple contexts.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = [
-                new HistoricalContextDto()
+        List<HistoricalContextTimeline> hcts = [
+            new HistoricalContextTimeline()
+            {
+                HistoricalContext = new HistContext()
+                {
+                    Id = 0,
+                    Title = "Title"
+                },
+                HistoricalContextId = 2,
+                Timeline = new TimelineItemEntity()
                 {
                     Id = 1,
-                    Title = "Context 1"
+                    Title = "Title"
                 },
-                new HistoricalContextDto()
+                TimelineId = 0
+            }
+        ];
+        TimelineItemEntity timeline_item = new()
+        {
+            Id = 0,
+            Title = "Test Timeline Item",
+            HistoricalContextTimelines = [
+                new HistoricalContextTimeline()
                 {
-                    Id = 2,
-                    Title = "Context 2"
-                },
-                new HistoricalContextDto()
-                {
-                    Id = 3,
-                    Title = "Context 3"
+                    HistoricalContext = new HistContext()
+                    {
+                        Id = 0,
+                        Title = "Title"
+                    },
+                    HistoricalContextId = 3,
+                    Timeline = new TimelineItemEntity()
+                    {
+                        Id = 1,
+                        Title = "Title"
+                    },
+                    TimelineId = 0
                 }
             ]
         };
-        TimelineItemEntity timeline_item_entity = new()
-        {
-            Id = 1,
-            Title = "Original Title",
-            Description = "Original description.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContextTimelines = []
-        };
+        TimelineItemDto dto = Mapper.Map<TimelineItemDto>(timeline_item);
+        string error_msg = string.Format(ErrorMessages.FailedToCreateType, nameof(HistoricalContextTimeline));
         UpdateTimelineItemCommand command = new(dto);
-
-        _mockTimelineRepository.Setup(
+        TimelineRepositoryMock.Setup(
             r => r.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
                 It.IsAny<CancellationToken>()
             )
-        ).ReturnsAsync(timeline_item_entity);
-        _mockHistoricalContextTimelineRepository.Setup(
+        ).ReturnsAsync(timeline_item);
+        TimelineRepositoryMock.Setup(
+            r => r.Update(It.IsAny<TimelineItemEntity>())
+        );
+        HistoricalContextTimelineRepositoryMock.Setup(
             r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
         );
-        _mockRepositoryWrapper.Setup(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
-        ).ReturnsAsync(1);
-        _mockHistoricalContextRepository.Setup(
-            r => r.GetAllAsync(
-                It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
+        HistoricalContextTimelineRepositoryMock.Setup(
+            r => r.CreateRangeAsync(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
+        );
+        HistoricalContextTimelineRepositoryMock.Setup(
+            r => r.FindAll(
+                It.IsAny<Expression<Func<HistoricalContextTimeline, bool>>>()
             )
-        ).ReturnsAsync([
-            new HistContext { Id = 1, Title = "Context 1" },
-            new HistContext { Id = 2, Title = "Context 2" },
-            new HistContext { Id = 3, Title = "Context 3" },
+        ).Returns(hcts.BuildMock());
+        RepositoryWrapperMock.SetupSequence(
+            r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
+        ).ReturnsAsync(1).ReturnsAsync(1).ReturnsAsync(0);
+        LoggerMock.Setup(l => l.LogError(command, error_msg));
+
+        // Act
+        Result<TimelineItemDto> result = await Handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().BeEquivalentTo([
+            new Error(error_msg)
         ]);
-        _mockTimelineRepository.Setup(
-            r => r.Update(timeline_item_entity)
-        );
-
-        // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.HistoricalContexts.Should().HaveCount(3);
-        _mockHistoricalContextRepository.Verify(
-            r => r.GetAllAsync(
-                It.IsAny<Expression<Func<HistContext, bool>>>(),
-                It.IsAny<Func<IQueryable<HistContext>, IIncludableQueryable<HistContext, object>>>()
-            ),
-            Times.Once
-        );
-        _mockRepositoryWrapper.Verify(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Exactly(2)
-        );
-    }
-
-    [Fact]
-    public async Task Handle_ReturnsSuccess_WhenNoHistoricalContextsProvided()
-    {
-        // Arrange
-        TimelineItemDto dto = new()
-        {
-            Id = 1,
-            Title = "Updated Timeline Item",
-            Description = "Updated description without contexts.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContexts = []
-        };
-        TimelineItemEntity timeline_item_entity = new()
-        {
-            Id = 1,
-            Title = "Original Title",
-            Description = "Original description.",
-            Date = new DateTime(2024, 1, 1),
-            DateViewPattern = DateViewPattern.DateMonthYear,
-            StreetcodeId = 1,
-            HistoricalContextTimelines = []
-        };
-        UpdateTimelineItemCommand command = new(dto);
-
-        _mockTimelineRepository.Setup(
-            r => r.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
-                It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
-                It.IsAny<CancellationToken>()
-            )
-        ).ReturnsAsync(timeline_item_entity);
-        _mockHistoricalContextTimelineRepository.Setup(
-            r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>())
-        );
-        _mockRepositoryWrapper.Setup(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>())
-        ).ReturnsAsync(1);
-        _mockTimelineRepository.Setup(
-            r => r.Update(timeline_item_entity)
-        );
-
-        // Act
-        Result<TimelineItemDto> result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.HistoricalContexts.Should().BeEmpty();
-        _mockTimelineRepository.Verify(
+        TimelineRepositoryMock.Verify(
             r => r.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<TimelineItemEntity, bool>>>(),
                 It.IsAny<Func<IQueryable<TimelineItemEntity>, IIncludableQueryable<TimelineItemEntity, object>>>(),
@@ -594,13 +507,28 @@ public sealed class UpdateTimelineItemHandlerTests
             ),
             Times.Once
         );
-        _mockTimelineRepository.Verify(
+        TimelineRepositoryMock.Verify(
             r => r.Update(It.IsAny<TimelineItemEntity>()),
             Times.Once
         );
-        _mockRepositoryWrapper.Verify(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Exactly(2)
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.DeleteRange(It.IsAny<IEnumerable<HistoricalContextTimeline>>()),
+            Times.Once
         );
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.CreateRangeAsync(It.IsAny<IEnumerable<HistoricalContextTimeline>>()),
+            Times.Once
+        );
+        HistoricalContextTimelineRepositoryMock.Verify(
+            r => r.FindAll(
+                It.IsAny<Expression<Func<HistoricalContextTimeline, bool>>>()
+            ),
+            Times.Once
+        );
+        RepositoryWrapperMock.Verify(
+            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Exactly(3)
+        );
+        LoggerMock.Verify(l => l.LogError(command, error_msg), Times.Once);
     }
 }
