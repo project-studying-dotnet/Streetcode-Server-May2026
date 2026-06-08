@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.Media.Video;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using T = Streetcode.DAL.Entities.Media;
 
@@ -32,7 +33,7 @@ namespace Streetcode.BLL.MediatR.Media.Video.Create
 
             if (!streetcodeExists)
             {
-                string errorMsg = $"Streetcode with Id {streetcodeId} does not exist.";
+                string errorMsg = string.Format(ErrorMessages.StreetcodeWithIdNotFound, streetcodeId);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail<VideoDto>(errorMsg);
             }
