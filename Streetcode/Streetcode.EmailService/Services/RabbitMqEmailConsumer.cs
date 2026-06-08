@@ -24,8 +24,7 @@ public class RabbitMqEmailConsumer : BackgroundService
 
     private IConnection? _connection;
     private IModel? _channel;
-
-    // [ExcludeFromCodeCoverage]
+    
     public RabbitMqEmailConsumer(
         IOptions<RabbitMqSettings> rabbitMqSettings,
         IServiceScopeFactory serviceScopeFactory,
