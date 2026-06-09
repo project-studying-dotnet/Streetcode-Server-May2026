@@ -6,7 +6,7 @@ namespace Streetcode.BLL.DTO.Streetcode
         public string? StreetcodeTransliterationUrl { get; set; }
         public int StreetcodeIndex { get; set; }
         public string? BlockName { get; set; }
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
         public string? SourceName { get; set; }
     }
 }
