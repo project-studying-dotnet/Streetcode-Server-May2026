@@ -1,54 +1,66 @@
+using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Streetcode.BLL.DTO.Streetcode.TextContent.Fact;
+using Streetcode.WebApi.Attributes;
 using Streetcode.BLL.MediatR.Streetcode.Fact.Create;
 using Streetcode.BLL.MediatR.Streetcode.Fact.Delete;
 using Streetcode.BLL.MediatR.Streetcode.Fact.GetAll;
-using Streetcode.BLL.MediatR.Streetcode.Fact.GetById;
-using Streetcode.BLL.MediatR.Streetcode.Fact.GetByStreetcodeId;
 using Streetcode.BLL.MediatR.Streetcode.Fact.Update;
-using Streetcode.DAL.Enums;
-using Streetcode.WebApi.Attributes;
+using Streetcode.BLL.MediatR.Streetcode.Fact.GetById;
+using Streetcode.BLL.DTO.Streetcode.TextContent.Fact;
+using Streetcode.BLL.MediatR.Streetcode.Fact.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent;
 
-public class FactController : BaseApiController
+public sealed class FactController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllFactsQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllFactsQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetFactByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetFactByIdQuery(id), cancellationToken)
+        );
     }
 
     [HttpGet("{streetcodeId:int}")]
-    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetFactByStreetcodeIdQuery(streetcodeId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetFactByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     public async Task<IActionResult> Create([FromBody] FactDto request, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new CreateFactCommand(request), cancellationToken));
+        return base.HandleResult(
+            await base.Mediator.Send(new CreateFactCommand(request), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPut]
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     public async Task<IActionResult> Update([FromBody] FactDto fact, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new UpdateFactCommand(fact), cancellationToken));
+        return base.HandleResult(
+            await base.Mediator.Send(new UpdateFactCommand(fact), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
+    [AuthorizeRoles(UserRole.MainAdministrator)]
     public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new DeleteFactCommand(id), cancellationToken));
+        return base.HandleResult(
+            await base.Mediator.Send(new DeleteFactCommand(id), cancellationToken)
+        );
     }
 }

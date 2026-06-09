@@ -1,13 +1,13 @@
-﻿using FluentAssertions;
-using FluentResults;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using Moq;
-using Streetcode.BLL.DTO.News;
-using Streetcode.BLL.MediatR.Newss.Create;
-using Streetcode.WebApi.Controllers;
+﻿using Moq;
 using Xunit;
+using MediatR;
+using FluentResults;
+using FluentAssertions;
+using Streetcode.BLL.DTO.News;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Streetcode.WebApi.Controllers.News;
+using Streetcode.BLL.MediatR.Newss.Create;
 
 namespace Streetcode.XUnitTest.Controllers
 {

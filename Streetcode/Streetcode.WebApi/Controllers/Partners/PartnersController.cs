@@ -1,59 +1,73 @@
+using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Partners;
+using Streetcode.WebApi.Attributes;
 using Streetcode.BLL.MediatR.Partners.Create;
 using Streetcode.BLL.MediatR.Partners.GetAll;
-using Streetcode.BLL.MediatR.Partners.GetAllPartnerShort;
 using Streetcode.BLL.MediatR.Partners.GetById;
 using Streetcode.BLL.MediatR.Partners.GetByStreetcodeId;
-using Streetcode.DAL.Enums;
-using Streetcode.WebApi.Attributes;
+using Streetcode.BLL.MediatR.Partners.GetAllPartnerShort;
 
 namespace Streetcode.WebApi.Controllers.Partners;
 
-public class PartnersController : BaseApiController
+public sealed class PartnersController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllPartnersQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllPartnersQuery(), cancellationToken)
+        );
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllShort()
+    public async Task<IActionResult> GetAllShort(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllPartnersShortQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllPartnersShortQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetPartnerByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetPartnerByIdQuery(id), cancellationToken)
+        );
     }
 
     [HttpGet("{streetcodeId:int}")]
-    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetPartnersByStreetcodeIdQuery(streetcodeId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetPartnersByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreatePartnerDTO partner)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Create([FromBody] CreatePartnerDTO partner, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new CreatePartnerQuery(partner)));
+        return base.HandleResult(
+            await base.Mediator.Send(new CreatePartnerQuery(partner), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] CreatePartnerDTO partner)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Update([FromBody] CreatePartnerDTO partner, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new BLL.MediatR.Partners.Update.UpdatePartnerQuery(partner)));
+        return base.HandleResult(
+            await base.Mediator.Send(new BLL.MediatR.Partners.Update.UpdatePartnerQuery(partner), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new BLL.MediatR.Partners.Delete.DeletePartnerQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new BLL.MediatR.Partners.Delete.DeletePartnerQuery(id), cancellationToken)
+        );
     }
 }

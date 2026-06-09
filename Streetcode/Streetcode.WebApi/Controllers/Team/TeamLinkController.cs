@@ -1,28 +1,28 @@
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using Streetcode.DAL.Enums;
 using Streetcode.BLL.DTO.Team;
-using Streetcode.BLL.MediatR.Team.Create;
-using Streetcode.BLL.MediatR.Team.GetAll;
+using Microsoft.AspNetCore.Mvc;
+using Streetcode.WebApi.Attributes;
 using Streetcode.BLL.MediatR.Team.TeamMembersLinks.Create;
 using Streetcode.BLL.MediatR.Team.TeamMembersLinks.GetAll;
-using Streetcode.DAL.Enums;
-using Streetcode.WebApi.Attributes;
 
-namespace Streetcode.WebApi.Controllers.Team
+namespace Streetcode.WebApi.Controllers.Team;
+
+public sealed class TeamLinkController : BaseApiController
 {
-    public class TeamLinkController : BaseApiController
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return HandleResult(await Mediator.Send(new GetAllTeamLinkQuery()));
-        }
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllTeamLinkQuery(), cancellationToken)
+        );
+    }
 
-        [AuthorizeRoles(UserRole.MainAdministrator)]
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TeamMemberLinkDTO teamMemberLink)
-        {
-            return HandleResult(await Mediator.Send(new CreateTeamLinkQuery(teamMemberLink)));
-        }
+    [HttpPost]
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Create([FromBody] TeamMemberLinkDTO teamMemberLink, CancellationToken cancellationToken = default)
+    {
+        return base.HandleResult(
+            await base.Mediator.Send(new CreateTeamLinkQuery(teamMemberLink), cancellationToken)
+        );
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Moq;
 using Streetcode.BLL.MediatR.Newss.Delete;
-using Streetcode.WebApi.Controllers;
+using Streetcode.WebApi.Controllers.News;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Controllers

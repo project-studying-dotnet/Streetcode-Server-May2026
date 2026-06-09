@@ -1,29 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
-using Streetcode.BLL.DTO.Transactions;
 using Streetcode.BLL.MediatR.Transactions.TransactionLink.GetAll;
 using Streetcode.BLL.MediatR.Transactions.TransactionLink.GetById;
 using Streetcode.BLL.MediatR.Transactions.TransactionLink.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Transactions;
 
-public class TransactLinksController : BaseApiController
+public sealed class TransactLinksController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllTransactLinksQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllTransactLinksQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("{streetcodeId:int}")]
-    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        var res = await Mediator.Send(new GetTransactLinkByStreetcodeIdQuery(streetcodeId));
-        return HandleResult(res);
+        return base.HandleResult(
+            await base.Mediator.Send(new GetTransactLinkByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetTransactLinkByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetTransactLinkByIdQuery(id), cancellationToken)
+        );
     }
 }

@@ -6,7 +6,7 @@ using MediatR;
 using Moq;
 using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.MediatR.Newss.GetAll;
-using Streetcode.WebApi.Controllers;
+using Streetcode.WebApi.Controllers.News;
 using Xunit;
 
 namespace Streetcode.XUnitTest.Controllers

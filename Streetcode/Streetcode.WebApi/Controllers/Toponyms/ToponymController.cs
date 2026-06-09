@@ -6,23 +6,29 @@ using Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Toponyms;
 
-public class ToponymController : BaseApiController
+public sealed class ToponymController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] GetAllToponymsRequestDTO request)
+    public async Task<IActionResult> GetAll([FromQuery] GetAllToponymsRequestDTO request, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllToponymsQuery(request)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllToponymsQuery(request), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetToponymByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetToponymByIdQuery(id), cancellationToken)
+        );
     }
 
     [HttpGet("{streetcodeId:int}")]
-    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetToponymsByStreetcodeIdQuery(streetcodeId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetToponymsByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 }
