@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.AdditionalContent.Coordinate.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.AdditionalContent;
 
+[ExcludeFromCodeCoverage]
 public sealed class CoordinateController : BaseApiController
 {
     [HttpGet("{streetcodeId:int}")]

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Timeline;
@@ -6,6 +7,7 @@ using Streetcode.BLL.MediatR.Timeline.TimelineItem;
 
 namespace Streetcode.WebApi.Controllers.Timeline;
 
+[ExcludeFromCodeCoverage]
 public sealed class TimelineItemController : BaseApiController
 {
     [HttpGet]

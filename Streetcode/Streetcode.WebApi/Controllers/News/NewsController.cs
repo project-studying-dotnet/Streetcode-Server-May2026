@@ -1,4 +1,5 @@
-﻿using Streetcode.DAL.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Enums;
 using Streetcode.BLL.DTO.News;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.WebApi.Attributes;
@@ -13,6 +14,7 @@ using Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl;
 
 namespace Streetcode.WebApi.Controllers.News;
 
+[ExcludeFromCodeCoverage]
 public sealed class NewsController : BaseApiController
 {
     [HttpGet]

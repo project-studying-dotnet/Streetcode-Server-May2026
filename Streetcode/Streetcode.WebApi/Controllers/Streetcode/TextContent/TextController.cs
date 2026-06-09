@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.WebApi.Attributes;
@@ -12,6 +13,7 @@ using Streetcode.BLL.MediatR.Streetcode.Text.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent;
 
+[ExcludeFromCodeCoverage]
 public sealed class TextController : BaseApiController
 {
     [HttpGet]

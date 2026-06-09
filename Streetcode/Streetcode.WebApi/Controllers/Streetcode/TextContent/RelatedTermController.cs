@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.WebApi.Attributes;
@@ -10,6 +11,7 @@ using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent;
 
+[ExcludeFromCodeCoverage]
 public sealed class RelatedTermController : BaseApiController
 {
     [HttpGet("{id:int}")]

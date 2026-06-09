@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.Media.Art.GetAll;
 using Streetcode.BLL.MediatR.Media.Art.GetById;
@@ -5,6 +6,7 @@ using Streetcode.BLL.MediatR.Media.Art.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Media.Images;
 
+[ExcludeFromCodeCoverage]
 public sealed class ArtController : BaseApiController
 {
     [HttpGet]

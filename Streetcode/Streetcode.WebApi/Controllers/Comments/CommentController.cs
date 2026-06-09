@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Comments;
@@ -6,6 +7,7 @@ using Streetcode.BLL.MediatR.Comments.Create;
 
 namespace Streetcode.WebApi.Controllers.Comments;
 
+[ExcludeFromCodeCoverage]
 public sealed class CommentController : BaseApiController
 {
     [HttpPost]

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Partners;
@@ -10,6 +11,7 @@ using Streetcode.BLL.MediatR.Partners.GetAllPartnerShort;
 
 namespace Streetcode.WebApi.Controllers.Partners;
 
+[ExcludeFromCodeCoverage]
 public sealed class PartnersController : BaseApiController
 {
     [HttpGet]

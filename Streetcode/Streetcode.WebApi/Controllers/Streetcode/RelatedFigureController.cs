@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.Streetcode.RelatedFigure.Create;
 using Streetcode.BLL.MediatR.Streetcode.RelatedFigure.Delete;
@@ -8,6 +9,7 @@ using Streetcode.WebApi.Attributes;
 
 namespace Streetcode.WebApi.Controllers.Streetcode;
 
+[ExcludeFromCodeCoverage]
 public sealed class RelatedFigureController : BaseApiController
 {
     [HttpGet("{streetcodeId:int}")]

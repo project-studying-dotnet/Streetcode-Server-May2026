@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Email;
 using Streetcode.BLL.MediatR.Email;
 
 namespace Streetcode.WebApi.Controllers.Email;
 
+[ExcludeFromCodeCoverage]
 public sealed class EmailController : BaseApiController
 {
     [HttpPost]

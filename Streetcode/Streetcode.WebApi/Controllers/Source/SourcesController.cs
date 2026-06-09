@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Sources;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Create;
@@ -13,6 +14,7 @@ using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStre
 
 namespace Streetcode.WebApi.Controllers.Source;
 
+[ExcludeFromCodeCoverage]
 public sealed class SourcesController : BaseApiController
 {
     [HttpGet("names")]

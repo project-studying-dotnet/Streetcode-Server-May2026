@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Streetcode.BLL.DTO.Team;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Streetcode.BLL.MediatR.Team.TeamMembersLinks.GetAll;
 
 namespace Streetcode.WebApi.Controllers.Team;
 
+[ExcludeFromCodeCoverage]
 public sealed class TeamLinkController : BaseApiController
 {
     [HttpGet]

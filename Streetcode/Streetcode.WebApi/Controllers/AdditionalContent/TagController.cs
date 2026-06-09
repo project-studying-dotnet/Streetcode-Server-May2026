@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetAll;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetById;
@@ -5,6 +6,7 @@ using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.AdditionalContent;
 
+[ExcludeFromCodeCoverage]
 public sealed class TagController : BaseApiController
 {
     [HttpGet]

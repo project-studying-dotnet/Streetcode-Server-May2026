@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 using MediatR;
 using FluentResults;
 using Streetcode.DAL.Enums;
@@ -8,6 +9,7 @@ using Streetcode.BLL.MediatR.ResultVariations;
 namespace Streetcode.WebApi.Controllers;
 
 [ApiController]
+[ExcludeFromCodeCoverage]
 [Route("api/[controller]/[action]")]
 public class BaseApiController : ControllerBase
 {

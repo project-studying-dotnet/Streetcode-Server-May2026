@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.WebApi.Attributes;
@@ -11,6 +12,7 @@ using Streetcode.BLL.MediatR.Media.Image.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Media.Images;
 
+[ExcludeFromCodeCoverage]
 public sealed class ImageController : BaseApiController
 {
     [HttpGet]

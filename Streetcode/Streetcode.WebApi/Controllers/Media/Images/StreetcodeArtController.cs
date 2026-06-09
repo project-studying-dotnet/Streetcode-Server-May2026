@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.Media.StreetcodeArt.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Media.Images;
 
+[ExcludeFromCodeCoverage]
 public sealed class StreetcodeArtController : BaseApiController
 {
     [HttpGet("{streetcodeId:int}")]

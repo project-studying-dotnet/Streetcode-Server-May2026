@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.Instagram.GetAll;
 
 namespace Streetcode.WebApi.Controllers.Instagram;
 
+[ExcludeFromCodeCoverage]
 public sealed class InstagramController : BaseApiController
 {
     [HttpGet]

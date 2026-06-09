@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Toponyms;
 using Streetcode.BLL.MediatR.Toponyms.GetAll;
@@ -6,6 +7,7 @@ using Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Toponyms;
 
+[ExcludeFromCodeCoverage]
 public sealed class ToponymController : BaseApiController
 {
     [HttpGet]

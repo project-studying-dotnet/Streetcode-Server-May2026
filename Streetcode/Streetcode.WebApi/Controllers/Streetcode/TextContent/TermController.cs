@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.WebApi.Attributes;
@@ -10,6 +11,7 @@ using Streetcode.BLL.DTO.Streetcode.TextContent.Term;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent;
 
+[ExcludeFromCodeCoverage]
 public sealed class TermController : BaseApiController
 {
     [HttpPost]

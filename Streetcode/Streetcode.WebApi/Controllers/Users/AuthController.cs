@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
@@ -10,9 +11,9 @@ using Streetcode.BLL.MediatR.Users.RefreshToken;
 namespace Streetcode.WebApi.Controllers.Users;
 
 [Route("api/auth")]
+[ExcludeFromCodeCoverage]
 public sealed class AuthController : BaseApiController
 {
-    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest, CancellationToken cancellationToken = default)
     {
@@ -21,7 +22,6 @@ public sealed class AuthController : BaseApiController
         );
     }
 
-    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterDto registerRequest, CancellationToken cancellationToken = default)
     {
@@ -30,7 +30,6 @@ public sealed class AuthController : BaseApiController
         );
     }
 
-    [AllowAnonymous]
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest, CancellationToken cancellationToken = default)
     {

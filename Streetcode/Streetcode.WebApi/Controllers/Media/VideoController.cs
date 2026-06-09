@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.WebApi.Attributes;
@@ -10,6 +11,7 @@ using Streetcode.BLL.MediatR.Media.Video.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Media;
 
+[ExcludeFromCodeCoverage]
 public sealed class VideoController : BaseApiController
 {
     [HttpGet]

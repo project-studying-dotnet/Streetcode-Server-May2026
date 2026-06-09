@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.Team.GetAll;
 using Streetcode.BLL.MediatR.Team.GetById;
 
 namespace Streetcode.WebApi.Controllers.Team;
 
+[ExcludeFromCodeCoverage]
 public sealed class TeamController : BaseApiController
 {
     [HttpGet]

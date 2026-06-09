@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.MediatR.Transactions.TransactionLink.GetAll;
 using Streetcode.BLL.MediatR.Transactions.TransactionLink.GetById;
@@ -5,6 +6,7 @@ using Streetcode.BLL.MediatR.Transactions.TransactionLink.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Transactions;
 
+[ExcludeFromCodeCoverage]
 public sealed class TransactLinksController : BaseApiController
 {
     [HttpGet]
