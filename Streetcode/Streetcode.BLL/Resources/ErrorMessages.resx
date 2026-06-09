@@ -702,4 +702,7 @@
   <data name="CommentCannotBeItsOwnParent" xml:space="preserve">
     <value>Comment cannot be its own parent.</value>
   </data>
+  <data name="ParentCommentCannotBeDescendantOfComment" xml:space="preserve">
+    <value>Parent comment cannot be a descendant of the comment being updated.</value>
+  </data>
 </root>

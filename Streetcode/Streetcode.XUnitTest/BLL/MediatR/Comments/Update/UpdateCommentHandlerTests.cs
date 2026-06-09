@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
-using MockQueryable.Moq;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Streetcode.BLL.DTO.Comments;
 using Streetcode.BLL.Interfaces.Logging;
@@ -66,7 +66,7 @@ public class UpdateCommentHandlerTests
             CreatedAt = DateTime.UtcNow.AddDays(-1),
         };
 
-        SetupExistingComment(existingComment);
+        SetupCommentLookup(existingComment);
 
         _repositoryWrapperMock
             .Setup(wrapper => wrapper.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -91,12 +91,7 @@ public class UpdateCommentHandlerTests
         var dto = CreateValidDto();
         var command = new UpdateCommentCommand(dto);
 
-        _commentRepositoryMock
-            .Setup(repo => repo.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<CommentEntity, bool>>>(),
-                null,
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync((CommentEntity?)null);
+        SetupCommentLookup();
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -118,7 +113,7 @@ public class UpdateCommentHandlerTests
             StreetcodeId = 1,
         };
 
-        SetupExistingComment(existingComment);
+        SetupCommentLookup(existingComment);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -141,8 +136,7 @@ public class UpdateCommentHandlerTests
             StreetcodeId = dto.StreetcodeId,
         };
 
-        SetupExistingComment(existingComment);
-        SetupComments([]);
+        SetupCommentLookup(existingComment);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -164,8 +158,9 @@ public class UpdateCommentHandlerTests
             StreetcodeId = dto.StreetcodeId,
         };
 
-        SetupExistingComment(existingComment);
-        SetupComments([new CommentEntity { Id = 2, StreetcodeId = 999, Text = "Parent" }]);
+        SetupCommentLookup(
+            existingComment,
+            new CommentEntity { Id = 2, StreetcodeId = 999, Text = "Parent" });
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -187,13 +182,80 @@ public class UpdateCommentHandlerTests
             StreetcodeId = dto.StreetcodeId,
         };
 
-        SetupExistingComment(existingComment);
+        SetupCommentLookup(existingComment);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.Should().BeTrue();
         result.Errors[0].Message.Should().Be(ErrorMessages.CommentCannotBeItsOwnParent);
         _loggerMock.Verify(logger => logger.LogError(command, ErrorMessages.CommentCannotBeItsOwnParent), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnFail_WhenParentCommentIsDirectDescendant()
+    {
+        var dto = CreateValidDto(id: 1);
+        dto.ParentCommentId = 2;
+        var command = new UpdateCommentCommand(dto);
+        var existingComment = new CommentEntity
+        {
+            Id = 1,
+            Text = "Parent comment",
+            StreetcodeId = dto.StreetcodeId,
+        };
+        var childComment = new CommentEntity
+        {
+            Id = 2,
+            Text = "Child comment",
+            StreetcodeId = dto.StreetcodeId,
+            ParentCommentId = 1,
+        };
+
+        SetupCommentLookup(existingComment, childComment);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailed.Should().BeTrue();
+        result.Errors[0].Message.Should().Be(ErrorMessages.ParentCommentCannotBeDescendantOfComment);
+        _loggerMock.Verify(logger => logger.LogError(command, ErrorMessages.ParentCommentCannotBeDescendantOfComment), Times.Once);
+        _commentRepositoryMock.Verify(repo => repo.Update(It.IsAny<CommentEntity>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnFail_WhenParentCommentIsNestedDescendant()
+    {
+        var dto = CreateValidDto(id: 1);
+        dto.ParentCommentId = 3;
+        var command = new UpdateCommentCommand(dto);
+        var existingComment = new CommentEntity
+        {
+            Id = 1,
+            Text = "Root comment",
+            StreetcodeId = dto.StreetcodeId,
+        };
+        var middleComment = new CommentEntity
+        {
+            Id = 2,
+            Text = "Middle comment",
+            StreetcodeId = dto.StreetcodeId,
+            ParentCommentId = 1,
+        };
+        var nestedComment = new CommentEntity
+        {
+            Id = 3,
+            Text = "Nested comment",
+            StreetcodeId = dto.StreetcodeId,
+            ParentCommentId = 2,
+        };
+
+        SetupCommentLookup(existingComment, middleComment, nestedComment);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailed.Should().BeTrue();
+        result.Errors[0].Message.Should().Be(ErrorMessages.ParentCommentCannotBeDescendantOfComment);
+        _loggerMock.Verify(logger => logger.LogError(command, ErrorMessages.ParentCommentCannotBeDescendantOfComment), Times.Once);
+        _commentRepositoryMock.Verify(repo => repo.Update(It.IsAny<CommentEntity>()), Times.Never);
     }
 
     [Fact]
@@ -208,7 +270,7 @@ public class UpdateCommentHandlerTests
             StreetcodeId = dto.StreetcodeId,
         };
 
-        SetupExistingComment(existingComment);
+        SetupCommentLookup(existingComment);
 
         _repositoryWrapperMock
             .Setup(wrapper => wrapper.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -221,20 +283,17 @@ public class UpdateCommentHandlerTests
         _loggerMock.Verify(logger => logger.LogError(command, ErrorMessages.FailedToUpdateComment), Times.Once);
     }
 
-    private void SetupExistingComment(CommentEntity comment)
+    private void SetupCommentLookup(params CommentEntity[] comments)
     {
         _commentRepositoryMock
             .Setup(repo => repo.GetFirstOrDefaultAsync(
                 It.IsAny<Expression<Func<CommentEntity, bool>>>(),
                 null,
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(comment);
-    }
-
-    private void SetupComments(IEnumerable<CommentEntity> comments)
-    {
-        _commentRepositoryMock
-            .Setup(repo => repo.FindAll())
-            .Returns(comments.AsQueryable().BuildMock());
+            .ReturnsAsync((
+                Expression<Func<CommentEntity, bool>> predicate,
+                Func<IQueryable<CommentEntity>, IIncludableQueryable<CommentEntity, object>>? include,
+                CancellationToken cancellationToken) =>
+                comments.FirstOrDefault(predicate.Compile()));
     }
 }

@@ -1222,6 +1222,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parent comment cannot be a descendant of the comment being updated..
+        /// </summary>
+        public static string ParentCommentCannotBeDescendantOfComment {
+            get {
+                return ResourceManager.GetString("ParentCommentCannotBeDescendantOfComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Partner is required..
         /// </summary>
         public static string PartnerIsRequired {

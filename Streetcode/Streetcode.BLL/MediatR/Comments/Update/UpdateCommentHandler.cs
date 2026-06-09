@@ -1,7 +1,6 @@
 using AutoMapper;
 using FluentResults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.Comments;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Resources;
@@ -47,29 +46,16 @@ public class UpdateCommentHandler : IRequestHandler<UpdateCommentCommand, Result
 
         if (updateComment.ParentCommentId is int parentCommentId)
         {
-            if (parentCommentId == updateComment.Id)
-            {
-                string errorMsg = ErrorMessages.CommentCannotBeItsOwnParent;
-                _logger.LogError(request, errorMsg);
-                return Result.Fail<CommentDto>(errorMsg);
-            }
+            var parentValidationResult = await ValidateParentCommentAsync(
+                request,
+                updateComment.Id,
+                parentCommentId,
+                updateComment.StreetcodeId,
+                cancellationToken);
 
-            var parentComment = await _repositoryWrapper.CommentRepository
-                .FindAll()
-                .FirstOrDefaultAsync(c => c.Id == parentCommentId, cancellationToken);
-
-            if (parentComment is null)
+            if (parentValidationResult is not null)
             {
-                string errorMsg = string.Format(ErrorMessages.ParentCommentNotFound, parentCommentId);
-                _logger.LogError(request, errorMsg);
-                return Result.Fail<CommentDto>(errorMsg);
-            }
-
-            if (parentComment.StreetcodeId != updateComment.StreetcodeId)
-            {
-                string errorMsg = ErrorMessages.ParentCommentMustBelongToSameStreetcode;
-                _logger.LogError(request, errorMsg);
-                return Result.Fail<CommentDto>(errorMsg);
+                return parentValidationResult;
             }
         }
 
@@ -87,5 +73,70 @@ public class UpdateCommentHandler : IRequestHandler<UpdateCommentCommand, Result
         }
 
         return Result.Ok(_mapper.Map<CommentDto>(commentEntity));
+    }
+
+    private async Task<Result<CommentDto>?> ValidateParentCommentAsync(
+        UpdateCommentCommand request,
+        int commentId,
+        int parentCommentId,
+        int streetcodeId,
+        CancellationToken cancellationToken)
+    {
+        if (parentCommentId == commentId)
+        {
+            string errorMsg = ErrorMessages.CommentCannotBeItsOwnParent;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail<CommentDto>(errorMsg);
+        }
+
+        var parentComment = await _repositoryWrapper.CommentRepository
+            .GetFirstOrDefaultAsync(c => c.Id == parentCommentId, cancellationToken: cancellationToken);
+
+        if (parentComment is null)
+        {
+            string errorMsg = string.Format(ErrorMessages.ParentCommentNotFound, parentCommentId);
+            _logger.LogError(request, errorMsg);
+            return Result.Fail<CommentDto>(errorMsg);
+        }
+
+        if (parentComment.StreetcodeId != streetcodeId)
+        {
+            string errorMsg = ErrorMessages.ParentCommentMustBelongToSameStreetcode;
+            _logger.LogError(request, errorMsg);
+            return Result.Fail<CommentDto>(errorMsg);
+        }
+
+        return await ValidateNoCircularParentReferenceAsync(request, commentId, parentComment, cancellationToken);
+    }
+
+    private async Task<Result<CommentDto>?> ValidateNoCircularParentReferenceAsync(
+        UpdateCommentCommand request,
+        int commentId,
+        CommentEntity parentComment,
+        CancellationToken cancellationToken)
+    {
+        var currentParentId = parentComment.ParentCommentId;
+
+        while (currentParentId is int ancestorId)
+        {
+            if (ancestorId == commentId)
+            {
+                string errorMsg = ErrorMessages.ParentCommentCannotBeDescendantOfComment;
+                _logger.LogError(request, errorMsg);
+                return Result.Fail<CommentDto>(errorMsg);
+            }
+
+            var ancestorComment = await _repositoryWrapper.CommentRepository
+                .GetFirstOrDefaultAsync(c => c.Id == ancestorId, cancellationToken: cancellationToken);
+
+            if (ancestorComment is null)
+            {
+                break;
+            }
+
+            currentParentId = ancestorComment.ParentCommentId;
+        }
+
+        return null;
     }
 }
