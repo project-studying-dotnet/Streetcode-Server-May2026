@@ -37,6 +37,8 @@ dotnet_diagnostic.SA1100.severity = none
 
 dotnet_diagnostic.SA1101.severity = none
 
+dotnet_diagnostic.SA1106.severity = none
+
 dotnet_diagnostic.SA1109.severity = none
 
 dotnet_diagnostic.SA1111.severity = none

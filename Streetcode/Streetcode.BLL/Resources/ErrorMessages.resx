@@ -297,6 +297,9 @@
   <data name="StreetcodeIdMustBePositive" xml:space="preserve">
     <value>StreetcodeId must be greater than 0</value>
   </data>
+  <data name="StreetcodeWithIdNotFound" xml:space="preserve">
+    <value>Streetcode with Id {0} does not exist.</value>
+  </data>
   <data name="SubtitleTextIsRequired" xml:space="preserve">
     <value>Subtitle text is required.</value>
   </data>
@@ -644,5 +647,47 @@
   </data>
   <data name="FailedToUpdateText" xml:space="preserve">
     <value>Failed to update Text.</value>
+  </data>
+  <data name="PropertyMustBeGreaterThanOrEqualToValue" xml:space="preserve">
+    <value>Property '{0}' must be greater than or equal to '{1}'</value>
+  </data>
+  <data name="StringPropertyIsRequired" xml:space="preserve">
+    <value>String property '{0}' must be not null, not empty, and not contain only whitespace characters</value>
+  </data>
+  <data name="StringPropertyMustNotExceedCharacters" xml:space="preserve">
+    <value>String property '{0}' must not exceed '{1}' characters</value>
+  </data>
+  <data name="FailedToCreateType" xml:space="preserve">
+    <value>Failed to create '{0}'</value>
+  </data>
+  <data name="FailedToDeleteType" xml:space="preserve">
+    <value>Failed to delete '{0}'</value>
+  </data>
+  <data name="FailedToUpdateType" xml:space="preserve">
+    <value>Failed to update '{0}'</value>
+  </data>
+  <data name="FailedToFindAnyType" xml:space="preserve">
+    <value>Failed to find any '{0}'</value>
+  </data>
+  <data name="TypeWithIdNotFound" xml:space="preserve">
+    <value>'{0}' with property 'Id' equals to '{1}' not found</value>
+  </data>
+  <data name="StructPropertyIsRequired" xml:space="preserve">
+    <value>Struct property '{0}' must not be a default value</value>
+  </data>
+  <data name="PropertyMustBeValidEnumValue" xml:space="preserve">
+    <value>Property '{0}' must be valid enum '{1}'</value>
+  </data>
+  <data name="CommentIsRequired" xml:space="preserve">
+    <value>Comment is required.</value>
+  </data>
+  <data name="CannotSaveCommentToDatabase" xml:space="preserve">
+    <value>Cannot save comment to database.</value>
+  </data>
+  <data name="ParentCommentNotFound" xml:space="preserve">
+    <value>Parent comment with Id {0} not found.</value>
+  </data>
+  <data name="ParentCommentMustBelongToSameStreetcode" xml:space="preserve">
+    <value>Parent comment must belong to the same streetcode.</value>
   </data>
 </root>

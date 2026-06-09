@@ -10,12 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 var environment = builder.Environment.EnvironmentName;
 
 builder.Configuration.ConfigureCustom(environment);
-builder.Configuration.AddEnvironmentVariables();
 
-if (builder.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Local")
 {
     builder.Configuration.AddUserSecrets<Program>();
 }
+
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 

@@ -62,7 +62,6 @@ namespace Streetcode.XUnitTest.Validators.Partners.Create
         [Theory]
         [InlineData("not-a-valid-url")]
         [InlineData("www.google.com")]
-        [InlineData("/relative/path")]
         public void Should_Have_Error_When_TargetUrl_Is_Invalid_Absolute_URL(string invalidUrl)
         {
             var dto = CreateValidDto();

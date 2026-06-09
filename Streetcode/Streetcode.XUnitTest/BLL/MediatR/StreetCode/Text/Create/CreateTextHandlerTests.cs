@@ -9,6 +9,7 @@ using Streetcode.BLL.DTO.Streetcode.TextContent.Text;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Streetcode.TextContent;
 using Streetcode.BLL.MediatR.Streetcode.Text.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
@@ -130,7 +131,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text.Create
             var result = await this.handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors.Should().ContainSingle(e => e.Message.Contains($"Streetcode with Id {requestDto.StreetcodeId} does not exist."));
+            result.Errors.Should().ContainSingle(e =>
+                e.Message.Contains(string.Format(ErrorMessages.StreetcodeWithIdNotFound, requestDto.StreetcodeId)));
 
             this.streetcodeRepoMock.Verify(r => r.FindAll(), Times.Once);
             this.textRepoMock.Verify(r => r.FindAll(), Times.Never);
