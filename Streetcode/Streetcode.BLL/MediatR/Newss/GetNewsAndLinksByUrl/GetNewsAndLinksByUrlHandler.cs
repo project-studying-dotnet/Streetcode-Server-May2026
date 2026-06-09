@@ -29,11 +29,11 @@ namespace Streetcode.BLL.MediatR.Newss.GetNewsAndLinksByUrl
             GetNewsAndLinksByUrlQuery request,
             CancellationToken cancellationToken)
         {
-            var newsDto = await GetNewsDtoByUrlAsync(request.url);
+            var newsDto = await GetNewsDtoByUrlAsync(request.Url);
 
             if (newsDto is null)
             {
-                return FailNewsNotFound<NewsDTOWithURLs>(request, request.url);
+                return FailNewsNotFound<NewsDTOWithURLs>(request, request.Url);
             }
 
             FillImageBase64(newsDto);

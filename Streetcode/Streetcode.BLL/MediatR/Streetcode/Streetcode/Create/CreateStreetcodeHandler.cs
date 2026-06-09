@@ -41,7 +41,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.Create
 
                 newStreetcode = await _repositoryWrapper.StreetcodeRepository.CreateAsync(newStreetcode);
 
-                _repositoryWrapper?.SaveChangesAsync(cancellationToken);
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 var tagIds = request.newStreetcodeContent.Tags.Select(t => t.Id).ToList();
 

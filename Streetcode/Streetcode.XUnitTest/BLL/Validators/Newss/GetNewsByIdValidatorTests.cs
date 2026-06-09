@@ -3,7 +3,7 @@ using Streetcode.BLL.MediatR.Newss.GetById;
 using Streetcode.BLL.Validators.Newss.GetById;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Validators.Newss.GetById
+namespace Streetcode.XUnitTest.BLL.Validators.Newss
 {
     public class GetNewsByIdValidatorTests
     {

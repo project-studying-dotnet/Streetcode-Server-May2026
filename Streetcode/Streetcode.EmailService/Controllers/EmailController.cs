@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Mvc;
 using Streetcode.EmailService.Interfaces;
 using Streetcode.EmailService.Models;
 using Streetcode.EmailService.Models.Requests;
@@ -9,18 +10,17 @@ namespace Streetcode.EmailService.Controllers;
 [Route("api/email")]
 public class EmailController : ControllerBase
 {
-    private const string EmailSentSuccessfully = "Email was sent successfully.";
-    private const string EmailNotSent = "Email was not sent. Check SMTP configuration.";
+    private const string EmailQueuedSuccessfully = "Email queued successfully.";
 
-    private readonly IEmailService _emailService;
+    private readonly IBackgroundJobClient _backgroundJobClient;
 
-    public EmailController(IEmailService emailService)
+    public EmailController(IBackgroundJobClient backgroundJobClient)
     {
-        _emailService = emailService;
+        _backgroundJobClient = backgroundJobClient;
     }
 
     [HttpPost("send")]
-    public async Task<IActionResult> Send([FromBody] SendEmailRequest request)
+    public IActionResult Send([FromBody] SendEmailRequest request)
     {
         var message = new Message
         {
@@ -30,10 +30,9 @@ public class EmailController : ControllerBase
             Content = request.Content,
         };
 
-        var result = await _emailService.SendEmailAsync(message);
+        _backgroundJobClient.Enqueue<IEmailService>(
+            emailService => emailService.SendEmailAsync(message));
 
-        return result
-            ? Ok(EmailSentSuccessfully)
-            : BadRequest(EmailNotSent);
+        return Accepted(EmailQueuedSuccessfully);
     }
 }

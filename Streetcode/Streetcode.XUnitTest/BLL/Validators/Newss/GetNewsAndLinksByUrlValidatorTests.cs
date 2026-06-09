@@ -4,7 +4,7 @@ using Streetcode.BLL.Resources;
 using Streetcode.BLL.Validators.Newss.GetNewsAndLinksByUrl;
 using Xunit;
 
-namespace Streetcode.XUnitTest.Validators.Newss.GetNewsAndLinksByUrl
+namespace Streetcode.XUnitTest.BLL.Validators.Newss
 {
     public class GetNewsAndLinksByUrlValidatorTests
     {
@@ -25,29 +25,27 @@ namespace Streetcode.XUnitTest.Validators.Newss.GetNewsAndLinksByUrl
 
             var result = _validator.TestValidate(query);
 
-            result.ShouldHaveValidationErrorFor(x => x.url);
+            result.ShouldHaveValidationErrorFor(x => x.Url)
+                  .WithErrorMessage(ErrorMessages.UrlIsRequired);
         }
 
-        [Theory]
-        [InlineData("just-some-text")]
-        [InlineData("www.google.com")]
-        [InlineData("/local/path/to/news")]
-        [InlineData("http:relative-path")]
-        public void Should_Have_Error_When_Url_Is_Not_A_Valid_Absolute_URL(string invalidUrl)
+        [Fact]
+        public void Should_Have_Error_When_Url_Exceeds_Max_Length()
         {
-            var query = new GetNewsAndLinksByUrlQuery(invalidUrl);
+            var longUrl = new string('a', 2049);
+            var query = new GetNewsAndLinksByUrlQuery(longUrl);
 
             var result = _validator.TestValidate(query);
 
-            result.ShouldHaveValidationErrorFor(x => x.url)
-                  .WithErrorMessage(ErrorMessages.UrlMustBeValidAbsoluteUrl);
+            result.ShouldHaveValidationErrorFor(x => x.Url)
+                  .WithErrorMessage(string.Format(ErrorMessages.UrlMustNotExceedCharacters, 2048));
         }
 
         [Theory]
+        [InlineData("lol")]
+        [InlineData("some-valid-news-slug")]
         [InlineData("https://streetcode.ua")]
-        [InlineData("http://localhost:5001/news/1")]
-        [InlineData("https://www.google.com/search?q=streetcode")]
-        public void Should_Not_Have_Errors_When_Url_Is_Valid_Absolute_URL(string validUrl)
+        public void Should_Not_Have_Errors_When_Url_Is_Valid(string validUrl)
         {
             var query = new GetNewsAndLinksByUrlQuery(validUrl);
 

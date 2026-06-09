@@ -10,8 +10,8 @@ using Streetcode.BLL.MediatR.Newss.GetById;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
-using ImageEntity = global::Streetcode.DAL.Entities.Media.Images.Image;
-using NewsEntity = global::Streetcode.DAL.Entities.News.News;
+using ImageEntity = Streetcode.DAL.Entities.Media.Images.Image;
+using NewsEntity = Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.GetById
 {

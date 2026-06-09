@@ -7,9 +7,9 @@ using Streetcode.BLL.DTO.Media.Video;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Media;
 using Streetcode.BLL.MediatR.Media.Video.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Media;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
 using Xunit;
 
@@ -128,7 +128,7 @@ public class CreateVideoHandlerTests
 
         result.Errors.Should().ContainSingle(
             e => e.Message.Contains(
-                $"Streetcode with Id {requestDto.StreetcodeId} does not exist."));
+                string.Format(ErrorMessages.StreetcodeWithIdNotFound, requestDto.StreetcodeId)));
 
         _streetcodeRepoMock.Verify(r => r.FindAll(), Times.Once);
 

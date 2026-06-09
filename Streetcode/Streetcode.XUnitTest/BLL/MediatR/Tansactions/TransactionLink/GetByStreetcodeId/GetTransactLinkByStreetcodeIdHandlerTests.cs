@@ -9,8 +9,8 @@ using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
 
-using TransactionLinkEntity = Streetcode.DAL.Entities.Transactions.TransactionLink;
 using StreetcodeEntity = Streetcode.DAL.Entities.Streetcode.StreetcodeContent;
+using TransactionLinkEntity = Streetcode.DAL.Entities.Transactions.TransactionLink;
 
 namespace Streetcode.XUnitTest.MediatRTests.Transactions.TransactionLink.GetByStreetcodeId;
 

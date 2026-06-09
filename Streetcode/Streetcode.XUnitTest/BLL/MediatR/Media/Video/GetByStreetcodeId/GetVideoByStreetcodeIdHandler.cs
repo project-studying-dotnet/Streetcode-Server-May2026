@@ -3,16 +3,15 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
+using Repositories.Interfaces;
 using Streetcode.BLL.DTO.Media.Video;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Media.Video.GetByStreetcodeId;
-using Repositories.Interfaces;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode;
 using Xunit;
-
-using StreetcodeContentEntity = global::Streetcode.DAL.Entities.Streetcode.StreetcodeContent;
-using VideoEntity = global::Streetcode.DAL.Entities.Media.Video;
+using StreetcodeContentEntity = Streetcode.DAL.Entities.Streetcode.StreetcodeContent;
+using VideoEntity = Streetcode.DAL.Entities.Media.Video;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Media.Video.GetByStreetcodeId;
 
