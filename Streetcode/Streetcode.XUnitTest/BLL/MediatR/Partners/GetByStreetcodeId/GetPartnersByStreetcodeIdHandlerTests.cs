@@ -109,6 +109,12 @@ public class GetPartnersByStreetcodeIdHandlerTests
         var partners = new List<Partner> { GetDefaultPartnerEntity(streetcode) };
         var partnerDTOs = new List<PartnerDTO> { GetDefaultPartnerDto() };
 
+        _streetcodeRepositoryMock
+        .Setup(repo => repo.GetSingleOrDefaultAsync(
+            It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
+            null))
+        .ReturnsAsync(streetcode);
+
         _partnersRepositoryMock
             .Setup(repo => repo.GetAllAsync(It.IsAny<ISpecification<Partner>>()))
             .ReturnsAsync(partners);
