@@ -1,15 +1,14 @@
 using System.Collections.Frozen;
-using System.Diagnostics.CodeAnalysis;
 using MediatR;
 using FluentResults;
 using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.MediatR.ResultVariations;
 
 namespace Streetcode.WebApi.Controllers;
 
 [ApiController]
-[ExcludeFromCodeCoverage]
 [Route("api/[controller]/[action]")]
 public class BaseApiController : ControllerBase
 {
@@ -25,7 +24,7 @@ public class BaseApiController : ControllerBase
 
     protected UserRole? GetUserRole()
     {
-        foreach(UserRole role in UserRoles)
+        foreach(UserRole role in BaseApiController.UserRoles)
         {
             string role_str = role.ToString();
             if(base.User.IsInRole(role_str))
@@ -43,7 +42,7 @@ public class BaseApiController : ControllerBase
             {
                 return base.Ok(result.Value);
             }
-            return (result.Value is null) ? base.NotFound("Found result matching null") : base.Ok(result.Value);
+            return (result.Value is null) ? base.NotFound(ErrorMessages.FoundResultMatchingNull) : base.Ok(result.Value);
         }
         return base.BadRequest(result.Reasons);
     }
