@@ -140,7 +140,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T>
             query = query.Take(spec.Take.Value);
         }
 
-        return query.ToListAsync();
+        return await query.ToListAsync();
     }
 
     public async Task<IEnumerable<T>?> GetAllAsync(

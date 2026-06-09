@@ -1,4 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using MockQueryable.Moq;
@@ -15,36 +20,16 @@ using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Entities.Toponyms;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Toponyms;
+using Streetcode.DAL.Specifications.Base;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Toponyms;
 
+/// <summary>
+/// Initializes a new instance of the <see cref="GetToponymsByStreetcodeIdHandlerTests"/> class.
+/// </summary>
 public sealed class GetToponymsByStreetcodeIdHandlerTests
 {
-    using System.Linq.Expressions;
-    using AutoMapper;
-    using Streetcode.DAL.Entities.Streetcode;
-    using FluentAssertions;
-    using MockQueryable.Moq;
-    using Moq;
-    using Streetcode.BLL.DTO.AdditionalContent.Coordinates.Types;
-    using Streetcode.BLL.DTO.AdditionalContent.Tag;
-    using Streetcode.BLL.DTO.Streetcode;
-    using Streetcode.BLL.DTO.Toponyms;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
-    using Streetcode.DAL.Entities.AdditionalContent;
-    using Streetcode.DAL.Entities.AdditionalContent.Coordinates.Types;
-    using Streetcode.DAL.Entities.Toponyms;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Streetcode.DAL.Repositories.Interfaces.Toponyms;
-    using Streetcode.DAL.Specifications.Base;
-    using Xunit;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GetToponymsByStreetcodeIdHandlerTests"/> class.
-    /// </summary>
-    public sealed class GetToponymsByStreetcodeIdHandlerTests
     private readonly IMapper _mapper;
     private readonly Mock<ILoggerService> _loggerMock;
     private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
@@ -78,81 +63,59 @@ public sealed class GetToponymsByStreetcodeIdHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnToponyms_WhenFound()
     {
-        var query = new GetToponymsByStreetcodeIdQuery(1);
-
-        var toponyms = new List<Toponym>
+        // Arrange
+        IQueryable<Toponym> toponyms = new List<Toponym>()
         {
-            // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>()
+            new()
             {
-                new()
+                Id = 1,
+                StreetName = "Шевченка",
+                Oblast = "Київська",
+                Streetcodes = new List<StreetcodeContent>()
                 {
-                    Id = 1,
-                    StreetName = "Шевченка",
-                    Oblast = "Київська",
-                    Streetcodes = new List<StreetcodeContent>()
+                    new()
                     {
-                        new()
-                        {
-                            Id = 1,
-                        },
-                        new()
-                        {
-                            Id = 2,
-                        },
+                        Id = 1,
+                    },
+                    new()
+                    {
+                        Id = 2,
                     },
                 },
-            }.BuildMock();
-            List<ToponymDTO> expected_toponyms = new()
-            {
-                this.mapper.Map<ToponymDTO>(toponyms.First()),
-            };
-            GetToponymsByStreetcodeIdQuery query = new(1);
-            this.toponymRepositoryMock.Setup(
-                r => r.FindAll(It.IsAny<ISpecification<Toponym>>())
-            ).Returns(toponyms);
+            },
+        }.BuildMock();
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(
-                r => r.FindAll(It.IsAny<ISpecification<Toponym>>()),
-                Times.Once
-            );
-        }
-
-        /// <summary>
-        /// Should return toponyms with unique street name when found by streetcode id.
-        /// </summary>
-        /// <returns>Awaitable task.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnUniqueToponyms_WhenFound()
+        List<ToponymDTO> expectedToponyms = new()
         {
             _mapper.Map<ToponymDTO>(toponyms.First()),
         };
 
-        _toponymRepositoryMock
-            .Setup(r => r.FindAll(
-                It.IsAny<Expression<Func<Toponym, bool>>>()))
-            .Returns(toponyms);
+        GetToponymsByStreetcodeIdQuery query = new(1);
 
+        _toponymRepositoryMock.Setup(
+            r => r.FindAll(It.IsAny<ISpecification<Toponym>>())
+        ).Returns(toponyms);
+
+        // Act
         var result = await _handler.Handle(query, CancellationToken.None);
 
+        // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(expectedToponyms);
-
         _toponymRepositoryMock.Verify(
-            r => r.FindAll(
-                It.IsAny<Expression<Func<Toponym, bool>>>()),
-            Times.Once);
+            r => r.FindAll(It.IsAny<ISpecification<Toponym>>()),
+            Times.Once
+        );
     }
 
+    /// <summary>
+    /// Should return toponyms with unique street name when found by streetcode id.
+    /// </summary>
+    /// <returns>Awaitable task.</returns>
     [Fact]
     public async Task Handle_ShouldReturnUniqueToponyms_WhenFound()
     {
+        // Arrange
         var query = new GetToponymsByStreetcodeIdQuery(1);
 
         var toponyms = new List<Toponym>
@@ -168,43 +131,56 @@ public sealed class GetToponymsByStreetcodeIdHandlerTests
 
         _toponymRepositoryMock
             .Setup(r => r.FindAll(
-                It.IsAny<Expression<Func<Toponym, bool>>>()))
+                It.IsAny<ISpecification<Toponym>>()))
             .Returns(toponyms);
 
+        // Act
         var result = await _handler.Handle(query, CancellationToken.None);
 
+        // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(expectedToponyms);
 
         _toponymRepositoryMock.Verify(
             r => r.FindAll(
-                It.IsAny<Expression<Func<Toponym, bool>>>()),
+                It.IsAny<ISpecification<Toponym>>()),
             Times.Once);
     }
 
+    /// <summary>
+    /// Should return error and log it when toponyms not found by streetcode id.
+    /// </summary>
+    /// <returns>Awaitable task.</returns>
     [Fact]
     public async Task Handle_ShouldReturnError_WhenNotFound()
     {
-        var query = new GetToponymsByStreetcodeIdQuery(3);
+        // Arrange
+        GetToponymsByStreetcodeIdQuery query = new(3);
 
-        _toponymRepositoryMock
-            .Setup(r => r.FindAll(
-                It.IsAny<Expression<Func<Toponym, bool>>>()))
-            .Returns(new List<Toponym>().BuildMock());
+        _toponymRepositoryMock.Setup(
+            r => r.FindAll(It.IsAny<ISpecification<Toponym>>())
+        ).Returns(Enumerable.Empty<Toponym>().BuildMock());
 
+        _loggerMock.Setup(
+            l => l.LogError(query, It.IsAny<string>())
+        );
+
+        // Act
         var result = await _handler.Handle(query, CancellationToken.None);
 
+        // Assert
         result.IsSuccess.Should().BeFalse();
         result.Errors.Should().NotBeEmpty();
 
         _toponymRepositoryMock.Verify(
-            r => r.FindAll(
-                It.IsAny<Expression<Func<Toponym, bool>>>()),
-            Times.Once);
+            r => r.FindAll(It.IsAny<ISpecification<Toponym>>()),
+            Times.Once
+        );
 
         _loggerMock.Verify(
             l => l.LogError(query, It.IsAny<string>()),
-            Times.Once);
+            Times.Once
+        );
     }
 
     private static Toponym CreateToponym(
@@ -226,61 +202,6 @@ public sealed class GetToponymsByStreetcodeIdHandlerTests
                 {
                     Id = 2,
                 },
-            }.BuildMock();
-            List<ToponymDTO> expected_toponyms = new()
-            {
-                this.mapper.Map<ToponymDTO>(toponyms.First()),
-            };
-            GetToponymsByStreetcodeIdQuery query = new(1);
-            this.toponymRepositoryMock.Setup(
-                r => r.FindAll(It.IsAny<ISpecification<Toponym>>())
-            ).Returns(toponyms);
-
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().BeEquivalentTo(expected_toponyms);
-            this.toponymRepositoryMock.Verify(
-                r => r.FindAll(It.IsAny<ISpecification<Toponym>>()),
-                Times.Once
-            );
-        }
-
-        /// <summary>
-        /// Should return error and log it when toponyms not found by streetcode id.
-        /// </summary>
-        /// <returns>Awaitable task.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnError_WhenNotFound()
-        {
-            // Arrange
-            GetToponymsByStreetcodeIdQuery query = new(3);
-            this.toponymRepositoryMock.Setup(
-                r => r.FindAll(It.IsAny<ISpecification<Toponym>>())
-            ).Returns(Enumerable.Empty<Toponym>().BuildMock());
-            this.loggerMock.Setup(
-                l => l.LogError(query, It.IsAny<string>())
-            );
-
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            // Assert
-            result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().NotBeEmpty();
-            this.toponymRepositoryMock.Verify(
-                r => r.FindAll(It.IsAny<ISpecification<Toponym>>()),
-                Times.Once
-            );
-            this.loggerMock.Verify(
-                l => l.LogError(query, It.IsAny<string>()),
-                Times.Once
-            );
-        }
-    }
-}
-            },
+            }
         };
 }
