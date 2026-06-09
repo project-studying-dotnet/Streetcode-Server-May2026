@@ -1,17 +1,17 @@
-﻿using AutoMapper;
-using FluentResults;
-using Moq;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
-using Streetcode.DAL.Entities.Streetcode.TextContent;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Streetcode.BLL.DTO.Streetcode.TextContent;
 using Streetcode.BLL.Interfaces.Logging;
-using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete;
+using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Entities.Streetcode.TextContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-using Streetcode.BLL.DTO.Streetcode.TextContent;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
-using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
+
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.RelatedTerm;
 
 namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermId
@@ -39,6 +39,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
               _repositoryWrapperMock.Object,
               _loggerMock.Object);
         }
+
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenRelatedTermsIsNull()
         {
@@ -47,16 +48,17 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetAllAsync(
                     It.IsAny<Expression<Func<Entity, bool>>>(),
-                    It.IsAny<Func<IQueryable<Entity>, IIncludableQueryable<Entity, object>>?>()))
+                    It.IsAny<Func<IQueryable<Entity>,
+                    IIncludableQueryable<Entity, object>>?>()))
                 .ReturnsAsync((IEnumerable<Entity>)null!);
 
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot get words by term id");
+            result.Errors[0].Message.Should().Be(ErrorMessages.CannotGetWordsByTermId);
 
             _loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot get words by term id"),
+                logger => logger.LogError(query, ErrorMessages.CannotGetWordsByTermId),
                 Times.Once);
 
             _mapperMock.Verify(
@@ -70,9 +72,9 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             var query = new GetAllRelatedTermsByTermIdQuery(1);
 
             var relatedTerms = new List<Entity>
-        {
-            new Entity { Id = 1, TermId = 1, Word = "test" }
-        };
+            {
+                new Entity { Id = 1, TermId = 1, Word = "test" }
+            };
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetAllAsync(
@@ -87,10 +89,10 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot create DTOs for related words!");
+            result.Errors[0].Message.Should().Be(ErrorMessages.CannotCreateRelatedWordDtos);
 
             _loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot create DTOs for related words!"),
+                logger => logger.LogError(query, ErrorMessages.CannotCreateRelatedWordDtos),
                 Times.Once);
         }
 
@@ -100,14 +102,24 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
             var query = new GetAllRelatedTermsByTermIdQuery(1);
 
             var relatedTerms = new List<Entity>
-        {
-            new Entity { Id = 1, TermId = 1, Word = "test" }
-        };
+            {
+                new Entity
+                {
+                    Id = 1,
+                    TermId = 1,
+                    Word = "test"
+                }
+            };
 
             var relatedTermsDto = new List<RelatedTermDTO>
-        {
-            new RelatedTermDTO { Id = 1, TermId = 1, Word = "test" }
-        };
+            {
+                new RelatedTermDTO
+                {
+                    Id = 1,
+                    TermId = 1,
+                    Word = "test"
+                }
+            };
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetAllAsync(
@@ -128,6 +140,5 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.GetAllByTermI
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
-
     }
 }

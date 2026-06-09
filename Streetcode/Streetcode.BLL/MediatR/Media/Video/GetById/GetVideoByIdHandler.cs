@@ -4,10 +4,11 @@ using MediatR;
 using Streetcode.BLL.DTO.Media.Video;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Media.Video.GetById;
 
-public class GetVideoByIdHandler : IRequestHandler<GetVideoByIdQuery, Result<VideoDTO>>
+public class GetVideoByIdHandler : IRequestHandler<GetVideoByIdQuery, Result<VideoDto>>
 {
     private readonly IMapper _mapper;
     private readonly IRepositoryWrapper _repositoryWrapper;
@@ -20,17 +21,19 @@ public class GetVideoByIdHandler : IRequestHandler<GetVideoByIdQuery, Result<Vid
         _logger = logger;
     }
 
-    public async Task<Result<VideoDTO>> Handle(GetVideoByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<VideoDto>> Handle(GetVideoByIdQuery request, CancellationToken cancellationToken)
     {
-        var video = await _repositoryWrapper.VideoRepository.GetFirstOrDefaultAsync(f => f.Id == request.Id);
+        var video = await _repositoryWrapper.VideoRepository.GetFirstOrDefaultAsync(
+            f => f.Id == request.Id,
+            cancellationToken: cancellationToken);
 
         if (video is null)
         {
-            string errorMsg = $"Cannot find a video with corresponding id: {request.Id}";
+            string errorMsg = string.Format(ErrorMessages.CannotFindVideoById, request.Id);
             _logger.LogError(request, errorMsg);
             return Result.Fail(new Error(errorMsg));
         }
 
-        return Result.Ok(_mapper.Map<VideoDTO>(video));
+        return Result.Ok(_mapper.Map<VideoDto>(video));
     }
 }

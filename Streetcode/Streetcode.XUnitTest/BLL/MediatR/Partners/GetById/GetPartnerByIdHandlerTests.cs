@@ -1,15 +1,15 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
-using FluentResults;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.Partners;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Partners;
-using System.Linq.Expressions;
 using Xunit;
 
 namespace Streetcode.BLL.MediatR.Partners.GetById
@@ -42,6 +42,7 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenPartnersIsNull()
         {
+            // Arrange
             int id = 1;
             var query = new GetPartnerByIdQuery(id);
 
@@ -51,13 +52,15 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
                     It.IsAny<Func<IQueryable<Partner>, IIncludableQueryable<Partner, object>>?>()))
                 .ReturnsAsync((IEnumerable<Partner>)null!);
 
+            // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
+            // Assert
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot find any partner with corresponding id: " + id);
+            result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindPartnerById, id));
 
             _loggerMock.Verify(
-                logger => logger.LogError(query, "Cannot find any partner with corresponding id: " + id),
+                logger => logger.LogError(query, string.Format(ErrorMessages.CannotFindPartnerById, id)),
                 Times.Once);
 
             _mapperMock.Verify(
@@ -68,37 +71,26 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
         [Fact]
         public async Task Handle_ShouldReturnOk_WhenPartnersExist()
         {
+            // Arrange
             int id = 1;
             var query = new GetPartnerByIdQuery(id);
-
-            var partner = new Partner {
-                Id = 1,
-                Title = "Title 1",
-                LogoId = 1, IsKeyPartner = true,
-                IsVisibleEverywhere = true,
-                Streetcodes = new List<StreetcodeContent>(),
-            };
-            var partnerDto = new PartnerDTO
-            {
-                Id = 1,
-                Title = "Title 1",
-                LogoId = 1,
-                IsKeyPartner = true,
-                IsVisibleEverywhere = true,
-            };
+            var partner = GetDefaultPartnerEntity();
+            var partnerDto = GetDefaultPartnerDto();
 
             _partnersRepositoryMock
                 .Setup(repo => repo.GetSingleOrDefaultAsync(
                     It.IsAny<Expression<Func<Partner, bool>>>(),
                     It.IsAny<Func<IQueryable<Partner>, IIncludableQueryable<Partner, object>>?>()))
-                .Returns(Task.FromResult(partner));
+                .Returns(Task.FromResult<Partner?>(partner));
 
             _mapperMock
                 .Setup(mapper => mapper.Map<PartnerDTO>(partner))
                 .Returns(partnerDto);
 
+            // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
+            // Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(partnerDto);
 
@@ -107,5 +99,27 @@ namespace Streetcode.BLL.MediatR.Partners.GetById
                 Times.Never);
         }
 
+        #region Test Data Factories
+
+        private static Partner GetDefaultPartnerEntity() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+            Streetcodes = new List<StreetcodeContent>(),
+        };
+
+        private static PartnerDTO GetDefaultPartnerDto() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+        };
+
+        #endregion
     }
 }

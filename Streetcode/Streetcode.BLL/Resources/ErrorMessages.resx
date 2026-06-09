@@ -1,0 +1,693 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotConvertNullToNews" xml:space="preserve">
+    <value>Cannot convert null to news</value>
+  </data>
+  <data name="CannotFindAnyText" xml:space="preserve">
+    <value>Cannot find any text</value>
+  </data>
+  <data name="CannotFindTextById" xml:space="preserve">
+    <value>Cannot find any text with corresponding id: {0}</value>
+  </data>
+  <data name="FailedToCreateNews" xml:space="preserve">
+    <value>Failed to create a news</value>
+  </data>
+  <data name="FailedToDeleteNews" xml:space="preserve">
+    <value>Failed to delete news</value>
+  </data>
+  <data name="FailedToUpdateNews" xml:space="preserve">
+    <value>Failed to update news</value>
+  </data>
+  <data name="NoNewsFoundByUrl" xml:space="preserve">
+    <value>No news by entered Url - {0}</value>
+  </data>
+  <data name="NoNewsFoundById" xml:space="preserve">
+    <value>No news found by entered Id - {0}</value>
+  </data>
+  <data name="ThereAreNoNewsInDatabase" xml:space="preserve">
+    <value>There are no news in the database</value>
+  </data>
+  <data name="FailedToCreateAudio" xml:space="preserve">
+    <value>Failed to create an audio</value>
+  </data>
+  <data name="CannotFindAudioByCategoryId" xml:space="preserve">
+    <value>Cannot find an audio with corresponding categoryId: {0}</value>
+  </data>
+  <data name="CannotFindAnyAudios" xml:space="preserve">
+    <value>Cannot find any audios</value>
+  </data>
+  <data name="CannotFindAudioById" xml:space="preserve">
+    <value>Cannot find an audio with corresponding id: {0}</value>
+  </data>
+  <data name="CannotFindAudioByStreetcodeId" xml:space="preserve">
+    <value>Cannot find an audio with the corresponding streetcode id: {0}</value>
+  </data>
+  <data name="NoPartnerWithSuchId" xml:space="preserve">
+    <value>No partner with such id.</value>
+  </data>
+  <data name="CannotFindPartnerById" xml:space="preserve">
+    <value>Cannot find any partner with corresponding id: {0}</value>
+  </data>
+  <data name="CannotFindPartnersByStreetcodeId" xml:space="preserve">
+    <value>Cannot find any partners with corresponding streetcode id: {0}</value>
+  </data>
+  <data name="CannotFindPartnersByStreetcode" xml:space="preserve">
+    <value>Cannot find a partners by a streetcode id: {0}</value>
+  </data>
+  <data name="CannotCreateRelatedWordForTerm" xml:space="preserve">
+    <value>Cannot create new related word for a term!</value>
+  </data>
+  <data name="RelatedWordAlreadyExists" xml:space="preserve">
+    <value>Слово з цим визначенням уже існує</value>
+  </data>
+  <data name="CannotSaveRelatedWordChanges" xml:space="preserve">
+    <value>Cannot save changes in the database after related word creation!</value>
+  </data>
+  <data name="CannotMapEntity" xml:space="preserve">
+    <value>Cannot map entity!</value>
+  </data>
+  <data name="CannotFindRelatedTerm" xml:space="preserve">
+    <value>Cannot find a related term: {0}</value>
+  </data>
+  <data name="FailedToDeleteRelatedTerm" xml:space="preserve">
+    <value>Failed to delete a related term</value>
+  </data>
+  <data name="CannotGetWordsByTermId" xml:space="preserve">
+    <value>Cannot get words by term id</value>
+  </data>
+  <data name="CannotCreateRelatedWordDtos" xml:space="preserve">
+    <value>Cannot create DTOs for related words!</value>
+  </data>
+  <data name="CannotConvertNullToStreetcodeCoordinate" xml:space="preserve">
+    <value>Cannot convert null to streetcodeCoordinate</value>
+  </data>
+  <data name="FailedToCreateStreetcodeCoordinate" xml:space="preserve">
+    <value>Failed to create a streetcodeCoordinate</value>
+  </data>
+  <data name="CannotFindCoordinateByCategoryId" xml:space="preserve">
+    <value>Cannot find a coordinate with corresponding categoryId: {0}</value>
+  </data>
+  <data name="FailedToDeleteCoordinate" xml:space="preserve">
+    <value>Failed to delete a coordinate</value>
+  </data>
+  <data name="FailedToUpdateStreetcodeCoordinate" xml:space="preserve">
+    <value>Failed to update a streetcodeCoordinate</value>
+  </data>
+  <data name="FailedToDeleteAnAudio" xml:space="preserve">
+    <value>Failed to delete an audio</value>
+  </data>
+  <data name="CannotFindAnyArts" xml:space="preserve">
+    <value>Cannot find any arts</value>
+  </data>
+  <data name="CannotFindArtById" xml:space="preserve">
+    <value>Cannot find an art with corresponding id: {0}</value>
+  </data>
+  <data name="CannotFindArtByStreetcodeId" xml:space="preserve">
+    <value>Cannot find any art with corresponding streetcode id: {0}</value>
+  </data>
+  <data name="CannotFindAnyTeamLinks" xml:space="preserve">
+    <value>Cannot find any team links</value>
+  </data>
+  <data name="DefaultConnectionIsMissing" xml:space="preserve">
+    <value>Default Connection is missing</value>
+  </data>
+  <data name="EmailConfigurationIsMissing" xml:space="preserve">
+    <value>Email Configuration is missing</value>
+  </data>
+  <data name="CannotFindAnyTerm" xml:space="preserve">
+    <value>Cannot find any term</value>
+  </data>
+  <data name="CannotFindAnyPartners" xml:space="preserve">
+    <value>Cannot find any partners</value>
+  </data>
+  <data name="TextWasNotParsedSuccessfully" xml:space="preserve">
+    <value>text was not parsed successfully</value>
+  </data>
+  <data name="CannotFindTermById" xml:space="preserve">
+    <value>Cannot find any term with corresponding id: {0}</value>
+  </data>
+  <data name="TagTitleIsEmpty" xml:space="preserve">
+    <value>Test tag</value>
+  </data>
+  <data name="CannotSaveHistoricalContextToDatabase" xml:space="preserve">
+    <value>Cannot save historical context to database</value>
+  </data>
+  <data name="HistoricalContextWithIdNotFound" xml:space="preserve">
+    <value>Historical context with id {0} not found</value>
+  </data>
+  <data name="FailedToDeleteHistoricalContextWithId" xml:space="preserve">
+    <value>Failed to delete historical context with id {0}</value>
+  </data>
+  <data name="FailedToUpdateHistoricalContextWithId" xml:space="preserve">
+    <value>Failed to update historical context with id {0}</value>
+  </data>
+  <data name="CannotSaveTimelineItem" xml:space="preserve">
+    <value>Cannot save timeline item to database</value>
+  </data>
+  <data name="TimelineItemWithIdNotFound" xml:space="preserve">
+    <value>Timeline item with id {0} not found</value>
+  </data>
+  <data name="FailedToDeleteTimelineItemWithId" xml:space="preserve">
+    <value>Failed to delete timeline item with id {0}</value>
+  </data>
+  <data name="CannotFindOneOrMoreHistoricalContexts" xml:space="preserve">
+    <value>Cannot find one or more historical contexts</value>
+  </data>
+  <data name="FailedToUpdateTimelineItemWithId" xml:space="preserve">
+    <value>Failed to update timeline item with id {0}</value>
+  </data>
+  <data name="CannotFindVideoById" xml:space="preserve">
+    <value>Cannot find a video with corresponding id: {0}</value>
+  </data>
+  <data name="FailedToCreateRelation" xml:space="preserve">
+    <value>Failed to create a relation.</value>
+  </data>
+  <data name="NoExistingStreetcodeWithId" xml:space="preserve">
+    <value>No existing streetcode with id: {0}</value>
+  </data>
+  <data name="CoordinateIsRequired" xml:space="preserve">
+    <value>Coordinate is required</value>
+  </data>
+  <data name="CoordinateIdMustBePositive" xml:space="preserve">
+    <value>Coordinate Id must be greater than 0</value>
+  </data>
+  <data name="LatitudeMustBeBetweenMinus90And90" xml:space="preserve">
+    <value>Latitude must be between -90 and 90.</value>
+  </data>
+  <data name="LongitudeMustBeBetweenMinus180And180" xml:space="preserve">
+    <value>Longitude must be between -180 and 180.</value>
+  </data>
+  <data name="StreetcodeIdMustBePositive" xml:space="preserve">
+    <value>StreetcodeId must be greater than 0</value>
+  </data>
+  <data name="StreetcodeWithIdNotFound" xml:space="preserve">
+    <value>Streetcode with Id {0} does not exist.</value>
+  </data>
+  <data name="SubtitleTextIsRequired" xml:space="preserve">
+    <value>Subtitle text is required.</value>
+  </data>
+  <data name="TitleIsRequired" xml:space="preserve">
+    <value>Title is required.</value>
+  </data>
+  <data name="TitleCannotBeWhitespace" xml:space="preserve">
+    <value>Title cannot contain only whitespace.</value>
+  </data>
+  <data name="TagIsRequired" xml:space="preserve">
+    <value>Tag is required.</value>
+  </data>
+  <data name="TitleMustNotExceedCharacters" xml:space="preserve">
+    <value>Title must not exceed {0} characters.</value>
+  </data>
+  <data name="EmailFromMustNotExceedCharacters" xml:space="preserve">
+    <value>Email 'From' field must not exceed {0} characters.</value>
+  </data>
+  <data name="ContentIsRequired" xml:space="preserve">
+    <value>Content is required.</value>
+  </data>
+  <data name="ContentLengthMustBeBetween" xml:space="preserve">
+    <value>Content length must be between {0} and {1} characters.</value>
+  </data>
+  <data name="EmailPayloadIsRequired" xml:space="preserve">
+    <value>Email payload is required.</value>
+  </data>
+  <data name="DescriptionMustNotExceedCharacters" xml:space="preserve">
+    <value>Description must not exceed {0} characters.</value>
+  </data>
+  <data name="AudioIsRequired" xml:space="preserve">
+    <value>Audio is required.</value>
+  </data>
+  <data name="ImageIsRequired" xml:space="preserve">
+    <value>Image is required.</value>
+  </data>
+  <data name="AltMustNotExceedCharacters" xml:space="preserve">
+    <value>Alt text must not exceed {0} characters.</value>
+  </data>
+  <data name="BaseFormatIsRequired" xml:space="preserve">
+    <value>Base format is required.</value>
+  </data>
+  <data name="MimeTypeIsRequired" xml:space="preserve">
+    <value>MIME type is required.</value>
+  </data>
+  <data name="ExtensionIsRequired" xml:space="preserve">
+    <value>Extension is required.</value>
+  </data>
+  <data name="MimeTypeMustNotExceedCharacters" xml:space="preserve">
+    <value>MIME type must not exceed {0} characters.</value>
+  </data>
+  <data name="ExtensionMustNotExceedCharacters" xml:space="preserve">
+    <value>Extension must not exceed {0} characters.</value>
+  </data>
+  <data name="NewsIsRequired" xml:space="preserve">
+    <value>News is required.</value>
+  </data>
+  <data name="UrlIsRequired" xml:space="preserve">
+    <value>URL is required.</value>
+  </data>
+  <data name="UrlMustNotExceedCharacters" xml:space="preserve">
+    <value>URL must not exceed {0} characters.</value>
+  </data>
+  <data name="UrlMustBeValidAbsoluteUrl" xml:space="preserve">
+    <value>URL must be a valid absolute URL.</value>
+  </data>
+  <data name="IdMustBePositive" xml:space="preserve">
+    <value>Id must be greater than 0.</value>
+  </data>
+  <data name="TextIsRequired" xml:space="preserve">
+    <value>Text is required.</value>
+  </data>
+  <data name="TextMustNotExceedCharacters" xml:space="preserve">
+    <value>Text must not exceed {0} characters.</value>
+  </data>
+  <data name="TargetUrlMustBeValid" xml:space="preserve">
+    <value>Target URL must be a valid URL.</value>
+  </data>
+  <data name="UrlTitleMustNotExceedCharacters" xml:space="preserve">
+    <value>URL title must not exceed {0} characters.</value>
+  </data>
+  <data name="LogoIdMustBePositive" xml:space="preserve">
+    <value>Logo ID must be greater than 0.</value>
+  </data>
+  <data name="PartnerIsRequired" xml:space="preserve">
+    <value>Partner is required.</value>
+  </data>
+  <data name="LogoTypeMustBeValidEnum" xml:space="preserve">
+    <value>Logo type must be a valid enum value.</value>
+  </data>
+  <data name="TargetUrlIsRequired" xml:space="preserve">
+    <value>Target URL is required.</value>
+  </data>
+  <data name="TargetUrlMustNotExceedCharacters" xml:space="preserve">
+    <value>Target URL must not exceed {0} characters.</value>
+  </data>
+  <data name="TargetUrlMustBeValidAbsoluteUrl" xml:space="preserve">
+    <value>Target URL must be a valid absolute URL.</value>
+  </data>
+  <data name="IdMustBeGreaterOrEqualToZero" xml:space="preserve">
+    <value>Id must be greater than or equal to 0.</value>
+  </data>
+  <data name="PartnerSourceLinksRequired" xml:space="preserve">
+    <value>Partner source links collection is required.</value>
+  </data>
+  <data name="StreetcodesRequired" xml:space="preserve">
+    <value>Streetcodes collection is required.</value>
+  </data>
+  <data name="PaymentIsRequired" xml:space="preserve">
+    <value>Payment information is required.</value>
+  </data>
+  <data name="AmountMustBeGreaterThanZero" xml:space="preserve">
+    <value>Amount must be greater than 0.</value>
+  </data>
+  <data name="CategoryIdMustBePositive" xml:space="preserve">
+    <value>The category ID must be positive.</value>
+  </data>
+  <data name="FactContentIsRequired" xml:space="preserve">
+    <value>Fact content is required.</value>
+  </data>
+  <data name="FactContentMustNotExceedCharacters" xml:space="preserve">
+    <value>Fact content must not exceed {0} characters.</value>
+  </data>
+  <data name="ImageIdMustBePositive" xml:space="preserve">
+    <value>Image ID must be greater than 0.</value>
+  </data>
+  <data name="ObserverIdMustBePositive" xml:space="preserve">
+    <value>The Observer ID must be positive.</value>
+  </data>
+  <data name="TargetIdMustBePositive" xml:space="preserve">
+    <value>The Target ID must be positive.</value>
+  </data>
+  <data name="RelatedTermIsRequired" xml:space="preserve">
+    <value>Related term is required.</value>
+  </data>
+  <data name="WordIsRequired" xml:space="preserve">
+    <value>Word is required.</value>
+  </data>
+  <data name="WordMustNotExceedCharacters" xml:space="preserve">
+    <value>Word must not exceed {0} characters.</value>
+  </data>
+  <data name="TermIdMustBePositive" xml:space="preserve">
+    <value>Term ID must be greater than 0.</value>
+  </data>
+  <data name="PageNumberMustBePositive" xml:space="preserve">
+    <value>The page number must be greater than 0.</value>
+  </data>
+  <data name="PageSizeMustBePositive" xml:space="preserve">
+    <value>The page size must be greater than 0.</value>
+  </data>
+  <data name="FilterIsRequired" xml:space="preserve">
+    <value>Filter is required.</value>
+  </data>
+  <data name="SearchQueryIsRequired" xml:space="preserve">
+    <value>Search query is required.</value>
+  </data>
+  <data name="SearchQueryMustNotExceedCharacters" xml:space="preserve">
+    <value>Search query must not exceed {0} characters.</value>
+  </data>
+  <data name="IndexMustBeGreaterOrEqualToZero" xml:space="preserve">
+    <value>Index must be greater than or equal to 0.</value>
+  </data>
+  <data name="TransliterationUrlIsRequired" xml:space="preserve">
+    <value>Transliteration URL is required.</value>
+  </data>
+  <data name="TransliterationUrlMustNotExceedCharacters" xml:space="preserve">
+    <value>Transliteration URL must not exceed {0} characters.</value>
+  </data>
+  <data name="DescriptionIsRequired" xml:space="preserve">
+    <value>Description is required.</value>
+  </data>
+  <data name="TextToParseIsRequired" xml:space="preserve">
+    <value>Text to parse is required.</value>
+  </data>
+  <data name="PositionIsRequired" xml:space="preserve">
+    <value>Position is required.</value>
+  </data>
+  <data name="PositionNameIsRequired" xml:space="preserve">
+    <value>Position name is required.</value>
+  </data>
+  <data name="TeamMemberLinkIsRequired" xml:space="preserve">
+    <value>Team member link is required.</value>
+  </data>
+  <data name="TeamMemberIdMustBePositive" xml:space="preserve">
+    <value>TeamMemberId must be greater than 0.</value>
+  </data>
+  <data name="InvalidLogoType" xml:space="preserve">
+    <value>The provided logo type is invalid.</value>
+  </data>
+  <data name="DateIsRequired" xml:space="preserve">
+    <value>Date is required.</value>
+  </data>
+  <data name="InvalidDateViewPattern" xml:space="preserve">
+    <value>Invalid date view pattern.</value>
+  </data>
+  <data name="HistoricalContextsCollectionIsRequired" xml:space="preserve">
+    <value>Historical contexts collection is required.</value>
+  </data>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Name is required.</value>
+  </data>
+  <data name="NameMustNotExceedCharacters" xml:space="preserve">
+    <value>Name must not exceed {0} characters.</value>
+  </data>
+  <data name="SurnameIsRequired" xml:space="preserve">
+    <value>Surname is required.</value>
+  </data>
+  <data name="SurnameMustNotExceedCharacters" xml:space="preserve">
+    <value>Surname must not exceed {0} characters.</value>
+  </data>
+  <data name="EmailIsRequired" xml:space="preserve">
+    <value>Email is required.</value>
+  </data>
+  <data name="InvalidEmailFormat" xml:space="preserve">
+    <value>Invalid email format.</value>
+  </data>
+  <data name="LoginIsRequired" xml:space="preserve">
+    <value>Login is required.</value>
+  </data>
+  <data name="LoginMustNotExceedCharacters" xml:space="preserve">
+    <value>Login must not exceed {0} characters.</value>
+  </data>
+  <data name="InvalidUserRole" xml:space="preserve">
+    <value>Invalid user role.</value>
+  </data>
+  <data name="PasswordIsRequired" xml:space="preserve">
+    <value>Password is required.</value>
+  </data>
+  <data name="PasswordMustNotExceedCharacters" xml:space="preserve">
+    <value>Password must not exceed {0} characters.</value>
+  </data>
+  <data name="TagIdMustBePositive" xml:space="preserve">
+    <value>The tagId must be positive.</value>
+  </data>
+  <data name="IdMustBeGreaterThanOrEqualToZero" xml:space="preserve">
+    <value>Id must be greater than or equal to 0</value>
+  </data>
+  <data name="IndexMustBeGreaterThanOrEqualToZero" xml:space="preserve">
+    <value>Index must be greater than or equal to 0</value>
+  </data>
+  <data name="DateStringIsRequired" xml:space="preserve">
+    <value>Date string is required</value>
+  </data>
+  <data name="ValueMustBeGreaterThanOrEqualTo" xml:space="preserve">
+    <value>{0} must be greater than or equal to {1}</value>
+  </data>
+  <data name="FieldIsRequired" xml:space="preserve">
+    <value>{0} is required</value>
+  </data>
+  <data name="FieldMustNotExceedCharacters" xml:space="preserve">
+    <value>{0} must not exceed {1} characters</value>
+  </data>
+  <data name="InvalidEnumValue" xml:space="preserve">
+    <value>Invalid {0}</value>
+  </data>
+  <data name="EndDateCannotBeEarlierThanStartDate" xml:space="preserve">
+    <value>End or death date cannot be earlier than start or birth date</value>
+  </data>
+  <data name="ValueCannotBeNegative" xml:space="preserve">
+    <value>{0} cannot be negative</value>
+  </data>
+  <data name="CollectionIsRequired" xml:space="preserve">
+    <value>{0} collection is required</value>
+  </data>
+  <data name="TeaserLengthIsInvalid" xml:space="preserve">
+    <value>Teaser must contain up to {0} characters with paragraph breaks or up to {1} characters without paragraph breaks</value>
+  </data>
+  <data name="TextContentIsRequired" xml:space="preserve">
+    <value>Text content is required.</value>
+  </data>
+  <data name="AdditionalTextMustNotExceed" xml:space="preserve">
+    <value>Additional text must not exceed {0} characters</value>
+  </data>
+	<data name="SourceCategoryNotFound" xml:space="preserve">
+  <value>Source category was not found</value>
+</data>
+	<data name="SourceCategoryIdRequired" xml:space="preserve">
+  <value>Source CategoryId is Required</value>
+</data>
+	<data name="CannotSaveSourceCategory" xml:space="preserve">
+  <value>Failed to save source category</value>
+</data>
+	<data name="CannotDeleteSourceCategory" xml:space="preserve">
+  <value>Failed to delete source category</value>
+</data>
+	<data name="CannotUpdateSourceCategory" xml:space="preserve">
+  <value>Failed to update streetcode category</value>
+</data>
+	<data name="StreetcodeNotFound" xml:space="preserve">
+  <value>Streetcode was not found</value>
+</data>
+	<data name="SourceCategoryAlreadyExists" xml:space="preserve">
+  <value>Source category already exists for this streetcode</value>
+</data>
+	<data name="CannotSaveSourceCategoryContent" xml:space="preserve">
+  <value>Failed to save source category content</value>
+</data>
+	<data name="CannotDeleteSourceCategoryСontent" xml:space="preserve">
+  <value>Failed to delete source category content</value>
+</data>
+	<data name="CannotUpdateStreetcodeCategoryContent" xml:space="preserve">
+  <value>Failed to update streetcode category content</value>
+</data>
+  <data name="EmailMustNotExceedCharacters" xml:space="preserve">
+    <value>Email must not exceed {0} characters.</value>
+  </data>
+  <data name="PasswordMustBeAtLeastCharacters" xml:space="preserve">
+    <value>Password must not exceed {0} characters.</value>
+  </data>
+  <data name="PasswordConfirmationIsRequired" xml:space="preserve">
+    <value>Password Confirmation is required.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Passwords did not match.</value>
+  </data>
+  <data name="WordLengthError" xml:space="preserve">
+    <value>The length of the word must not exceed {0} characters.</value>
+  </data>
+  <data name="TermIdIsRequired" xml:space="preserve">
+    <value>The Term ID is required and must be greater than zero.</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid token.</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid refresh token.</value>
+  </data>
+  <data name="SuccessfulRefreshToken" xml:space="preserve">
+    <value>Token refreshed for user {0}</value>
+  </data>
+  <data name="CannotFindAnyTransactionLink" xml:space="preserve">
+    <value>Cannot find any transaction link</value>
+  </data>
+  <data name="CannotFindAnyTransactionLinkWithCorrespondingId" xml:space="preserve">
+    <value>Cannot find any transaction link with corresponding id: {0}</value>
+  </data>
+  <data name="CannotFindAnyTransactionLinkWithCorrespondingStreetcodeId" xml:space="preserve">
+    <value>Cannot find a transaction link by a streetcode id: {0}, because such streetcode doesn`t exist</value>
+  </data>
+  <data name="TextWithIdNotFound" xml:space="preserve">
+    <value>Text with Id {0} not found.</value>
+  </data>
+  <data name="ChangingStreetcodeIdNotAllowed" xml:space="preserve">
+    <value>Changing StreetcodeId for an existing Text is not allowed.</value>
+  </data>
+  <data name="FailedToUpdateText" xml:space="preserve">
+    <value>Failed to update Text.</value>
+  </data>
+  <data name="PropertyMustBeGreaterThanOrEqualToValue" xml:space="preserve">
+    <value>Property '{0}' must be greater than or equal to '{1}'</value>
+  </data>
+  <data name="StringPropertyIsRequired" xml:space="preserve">
+    <value>String property '{0}' must be not null, not empty, and not contain only whitespace characters</value>
+  </data>
+  <data name="StringPropertyMustNotExceedCharacters" xml:space="preserve">
+    <value>String property '{0}' must not exceed '{1}' characters</value>
+  </data>
+  <data name="FailedToCreateType" xml:space="preserve">
+    <value>Failed to create '{0}'</value>
+  </data>
+  <data name="FailedToDeleteType" xml:space="preserve">
+    <value>Failed to delete '{0}'</value>
+  </data>
+  <data name="FailedToUpdateType" xml:space="preserve">
+    <value>Failed to update '{0}'</value>
+  </data>
+  <data name="FailedToFindAnyType" xml:space="preserve">
+    <value>Failed to find any '{0}'</value>
+  </data>
+  <data name="TypeWithIdNotFound" xml:space="preserve">
+    <value>'{0}' with property 'Id' equals to '{1}' not found</value>
+  </data>
+  <data name="StructPropertyIsRequired" xml:space="preserve">
+    <value>Struct property '{0}' must not be a default value</value>
+  </data>
+  <data name="PropertyMustBeValidEnumValue" xml:space="preserve">
+    <value>Property '{0}' must be valid enum '{1}'</value>
+  </data>
+  <data name="CommentIsRequired" xml:space="preserve">
+    <value>Comment is required.</value>
+  </data>
+  <data name="CannotSaveCommentToDatabase" xml:space="preserve">
+    <value>Cannot save comment to database.</value>
+  </data>
+  <data name="ParentCommentNotFound" xml:space="preserve">
+    <value>Parent comment with Id {0} not found.</value>
+  </data>
+  <data name="ParentCommentMustBelongToSameStreetcode" xml:space="preserve">
+    <value>Parent comment must belong to the same streetcode.</value>
+  </data>
+</root>

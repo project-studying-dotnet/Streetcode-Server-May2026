@@ -1,0 +1,147 @@
+using System.Linq.Expressions;
+using AutoMapper;
+using FluentAssertions;
+using Moq;
+using Streetcode.BLL.DTO.Partners;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Partners.Delete;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Entities.Partners;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Partners;
+using Xunit;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Partners.Delete
+{
+    public class DeletePartnersHandlerTests
+    {
+        private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+        private readonly Mock<IPartnersRepository> _partnersRepositoryMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<ILoggerService> _loggerMock;
+        private readonly DeletePartnerHandler _handler;
+
+        public DeletePartnersHandlerTests()
+        {
+            _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+            _mapperMock = new Mock<IMapper>();
+            _loggerMock = new Mock<ILoggerService>();
+            _partnersRepositoryMock = new Mock<IPartnersRepository>();
+
+            _repositoryWrapperMock
+                .Setup(wrapper => wrapper.PartnersRepository)
+                .Returns(_partnersRepositoryMock.Object);
+
+            _handler = new DeletePartnerHandler(
+                _repositoryWrapperMock.Object,
+                _mapperMock.Object,
+                _loggerMock.Object);
+        }
+
+        [Fact]
+        public async Task Handle_ShouldReturnFail_PartnerNotFound()
+        {
+            // Arrange
+            int id = 1;
+            var deletePartnerQuery = new DeletePartnerQuery(id);
+
+            _partnersRepositoryMock
+                .Setup(repo => repo.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<Partner, bool>>>(),
+                    null))
+                .ReturnsAsync((Partner)null!);
+
+            // Act
+            var result = await _handler.Handle(deletePartnerQuery, CancellationToken.None);
+
+            // Assert
+            result.IsFailed.Should().BeTrue();
+            result.Errors[0].Message.Should().Be(ErrorMessages.NoPartnerWithSuchId);
+
+            _loggerMock.Verify(
+                logger => logger.LogError(deletePartnerQuery, ErrorMessages.NoPartnerWithSuchId),
+                Times.Once);
+
+            _partnersRepositoryMock.Verify(
+                repo => repo.Delete(It.IsAny<Partner>()),
+                Times.Never);
+
+            _repositoryWrapperMock.Verify(
+                wrapper => wrapper.SaveChangesAsync(),
+                Times.Never);
+
+            _mapperMock.Verify(
+                mapper => mapper.Map<PartnerDTO>(It.IsAny<Partner>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task Handle_ShouldReturnOk_WhenPartnerDeletedSuccessfully()
+        {
+            // Arrange
+            int id = 1;
+            var deletePartnerQuery = new DeletePartnerQuery(id);
+            var partner = GetDefaultPartnerEntity();
+            var dto = GetDefaultPartnerDto();
+
+            _partnersRepositoryMock
+                .Setup(repo => repo.GetFirstOrDefaultAsync(
+                    It.IsAny<Expression<Func<Partner, bool>>>(),
+                    null))
+                .ReturnsAsync(partner);
+
+            _repositoryWrapperMock
+                .Setup(wrapper => wrapper.SaveChangesAsync())
+                .ReturnsAsync(1);
+
+            _mapperMock
+                .Setup(mapper => mapper.Map<PartnerDTO>(partner))
+                .Returns(dto);
+
+            // Act
+            var result = await _handler.Handle(deletePartnerQuery, CancellationToken.None);
+
+            // Assert
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeEquivalentTo(dto);
+
+            _partnersRepositoryMock.Verify(
+                repo => repo.Delete(partner),
+                Times.Once);
+
+            _repositoryWrapperMock.Verify(
+                wrapper => wrapper.SaveChanges(),
+                Times.Once);
+
+            _mapperMock.Verify(
+                mapper => mapper.Map<PartnerDTO>(partner),
+                Times.Once);
+
+            _loggerMock.Verify(
+                logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
+                Times.Never);
+        }
+
+        #region Test Data Factories
+
+        private static Partner GetDefaultPartnerEntity() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+        };
+
+        private static PartnerDTO GetDefaultPartnerDto() => new()
+        {
+            Id = 1,
+            Title = "Title 1",
+            LogoId = 1,
+            IsKeyPartner = true,
+            IsVisibleEverywhere = true,
+        };
+
+        #endregion
+    }
+}

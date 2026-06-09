@@ -11,7 +11,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Media.Video.GetByStreetcodeId;
 
-public class GetVideoByStreetcodeIdHandler : IRequestHandler<GetVideoByStreetcodeIdQuery, Result<VideoDTO>>
+public class GetVideoByStreetcodeIdHandler : IRequestHandler<GetVideoByStreetcodeIdQuery, Result<VideoDto>>
 {
     private readonly IMapper _mapper;
     private readonly IRepositoryWrapper _repositoryWrapper;
@@ -24,13 +24,18 @@ public class GetVideoByStreetcodeIdHandler : IRequestHandler<GetVideoByStreetcod
         _logger = logger;
     }
 
-    public async Task<Result<VideoDTO>> Handle(GetVideoByStreetcodeIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<VideoDto>> Handle(GetVideoByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
         var video = await _repositoryWrapper.VideoRepository
-            .GetFirstOrDefaultAsync(video => video.StreetcodeId == request.StreetcodeId);
+            .GetFirstOrDefaultAsync(
+                video => video.StreetcodeId == request.StreetcodeId,
+                cancellationToken: cancellationToken);
+
         if(video == null)
         {
-            StreetcodeContent? streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(x => x.Id == request.StreetcodeId);
+            StreetcodeContent? streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
+                x => x.Id == request.StreetcodeId,
+                cancellationToken: cancellationToken);
             if (streetcode is null)
             {
                 string errorMsg = $"Streetcode with id: {request.StreetcodeId} doesn`t exist";
@@ -39,8 +44,8 @@ public class GetVideoByStreetcodeIdHandler : IRequestHandler<GetVideoByStreetcod
             }
         }
 
-        NullResult<VideoDTO> result = new NullResult<VideoDTO>();
-        result.WithValue(_mapper.Map<VideoDTO>(video));
+        NullResult<VideoDto> result = new NullResult<VideoDto>();
+        result.WithValue(_mapper.Map<VideoDto>(video));
         return result;
     }
 }

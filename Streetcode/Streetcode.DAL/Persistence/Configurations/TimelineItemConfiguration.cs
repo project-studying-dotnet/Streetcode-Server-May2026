@@ -1,31 +1,23 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Streetcode.DAL.Entities.Timeline;
+using Streetcode.DAL.Persistence.Constants;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Streetcode.DAL.Persistence.Configurations;
 
-public class TimelineItemConfiguration : IEntityTypeConfiguration<TimelineItem>
+public sealed class TimelineItemConfiguration : IEntityTypeConfiguration<TimelineItem>
 {
+    #region IEntityTypeConfiguration<TimelineItem>
     public void Configure(EntityTypeBuilder<TimelineItem> builder)
     {
         builder.ToTable("timeline_items", "timeline");
-
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd();
-
-        builder.Property(x => x.Date)
-            .IsRequired();
-
-        builder.Property(x => x.DateViewPattern)
-            .IsRequired();
-
-        builder.Property(x => x.Title)
-            .IsRequired()
-            .HasMaxLength(100);
-
-        builder.Property(x => x.Description)
-            .HasMaxLength(600);
+        builder.HasKey(ti => ti.Id);
+        builder.Property(ti => ti.Id).ValueGeneratedOnAdd();
+        builder.Property(ti => ti.Date).IsRequired();
+        builder.Property(ti => ti.DateViewPattern).IsRequired();
+        builder.Property(ti => ti.Title).IsRequired().HasMaxLength(TimelineItemConstants.TitleMaxLength);
+        builder.Property(ti => ti.Description).HasMaxLength(TimelineItemConstants.DescriptionMaxLength);
+        builder.HasOne(ti => ti.Streetcode).WithMany(sc => sc.TimelineItems).HasForeignKey(ti => ti.StreetcodeId).IsRequired(false);
     }
+    #endregion
 }

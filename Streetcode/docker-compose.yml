@@ -1,14 +1,24 @@
-﻿version: '3.8'
-
-services:
+﻿services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: streetcode-db
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=${DB_PASSWORD} #  pass
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
     ports:
       - "1434:1433"
+    volumes:
+      - streetcode_sql_data:/var/opt/mssql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: streetcode-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   webapi:
     build:
@@ -16,10 +26,45 @@ services:
       dockerfile: Dockerfile
     container_name: streetcode-api
     ports:
-      - "5000:80"
-      - "5001:443"
+      - "5000:8080"
     depends_on:
       - db
+      - rabbitmq
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=Server=db;Database=StreetcodeDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ConnectionStrings__HangfireConnection=Server=db;Database=StreetcodeDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__UserName=${RABBITMQ_USERNAME}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - RabbitMq__QueueName=email-queue
+
+  emailservice:
+    build:
+      context: .
+      dockerfile: Streetcode.EmailService/Dockerfile
+    container_name: streetcode-email-service
+    ports:
+      - "5190:8080"
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - EmailConfiguration__From=${EMAIL_FROM}
+      - EmailConfiguration__SmtpServer=${EMAIL_SMTP_SERVER}
+      - EmailConfiguration__Port=${EMAIL_SMTP_PORT}
+      - EmailConfiguration__UserName=${EMAIL_USERNAME}
+      - EmailConfiguration__Password=${EMAIL_PASSWORD}
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__UserName=${RABBITMQ_USERNAME}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - RabbitMq__QueueName=email-queue
+      - ConnectionStrings__HangfireConnection=Server=db;Database=StreetcodeDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+
+volumes:
+  streetcode_sql_data:

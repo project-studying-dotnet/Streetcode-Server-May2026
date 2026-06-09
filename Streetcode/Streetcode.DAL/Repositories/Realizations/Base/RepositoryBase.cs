@@ -89,7 +89,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T>
     {
         IIncludableQueryable<T, object>? query = default;
 
-        if (includes.Any())
+        if (includes.Length > 0)
         {
             query = _dbContext.Set<T>().Include(includes[0]);
         }
@@ -160,9 +160,10 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T>
 
     public async Task<T?> GetFirstOrDefaultAsync(
         Expression<Func<T, bool>>? predicate = default,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default)
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default,
+        CancellationToken cancellationToken = default)
     {
-        return await GetQueryable(predicate, include).FirstOrDefaultAsync();
+        return await GetQueryable(predicate, include).FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<T?> GetFirstOrDefaultAsync(

@@ -4,18 +4,20 @@ using Streetcode.DAL.Entities.Timeline;
 
 namespace Streetcode.BLL.Mapping.Timeline;
 
-public class TimelineItemProfile : Profile
+public sealed class TimelineItemProfile : Profile
 {
     public TimelineItemProfile()
     {
-        CreateMap<TimelineItem, TimelineItemDTO>().ReverseMap();
-
-        CreateMap<TimelineItem, TimelineItemDTO>()
-            .ForMember(dest => dest.HistoricalContexts, opt => opt.MapFrom(x => x.HistoricalContextTimelines
-                .Select(x => new HistoricalContextDTO
-                {
-                    Id = x.HistoricalContextId,
-                    Title = x.HistoricalContext.Title
-                }).ToList()));
+        base.CreateMap<TimelineItem, TimelineItemDto>().ForMember(
+            dest => dest.HistoricalContexts,
+            opt => opt.MapFrom(ti => ti.HistoricalContextTimelines)
+        );
+        base.CreateMap<TimelineItemDto, TimelineItem>().ForMember(
+            dest => dest.HistoricalContextTimelines,
+            opt => opt.Ignore()
+        ).ForMember(
+            dest => dest.Streetcode,
+            opt => opt.Ignore()
+        );
     }
 }

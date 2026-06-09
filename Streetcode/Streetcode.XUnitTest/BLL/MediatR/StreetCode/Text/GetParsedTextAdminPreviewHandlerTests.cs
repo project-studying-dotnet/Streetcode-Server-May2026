@@ -1,30 +1,29 @@
 ﻿// <copyright file="GetParsedTextAdminPreviewHandlerTests.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using FluentAssertions;
+using Streetcode.BLL.Interfaces.Text;
+using Streetcode.BLL.MediatR.Streetcode.Text.GetParsed;
+using Moq;
+using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
 {
-    using FluentAssertions;
-    using Moq;
-    using Streetcode.BLL.Interfaces.Text;
-    using Streetcode.BLL.MediatR.Streetcode.Text.GetParsed;
-    using Xunit;
-
     /// <summary>
     /// Unit tests for <see cref="GetParsedTextAdminPreviewHandler"/>.
     /// </summary>
     public class GetParsedTextAdminPreviewHandlerTests
     {
-        private readonly Mock<ITextService> textServiceMock;
-        private readonly GetParsedTextAdminPreviewHandler handler;
+        private readonly Mock<ITextService> _textServiceMock;
+        private readonly GetParsedTextAdminPreviewHandler _handler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetParsedTextAdminPreviewHandlerTests"/> class.
         /// </summary>
         public GetParsedTextAdminPreviewHandlerTests()
         {
-            this.textServiceMock = new Mock<ITextService>();
-            this.handler = new GetParsedTextAdminPreviewHandler(this.textServiceMock.Object);
+            _textServiceMock = new Mock<ITextService>();
+            _handler = new GetParsedTextAdminPreviewHandler(_textServiceMock.Object);
         }
 
         /// <summary>
@@ -32,21 +31,19 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Fact]
-        public async Task Handle_ReturnsError_WhenServiceReturnsNull()
+        public async Task Handle_ReturnsParsedText_WhenServiceReturnsText()
         {
-            // Arrange
-            var command = new GetParsedTextForAdminPreviewCommand(textToParse: "some text");
+            var command = new GetParsedTextForAdminPreviewCommand("raw text");
+            const string parsedText = "parsed text";
 
-            this.textServiceMock
+            _textServiceMock
                 .Setup(s => s.AddTermsTag(command.textToParse))
-                .ReturnsAsync((string?)null);
+                .ReturnsAsync(parsedText);
 
-            // Act
-            var result = await this.handler.Handle(command, CancellationToken.None);
+            var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
-            result.IsFailed.Should().BeTrue();
-            result.Errors.Should().ContainSingle(e => e.Message == "text was not parsed successfully");
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().Be(parsedText);
         }
 
         /// <summary>
@@ -60,12 +57,12 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
             const string parsedText = "<Popover><Term>Майдан</Term><Desc>Центральна площа</Desc></Popover>";
             var command = new GetParsedTextForAdminPreviewCommand(textToParse: "some text");
 
-            this.textServiceMock
+            _textServiceMock
                 .Setup(s => s.AddTermsTag(command.textToParse))
                 .ReturnsAsync(parsedText);
 
             // Act
-            var result = await this.handler.Handle(command, CancellationToken.None);
+            var result = await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
@@ -83,15 +80,15 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Text
             const string originalText = "raw input text";
             var command = new GetParsedTextForAdminPreviewCommand(textToParse: originalText);
 
-            this.textServiceMock
+            _textServiceMock
                 .Setup(s => s.AddTermsTag(originalText))
                 .ReturnsAsync("processed");
 
             // Act
-            await this.handler.Handle(command, CancellationToken.None);
+            await _handler.Handle(command, CancellationToken.None);
 
             // Assert
-            this.textServiceMock.Verify(
+            _textServiceMock.Verify(
                 s => s.AddTermsTag(originalText),
                 Times.Once);
         }

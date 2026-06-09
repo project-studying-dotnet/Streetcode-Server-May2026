@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.News;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Newss.SortedByDateTime
@@ -27,10 +28,10 @@ namespace Streetcode.BLL.MediatR.Newss.SortedByDateTime
         public async Task<Result<List<NewsDTO>>> Handle(SortedByDateTimeQuery request, CancellationToken cancellationToken)
         {
             var news = await _repositoryWrapper.NewsRepository.GetAllAsync(
-                include: cat => cat.Include(img => img.Image));
+                include: cat => cat.Include(img => img.Image!));
             if (news == null)
             {
-                const string errorMsg = "There are no news in the database";
+                string errorMsg = ErrorMessages.ThereAreNoNewsInDatabase;
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(errorMsg);
             }
@@ -41,7 +42,7 @@ namespace Streetcode.BLL.MediatR.Newss.SortedByDateTime
             {
                 if (dto.Image is not null)
                 {
-                    dto.Image.Base64 = _blobService.FindFileInStorageAsBase64(dto.Image.BlobName);
+                    dto.Image.Base64 = _blobService.FindFileInStorageAsBase64(dto.Image.BlobName!);
                 }
             }
 

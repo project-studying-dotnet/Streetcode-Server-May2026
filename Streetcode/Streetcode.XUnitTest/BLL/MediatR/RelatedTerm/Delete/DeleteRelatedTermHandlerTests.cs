@@ -1,29 +1,29 @@
-﻿using AutoMapper;
-using FluentResults;
-using Moq;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
-using Streetcode.DAL.Entities.Streetcode.TextContent;
+using Moq;
+using Streetcode.BLL.DTO.Streetcode.TextContent;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Entities.Streetcode.TextContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Streetcode.TextContent;
-using Streetcode.BLL.DTO.Streetcode.TextContent;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
+
 using Entity = Streetcode.DAL.Entities.Streetcode.TextContent.RelatedTerm;
 
 namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
 {
-
     public class DeleteRelatedTermHandlerTests
     {
+        private const string TestWord = "test";
+        private const int TermId = 1;
         private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
         private readonly Mock<IRelatedTermRepository> _relatedTermRepositoryMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILoggerService> _loggerMock;
         private readonly DeleteRelatedTermHandler _handler;
-
 
         public DeleteRelatedTermHandlerTests()
         {
@@ -39,12 +39,12 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                     _repositoryWrapperMock.Object,
                     _mapperMock.Object,
                     _loggerMock.Object);
-
         }
+
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenRelatedTermNotFound()
         {
-            var command = new DeleteRelatedTermCommand("test");
+            var command = new DeleteRelatedTermCommand(TestWord, TermId);
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
@@ -55,10 +55,10 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Cannot find a related term: test");
+            result.Errors[0].Message.Should().Be(string.Format(ErrorMessages.CannotFindRelatedTerm, TestWord));
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Cannot find a related term: test"),
+                logger => logger.LogError(command, string.Format(ErrorMessages.CannotFindRelatedTerm, TestWord)),
                 Times.Once);
 
             _relatedTermRepositoryMock.Verify(
@@ -77,7 +77,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenSaveChangesFails()
         {
-            var command = new DeleteRelatedTermCommand("test");
+            var command = new DeleteRelatedTermCommand(TestWord, TermId);
             var entity = new Entity { Id = 1, TermId = 1, Word = "test" };
             var dto = new RelatedTermDTO { Id = 1, TermId = 1, Word = "test" };
 
@@ -98,7 +98,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Failed to delete a related term");
+            result.Errors[0].Message.Should().Be(ErrorMessages.FailedToDeleteRelatedTerm);
 
             _relatedTermRepositoryMock.Verify(
                 repo => repo.Delete(entity),
@@ -109,15 +109,15 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                 Times.Once);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Failed to delete a related term"),
+                logger => logger.LogError(command, ErrorMessages.FailedToDeleteRelatedTerm),
                 Times.Once);
         }
 
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenMappingToDtoFails()
         {
-            var command = new DeleteRelatedTermCommand("test");
-            var entity = new Entity { Id = 1, TermId = 1, Word = "test" };
+            var command = new DeleteRelatedTermCommand(TestWord, TermId);
+            var entity = new Entity { Id = 1, TermId = 1, Word = TestWord };
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
@@ -136,7 +136,7 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Failed to delete a related term");
+            result.Errors[0].Message.Should().Be(ErrorMessages.FailedToDeleteRelatedTerm);
 
             _relatedTermRepositoryMock.Verify(
                 repo => repo.Delete(entity),
@@ -147,16 +147,16 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                 Times.Once);
 
             _loggerMock.Verify(
-                logger => logger.LogError(command, "Failed to delete a related term"),
+                logger => logger.LogError(command, ErrorMessages.FailedToDeleteRelatedTerm),
                 Times.Once);
         }
 
         [Fact]
         public async Task Handle_ShouldReturnOk_WhenRelatedTermDeletedSuccessfully()
         {
-            var command = new DeleteRelatedTermCommand("test");
-            var entity = new Entity { Id = 1, TermId = 1, Word = "test" };
-            var dto = new RelatedTermDTO { Id = 1, TermId = 1, Word = "test" };
+            var command = new DeleteRelatedTermCommand(TestWord, TermId);
+            var entity = new Entity { Id = 1, TermId = 1, Word = TestWord };
+            var dto = new RelatedTermDTO { Id = 1, TermId = 1, Word = TestWord };
 
             _relatedTermRepositoryMock
                 .Setup(repo => repo.GetFirstOrDefaultAsync(
@@ -193,6 +193,5 @@ namespace Streetcode.XUnitTest.MediatRTests.Streetcode.RelatedTerm.Delete
                 logger => logger.LogError(It.IsAny<object>(), It.IsAny<string>()),
                 Times.Never);
         }
-
     }
 }

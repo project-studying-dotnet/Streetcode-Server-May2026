@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
+using Streetcode.BLL.DTO.Streetcode.TextContent.RelatedTerm;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Create;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.GetAllByTermId;
 using Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Update;
+using Streetcode.DAL.Enums;
+using Streetcode.WebApi.Attributes;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent
 {
@@ -15,22 +18,25 @@ namespace Streetcode.WebApi.Controllers.Streetcode.TextContent
             return HandleResult(await Mediator.Send(new GetAllRelatedTermsByTermIdQuery(id)));
         }
 
+        [AuthorizeRoles(UserRole.MainAdministrator)]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RelatedTermDTO relatedTerm)
+        public async Task<IActionResult> Create([FromBody] CreateRelatedTermDto request)
         {
-            return HandleResult(await Mediator.Send(new CreateRelatedTermCommand(relatedTerm)));
+            return HandleResult(await Mediator.Send(new CreateRelatedTermCommand(request)));
         }
 
+        [AuthorizeRoles(UserRole.MainAdministrator)]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] RelatedTermDTO relatedTerm)
         {
             return HandleResult(await Mediator.Send(new UpdateRelatedTermCommand(id, relatedTerm)));
         }
 
-        [HttpDelete("{word}")]
-        public async Task<IActionResult> Delete([FromRoute] string word)
+        [AuthorizeRoles(UserRole.MainAdministrator)]
+        [HttpDelete("{word}/{termId:int}")]
+        public async Task<IActionResult> Delete([FromRoute] string word, [FromRoute] int termId)
         {
-            return HandleResult(await Mediator.Send(new DeleteRelatedTermCommand(word)));
+            return HandleResult(await Mediator.Send(new DeleteRelatedTermCommand(word, termId)));
         }
     }
 }

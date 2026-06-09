@@ -1,4 +1,17 @@
-﻿namespace Streetcode.XUnitTest.BLL.MediatR.Toponyms
+﻿using AutoMapper;
+using FluentAssertions;
+using Moq;
+using Streetcode.BLL.DTO.Toponyms;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Toponyms.GetAll;
+using Streetcode.DAL.Entities.Toponyms;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Repositories.Interfaces.Toponyms;
+using Xunit;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Toponyms;
+
+public sealed class GetAllToponymsHandlerTests
 {
     using System;
     using System.Linq.Expressions;
@@ -17,56 +30,44 @@
     /// Contains tests for <see cref="GetAllToponymsHandler"/>.
     /// </summary>
     public sealed class GetAllToponymsHandlerTests
+    private readonly IMapper _mapper;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly Mock<IToponymRepository> _toponymRepositoryMock;
+    private readonly GetAllToponymsHandler _handler;
+
+    public GetAllToponymsHandlerTests()
     {
-        private readonly IMapper mapper;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly Mock<IToponymRepository> toponymRepositoryMock;
-        private readonly GetAllToponymsHandler handler;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetAllToponymsHandlerTests"/> class.
-        /// </summary>
-        public GetAllToponymsHandlerTests()
+        _mapper = new MapperConfiguration(cfg =>
         {
-            this.mapper = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Toponym, ToponymDTO>();
-            }).CreateMapper();
-            this.loggerMock = new Mock<ILoggerService>();
-            this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            this.toponymRepositoryMock = new Mock<IToponymRepository>();
-            this.repositoryWrapperMock.Setup(r => r.ToponymRepository).Returns(this.toponymRepositoryMock.Object);
-            this.handler = new GetAllToponymsHandler(this.repositoryWrapperMock.Object, this.mapper, this.loggerMock.Object);
-        }
+            cfg.CreateMap<Toponym, ToponymDTO>();
+        }).CreateMapper();
 
-        /// <summary>
-        /// Should return all toponyms when <see cref="GetAllToponymsRequestDTO.Title"/> <see langword="is null"/>.
-        /// </summary>
-        /// <returns>Awaitable task.</returns>
-        [Fact]
-        public async Task Handle_ShouldReturnAllToponyms_WhenNoTitleProvided()
+        _loggerMock = new Mock<ILoggerService>();
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _toponymRepositoryMock = new Mock<IToponymRepository>();
+
+        _repositoryWrapperMock
+            .Setup(r => r.ToponymRepository)
+            .Returns(_toponymRepositoryMock.Object);
+
+        _handler = new GetAllToponymsHandler(
+            _repositoryWrapperMock.Object,
+            _mapper,
+            _loggerMock.Object);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnAllToponyms_WhenNoTitleProvided()
+    {
+        IQueryable<Toponym> toponyms = new List<Toponym>
         {
-            // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>
+            new()
             {
-                new()
-                {
-                    Id = 1,
-                    StreetName = "Шевченка",
-                },
-                new()
-                {
-                    Id = 2,
-                    StreetName = "Бандери",
-                },
-            }.AsQueryable();
-            List<ToponymDTO> expected_toponyms = new()
-            {
-                this.mapper.Map<ToponymDTO>(toponyms.ElementAt(0)),
-                this.mapper.Map<ToponymDTO>(toponyms.ElementAt(1)),
-            };
-            GetAllToponymsQuery query = new(new GetAllToponymsRequestDTO
+                Id = 1,
+                StreetName = "Шевченка",
+            },
+            new()
             {
                 Title = null,
             });
@@ -171,22 +172,12 @@
         [Fact]
         public async Task Handle_ShouldReturnEmptyCollection_WhenNoMatchesFound()
         {
-            // Arrange
-            IQueryable<Toponym> toponyms = new List<Toponym>
+            new()
             {
-                new()
-                {
-                    Id = 1,
-                    StreetName = "Шевченка",
-                },
-                new()
-                {
-                    Id = 2,
-                    StreetName = "Бандери",
-                },
-            }.AsQueryable();
-            List<ToponymDTO> expected_toponyms = new();
-            GetAllToponymsQuery query = new(new GetAllToponymsRequestDTO
+                Id = 1,
+                StreetName = "Шевченка",
+            },
+            new()
             {
                 Title = "ийськ",
             });

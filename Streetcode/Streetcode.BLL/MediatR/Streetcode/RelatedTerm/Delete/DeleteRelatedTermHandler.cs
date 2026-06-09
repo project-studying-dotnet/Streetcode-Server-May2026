@@ -4,6 +4,7 @@ using MediatR;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.DTO.Streetcode.TextContent;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete
 {
@@ -22,29 +23,35 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedTerm.Delete
 
         public async Task<Result<RelatedTermDTO>> Handle(DeleteRelatedTermCommand request, CancellationToken cancellationToken)
         {
-            var relatedTerm = await _repository.RelatedTermRepository.GetFirstOrDefaultAsync(rt => rt.Word.ToLower().Equals(request.word.ToLower()));
+            var word = request.Word?.ToLower();
+
+            var relatedTerm = await _repository.RelatedTermRepository.GetFirstOrDefaultAsync(
+                predicate: rt =>
+                    rt.Word != null &&
+                    rt.Word.ToLower().Equals(word) &&
+                    rt.TermId == request.TermId,
+                cancellationToken: cancellationToken);
 
             if (relatedTerm is null)
             {
-                string errorMsg = $"Cannot find a related term: {request.word}";
+                string errorMsg = string.Format(ErrorMessages.CannotFindRelatedTerm, request.Word);
                 _logger.LogError(request, errorMsg);
                 return Result.Fail(new Error(errorMsg));
             }
 
             _repository.RelatedTermRepository.Delete(relatedTerm);
 
-            var resultIsSuccess = await _repository.SaveChangesAsync() > 0;
+            var resultIsSuccess = await _repository.SaveChangesAsync(cancellationToken) > 0;
             var relatedTermDto = _mapper.Map<RelatedTermDTO>(relatedTerm);
-            if(resultIsSuccess && relatedTermDto != null)
+
+            if (resultIsSuccess && relatedTermDto != null)
             {
                 return Result.Ok(relatedTermDto);
             }
-            else
-            {
-                const string errorMsg = "Failed to delete a related term";
-                _logger.LogError(request, errorMsg);
-                return Result.Fail(new Error(errorMsg));
-            }
+
+            string failedErrorMsg = ErrorMessages.FailedToDeleteRelatedTerm;
+            _logger.LogError(request, failedErrorMsg);
+            return Result.Fail(new Error(failedErrorMsg));
         }
     }
 }

@@ -4,6 +4,8 @@ using MediatR;
 using Streetcode.BLL.DTO.Media.Audio;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.Resources;
+using Streetcode.BLL.Services.Payment.Exceptions;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 
 namespace Streetcode.BLL.MediatR.Media.Audio.Create;
@@ -29,6 +31,14 @@ public class CreateAudioHandler : IRequestHandler<CreateAudioCommand, Result<Aud
 
     public async Task<Result<AudioDTO>> Handle(CreateAudioCommand request, CancellationToken cancellationToken)
     {
+        if (request.Audio is null ||
+            request.Audio.BaseFormat is null ||
+            request.Audio.Title is null ||
+            request.Audio.Extension is null)
+        {
+            return Result.Fail(new FluentResults.Error(ErrorMessages.FailedToCreateAudio));
+        }
+
         string hashBlobStorageName = _blobService.SaveFileInStorage(
             request.Audio.BaseFormat,
             request.Audio.Title,
@@ -40,7 +50,7 @@ public class CreateAudioHandler : IRequestHandler<CreateAudioCommand, Result<Aud
 
         await _repositoryWrapper.AudioRepository.CreateAsync(audio);
 
-        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync() > 0;
+        var resultIsSuccess = await _repositoryWrapper.SaveChangesAsync(cancellationToken) > 0;
 
         var createdAudio = _mapper.Map<AudioDTO>(audio);
 
@@ -50,9 +60,9 @@ public class CreateAudioHandler : IRequestHandler<CreateAudioCommand, Result<Aud
         }
         else
         {
-            const string errorMsg = $"Failed to create an audio";
+            string errorMsg = ErrorMessages.FailedToCreateAudio;
             _logger.LogError(request, errorMsg);
-            return Result.Fail(new Error(errorMsg));
+            return Result.Fail(new FluentResults.Error(errorMsg));
         }
     }
 }

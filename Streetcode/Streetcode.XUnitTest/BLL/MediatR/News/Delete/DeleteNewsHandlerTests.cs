@@ -1,10 +1,12 @@
-﻿using Moq;
+﻿using System.Linq.Expressions;
+using Moq;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Newss.Delete;
-using Streetcode.DAL.Entities.Media.Images;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Linq.Expressions;
 using Xunit;
+using ImageEntity = Streetcode.DAL.Entities.Media.Images.Image;
+using NewsEntity = Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
 {
@@ -31,28 +33,32 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
             var request = new DeleteNewsCommand(1);
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(), null))
-                .ReturnsAsync((DAL.Entities.News.News)null);
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(), null))
+                .ReturnsAsync((NewsEntity)null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
+            const int idMessages = 1;
 
             Assert.True(result.IsFailed);
-            Assert.Equal("No news found by entered Id - 1", result.Errors[0].Message);
-            _loggerMock.Verify(l => l.LogError(request, "No news found by entered Id - 1"), Times.Once);
+            Assert.Equal(string.Format(ErrorMessages.NoNewsFoundById, idMessages), result.Errors[0].Message);
+            _loggerMock.Verify(l => l.LogError(request, string.Format(ErrorMessages.NoNewsFoundById, idMessages)), Times.Once);
         }
 
         [Fact]
         public async Task Handle_ShouldDeleteNewsAndImage_WhenImageExists()
         {
             var request = new DeleteNewsCommand(1);
-            var newsEntity = new DAL.Entities.News.News
+            var newsEntity = new NewsEntity
             {
                 Id = 1,
-                Image = new Image()
+                Image = new ImageEntity(),
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = "test-url",
             };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(), null))
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(), null))
                 .ReturnsAsync(newsEntity);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
@@ -68,14 +74,17 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
         public async Task Handle_ShouldDeleteOnlyNews_WhenImageIsNull()
         {
             var request = new DeleteNewsCommand(1);
-            var newsEntity = new DAL.Entities.News.News
+            var newsEntity = new NewsEntity
             {
                 Id = 1,
-                Image = null
+                Image = null,
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = "test-url"
             };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(), null))
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(), null))
                 .ReturnsAsync(newsEntity);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
@@ -84,17 +93,24 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
 
             Assert.True(result.IsSuccess);
             _repositoryWrapperMock.Verify(r => r.NewsRepository.Delete(newsEntity), Times.Once);
-            _repositoryWrapperMock.Verify(r => r.ImageRepository.Delete(It.IsAny<Image>()), Times.Never);
+            _repositoryWrapperMock.Verify(r => r.ImageRepository.Delete(It.IsAny<ImageEntity>()), Times.Never);
         }
 
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenSaveChangesReturnsZero()
         {
             var request = new DeleteNewsCommand(1);
-            var newsEntity = new DAL.Entities.News.News { Id = 1 };
+            var newsEntity = new NewsEntity
+            {
+                Id = 1,
+                Image = new ImageEntity(),
+                Title = "Test News",
+                Text = "This is a test news.",
+                URL = "test-url"
+            };
 
             _repositoryWrapperMock.Setup(r => r.NewsRepository.GetFirstOrDefaultAsync(
-                It.IsAny<Expression<Func<DAL.Entities.News.News, bool>>>(), null))
+                It.IsAny<Expression<Func<NewsEntity, bool>>>(), null))
                 .ReturnsAsync(newsEntity);
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync()).ReturnsAsync(0);
@@ -102,8 +118,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Delete
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal("Failed to delete news", result.Errors[0].Message);
-            _loggerMock.Verify(l => l.LogError(request, "Failed to delete news"), Times.Once);
+            Assert.Equal(ErrorMessages.FailedToDeleteNews, result.Errors[0].Message);
+            _loggerMock.Verify(l => l.LogError(request, ErrorMessages.FailedToDeleteNews), Times.Once);
         }
     }
 }

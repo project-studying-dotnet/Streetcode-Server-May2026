@@ -1,14 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Streetcode.BLL.DTO.Users
+﻿namespace Streetcode.BLL.DTO.Users
 {
-    public class UserLoginDTO
+    public class UserLoginDto
     {
-        [Required]
-        [MaxLength(20)]
-        public string Login { get; set; }
-        [Required]
-        [MaxLength(20)]
-        public string Password { get; set; }
+        required public string Login { get; set; }
+
+        required public string Password { get; set; }
     }
 }

@@ -1,214 +1,208 @@
-﻿// <copyright file="DeleteAudioHandlerTests.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+﻿using System.Linq.Expressions;
+using FluentAssertions;
+using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Repositories.Interfaces;
+using Streetcode.BLL.Interfaces.BlobStorage;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Media.Audio.Delete;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Xunit;
 
-namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio
+using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Media.Audio;
+
+public class DeleteAudioHandlerTests
 {
-    using System.Linq.Expressions;
-    using FluentAssertions;
-    using global::MediatR;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Repositories.Interfaces;
-    using Streetcode.BLL.Interfaces.BlobStorage;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.MediatR.Media.Audio.Delete;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Xunit;
-    using AudioEntity = Streetcode.DAL.Entities.Media.Audio;
+    private const int AudioId = 1;
+    private const string BlobName = "audio-file.mp3";
 
-    /// <summary>
-    /// Unit tests for the <see cref="DeleteAudioHandler"/> class, which handles the deletion of audio files in the system.
-    /// </summary>
-    public class DeleteAudioHandlerTests
+    private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
+    private readonly Mock<IBlobService> _blobServiceMock;
+    private readonly Mock<ILoggerService> _loggerMock;
+    private readonly Mock<IAudioRepository> _audioRepositoryMock;
+    private readonly DeleteAudioHandler _handler;
+
+    public DeleteAudioHandlerTests()
     {
-        private const int AudioId = 1;
-        private const string BlobName = "audio-file.mp3";
+        _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
+        _audioRepositoryMock = new Mock<IAudioRepository>();
+        _blobServiceMock = new Mock<IBlobService>();
+        _loggerMock = new Mock<ILoggerService>();
 
-        private readonly Mock<IRepositoryWrapper> repositoryWrapperMock;
-        private readonly Mock<IBlobService> blobServiceMock;
-        private readonly Mock<ILoggerService> loggerMock;
-        private readonly Mock<IAudioRepository> audioRepositoryMock;
-        private readonly DeleteAudioHandler handler;
+        _repositoryWrapperMock
+            .Setup(w => w.AudioRepository)
+            .Returns(_audioRepositoryMock.Object);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteAudioHandlerTests"/> class.
-        /// </summary>
-        public DeleteAudioHandlerTests()
+        _handler = new DeleteAudioHandler(
+            _repositoryWrapperMock.Object,
+            _blobServiceMock.Object,
+            _loggerMock.Object);
+    }
+
+    [Fact]
+    public async Task Handle_WhenAudioNotFound_ReturnsFailResult()
+    {
+        var command = new DeleteAudioCommand(AudioId);
+
+        SetupGetFirstOrDefault(null);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailed.Should().BeTrue();
+
+        result.Errors[0].Message.Should()
+            .Be(string.Format(ErrorMessages.CannotFindAudioByCategoryId, AudioId));
+    }
+
+    [Fact]
+    public async Task Handle_WhenAudioNotFound_LogsError()
+    {
+        var command = new DeleteAudioCommand(AudioId);
+
+        SetupGetFirstOrDefault(null);
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        _loggerMock.Verify(
+            logger => logger.LogError(
+                command,
+                string.Format(ErrorMessages.CannotFindAudioByCategoryId, AudioId)),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_WhenSaveSucceeds_ReturnsOkResult()
+    {
+        var audio = new AudioEntity
         {
-            this.repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-            this.audioRepositoryMock = new Mock<IAudioRepository>();
-            this.blobServiceMock = new Mock<IBlobService>();
-            this.loggerMock = new Mock<ILoggerService>();
+            Id = AudioId,
+            BlobName = BlobName,
+        };
 
-            this.repositoryWrapperMock
-                .Setup(w => w.AudioRepository)
-                .Returns(this.audioRepositoryMock.Object);
+        var command = new DeleteAudioCommand(AudioId);
 
-            this.handler = new DeleteAudioHandler(
-                this.repositoryWrapperMock.Object,
-                this.blobServiceMock.Object,
-                this.loggerMock.Object);
-        }
+        SetupGetFirstOrDefault(audio);
 
-        /// <summary>
-        /// Tests that when the audio to be deleted is not found, the handler returns a failed result with the appropriate error message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenAudioNotFound_ReturnsFailResult()
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(1);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(Unit.Value);
+    }
+
+    [Fact]
+    public async Task Handle_WhenSaveSucceeds_CallsDeleteFileInStorage()
+    {
+        var audio = new AudioEntity
         {
-            var command = new DeleteAudioCommand(AudioId);
+            Id = AudioId,
+            BlobName = BlobName,
+        };
 
-            this.SetupGetFirstOrDefault(null);
+        var command = new DeleteAudioCommand(AudioId);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+        SetupGetFirstOrDefault(audio);
 
-            result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should()
-                .Be($"Cannot find an audio with corresponding categoryId: {AudioId}");
-        }
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(1);
 
-        /// <summary>
-        /// Tests that when the audio to be deleted is not found, the handler logs an error with the appropriate message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenAudioNotFound_LogsError()
+        await _handler.Handle(command, CancellationToken.None);
+
+        _blobServiceMock.Verify(
+            b => b.DeleteFileInStorage(BlobName),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_WhenSaveFails_ReturnsFailResult()
+    {
+        var audio = new AudioEntity
         {
-            var command = new DeleteAudioCommand(AudioId);
+            Id = AudioId,
+            BlobName = BlobName,
+        };
 
-            this.SetupGetFirstOrDefault(null);
+        var command = new DeleteAudioCommand(AudioId);
 
-            await this.handler.Handle(command, CancellationToken.None);
+        SetupGetFirstOrDefault(audio);
 
-            this.loggerMock.Verify(
-                logger => logger.LogError(
-                    command,
-                    $"Cannot find an audio with corresponding categoryId: {AudioId}"),
-                Times.Once);
-        }
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(0);
 
-        /// <summary>
-        /// Tests that when the save operation succeeds (i.e., SaveChangesAsync returns a value greater than 0), the handler returns a successful result with the expected value.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveSucceeds_ReturnsOkResult()
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailed.Should().BeTrue();
+
+        result.Errors[0].Message.Should()
+            .Be(ErrorMessages.FailedToDeleteAnAudio);
+    }
+
+    [Fact]
+    public async Task Handle_WhenSaveFails_DoesNotCallDeleteFileInStorage()
+    {
+        var audio = new AudioEntity
         {
-            var audio = new AudioEntity { Id = AudioId, BlobName = BlobName };
-            var command = new DeleteAudioCommand(AudioId);
+            Id = AudioId,
+            BlobName = BlobName,
+        };
 
-            this.SetupGetFirstOrDefault(audio);
+        var command = new DeleteAudioCommand(AudioId);
 
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(1);
+        SetupGetFirstOrDefault(audio);
 
-            var result = await this.handler.Handle(command, CancellationToken.None);
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(0);
 
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().Be(Unit.Value);
-        }
+        await _handler.Handle(command, CancellationToken.None);
 
-        /// <summary>
-        /// Tests that when the save operation succeeds, the handler calls the <see cref="IBlobService.DeleteFileInStorage"/> method with the correct blob name to delete the associated audio file from storage.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveSucceeds_CallsDeleteFileInStorage()
+        _blobServiceMock.Verify(
+            b => b.DeleteFileInStorage(It.IsAny<string>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_WhenSaveFails_LogsError()
+    {
+        var audio = new AudioEntity
         {
-            var audio = new AudioEntity { Id = AudioId, BlobName = BlobName };
-            var command = new DeleteAudioCommand(AudioId);
+            Id = AudioId,
+            BlobName = BlobName,
+        };
 
-            this.SetupGetFirstOrDefault(audio);
+        var command = new DeleteAudioCommand(AudioId);
 
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(1);
+        SetupGetFirstOrDefault(audio);
 
-            await this.handler.Handle(command, CancellationToken.None);
+        _repositoryWrapperMock
+            .Setup(w => w.SaveChangesAsync())
+            .ReturnsAsync(0);
 
-            this.blobServiceMock.Verify(
-                b => b.DeleteFileInStorage(BlobName),
-                Times.Once);
-        }
+        await _handler.Handle(command, CancellationToken.None);
 
-        /// <summary>
-        /// Tests that when the save operation fails (i.e., SaveChangesAsync returns 0), the handler returns a failed result with the appropriate error message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveFails_ReturnsFailResult()
-        {
-            var audio = new AudioEntity { Id = AudioId, BlobName = BlobName };
-            var command = new DeleteAudioCommand(AudioId);
+        _loggerMock.Verify(
+            logger => logger.LogError(
+                command,
+                ErrorMessages.FailedToDeleteAnAudio),
+            Times.Once);
+    }
 
-            this.SetupGetFirstOrDefault(audio);
-
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(0);
-
-            var result = await this.handler.Handle(command, CancellationToken.None);
-
-            result.IsFailed.Should().BeTrue();
-            result.Errors[0].Message.Should().Be("Failed to delete an audio");
-        }
-
-        /// <summary>
-        /// Tests that when the save operation fails, the handler does not call the <see cref="IBlobService.DeleteFileInStorage"/> method, ensuring that the audio file is not deleted from storage if the database operation fails.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveFails_DoesNotCallDeleteFileInStorage()
-        {
-            var audio = new AudioEntity { Id = AudioId, BlobName = BlobName };
-            var command = new DeleteAudioCommand(AudioId);
-
-            this.SetupGetFirstOrDefault(audio);
-
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(0);
-
-            await this.handler.Handle(command, CancellationToken.None);
-
-            this.blobServiceMock.Verify(
-                b => b.DeleteFileInStorage(It.IsAny<string>()),
-                Times.Never);
-        }
-
-        /// <summary>
-        /// Tests that when the save operation fails, the handler logs an error with the appropriate message, ensuring that any issues during the delete operation are properly recorded in the logs for troubleshooting and monitoring purposes.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        [Fact]
-        public async Task Handle_WhenSaveFails_LogsError()
-        {
-            var audio = new AudioEntity { Id = AudioId, BlobName = BlobName };
-            var command = new DeleteAudioCommand(AudioId);
-
-            this.SetupGetFirstOrDefault(audio);
-
-            this.repositoryWrapperMock
-                .Setup(w => w.SaveChangesAsync())
-                .ReturnsAsync(0);
-
-            await this.handler.Handle(command, CancellationToken.None);
-
-            this.loggerMock.Verify(
-                logger => logger.LogError(command, "Failed to delete an audio"),
-                Times.Once);
-        }
-
-        private void SetupGetFirstOrDefault(AudioEntity? returnValue)
-        {
-            this.audioRepositoryMock
-                .Setup(r => r.GetFirstOrDefaultAsync(
-                    It.IsAny<Expression<Func<AudioEntity, bool>>>(),
-                    It.IsAny<Func<IQueryable<AudioEntity>, IIncludableQueryable<AudioEntity, object>>?>()))
-                .ReturnsAsync(returnValue);
-        }
+    private void SetupGetFirstOrDefault(AudioEntity? returnValue)
+    {
+        _audioRepositoryMock
+            .Setup(r => r.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<AudioEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<AudioEntity>,
+                    IIncludableQueryable<AudioEntity, object>>?>()))
+            .ReturnsAsync(returnValue);
     }
 }

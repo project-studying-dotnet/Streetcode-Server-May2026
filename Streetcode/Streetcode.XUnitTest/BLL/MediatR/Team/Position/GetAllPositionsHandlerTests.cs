@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -7,8 +8,7 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Team.Position.GetAll;
 using Streetcode.DAL.Entities.Team;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using Streetcode.DAL.Repositories.Interfaces.Team; 
-using System.Linq.Expressions;
+using Streetcode.DAL.Repositories.Interfaces.Team;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Team.Position
@@ -49,8 +49,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Team.Position
 
             _mockPositionRepo.Setup(repo => repo.GetAllAsync(
                 It.IsAny<Expression<Func<Positions, bool>>>(),
-                It.IsAny<Func<IQueryable<Positions>, IIncludableQueryable<Positions, object>>>() 
-            )).ReturnsAsync(positions);
+                It.IsAny<Func<IQueryable<Positions>,
+                IIncludableQueryable<Positions, object>>>())).ReturnsAsync(positions);
 
             var result = await _handler.Handle(new GetAllPositionsQuery(), CancellationToken.None);
 
@@ -60,15 +60,20 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Team.Position
         }
 
         [Fact]
-        public async Task Handle_ShouldReturnFailure_WhenNoPositionsExist()
+        public async Task Handle_ShouldReturnEmptyCollection_WhenNoPositionsExist()
         {
-            _mockPositionRepo.Setup(repo => repo.GetAllAsync(
-                It.IsAny<Expression<Func<Positions, bool>>>(),
-                It.IsAny<Func<IQueryable<Positions>, IIncludableQueryable<Positions, object>>>() 
-            )).ReturnsAsync((IEnumerable<Positions>)null);
-            var result = await _handler.Handle(new GetAllPositionsQuery(), CancellationToken.None);
-            result.IsFailed.Should().BeTrue();
-            result.Errors.Should().ContainSingle(e => e.Message == "Cannot find any positions");
+            _mockPositionRepo
+                .Setup(repo => repo.GetAllAsync(
+                    It.IsAny<Expression<Func<Positions, bool>>>(),
+                    It.IsAny<Func<IQueryable<Positions>, IIncludableQueryable<Positions, object>>>()))
+                .ReturnsAsync(Array.Empty<Positions>());
+
+            var result = await _handler.Handle(
+                new GetAllPositionsQuery(),
+                CancellationToken.None);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeEmpty();
         }
     }
 }

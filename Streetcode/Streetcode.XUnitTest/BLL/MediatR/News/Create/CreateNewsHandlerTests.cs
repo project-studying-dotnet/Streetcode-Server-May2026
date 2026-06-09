@@ -5,8 +5,11 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Mapping.Media.Images;
 using Streetcode.BLL.Mapping.Newss;
 using Streetcode.BLL.MediatR.Newss.Create;
+using Streetcode.BLL.Resources;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
+
+using NewsEntity = Streetcode.DAL.Entities.News.News;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
 {
@@ -38,14 +41,14 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
         [Fact]
         public async Task Handle_ShouldReturnFail_WhenMapperReturnsNull()
         {
-            var request = new CreateNewsCommand(null);
+            var request = new CreateNewsCommand(null!);
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal("Cannot convert null to news", result.Errors[0].Message);
+            Assert.Equal(ErrorMessages.CannotConvertNullToNews, result.Errors[0].Message);
 
-            _loggerMock.Verify(l => l.LogError(request, "Cannot convert null to news"), Times.Once);
+            _loggerMock.Verify(l => l.LogError(request, ErrorMessages.CannotConvertNullToNews), Times.Once);
         }
 
         [Fact]
@@ -54,8 +57,8 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
             var newsDto = new NewsDTO { Title = "Test Title", ImageId = 1 };
             var request = new CreateNewsCommand(newsDto);
 
-            _repositoryWrapperMock.Setup(r => r.NewsRepository.Create(It.IsAny<DAL.Entities.News.News>()))
-                                  .Returns((DAL.Entities.News.News n) => n);
+            _repositoryWrapperMock.Setup(r => r.NewsRepository.CreateAsync(It.IsAny<NewsEntity>()))
+                                  .Returns((NewsEntity n) => Task.FromResult(n));
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
                                   .ReturnsAsync(1);
@@ -67,7 +70,7 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
             Assert.Equal(newsDto.Title, result.Value.Title);
             Assert.Equal(newsDto.ImageId, result.Value.ImageId);
 
-            _repositoryWrapperMock.Verify(r => r.NewsRepository.Create(It.IsAny<DAL.Entities.News.News>()), Times.Once);
+            _repositoryWrapperMock.Verify(r => r.NewsRepository.CreateAsync(It.IsAny<NewsEntity>()), Times.Once);
         }
 
         [Fact]
@@ -75,11 +78,11 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
         {
             var request = new CreateNewsCommand(new NewsDTO { ImageId = 0 });
 
-            DAL.Entities.News.News capturedEntity = null;
+            NewsEntity capturedEntity = null!;
 
-            _repositoryWrapperMock.Setup(r => r.NewsRepository.Create(It.IsAny<DAL.Entities.News.News>()))
-                                  .Callback<DAL.Entities.News.News>(n => capturedEntity = n)
-                                  .Returns((DAL.Entities.News.News n) => n);
+            _repositoryWrapperMock.Setup(r => r.NewsRepository.CreateAsync(It.IsAny<NewsEntity>()))
+                                  .Callback<NewsEntity>(n => capturedEntity = n)
+                                  .Returns((NewsEntity n) => Task.FromResult(n));
 
             _repositoryWrapperMock.Setup(r => r.SaveChangesAsync())
                                   .ReturnsAsync(0);
@@ -87,9 +90,9 @@ namespace Streetcode.XUnitTest.BLL.MediatR.News.Create
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.True(result.IsFailed);
-            Assert.Equal("Failed to create a news", result.Errors[0].Message);
+            Assert.Equal(ErrorMessages.FailedToCreateNews, result.Errors[0].Message);
 
-            _loggerMock.Verify(l => l.LogError(request, "Failed to create a news"), Times.Once);
+            _loggerMock.Verify(l => l.LogError(request, ErrorMessages.FailedToCreateNews), Times.Once);
 
             Assert.NotNull(capturedEntity);
             Assert.Null(capturedEntity.ImageId);

@@ -1,4 +1,23 @@
-﻿namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetByStreetcodeId
+﻿using System.Linq.Expressions;
+using AutoMapper;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Repositories.Interfaces;
+using Streetcode.BLL.DTO.Media.Art;
+using Streetcode.BLL.Interfaces.BlobStorage;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Media.Art.GetByStreetcodeId;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Entities.Streetcode;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Xunit;
+
+using ArtEntity = Streetcode.DAL.Entities.Media.Images.Art;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetByStreetcodeId;
+
+public class GetArtByStreetcodeIdHandlerTests
 {
     using System;
     using System.Collections.Generic;
@@ -26,92 +45,83 @@
     /// Checking class GetArtByStreetcodeIdHandler.
     /// </summary>
     public class GetArtByStreetcodeIdHandlerTests
+    private readonly GetArtsByStreetcodeIdHandler _handler;
+    private readonly Mock<IRepositoryWrapper> _mockRepository;
+    private readonly Mock<IBlobService> _mockBlobService;
+    private readonly Mock<ILoggerService> _mockLoggerService;
+    private readonly Mock<IArtRepository> _mockArtRepository;
+    private readonly IMapper _mapper;
+
+    public GetArtByStreetcodeIdHandlerTests()
     {
-        private GetArtsByStreetcodeIdHandler handler;
+        _mockRepository = new Mock<IRepositoryWrapper>();
+        _mockBlobService = new Mock<IBlobService>();
+        _mockLoggerService = new Mock<ILoggerService>();
+        _mockArtRepository = new Mock<IArtRepository>();
 
-        private Mock<IRepositoryWrapper> mockRepository;
-        private Mock<IMapper> mockMapper;
-        private Mock<IBlobService> mockBlobService;
-        private Mock<ILoggerService> mockLoggerService;
-        private Mock<IArtRepository> mockArtRepository;
+        _mockRepository
+            .Setup(r => r.ArtRepository)
+            .Returns(_mockArtRepository.Object);
 
-        private IMapper mapper;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetArtByStreetcodeIdHandlerTests"/> class.
-        /// </summary>
-        public GetArtByStreetcodeIdHandlerTests()
+        _mapper = new MapperConfiguration(cfg =>
         {
-            this.mockRepository = new Mock<IRepositoryWrapper>();
-            this.mockMapper = new Mock<IMapper>();
-            this.mockBlobService = new Mock<IBlobService>();
-            this.mockLoggerService = new Mock<ILoggerService>();
-            this.mockArtRepository = new Mock<IArtRepository>();
+            cfg.CreateMap<ArtEntity, ArtDTO>();
+        }).CreateMapper();
 
-            this.mockRepository
-                .Setup(r => r.ArtRepository)
-                .Returns(this.mockArtRepository.Object);
+        _handler = new GetArtsByStreetcodeIdHandler(
+            _mockRepository.Object,
+            _mapper,
+            _mockBlobService.Object,
+            _mockLoggerService.Object);
+    }
 
-            this.mapper = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<DAL.Entities.Media.Images.Art, ArtDTO>();
-            }).CreateMapper();
+    [Fact]
+    public async Task Handle_ValidStreetcodeId_ReturnCorrectArts()
+    {
+        var query = new GetArtsByStreetcodeIdQuery(1);
 
-            this.handler = new GetArtsByStreetcodeIdHandler(
-                this.mockRepository.Object,
-                this.mapper,
-                this.mockBlobService.Object,
-                this.mockLoggerService.Object);
-        }
+        const string expectedTitle = "Title art 1";
 
-        /// <summary>
-        /// Method returns correct arts, if entered valid streetcodeId.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task Handle_ValidStreetcodeId_ReturnCorrectArts()
+        var arts = new List<ArtEntity>
         {
-            // Arrange
-            var query = new GetArtsByStreetcodeIdQuery(1);
-
-            var expectedCount = 1;
-
-            string expectedTitle = "Title art 1";
-
-            var arts = new List<Art>()
+            new()
             {
-                new DAL.Entities.Media.Images.Art()
+                Id = 1,
+                Description = "Description art 1",
+                ImageId = 1,
+                Title = expectedTitle,
+                StreetcodeArts = new List<StreetcodeArt>
                 {
-                    Id = 1,
-                    Description = "Description art 1",
-                    ImageId = 1,
-                    Title = "Title art 1",
-                    StreetcodeArts = new List<StreetcodeArt>()
+                    new()
                     {
-                        new StreetcodeArt()
-                        {
-                            ArtId = 1,
-                            StreetcodeId = 1,
-                        },
+                        ArtId = 1,
+                        StreetcodeId = 1,
                     },
                 },
-            };
+            },
+        };
 
             this.mockArtRepository
                     .Setup(r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()))
                     .ReturnsAsync(arts);
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            // Assert
-            Assert.True(result.IsSuccess);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
 
-            Assert.NotNull(result.Value);
+        var art = Assert.Single(result.Value);
 
-            Assert.Equal(expectedCount, result.Value.Count());
+        art.Title.Should().Be(expectedTitle);
+        art.Should().BeOfType<ArtDTO>();
 
-            Assert.Equal(expectedTitle, result.Value.First().Title);
+        _mockArtRepository.Verify(
+            r => r.GetAllAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>,
+                    IIncludableQueryable<ArtEntity, object>>>()),
+            Times.Once);
+    }
 
             Assert.All(result.Value, item =>
             {
@@ -133,19 +143,20 @@
             // Arrange
             var query = new GetArtsByStreetcodeIdQuery(1);
 
-            var expectedErrorMessage = $"Cannot find any art with corresponding streetcode id: {query.StreetcodeId}";
+        var expectedErrorMessage = string.Format(
+            ErrorMessages.CannotFindArtByStreetcodeId,
+            query.StreetcodeId);
 
             this.mockArtRepository
                     .Setup(r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()))
                     .ReturnsAsync((List<Art>?)null);
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            // Assert
-            Assert.True(result.IsFailed);
+        result.IsFailed.Should().BeTrue();
 
-            Assert.Equal(expectedErrorMessage, result.Errors.First().Message);
+        result.Errors.First().Message.Should()
+            .Be(expectedErrorMessage);
 
             mockArtRepository.Verify(
                 r => r.GetAllAsync(It.IsAny<ISpecification<Art>>()),

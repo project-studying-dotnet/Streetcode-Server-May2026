@@ -1,144 +1,110 @@
-﻿namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetAll
+﻿using System.Linq.Expressions;
+using AutoMapper;
+using FluentResults;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
+using Repositories.Interfaces;
+using Streetcode.BLL.DTO.Media.Art;
+using Streetcode.BLL.Interfaces.Logging;
+using Streetcode.BLL.MediatR.Media.Art.GetAll;
+using Streetcode.BLL.Resources;
+using Streetcode.DAL.Repositories.Interfaces.Base;
+using Xunit;
+
+using ArtEntity = Streetcode.DAL.Entities.Media.Images.Art;
+
+namespace Streetcode.XUnitTest.BLL.MediatR.Media.Art.GetAll;
+
+public class GetAllArtsHandlerTests
 {
-    using System.Linq.Expressions;
-    using AutoMapper;
-    using FluentResults;
-    using Microsoft.EntityFrameworkCore.Query;
-    using Moq;
-    using Repositories.Interfaces;
-    using Streetcode.BLL.DTO.Media.Art;
-    using Streetcode.BLL.Interfaces.Logging;
-    using Streetcode.BLL.MediatR.Media.Art.GetAll;
-    using Streetcode.DAL.Entities.Media.Images;
-    using Streetcode.DAL.Repositories.Interfaces.Base;
-    using Xunit;
+    private readonly GetAllArtsHandler _handler;
+    private readonly Mock<IRepositoryWrapper> _mockRepository;
+    private readonly Mock<IArtRepository> _mockArtRepository;
+    private readonly Mock<ILoggerService> _mockLoggerService;
 
-    /// <summary>
-    /// Tests for GetAllArtsHandler.
-    /// </summary>
-    public class GetAllArtsHandlerTests
+    public GetAllArtsHandlerTests()
     {
-        private GetAllArtsHandler handler;
+        _mockRepository = new Mock<IRepositoryWrapper>();
+        _mockArtRepository = new Mock<IArtRepository>();
+        _mockLoggerService = new Mock<ILoggerService>();
 
-        private Mock<IMapper> mockMapper;
-        private Mock<IRepositoryWrapper> mockRepository;
-        private Mock<IArtRepository> mockArtRepository;
-        private Mock<ILoggerService> mockLoggerService;
+        _mockRepository
+            .Setup(r => r.ArtRepository)
+            .Returns(_mockArtRepository.Object);
 
-        private IMapper mapper;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetAllArtsHandlerTests"/> class.
-        /// </summary>
-        public GetAllArtsHandlerTests()
+        var mapper = new MapperConfiguration(cfg =>
         {
-            this.mockMapper = new Mock<IMapper>();
-            this.mockRepository = new Mock<IRepositoryWrapper>();
-            this.mockArtRepository = new Mock<IArtRepository>();
-            this.mockLoggerService = new Mock<ILoggerService>();
+            cfg.CreateMap<ArtEntity, ArtDTO>();
+        }).CreateMapper();
 
-            this.mockRepository
-                    .Setup(r => r.ArtRepository)
-                    .Returns(this.mockArtRepository.Object);
+        _handler = new GetAllArtsHandler(
+            _mockRepository.Object,
+            mapper,
+            _mockLoggerService.Object);
+    }
 
-            this.mapper = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<DAL.Entities.Media.Images.Art, ArtDTO>();
-            }).CreateMapper();
+    [Fact]
+    public async Task Handle_ArtsNotEmpty_ReturnAllArts()
+    {
+        var query = new GetAllArtsQuery();
 
-            this.handler = new GetAllArtsHandler(
-                    this.mockRepository.Object,
-                    this.mapper,
-                    this.mockLoggerService.Object);
-        }
+        const string expectedTitle = "Title art 1";
 
-        /// <summary>
-        /// Method Handel returns all Arts, if they are.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task Handle_ArtsNotEmpty_ReturnAllArts()
+        var arts = new List<ArtEntity>
         {
-            // Arrange
-            var query = new GetAllArtsQuery();
-
-            int expectedCount = 1;
-            string expectedTitle = "Title art 1";
-
-            var arts = new List<Art>()
+            new()
             {
-                new Art()
-                {
-                    Id = 1,
-                    Description = "Description art 1",
-                    ImageId = 1,
-                    Title = "Title art 1",
-                },
-            };
+                Id = 1,
+                Description = "Description art 1",
+                ImageId = 1,
+                Title = expectedTitle,
+            },
+        };
 
-            this.mockArtRepository
-                        .Setup(r => r.GetAllAsync(
-                            It.IsAny<Expression<Func<Art, bool>>>(),
-                            It.IsAny<Func<IQueryable<Art>,
-                                IIncludableQueryable<Art, object>>>()))
-                        .ReturnsAsync(arts);
+        _mockArtRepository
+            .Setup(r => r.GetAllAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>, IIncludableQueryable<ArtEntity, object>>>()))
+            .ReturnsAsync(arts);
 
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            // Assert
-            Assert.True(result.IsSuccess);
+        Assert.True(result.IsSuccess);
+        Assert.NotNull(result.Value);
 
-            Assert.NotNull(result.Value);
+        var art = Assert.Single(result.Value);
+        Assert.Equal(expectedTitle, art.Title);
+        Assert.IsType<ArtDTO>(art);
 
-            Assert.Equal(expectedCount, result.Value.Count());
+        _mockArtRepository.Verify(
+            r => r.GetAllAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>, IIncludableQueryable<ArtEntity, object>>>()),
+            Times.Once);
+    }
 
-            Assert.Equal(expectedTitle, result.Value.First().Title);
+    [Fact]
+    public async Task Handle_ArtsIsEmpty_ReturnErrorMessage()
+    {
+        var query = new GetAllArtsQuery();
 
-            Assert.All(result.Value, item =>
-            {
-                Assert.IsType<ArtDTO>(item);
-            });
+        var expectedError = new Error(ErrorMessages.CannotFindAnyArts);
 
-            this.mockArtRepository.Verify(r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Art, bool>>>(),
-                    It.IsAny<Func<IQueryable<Art>,
-                        IIncludableQueryable<Art, object>>>()),
-                    Times.Once);
-        }
+        _mockArtRepository
+            .Setup(r => r.GetAllAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>, IIncludableQueryable<ArtEntity, object>>>()))
+            .ReturnsAsync((List<ArtEntity>)null!);
 
-        /// <summary>
-        /// Method Handle return error message, if Arts do not exist.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task Handle_ArtsIsEmpty_ReturnErrorMessage()
-        {
-            // Arrange
-            var query = new GetAllArtsQuery();
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-            var expectedError = new Error($"Cannot find any arts");
+        Assert.True(result.IsFailed);
+        Assert.Equal(expectedError.Message, result.Errors.First().Message);
 
-            this.mockArtRepository
-                    .Setup(r => r.GetAllAsync(
-                        It.IsAny<Expression<Func<Art, bool>>>(),
-                        It.IsAny<Func<IQueryable<Art>,
-                            IIncludableQueryable<Art, object>>>()))
-                    .ReturnsAsync((List<Art>?)null);
-
-            // Act
-            var result = await this.handler.Handle(query, CancellationToken.None);
-
-            // Assert
-            Assert.True(result.IsFailed);
-
-            Assert.Equal(expectedError.Message, result.Errors.First().Message);
-
-            this.mockArtRepository.Verify(r => r.GetAllAsync(
-                    It.IsAny<Expression<Func<Art, bool>>>(),
-                    It.IsAny<Func<IQueryable<Art>,
-                        IIncludableQueryable<Art, object>>>()),
-                    Times.Once);
-        }
+        _mockArtRepository.Verify(
+            r => r.GetAllAsync(
+                It.IsAny<Expression<Func<ArtEntity, bool>>>(),
+                It.IsAny<Func<IQueryable<ArtEntity>, IIncludableQueryable<ArtEntity, object>>>()),
+            Times.Once);
     }
 }

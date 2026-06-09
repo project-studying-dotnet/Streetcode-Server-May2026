@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -7,7 +8,6 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Team.GetAll;
 using Streetcode.DAL.Entities.Team;
 using Streetcode.DAL.Repositories.Interfaces.Base;
-using System.Linq.Expressions;
 using Xunit;
 
 namespace Streetcode.XUnitTest.MediatR.Team.GetAll;
@@ -22,12 +22,18 @@ public class GetAllMainTeamHandlerTests
     public GetAllMainTeamHandlerTests()
     {
         _mockRepo = new Mock<IRepositoryWrapper>();
-        this._mapper = new MapperConfiguration(cfg =>
+
+        _mapper = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<TeamMember, TeamMemberDTO>();
         }).CreateMapper();
+
         _mockLogger = new Mock<ILoggerService>();
-        _handler = new GetAllMainTeamHandler(_mockRepo.Object, _mapper, _mockLogger.Object);
+
+        _handler = new GetAllMainTeamHandler(
+            _mockRepo.Object,
+            _mapper,
+            _mockLogger.Object);
     }
 
     [Fact]
@@ -35,34 +41,60 @@ public class GetAllMainTeamHandlerTests
     {
         var mainTeamEntities = new List<TeamMember>
         {
-            new TeamMember { Id = 1, FirstName = "John", LastName = "Doe", IsMain = true },
-            new TeamMember { Id = 2, FirstName = "Jane", LastName = "Smith", IsMain = true }
+            new()
+            {
+                Id = 1,
+                FirstName = "John",
+                LastName = "Doe",
+                IsMain = true,
+            },
+            new()
+            {
+                Id = 2,
+                FirstName = "Jane",
+                LastName = "Smith",
+                IsMain = true,
+            },
         };
-        var mainTeamDTOs = mainTeamEntities.Select(tm => this._mapper.Map<TeamMemberDTO>(tm)).ToList();
 
-        _mockRepo.Setup(
-           repo => repo.TeamRepository.GetAllAsync(
-               It.IsAny<Expression<Func<TeamMember, bool>>>(),
-               It.IsAny<Func<IQueryable<TeamMember>, IIncludableQueryable<TeamMember, object>>>()
-           )
-       ).ReturnsAsync(mainTeamEntities);
+        var mainTeamDtos = mainTeamEntities
+            .Select(_mapper.Map<TeamMemberDTO>)
+            .ToList();
 
-        var result = await _handler.Handle(new GetAllMainTeamQuery(), CancellationToken.None);
+        _mockRepo
+            .Setup(repo => repo.TeamRepository.GetAllAsync(
+                It.IsAny<Expression<Func<TeamMember, bool>>>(),
+                It.IsAny<Func<IQueryable<TeamMember>,
+                    IIncludableQueryable<TeamMember, object>>>()))
+            .ReturnsAsync(mainTeamEntities);
+
+        var result = await _handler.Handle(
+            new GetAllMainTeamQuery(),
+            CancellationToken.None);
+
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(mainTeamDTOs);
+
+        result.Value.Should()
+            .BeEquivalentTo(mainTeamDtos);
     }
 
     [Fact]
     public async Task Handle_ReturnsFailResult_WhenNoMainTeamExists()
     {
-        _mockRepo.Setup(
-           repo => repo.TeamRepository.GetAllAsync(
-               It.IsAny<Expression<Func<TeamMember, bool>>>(),
-               It.IsAny<Func<IQueryable<TeamMember>, IIncludableQueryable<TeamMember, object>>>()
-           )
-       ).ReturnsAsync((IEnumerable<TeamMember>)null);
-        var result = await _handler.Handle(new GetAllMainTeamQuery(), CancellationToken.None);
+        _mockRepo
+            .Setup(repo => repo.TeamRepository.GetAllAsync(
+                It.IsAny<Expression<Func<TeamMember, bool>>>(),
+                It.IsAny<Func<IQueryable<TeamMember>,
+                    IIncludableQueryable<TeamMember, object>>>()))
+            .ReturnsAsync((IEnumerable<TeamMember>)null!);
+
+        var result = await _handler.Handle(
+            new GetAllMainTeamQuery(),
+            CancellationToken.None);
+
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle(e => e.Message == "Cannot find any team");
+
+        result.Errors.Should()
+            .ContainSingle(e => e.Message == "Cannot find any team");
     }
 }
