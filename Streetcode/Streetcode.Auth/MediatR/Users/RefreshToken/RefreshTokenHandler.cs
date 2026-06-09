@@ -9,7 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 namespace Streetcode.Auth.MediatR.Users.RefreshToken
 {
     public class RefreshTokenHandler
-        : IRequestHandler<RefreshTokenCommand, Result<LoginResultDto>>
+        : IRequestHandler<RefreshTokenCommand, Result<AuthResponseDto>>
     {
         private readonly IRefreshTokenService _refresh;
         private readonly IJwtTokenService _jwt;
@@ -25,7 +25,7 @@ namespace Streetcode.Auth.MediatR.Users.RefreshToken
             _mapper = mapper;
         }
 
-        public async Task<Result<LoginResultDto>> Handle(
+        public async Task<Result<AuthResponseDto>> Handle(
             RefreshTokenCommand request,
             CancellationToken cancellationToken)
         {
@@ -37,7 +37,7 @@ namespace Streetcode.Auth.MediatR.Users.RefreshToken
                 var jwt = _jwt.GenerateToken(user);
                 var accessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-                return Result.Ok(new LoginResultDto
+                return Result.Ok(new AuthResponseDto
                 {
                     User = _mapper.Map<UserDto>(user),
                     Token = accessToken,
@@ -47,7 +47,7 @@ namespace Streetcode.Auth.MediatR.Users.RefreshToken
             }
             catch (SecurityTokenException ex)
             {
-                return Result.Fail<LoginResultDto>(ex.Message);
+                return Result.Fail<AuthResponseDto>(ex.Message);
             }
         }
     }

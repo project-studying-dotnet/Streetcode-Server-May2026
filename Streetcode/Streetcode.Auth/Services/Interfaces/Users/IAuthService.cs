@@ -5,6 +5,6 @@ namespace Streetcode.Auth.Services.Interfaces.Users
 {
     public interface IAuthService
     {
-        Task<LoginResultDto> CreateLoginResultAsync(User user);
+        Task<AuthResponseDto> CreateLoginResultAsync(User user);
     }
 }

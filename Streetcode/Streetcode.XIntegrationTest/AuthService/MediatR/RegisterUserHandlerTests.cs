@@ -61,7 +61,7 @@ namespace Streetcode.XIntegrationTest.AuthService.MediatR
             {
                 var userManager = _provider.GetRequiredService<UserManager<User>>();
                 var roleManager = _provider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-                var publishEndpoint = harness.Bus; // важно
+                var publishEndpoint = harness.Bus;
 
                 var roleName = UserRole.Moderator.ToString();
 
@@ -76,7 +76,7 @@ namespace Streetcode.XIntegrationTest.AuthService.MediatR
 
                 authService
                     .Setup(x => x.CreateLoginResultAsync(It.IsAny<User>()))
-                    .ReturnsAsync(new LoginResultDto
+                    .ReturnsAsync(new AuthResponseDto
                     {
                         User = new UserDto(),
                         Token = "mock_token",

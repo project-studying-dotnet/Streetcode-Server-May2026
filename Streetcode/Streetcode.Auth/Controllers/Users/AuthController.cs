@@ -1,64 +1,61 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Streetcode.Auth.Models.DTO;
+using Streetcode.Auth.Extensions;
 using Streetcode.Auth.MediatR.Users.Login;
 using Streetcode.Auth.MediatR.Users.Logout;
 using Streetcode.Auth.MediatR.Users.RefreshToken;
 using Streetcode.Auth.MediatR.Users.Register;
+using Streetcode.Auth.Models.DTO;
 
-namespace Streetcode.Auth.Controllers.Users
+namespace Streetcode.Auth.Controllers.Users;
+
+[ApiController]
+[Route("api/auth")]
+public class AuthController : ControllerBase
 {
-    [ExcludeFromCodeCoverage]
+    private readonly IMediator _mediator;
 
-    [Route("api/auth")]
-    public class AuthController : BaseApiController
+    public AuthController(IMediator mediator)
     {
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
-        {
-            try
-            {
-                return HandleResult(await Mediator.Send(new LoginUserCommand(loginRequest)));
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserRegisterDto registerRequest)
-        {
-            try
-            {
-                return HandleResult(await Mediator.Send(new RegisterUserCommand(registerRequest)));
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-         }
-
-        [AllowAnonymous]
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
-        {
-            return HandleResult(await Mediator.Send(new RefreshTokenCommand(refreshTokenRequest)));
-        }
-
-        [Authorize]
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout([FromBody] LogoutRequestDto request)
-        {
-            if (string.IsNullOrEmpty(request.RefreshToken))
-            {
-                return BadRequest("Refresh token is required.");
-            }
-            return HandleResult(await Mediator.Send(new LogoutUserCommand(request.RefreshToken)));
-        }
+        _mediator = mediator;
     }
+
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(UserLoginDto request)
+    {
+        var result = await _mediator.Send(new LoginUserCommand(request));
+        return this.ToActionResult(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(UserRegisterDto request)
+    {
+        var result = await _mediator.Send(new RegisterUserCommand(request));
+        return this.ToActionResult(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken(RefreshTokenRequestDto request)
+    {
+        var result = await _mediator.Send(new RefreshTokenCommand(request));
+        return this.ToActionResult(result);
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var refreshToken = Request.Headers["X-Refresh-Token"].FirstOrDefault();
+
+        if (string.IsNullOrWhiteSpace(refreshToken))
+            return BadRequest("Refresh token missing in X-Refresh-Token header.");
+
+        var result = await _mediator.Send(new LogoutUserCommand(refreshToken));
+        return this.ToActionResult(result);
+    }
+
 }

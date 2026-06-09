@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Streetcode.Auth.Data;
+﻿using Streetcode.Auth.Data;
 
 namespace Streetcode.Auth.Services
 {
@@ -18,7 +16,15 @@ namespace Streetcode.Auth.Services
             while (!stoppingToken.IsCancellationRequested)
             {
                 await DoWork();
-                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+
+                try
+                {
+                    await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
             }
         }
 

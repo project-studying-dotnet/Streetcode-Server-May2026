@@ -1,5 +1,8 @@
-﻿namespace Streetcode.Auth.Models.DTO
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Streetcode.Auth.Models.DTO
 {
+    [ExcludeFromCodeCoverage]
     public class RefreshResult
     {
         public string AccessToken { get; set; } = null!;

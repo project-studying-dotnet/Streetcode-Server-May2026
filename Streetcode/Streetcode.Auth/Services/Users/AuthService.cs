@@ -27,7 +27,7 @@ namespace Streetcode.Auth.Services.Users
             _userManager = userManager;
         }
 
-        public async Task<LoginResultDto> CreateLoginResultAsync(User user)
+        public async Task<AuthResponseDto> CreateLoginResultAsync(User user)
         {
             var jwt = _jwt.GenerateToken(user);
             var accessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -35,10 +35,7 @@ namespace Streetcode.Auth.Services.Users
             var refreshToken = _refresh.Generate();
             await _refresh.SaveAsync(user.Id, refreshToken);
 
-            user.EnsureSecurityStamp();
-            await _userManager.UpdateAsync(user);
-
-            return new LoginResultDto
+            return new AuthResponseDto
             {
                 User = _mapper.Map<UserDto>(user),
                 Token = accessToken,

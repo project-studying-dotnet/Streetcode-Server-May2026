@@ -23,6 +23,6 @@ namespace Streetcode.Auth.Services.Interfaces.Users
 
         //Task<RefreshResult> RefreshAsync(string refreshToken);
 
-        //Task<LoginResultDto> CreateLoginResultAsync(User user);
+        //Task<AuthResponseDto> CreateLoginResultAsync(User user);
     }
 }

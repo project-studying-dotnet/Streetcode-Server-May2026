@@ -9,7 +9,6 @@ using Streetcode.Auth.Models.DTO;
 using Streetcode.Auth.Models.Entities;
 using Streetcode.Auth.Services.Interfaces.Logging;
 using Streetcode.Auth.Services.Interfaces.Users;
-using Streetcode.BLL.MediatR.Users.Login;
 using Streetcode.Common.Enums;
 using Xunit;
 
@@ -17,7 +16,7 @@ namespace Streetcode.XIntegrationTest.AuthService.MediatR
 {
     public class LoginUserHandlerTests : IAsyncLifetime
     {
-        private ServiceProvider _provider;
+        private ServiceProvider _provider = null!;
 
         public Task InitializeAsync()
         {
@@ -66,7 +65,8 @@ namespace Streetcode.XIntegrationTest.AuthService.MediatR
 
             var createResult = await userManager.CreateAsync(user, "Password123");
 
-            Assert.True(createResult.Succeeded,
+            Assert.True(
+                createResult.Succeeded,
                 string.Join(", ", createResult.Errors.Select(e => e.Description)));
 
             var mapper = new Mock<IMapper>();
@@ -81,7 +81,7 @@ namespace Streetcode.XIntegrationTest.AuthService.MediatR
                 });
 
             authService.Setup(x => x.CreateLoginResultAsync(It.IsAny<User>()))
-                .ReturnsAsync((User u) => new LoginResultDto
+                .ReturnsAsync((User u) => new AuthResponseDto
                 {
                     User = new UserDto
                     {

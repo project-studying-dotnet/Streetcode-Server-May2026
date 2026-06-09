@@ -3,17 +3,14 @@ using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Streetcode.Auth.Extensions;
-using Streetcode.Auth.MediatR.Users.Login;
 using Streetcode.Auth.Models.DTO;
 using Streetcode.Auth.Models.Entities;
 using Streetcode.Auth.Services.Interfaces.Logging;
 using Streetcode.Auth.Services.Interfaces.Users;
-using Streetcode.Auth.Services.Users;
-using System.IdentityModel.Tokens.Jwt;
 
-namespace Streetcode.BLL.MediatR.Users.Login
+namespace Streetcode.Auth.MediatR.Users.Login
 {
-    public class LoginUserHandler : IRequestHandler<LoginUserCommand, Result<LoginResultDto>>
+    public class LoginUserHandler : IRequestHandler<LoginUserCommand, Result<AuthResponseDto>>
     {
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
@@ -32,7 +29,7 @@ namespace Streetcode.BLL.MediatR.Users.Login
             _authService = authService;
         }
 
-        public async Task<Result<LoginResultDto>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<AuthResponseDto>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Login attempt for {request.loginRequest.Login}");
 
@@ -41,8 +38,9 @@ namespace Streetcode.BLL.MediatR.Users.Login
             if (user is null || !await _userManager.CheckPasswordAsync(user, request.loginRequest.Password))
             {
                 _logger.LogError(request, $"Failed login attempt for {request.loginRequest.Login}");
-                return Result.Fail<LoginResultDto>("Invalid login or password.");
+                return Result.Fail<AuthResponseDto>("Invalid login or password.");
             }
+            user.EnsureSecurityStamp();
 
             var loginResult = await _authService.CreateLoginResultAsync(user);
 

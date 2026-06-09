@@ -5,5 +5,5 @@ using Streetcode.Auth.Models.DTO;
 namespace Streetcode.Auth.MediatR.Users.RefreshToken
 {
     public record RefreshTokenCommand(RefreshTokenRequestDto RefreshTokenRequest)
-        : IRequest<Result<LoginResultDto>>;
+        : IRequest<Result<AuthResponseDto>>;
 }

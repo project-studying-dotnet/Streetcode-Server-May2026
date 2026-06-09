@@ -5,5 +5,5 @@ using Streetcode.Auth.Models.DTO;
 namespace Streetcode.Auth.MediatR.Users.Register
 {
     public record RegisterUserCommand(UserRegisterDto registerRequest)
-    : IRequest<Result<LoginResultDto>>;
+    : IRequest<Result<AuthResponseDto>>;
 }

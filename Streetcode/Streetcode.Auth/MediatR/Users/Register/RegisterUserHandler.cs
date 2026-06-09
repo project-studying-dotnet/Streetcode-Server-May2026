@@ -3,17 +3,17 @@ using FluentResults;
 using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Streetcode.Auth.Extensions;
 using Streetcode.Auth.Models.DTO;
 using Streetcode.Auth.Models.Entities;
 using Streetcode.Auth.Services.Interfaces.Logging;
 using Streetcode.Auth.Services.Interfaces.Users;
-using Streetcode.Auth.Services.Users;
 using Streetcode.Common.Enums;
 using Streetcode.Common.Events;
 
 namespace Streetcode.Auth.MediatR.Users.Register
 {
-    public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<LoginResultDto>>
+    public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<AuthResponseDto>>
     {
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
@@ -35,7 +35,7 @@ namespace Streetcode.Auth.MediatR.Users.Register
             _authService = authService;
         }
 
-        public async Task<Result<LoginResultDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<AuthResponseDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Register attempt for {request.registerRequest.Email}");
 
@@ -46,25 +46,26 @@ namespace Streetcode.Auth.MediatR.Users.Register
                 string errorMsg = $"User with email: {request.registerRequest.Email} already exist.";
                 _logger.LogError(request, errorMsg);
 
-                return Result.Fail<LoginResultDto>("User already exists");
+                return Result.Fail<AuthResponseDto>("User already exists");
             }
 
             var user = _mapper.Map<User>(request.registerRequest);
 
             user.UserName = request.registerRequest.Email;
+            user.EnsureSecurityStamp();
 
             var result = await _userManager.CreateAsync(user, request.registerRequest.Password);
 
             if (!result.Succeeded)
             {
-                return Result.Fail<LoginResultDto>(result.Errors.Select(e => e.Description));
+                return Result.Fail<AuthResponseDto>(result.Errors.Select(e => e.Description));
             }
 
             var roleResult = await _userManager.AddToRoleAsync(user, UserRole.Moderator.ToString());
 
             if (!roleResult.Succeeded)
             {
-                return Result.Fail<LoginResultDto>(
+                return Result.Fail<AuthResponseDto>(
                     roleResult.Errors.Select(e => e.Description));
             }
           
@@ -74,13 +75,20 @@ namespace Streetcode.Auth.MediatR.Users.Register
 
             var userDto = _mapper.Map<UserDto>(user);
 
-            await _publishEndpoint.Publish(new UserRegisteredEvent(
+            try
+            {
+                await _publishEndpoint.Publish(new UserRegisteredEvent(
                   user.Id,
                   user.Email!,
                   user.UserName,
                   user.Name,
                   user.Surname
               ), cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("Publishing message timed out. RabbitMQ might be down.");
+            }
 
             return Result.Ok(registrResult);
         }

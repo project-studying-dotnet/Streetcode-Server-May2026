@@ -1,6 +1,6 @@
 ﻿namespace Streetcode.Auth.Models.DTO
 {
-    public class LoginResultDto
+    public class AuthResponseDto
     {
         required public UserDto User { get; set; }
         required public string Token { get; set; }

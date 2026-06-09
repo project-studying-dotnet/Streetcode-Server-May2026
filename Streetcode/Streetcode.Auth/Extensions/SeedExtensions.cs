@@ -18,20 +18,16 @@ namespace Streetcode.Auth.Extensions
 
             var dbContext = services.GetRequiredService<ApplicationDbContext>();
 
-            //var r = await dbContext.Database.EnsureCreatedAsync();
-            //var r = await dbContext.Database.EnsureDeletedAsync();
-            //await dbContext.Database.EnsureCreatedAsync();
             try
             {
                 await dbContext.Database.MigrateAsync();
             }
             catch (Exception ex)
             {
-                // Поставьте брейкпоинт здесь
-                Console.WriteLine($"Ошибка миграции: {ex.Message}");
+                Console.WriteLine($"Migration error: {ex.Message}");
                 if (ex.InnerException != null)
                 {
-                    Console.WriteLine($"Внутренняя ошибка: {ex.InnerException.Message}");
+                    Console.WriteLine($"Internal error: {ex.InnerException.Message}");
                 }
             }
 
