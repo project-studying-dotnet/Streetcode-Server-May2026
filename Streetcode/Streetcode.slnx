@@ -12,6 +12,7 @@
     <Build Solution="*|Any CPU" Project="false" />
   </Project>
   <Project Path="DbUpdate/DbUpdate.csproj" />
+  <Project Path="Streetcode.ApiGateway/Streetcode.ApiGateway.csproj" />
   <Project Path="Streetcode.BLL/Streetcode.BLL.csproj" />
   <Project Path="Streetcode.DAL/Streetcode.DAL.csproj" />
   <Project Path="Streetcode.EmailService/Streetcode.EmailService.csproj" />
