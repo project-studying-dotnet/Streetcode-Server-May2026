@@ -1,3 +1,4 @@
+using System;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Specifications.Base;
 
@@ -56,7 +57,8 @@ public class StreetcodePagedAndSortedSpecification : BaseSpecification<Streetcod
         }
 
         var column = sort.TrimStart('-');
-        IsDescending = sort.StartsWith("-");
+
+        IsDescending = sort.StartsWith('-');
 
         OrderBy = column switch
         {
