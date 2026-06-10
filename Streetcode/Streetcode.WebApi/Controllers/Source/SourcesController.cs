@@ -1,102 +1,107 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Streetcode.BLL.DTO.Sources;
-using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoriesByStreetcodeId;
-using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoryById;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Create;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Delete;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetAll;
-using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId;
 using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.Update;
+using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoryById;
 using Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Create;
 using Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Delete;
 using Streetcode.BLL.MediatR.Sources.StreetcodeCategoryContent.Update;
-using Streetcode.DAL.Enums;
+using Streetcode.BLL.MediatR.Sources.SourceLink.GetCategoriesByStreetcodeId;
+using Streetcode.BLL.MediatR.Sources.SourceLinkCategory.GetCategoryContentByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Source;
 
-public class SourcesController : BaseApiController
+[ExcludeFromCodeCoverage]
+public sealed class SourcesController : BaseApiController
 {
     [HttpGet("names")]
-    public async Task<IActionResult> GetAllNames()
+    public async Task<IActionResult> GetAllNames(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllCategoryNamesQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllCategoryNamesQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("categories")]
-    public async Task<IActionResult> GetAllCategories()
+    public async Task<IActionResult> GetAllCategories(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllCategoriesQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllCategoriesQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("category/{id:int}")]
-    public async Task<IActionResult> GetCategoryById([FromRoute] int id)
+    public async Task<IActionResult> GetCategoryById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetCategoryByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetCategoryByIdQuery(id), cancellationToken)
+        );
     }
 
     [HttpGet("category-content/{categoryId:int}/{streetcodeId:int}")]
-    public async Task<IActionResult> GetCategoryContentByStreetcodeId(
-        [FromRoute] int streetcodeId,
-        [FromRoute] int categoryId)
+    public async Task<IActionResult> GetCategoryContentByStreetcodeId([FromRoute] int streetcodeId, [FromRoute] int categoryId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(
-            new GetCategoryContentByStreetcodeIdQuery(streetcodeId, categoryId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetCategoryContentByStreetcodeIdQuery(streetcodeId, categoryId), cancellationToken)
+        );
     }
 
     [HttpGet("streetcode/{streetcodeId:int}")]
-    public async Task<IActionResult> GetCategoriesByStreetcodeId(
-        [FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetCategoriesByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(
-            new GetCategoriesByStreetcodeIdQuery(streetcodeId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetCategoriesByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 
     [HttpPost("category")]
-    public async Task<IActionResult> CreateCategory(
-        [FromBody] SourceLinkCategoryDto category)
+    public async Task<IActionResult> CreateCategory([FromBody] SourceLinkCategoryDto category, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(
-            new CreateSourceLinkCategoryCommand(category)));
+        return base.HandleResult(
+            await base.Mediator.Send(new CreateSourceLinkCategoryCommand(category), cancellationToken)
+        );
     }
 
     [HttpPut("category")]
-    public async Task<IActionResult> UpdateCategory(
-        [FromBody] SourceLinkCategoryDto category)
+    public async Task<IActionResult> UpdateCategory([FromBody] SourceLinkCategoryDto category, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(
-            new UpdateSourceLinkCategoryCommand(category)));
+        return base.HandleResult(
+            await base.Mediator.Send(new UpdateSourceLinkCategoryCommand(category), cancellationToken)
+        );
     }
 
     [HttpDelete("category/{id:int}")]
-    public async Task<IActionResult> DeleteCategory([FromRoute] int id)
+    public async Task<IActionResult> DeleteCategory([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(
-            new DeleteSourceLinkCategoryCommand(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new DeleteSourceLinkCategoryCommand(id), cancellationToken)
+        );
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(
-        [FromBody] CategoryContentCreateDto categoryContent)
+    public async Task<IActionResult> Create([FromBody] CategoryContentCreateDto categoryContent, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(
-            new CreateStreetcodeCategoryContentCommand(categoryContent)));
+        return base.HandleResult(
+            await base.Mediator.Send(new CreateStreetcodeCategoryContentCommand(categoryContent), cancellationToken)
+        );
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(
-        [FromBody] CategoryContentUpdateDto categoryContent)
+    public async Task<IActionResult> Update([FromBody] CategoryContentUpdateDto categoryContent, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(
-            new UpdateStreetcodeCategoryContentCommand(categoryContent)));
+        return base.HandleResult(
+            await base.Mediator.Send(new UpdateStreetcodeCategoryContentCommand(categoryContent), cancellationToken)
+        );
     }
 
     [HttpDelete("{streetcodeId:int}/{categoryId:int}")]
-    public async Task<IActionResult> Delete(
-        [FromRoute] int streetcodeId,
-        [FromRoute] int categoryId)
+    public async Task<IActionResult> Delete([FromRoute] int streetcodeId, [FromRoute] int categoryId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(
-            new DeleteStreetcodeCategoryContentCommand(streetcodeId, categoryId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new DeleteStreetcodeCategoryContentCommand(streetcodeId, categoryId), cancellationToken)
+        );
     }
 }

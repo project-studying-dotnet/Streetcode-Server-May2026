@@ -1,53 +1,67 @@
+using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Streetcode.WebApi.Attributes;
 using Streetcode.BLL.DTO.Media.Images;
 using Streetcode.BLL.MediatR.Media.Image.GetAll;
-using Streetcode.BLL.MediatR.Media.Image.GetBaseImage;
-using Streetcode.BLL.MediatR.Media.Image.GetById;
-using Streetcode.BLL.MediatR.Media.Image.GetByStreetcodeId;
 using Streetcode.BLL.MediatR.Media.Image.Create;
 using Streetcode.BLL.MediatR.Media.Image.Delete;
-using Streetcode.DAL.Enums;
-using Streetcode.WebApi.Attributes;
+using Streetcode.BLL.MediatR.Media.Image.GetById;
+using Streetcode.BLL.MediatR.Media.Image.GetBaseImage;
+using Streetcode.BLL.MediatR.Media.Image.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.Media.Images;
 
-public class ImageController : BaseApiController
+[ExcludeFromCodeCoverage]
+public sealed class ImageController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllImagesQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllImagesQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("{streetcodeId:int}")]
-    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetImageByStreetcodeIdQuery(streetcodeId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetImageByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetImageByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetImageByIdQuery(id), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] ImageFileBaseCreateDTO image)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Create([FromBody] ImageFileBaseCreateDTO image, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new CreateImageCommand(image)));
+        return base.HandleResult(
+            await base.Mediator.Send(new CreateImageCommand(image), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new DeleteImageCommand(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new DeleteImageCommand(id), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetBaseImage([FromRoute] int id)
+    public async Task<IActionResult> GetBaseImage([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetBaseImageQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetBaseImageQuery(id), cancellationToken)
+        );
     }
 }

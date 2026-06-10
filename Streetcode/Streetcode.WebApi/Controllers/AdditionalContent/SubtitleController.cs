@@ -1,28 +1,35 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
 using Streetcode.BLL.MediatR.AdditionalContent.GetById;
 using Streetcode.BLL.MediatR.AdditionalContent.Subtitle.GetAll;
 using Streetcode.BLL.MediatR.AdditionalContent.Subtitle.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.AdditionalContent;
 
-public class SubtitleController : BaseApiController
+[ExcludeFromCodeCoverage]
+public sealed class SubtitleController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllSubtitlesQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllSubtitlesQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetSubtitleByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetSubtitleByIdQuery(id), cancellationToken)
+        );
     }
 
     [HttpGet("{streetcodeId:int}")]
-    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetSubtitlesByStreetcodeIdQuery(streetcodeId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetSubtitlesByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 }
