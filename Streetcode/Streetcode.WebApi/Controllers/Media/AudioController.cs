@@ -1,53 +1,67 @@
+using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Streetcode.WebApi.Attributes;
 using Streetcode.BLL.DTO.Media.Audio;
 using Streetcode.BLL.MediatR.Media.Audio.Create;
 using Streetcode.BLL.MediatR.Media.Audio.Delete;
 using Streetcode.BLL.MediatR.Media.Audio.GetAll;
-using Streetcode.BLL.MediatR.Media.Audio.GetBaseAudio;
 using Streetcode.BLL.MediatR.Media.Audio.GetById;
+using Streetcode.BLL.MediatR.Media.Audio.GetBaseAudio;
 using Streetcode.BLL.MediatR.Media.Audio.GetByStreetcodeId;
-using Streetcode.DAL.Enums;
-using Streetcode.WebApi.Attributes;
 
 namespace Streetcode.WebApi.Controllers.Media;
 
-public class AudioController : BaseApiController
+[ExcludeFromCodeCoverage]
+public sealed class AudioController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllAudiosQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllAudiosQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("{streetcodeId:int}")]
-    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAudioByStreetcodeIdQuery(streetcodeId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAudioByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAudioByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAudioByIdQuery(id), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetBaseAudio([FromRoute] int id)
+    public async Task<IActionResult> GetBaseAudio([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetBaseAudioQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetBaseAudioQuery(id), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] AudioFileBaseCreateDTO audio)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Create([FromBody] AudioFileBaseCreateDTO audio, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new CreateAudioCommand(audio)));
+        return base.HandleResult(
+            await base.Mediator.Send(new CreateAudioCommand(audio), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new DeleteAudioCommand(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new DeleteAudioCommand(id), cancellationToken)
+        );
     }
 }

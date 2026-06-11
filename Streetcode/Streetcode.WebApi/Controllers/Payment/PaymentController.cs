@@ -1,15 +1,18 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Payment;
 using Streetcode.BLL.MediatR.Payment;
 
-namespace Streetcode.WebApi.Controllers.Payment
+namespace Streetcode.WebApi.Controllers.Payment;
+
+[ExcludeFromCodeCoverage]
+public sealed class PaymentController : BaseApiController
 {
-    public class PaymentController : BaseApiController
+    [HttpPost]
+    public async Task<IActionResult> CreateInvoice([FromBody] PaymentDTO payment, CancellationToken cancellationToken = default)
     {
-        [HttpPost]
-        public async Task<IActionResult> CreateInvoice([FromBody] PaymentDTO payment)
-        {
-            return HandleResult(await Mediator.Send(new CreateInvoiceCommand(payment)));
-        }
+        return base.HandleResult(
+            await base.Mediator.Send(new CreateInvoiceCommand(payment), cancellationToken)
+        );
     }
 }
