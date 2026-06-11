@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using FluentResults;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Streetcode.Auth.Controllers.Users;
@@ -149,43 +148,37 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Logout_ShouldReturnBadRequest_WhenHeaderMissing()
+    public async Task Logout_ShouldReturnBadRequest_WhenTokenIsNullOrEmpty()
     {
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext()
-        };
+        // Act:
+        var result = await _controller.Logout(null!);
 
-        var result = await _controller.Logout();
-
+        // Assert
         result.Should().BeOfType<BadRequestObjectResult>();
+        _mediatorMock.Verify(x => x.Send(It.IsAny<LogoutUserCommand>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
-    public async Task Logout_ShouldReturnOk_WhenHeaderExists()
+    public async Task Logout_ShouldReturnOk_WhenTokenIsValid()
     {
-        var httpContext = new DefaultHttpContext();
-        httpContext.Request.Headers["X-Refresh-Token"] = "token";
-
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = httpContext
-        };
-
+        // Arrange
+        string refreshToken = "test-refresh-token";
         var expected = Result.Ok(Unit.Value);
 
         _mediatorMock
             .Setup(x => x.Send(
-                It.IsAny<LogoutUserCommand>(),
+                It.Is<LogoutUserCommand>(c => c.RefreshToken == refreshToken),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        var result = await _controller.Logout();
+        // Act
+        var result = await _controller.Logout(refreshToken);
 
+        // Assert
         result.Should().BeOfType<OkObjectResult>();
 
         _mediatorMock.Verify(
-            x => x.Send(It.IsAny<LogoutUserCommand>(), It.IsAny<CancellationToken>()),
+            x => x.Send(It.Is<LogoutUserCommand>(c => c.RefreshToken == refreshToken), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

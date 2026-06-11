@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using FluentResults;
-using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Streetcode.Auth.Data;
 using Streetcode.Auth.Extensions;
 using Streetcode.Auth.Models.DTO;
 using Streetcode.Auth.Models.Entities;
+using Streetcode.Auth.Services;
+using Streetcode.Auth.Services.Interfaces;
 using Streetcode.Auth.Services.Interfaces.Logging;
 using Streetcode.Auth.Services.Interfaces.Users;
+using Streetcode.Common.Contracts;
 using Streetcode.Common.Enums;
-using Streetcode.Common.Events;
 
 namespace Streetcode.Auth.MediatR.Users.Register
 {
@@ -18,21 +20,24 @@ namespace Streetcode.Auth.MediatR.Users.Register
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ILoggerService _logger;
-        private readonly IPublishEndpoint _publishEndpoint;
         private readonly IAuthService _authService;
+        private readonly ApplicationDbContext _context;
+        private readonly IRabbitMqPublisher _rabbitMqPublisher;
 
         public RegisterUserHandler(
          UserManager<User> userManager,
          IMapper mapper,
          ILoggerService logger,
-         IPublishEndpoint publishEndpoint,
-         IAuthService authService)
+         IAuthService authService,
+         ApplicationDbContext context,
+         IRabbitMqPublisher rabbitMqPublisher)
         {
             _userManager = userManager;
             _mapper = mapper;
             _logger = logger;
-            _publishEndpoint = publishEndpoint;
             _authService = authService;
+            _context = context;
+            _rabbitMqPublisher = rabbitMqPublisher;
         }
 
         public async Task<Result<AuthResponseDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -40,56 +45,50 @@ namespace Streetcode.Auth.MediatR.Users.Register
             _logger.LogInformation($"Register attempt for {request.registerRequest.Email}");
 
             var existingUser = await _userManager.FindByEmailAsync(request.registerRequest.Email);
-
             if (existingUser != null)
             {
-                string errorMsg = $"User with email: {request.registerRequest.Email} already exist.";
-                _logger.LogError(request, errorMsg);
-
                 return Result.Fail<AuthResponseDto>("User already exists");
             }
 
             var user = _mapper.Map<User>(request.registerRequest);
-
             user.UserName = request.registerRequest.Email;
             user.EnsureSecurityStamp();
 
             var result = await _userManager.CreateAsync(user, request.registerRequest.Password);
-
             if (!result.Succeeded)
             {
                 return Result.Fail<AuthResponseDto>(result.Errors.Select(e => e.Description));
             }
 
             var roleResult = await _userManager.AddToRoleAsync(user, UserRole.Moderator.ToString());
-
             if (!roleResult.Succeeded)
             {
-                return Result.Fail<AuthResponseDto>(
-                    roleResult.Errors.Select(e => e.Description));
+                return Result.Fail<AuthResponseDto>(roleResult.Errors.Select(e => e.Description));
             }
-          
+
+            await _context.SaveChangesAsync(cancellationToken);
+
             var registrResult = await _authService.CreateLoginResultAsync(user);
-
-            _logger.LogInformation($"User {user.Id} registered successfully.");
-
-            var userDto = _mapper.Map<UserDto>(user);
 
             try
             {
-                await _publishEndpoint.Publish(new UserRegisteredEvent(
-                  user.Id,
-                  user.Email!,
-                  user.UserName,
-                  user.Name,
-                  user.Surname
-              ), cancellationToken);
+                await _rabbitMqPublisher.PublishAsync(
+                     "email-queue",
+                     new EmailMessageContract
+                     {
+                         To = [user.Email!],
+                         From = "noreply@streetcode.com",
+                         Subject = "Welcome",
+                         Content = $"Hello {user.Name}"
+                     });
+                _logger.LogInformation(">>> [STEP 1] Msg send RabbitMQ!");
             }
-            catch (OperationCanceledException)
+            catch (Exception ex)
             {
-                _logger.LogInformation("Publishing message timed out. RabbitMQ might be down.");
+                _logger.LogError(request, $">>> [STEP 2] Error RabbitMQ: {ex.Message}");
             }
 
+            _logger.LogInformation(">>> [STEP 3] Method End complite RabbitMQ");
             return Result.Ok(registrResult);
         }
     }

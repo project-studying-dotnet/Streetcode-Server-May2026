@@ -24,7 +24,7 @@ public class ValidationBehaviorTests
 
         var nextCalled = false;
 
-        RequestHandlerDelegate<string> next = (ct) =>
+        RequestHandlerDelegate<string> next = () =>
         {
             nextCalled = true;
             return Task.FromResult("OK");
@@ -42,28 +42,30 @@ public class ValidationBehaviorTests
         var validatorMock = new Mock<IValidator<TestRequest>>();
 
         validatorMock
-            .Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
+            .Setup(v => v.ValidateAsync(
+                It.IsAny<ValidationContext<TestRequest>>(),
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult(new[]
             {
-                new ValidationFailure("Name", "Required")
+            new ValidationFailure("Name", "Required")
             }));
 
         var validators = new List<IValidator<TestRequest>>
-        {
-            validatorMock.Object
-        };
+    {
+        validatorMock.Object
+    };
 
         var behavior = new ValidationBehavior<TestRequest, string>(validators);
 
         var request = new TestRequest();
 
-        RequestHandlerDelegate<string> next = (ct) => Task.FromResult("OK");
+        RequestHandlerDelegate<string> next = () => Task.FromResult("OK");
 
-        Func<Task> act = async () =>
-            await behavior.Handle(request, next, CancellationToken.None);
+        Func<Task> act = () =>
+            behavior.Handle(request, next, CancellationToken.None);
 
         await act.Should()
-            .ThrowAsync<FluentValidation.ValidationException>();
+            .ThrowAsync<Streetcode.Shared.Web.Exceptions.ValidationException>();
     }
 
     [Fact]
@@ -86,7 +88,7 @@ public class ValidationBehaviorTests
 
         var nextCalled = false;
 
-        RequestHandlerDelegate<string> next = (ct) =>
+        RequestHandlerDelegate<string> next = () =>
         {
             nextCalled = true;
             return Task.FromResult("OK");

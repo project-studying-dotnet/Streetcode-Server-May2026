@@ -38,6 +38,7 @@
 	  <ProjectReference Include="..\Streetcode.Auth\Streetcode.Auth.csproj" />
 	  <ProjectReference Include="..\Streetcode.BLL\Streetcode.BLL.csproj" />
 	  <ProjectReference Include="..\Streetcode.DAL\Streetcode.DAL.csproj" />
+	  <ProjectReference Include="..\Streetcode.Shared.Web\Streetcode.Shared.Web.csproj" />
 	  <ProjectReference Include="..\Streetcode.WebApi\Streetcode.WebApi.csproj" />
 	  <ProjectReference Include="..\Streetcode.EmailService\Streetcode.EmailService.csproj" />
 	</ItemGroup>

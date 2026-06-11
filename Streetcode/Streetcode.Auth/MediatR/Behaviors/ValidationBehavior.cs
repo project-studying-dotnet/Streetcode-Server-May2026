@@ -32,7 +32,7 @@ public class ValidationBehavior<TRequest, TResponse>
 
         if (failures.Any())
         {
-            throw new FluentValidation.ValidationException(failures);
+            throw new Shared.Web.Exceptions.ValidationException(failures);
         }
 
         return await next();

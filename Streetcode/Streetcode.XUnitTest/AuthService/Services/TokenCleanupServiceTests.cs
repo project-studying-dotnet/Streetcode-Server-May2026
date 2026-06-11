@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Reflection;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Streetcode.Auth.Data;
@@ -8,47 +9,56 @@ using Xunit;
 
 public class TokenCleanupServiceTests
 {
-    private ApplicationDbContext CreateDb()
+    private ApplicationDbContext CreateDb(string dbName)
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .UseInMemoryDatabase(dbName)
             .Options;
+
         return new ApplicationDbContext(options);
     }
 
-    private TokenCleanupService CreateService(ApplicationDbContext context)
+    [Fact]
+    public async Task DoWork_ShouldRemoveExpiredTokens()
     {
-        var services = new ServiceCollection();
+        var dbName = Guid.NewGuid().ToString();
 
-        services.AddSingleton(context);
+        // ARRANGE
+        await using (var context = CreateDb(dbName))
+        {
+            context.RefreshTokens.AddRange(
+                new RefreshToken
+                {
+                    TokenHash = "1",
+                    Expires = DateTime.UtcNow.AddDays(-1)
+                },
+                new RefreshToken
+                {
+                    TokenHash = "2",
+                    Expires = DateTime.UtcNow.AddDays(1)
+                });
+
+            await context.SaveChangesAsync();
+        }
+
+        var services = new ServiceCollection();
+        services.AddDbContext<ApplicationDbContext>(o =>
+            o.UseInMemoryDatabase(dbName));
+
         var provider = services.BuildServiceProvider();
 
-        return new TokenCleanupService(provider);
-    }
+        var service = new TokenCleanupService(provider);
 
-    [Fact]
-    public async Task ExecuteAsync_ShouldRemoveExpiredTokens()
-    {
-        // Arrange
-        var context = CreateDb();
-        context.RefreshTokens.AddRange(
-            new RefreshToken { TokenHash = "1", Expires = DateTime.UtcNow.AddDays(-1) },
-            new RefreshToken { TokenHash = "2", Expires = DateTime.UtcNow.AddDays(1) }
-        );
-        await context.SaveChangesAsync();
+        var method = typeof(TokenCleanupService)
+            .GetMethod("DoWork", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        var service = CreateService(context);
-        using var cts = new CancellationTokenSource();
+        await (Task)method!.Invoke(service, null)!;
 
-        // Act
-        var runningTask = service.StartAsync(cts.Token);
+        // ASSERT
+        await using var verifyContext = CreateDb(dbName);
 
-        await Task.Delay(200);
+        var remaining = await verifyContext.RefreshTokens.ToListAsync();
 
-        await cts.CancelAsync();
-        await runningTask;
-
-        var remaining = await context.RefreshTokens.ToListAsync();
         remaining.Should().HaveCount(1);
         remaining.First().TokenHash.Should().Be("2");
     }

@@ -28,25 +28,17 @@ namespace Streetcode.Auth.Extensions
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
-                {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-
-                c.AddSecurityDefinition("RefreshToken", new OpenApiSecurityScheme
-                {
-                    Name = "X-Refresh-Token",
-                    Type = SecuritySchemeType.ApiKey,
-                    In = ParameterLocation.Header,
-                    Description = "Refresh Token"
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
                 });
             });
 

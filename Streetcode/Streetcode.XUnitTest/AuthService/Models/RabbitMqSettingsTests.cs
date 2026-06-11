@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Streetcode.Auth.Models;
+using Streetcode.Common.Models;
 using Xunit;
 
 namespace Streetcode.XUnitTest.AuthService.Models
@@ -12,14 +12,14 @@ namespace Streetcode.XUnitTest.AuthService.Models
             // Arrange
             var settings = new RabbitMqSettings
             {
-                Host = "localhost",
+                HostName = "localhost",
                 VirtualHost = "test-vh",
                 UserName = "guest",
                 Password = "password123"
             };
 
             // Act & Assert
-            settings.Host.Should().Be("localhost");
+            settings.HostName.Should().Be("localhost");
             settings.VirtualHost.Should().Be("test-vh");
             settings.UserName.Should().Be("guest");
             settings.Password.Should().Be("password123");
@@ -32,7 +32,7 @@ namespace Streetcode.XUnitTest.AuthService.Models
             var settings = new RabbitMqSettings();
 
             // Assert
-            settings.Host.Should().Be(string.Empty);
+            settings.HostName.Should().Be(string.Empty);
             settings.VirtualHost.Should().Be("/");
             settings.UserName.Should().Be(string.Empty);
             settings.Password.Should().Be(string.Empty);

@@ -47,10 +47,8 @@ public class AuthController : ControllerBase
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> Logout([FromHeader(Name = "X-Refresh-Token")] string refreshToken)
     {
-        var refreshToken = Request.Headers["X-Refresh-Token"].FirstOrDefault();
-
         if (string.IsNullOrWhiteSpace(refreshToken))
             return BadRequest("Refresh token missing in X-Refresh-Token header.");
 

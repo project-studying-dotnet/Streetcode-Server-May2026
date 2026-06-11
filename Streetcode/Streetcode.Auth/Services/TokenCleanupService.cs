@@ -37,6 +37,8 @@ namespace Streetcode.Auth.Services
                 var expiredTokens = context.RefreshTokens
                     .Where(t => t.Expires < DateTime.UtcNow);
 
+                var allTokens = context.RefreshTokens.ToList();
+
                 if (expiredTokens.Any())
                 {
                     context.RefreshTokens.RemoveRange(expiredTokens);

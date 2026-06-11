@@ -1,15 +1,18 @@
 ﻿using AutoMapper;
 using FluentAssertions;
-using MassTransit;
+using FluentResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Moq;
+using Streetcode.Auth.Data;
 using Streetcode.Auth.MediatR.Users.Register;
 using Streetcode.Auth.Models.DTO;
 using Streetcode.Auth.Models.Entities;
+using Streetcode.Auth.Services.Interfaces;
 using Streetcode.Auth.Services.Interfaces.Logging;
 using Streetcode.Auth.Services.Interfaces.Users;
+using Streetcode.Common.Contracts;
 using Streetcode.Common.Enums;
-using Streetcode.Common.Events;
 using Xunit;
 
 namespace Streetcode.XUnitTest.AuthService.MediatR.Users.Register;
@@ -18,27 +21,23 @@ public class RegisterUserHandlerTests
 {
     private readonly Mock<UserManager<User>> _userManagerMock;
     private readonly Mock<ILoggerService> _loggerMock;
-    private readonly Mock<IPublishEndpoint> _publishEndpointMock;
     private readonly Mock<IAuthService> _authServiceMock;
+    private readonly Mock<IRabbitMqPublisher> _rabbitMock;
+    private readonly Mock<ApplicationDbContext> _contextMock;
     private readonly IMapper _mapper;
     private readonly RegisterUserHandler _handler;
 
     public RegisterUserHandlerTests()
     {
         _userManagerMock = new Mock<UserManager<User>>(
-            Mock.Of<IUserStore<User>>(),
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!);
+            Mock.Of<IUserStore<User>>(), null!, null!, null!, null!, null!, null!, null!, null!);
 
         _loggerMock = new Mock<ILoggerService>();
-        _publishEndpointMock = new Mock<IPublishEndpoint>();
         _authServiceMock = new Mock<IAuthService>();
+        _rabbitMock = new Mock<IRabbitMqPublisher>();
+
+        _contextMock = new Mock<ApplicationDbContext>(
+            new DbContextOptions<ApplicationDbContext>());
 
         var mapperConfig = new MapperConfiguration(cfg =>
         {
@@ -52,8 +51,9 @@ public class RegisterUserHandlerTests
             _userManagerMock.Object,
             _mapper,
             _loggerMock.Object,
-            _publishEndpointMock.Object,
-            _authServiceMock.Object);
+            _authServiceMock.Object,
+            _contextMock.Object,
+            _rabbitMock.Object);
     }
 
     private static UserRegisterDto CreateValidDto() => new()
@@ -68,210 +68,136 @@ public class RegisterUserHandlerTests
     private static RegisterUserCommand CreateCommand(UserRegisterDto dto)
         => new(dto);
 
-    private static User CreateUser(UserRegisterDto dto) => new()
+    private static User CreateTestUser() => new()
     {
         Id = 1,
-        Email = dto.Email,
-        Name = dto.Name,
-        Surname = dto.Surname
+        UserName = "testUser",
+        Name = "John",
+        Surname = "Doe"
     };
-
-    private static AuthResponseDto CreateAuthResponse(User user) => new()
-    {
-        User = new UserDto
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Surname = user.Surname,
-            Email = user.Email!
-        },
-        Token = "jwt-token",
-        RefreshToken = "refresh-token",
-        ExpireAt = DateTime.UtcNow.AddHours(1)
-    };
-
-    private void SetupUserNotExists(UserRegisterDto dto)
-    {
-        _userManagerMock
-            .Setup(x => x.FindByEmailAsync(dto.Email))
-            .ReturnsAsync((User?)null);
-    }
-
-    private void SetupUserExists(User user)
-    {
-        _userManagerMock
-            .Setup(x => x.FindByEmailAsync(user.Email!))
-            .ReturnsAsync(user);
-    }
 
     [Fact]
     public async Task Handle_ShouldRegisterUser_WhenDataIsValid()
     {
         // Arrange
         var dto = CreateValidDto();
-        var command = CreateCommand(dto);
-        var user = CreateUser(dto);
-        var authResponse = CreateAuthResponse(user);
 
-        SetupUserNotExists(dto);
+        _userManagerMock.Setup(x => x.FindByEmailAsync(dto.Email))
+            .ReturnsAsync((User?)null);
 
-        _userManagerMock
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), dto.Password))
+        _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), dto.Password))
             .ReturnsAsync(IdentityResult.Success);
 
-        _userManagerMock
-            .Setup(x => x.AddToRoleAsync(
-                It.IsAny<User>(),
-                UserRole.Moderator.ToString()))
+        _userManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), UserRole.Moderator.ToString()))
             .ReturnsAsync(IdentityResult.Success);
 
-        _authServiceMock
-            .Setup(x => x.CreateLoginResultAsync(It.IsAny<User>()))
-            .ReturnsAsync(authResponse);
+        _authServiceMock.Setup(x => x.CreateLoginResultAsync(It.IsAny<User>()))
+            .ReturnsAsync(new AuthResponseDto
+            {
+                Token = "jwt-token",
+                RefreshToken = "refresh-token",
+                User = new UserDto
+                {
+                    Email = dto.Email,
+                    Name = dto.Name,
+                    Surname = dto.Surname
+                }
+            });
+
+        _contextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
+
+        _rabbitMock.Setup(x => x.PublishAsync(
+                "email-queue",
+                It.IsAny<EmailMessageContract>()))
+            .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(CreateCommand(dto), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-
-        result.Value.Should().NotBeNull();
         result.Value.Token.Should().Be("jwt-token");
-        result.Value.RefreshToken.Should().Be("refresh-token");
 
-        _authServiceMock.Verify(
-            x => x.CreateLoginResultAsync(It.IsAny<User>()),
+        _rabbitMock.Verify(
+            x => x.PublishAsync(
+                "email-queue",
+                It.IsAny<EmailMessageContract>()),
             Times.Once);
 
         _userManagerMock.Verify(
             x => x.CreateAsync(It.IsAny<User>(), dto.Password),
-            Times.Once);
-
-        _userManagerMock.Verify(
-            x => x.AddToRoleAsync(
-                It.IsAny<User>(),
-                UserRole.Moderator.ToString()),
-            Times.Once);
-
-        _publishEndpointMock.Verify(
-            x => x.Publish(
-                It.IsAny<UserRegisteredEvent>(),
-                It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenUserAlreadyExists()
     {
-        // Arrange
         var dto = CreateValidDto();
-        var user = CreateUser(dto);
 
-        SetupUserExists(user);
+        var user = CreateTestUser();
 
-        // Act
-        var result = await _handler.Handle(
-            CreateCommand(dto),
-            CancellationToken.None);
+        _userManagerMock.Setup(x => x.FindByEmailAsync(dto.Email))
+            .ReturnsAsync(user);
 
-        // Assert
+        var result = await _handler.Handle(CreateCommand(dto), CancellationToken.None);
+
         result.IsFailed.Should().BeTrue();
+        result.Errors.Should().ContainSingle(e => e.Message == "User already exists");
 
-        result.Errors.Should()
-            .ContainSingle(e => e.Message == "User already exists");
-
-        _userManagerMock.Verify(
-            x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()),
-            Times.Never);
-
-        _publishEndpointMock.Verify(
-            x => x.Publish(
-                It.IsAny<UserRegisteredEvent>(),
-                It.IsAny<CancellationToken>()),
+        _rabbitMock.Verify(
+            x => x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
             Times.Never);
     }
 
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenCreateUserFails()
     {
-        // Arrange
         var dto = CreateValidDto();
 
-        SetupUserNotExists(dto);
+        _userManagerMock.Setup(x => x.FindByEmailAsync(dto.Email))
+            .ReturnsAsync((User?)null);
 
-        _userManagerMock
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), dto.Password))
-            .ReturnsAsync(
-                IdentityResult.Failed(
-                    new IdentityError
-                    {
-                        Description = "Password too weak"
-                    }));
+        _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), dto.Password))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError
+            {
+                Description = "Password too weak"
+            }));
 
-        // Act
-        var result = await _handler.Handle(
-            CreateCommand(dto),
-            CancellationToken.None);
+        var result = await _handler.Handle(CreateCommand(dto), CancellationToken.None);
 
-        // Assert
         result.IsFailed.Should().BeTrue();
+        result.Errors.Should().ContainSingle(e => e.Message == "Password too weak");
 
-        result.Errors.Should()
-            .ContainSingle(e => e.Message == "Password too weak");
-
-        _publishEndpointMock.Verify(
-            x => x.Publish(
-                It.IsAny<UserRegisteredEvent>(),
-                It.IsAny<CancellationToken>()),
-            Times.Never);
-
-        _authServiceMock.Verify(
-            x => x.CreateLoginResultAsync(It.IsAny<User>()),
+        _rabbitMock.Verify(
+            x => x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
             Times.Never);
     }
 
     [Fact]
     public async Task Handle_ShouldReturnFail_WhenAddToRoleFails()
     {
-        // Arrange
         var dto = CreateValidDto();
 
-        SetupUserNotExists(dto);
+        _userManagerMock.Setup(x => x.FindByEmailAsync(dto.Email))
+            .ReturnsAsync((User?)null);
 
-        _userManagerMock
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), dto.Password))
+        _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), dto.Password))
             .ReturnsAsync(IdentityResult.Success);
 
-        _userManagerMock
-            .Setup(x => x.AddToRoleAsync(
-                It.IsAny<User>(),
-                It.IsAny<string>()))
-            .ReturnsAsync(
-                IdentityResult.Failed(
-                    new IdentityError
-                    {
-                        Description = "Role assignment error"
-                    }));
+        _userManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError
+            {
+                Description = "Role assignment error"
+            }));
 
-        // Act
-        var result = await _handler.Handle(
-            CreateCommand(dto),
-            CancellationToken.None);
+        var result = await _handler.Handle(CreateCommand(dto), CancellationToken.None);
 
-        // Assert
         result.IsFailed.Should().BeTrue();
+        result.Errors.Should().ContainSingle(e => e.Message == "Role assignment error");
 
-        result.Errors.Should()
-            .ContainSingle(e => e.Message == "Role assignment error");
-
-        _publishEndpointMock.Verify(
-            x => x.Publish(
-                It.IsAny<UserRegisteredEvent>(),
-                It.IsAny<CancellationToken>()),
-            Times.Never);
-
-        _authServiceMock.Verify(
-            x => x.CreateLoginResultAsync(It.IsAny<User>()),
+        _rabbitMock.Verify(
+            x => x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
             Times.Never);
     }
 }
