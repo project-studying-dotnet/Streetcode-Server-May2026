@@ -28,7 +28,7 @@ public class GetRelatedFiguresByStreetcodeIdHandler : IRequestHandler<GetRelated
     {
         var relatedFigureIds = GetRelatedFigureIdsByStreetcodeId(request.StreetcodeId);
 
-        if (relatedFigureIds is null)
+        if (!relatedFigureIds.Any())
         {
             string errorMsg = $"Cannot find any related figures by a streetcode id: {request.StreetcodeId}";
             _logger.LogError(request, errorMsg);
@@ -38,7 +38,7 @@ public class GetRelatedFiguresByStreetcodeIdHandler : IRequestHandler<GetRelated
         var relatedFigures = await _repositoryWrapper.StreetcodeRepository
             .GetAllAsync(new RelatedFiguresSpecification(relatedFigureIds));
 
-        if (relatedFigures is null)
+        if (!relatedFigures.Any())
         {
             string errorMsg = $"Cannot find any related figures by a streetcode id: {request.StreetcodeId}";
             _logger.LogError(request, errorMsg);

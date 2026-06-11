@@ -18,19 +18,22 @@ namespace Streetcode.XUnitTest.BLL.MediatR.StreetCode.Streetcode.GetAllMainPage;
 public class GetAllStreetcodesMainPageHandlerTests
 {
     private readonly Mock<IRepositoryWrapper> _mockRepositoryWrapper;
-    private readonly Mock<IMapper> _mockMapper;
+    private readonly IMapper _mapper;
     private readonly Mock<ILoggerService> _mockLogger;
     private readonly GetAllStreetcodesMainPageHandler _handler;
 
     public GetAllStreetcodesMainPageHandlerTests()
     {
         _mockRepositoryWrapper = new Mock<IRepositoryWrapper>();
-        _mockMapper = new Mock<IMapper>();
+        _mapper = new MapperConfiguration(opt =>
+        {
+            opt.AddMaps(typeof(GetAllStreetcodesMainPageHandler).Assembly);
+        }).CreateMapper();
         _mockLogger = new Mock<ILoggerService>();
 
         _handler = new GetAllStreetcodesMainPageHandler(
             _mockRepositoryWrapper.Object,
-            _mockMapper.Object,
+            _mapper,
             _mockLogger.Object);
     }
 
@@ -38,16 +41,13 @@ public class GetAllStreetcodesMainPageHandlerTests
     public async Task Handle_WhenStreetcodesExist_ReturnsOkResultWithMappedDtos()
     {
         var streetcodes = new List<StreetcodeContent> { new StreetcodeContent { Id = 1 } };
-        var mappedDtos = new List<StreetcodeMainPageDTO> { new StreetcodeMainPageDTO { Id = 1 } };
+        var mappedDtos = _mapper.Map<IEnumerable<StreetcodeMainPageDTO>>(streetcodes);
         var request = new GetAllStreetcodesMainPageQuery();
 
         _mockRepositoryWrapper.Setup(r => r.StreetcodeRepository.GetAllAsync(
             It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
             It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>>()))
             .ReturnsAsync(streetcodes);
-
-        _mockMapper.Setup(m => m.Map<IEnumerable<StreetcodeMainPageDTO>>(It.IsAny<IEnumerable<StreetcodeContent>>()))
-            .Returns(mappedDtos);
 
         var result = await _handler.Handle(request, CancellationToken.None);
 

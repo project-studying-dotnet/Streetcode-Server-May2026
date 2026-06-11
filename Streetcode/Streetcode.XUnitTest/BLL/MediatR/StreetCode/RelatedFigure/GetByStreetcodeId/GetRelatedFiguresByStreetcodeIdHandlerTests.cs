@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
+using MockQueryable.Moq;
 using Moq;
-using Streetcode.BLL.DTO.Streetcode.RelatedFigure;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Streetcode.RelatedFigure.GetByStreetcodeId;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Streetcode;
 using Xunit;
 
 using RelatedFigureEntity = Streetcode.DAL.Entities.Streetcode.RelatedFigure;
@@ -22,18 +18,21 @@ namespace Streetcode.XUnitTest.BLL.MediatR.Streetcode.RelatedFigure.GetByStreetc
 public class GetRelatedFiguresByStreetcodeIdHandlerTests
 {
     private readonly Mock<IRepositoryWrapper> _mockRepositoryWrapper;
-    private readonly Mock<IMapper> _mockMapper;
+    private readonly IMapper _mapper;
     private readonly Mock<ILoggerService> _mockLogger;
     private readonly GetRelatedFiguresByStreetcodeIdHandler _handler;
 
     public GetRelatedFiguresByStreetcodeIdHandlerTests()
     {
         _mockRepositoryWrapper = new Mock<IRepositoryWrapper>();
-        _mockMapper = new Mock<IMapper>();
+        _mapper = new MapperConfiguration(cfg =>
+        {
+            cfg.AddMaps(typeof(GetRelatedFigureByStreetcodeIdQuery).Assembly);
+        }).CreateMapper();
         _mockLogger = new Mock<ILoggerService>();
 
         _handler = new GetRelatedFiguresByStreetcodeIdHandler(
-            _mockMapper.Object,
+            _mapper,
             _mockRepositoryWrapper.Object,
             _mockLogger.Object);
     }
@@ -43,24 +42,31 @@ public class GetRelatedFiguresByStreetcodeIdHandlerTests
     {
         var request = new GetRelatedFigureByStreetcodeIdQuery(1);
 
-        _mockRepositoryWrapper.Setup(r => r.RelatedFigureRepository
-            .FindAll(It.IsAny<Expression<Func<RelatedFigureEntity, bool>>>()))
-            .Returns(new List<RelatedFigureEntity>
+        _mockRepositoryWrapper.Setup(
+            r => r.StreetcodeRepository.GetAllAsync(It.IsAny<RelatedFiguresSpecification>())
+        ).ReturnsAsync(new List<StreetcodeContentEntity>
+        {
+            new StreetcodeContentEntity { Id = 2 }
+        });
+        _mockRepositoryWrapper.SetupSequence(
+            r => r.RelatedFigureRepository.FindAll(
+                It.IsAny<Expression<Func<RelatedFigureEntity, bool>>>()
+            )
+        ).Returns(new List<RelatedFigureEntity>()
+        {
+            new()
             {
-                new RelatedFigureEntity { TargetId = 2, ObserverId = 1 }
-            }.AsQueryable());
-
-        _mockRepositoryWrapper.Setup(r => r.StreetcodeRepository
-            .GetAllAsync(
-                It.IsAny<Expression<Func<StreetcodeContentEntity, bool>>>(),
-                It.IsAny<Func<IQueryable<StreetcodeContentEntity>, IIncludableQueryable<StreetcodeContentEntity, object>>>()))
-            .ReturnsAsync(new List<StreetcodeContentEntity>
+                TargetId = 1,
+                ObserverId = 3,
+            }
+        }.BuildMock()).Returns(new List<RelatedFigureEntity>()
+        {
+            new()
             {
-                new StreetcodeContentEntity { Id = 2 }
-            });
-
-        _mockMapper.Setup(m => m.Map<IEnumerable<RelatedFigureDTO>>(It.IsAny<IEnumerable<StreetcodeContentEntity>>()))
-            .Returns(new List<RelatedFigureDTO> { new RelatedFigureDTO { Id = 2 } });
+                TargetId = 4,
+                ObserverId = 1
+            }
+        }.BuildMock());
 
         var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -68,13 +74,13 @@ public class GetRelatedFiguresByStreetcodeIdHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenRepositoryReturnsNull_ReturnsFailResult()
+    public async Task Handle_WhenRepositoryReturnsEmpty_ReturnsFailResult()
     {
         var request = new GetRelatedFigureByStreetcodeIdQuery(1);
 
         _mockRepositoryWrapper.Setup(r => r.RelatedFigureRepository
             .FindAll(It.IsAny<Expression<Func<RelatedFigureEntity, bool>>>()))
-            .Returns((IQueryable<RelatedFigureEntity>)null!);
+            .Returns(Enumerable.Empty<RelatedFigureEntity>().AsQueryable());
 
         var result = await _handler.Handle(request, CancellationToken.None);
 
