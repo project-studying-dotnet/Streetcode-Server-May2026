@@ -13,6 +13,7 @@ using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Media.Image.GetByStreetcodeId;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Base;
 using Xunit;
 
 using ImageEntity = Streetcode.DAL.Entities.Media.Images.Image;
@@ -49,15 +50,11 @@ public class GetImageByStreetcodeIdHandlerTests
         var images = new List<ImageEntity> { new() { BlobName = "test-blob" } };
         var imageDtos = new List<ImageDTO> { new() { BlobName = "test-blob" } };
 
-        // Перекриваємо всі можливі виклики GetAllAsync
-        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(
-            It.IsAny<Expression<Func<ImageEntity, bool>>>(),
-            It.IsAny<Func<IQueryable<ImageEntity>, IIncludableQueryable<ImageEntity, object>>>()))
+        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(It.IsAny<ISpecification<ImageEntity>>()))
             .ReturnsAsync(images);
-
-        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(
-            It.IsAny<Expression<Func<ImageEntity, bool>>>(),
-            null))
+        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(It.IsAny<Expression<Func<ImageEntity, bool>>>(), It.IsAny<Func<IQueryable<ImageEntity>, IIncludableQueryable<ImageEntity, object>>>()))
+            .ReturnsAsync(images);
+        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(It.IsAny<Expression<Func<ImageEntity, bool>>>(), null))
             .ReturnsAsync(images);
 
         _mockMapper.Setup(m => m.Map<IEnumerable<ImageDTO>>(It.IsAny<IEnumerable<ImageEntity>>()))
@@ -76,16 +73,14 @@ public class GetImageByStreetcodeIdHandlerTests
     public async Task Handle_WhenImagesDoNotExist_ReturnsFailResultAndLogsError()
     {
         var request = new GetImageByStreetcodeIdQuery(99);
+        var emptyList = new List<ImageEntity>();
 
-        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(
-            It.IsAny<Expression<Func<ImageEntity, bool>>>(),
-            It.IsAny<Func<IQueryable<ImageEntity>, IIncludableQueryable<ImageEntity, object>>>()))
-            .ReturnsAsync(new List<ImageEntity>());
-
-        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(
-            It.IsAny<Expression<Func<ImageEntity, bool>>>(),
-            null))
-            .ReturnsAsync(new List<ImageEntity>());
+        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(It.IsAny<ISpecification<ImageEntity>>()))
+            .ReturnsAsync(emptyList);
+        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(It.IsAny<Expression<Func<ImageEntity, bool>>>(), It.IsAny<Func<IQueryable<ImageEntity>, IIncludableQueryable<ImageEntity, object>>>()))
+            .ReturnsAsync(emptyList);
+        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(It.IsAny<Expression<Func<ImageEntity, bool>>>(), null))
+            .ReturnsAsync(emptyList);
 
         var result = await _handler.Handle(request, CancellationToken.None);
 
