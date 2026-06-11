@@ -16,6 +16,7 @@ using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Entities.Streetcode.TextContent;
 using Streetcode.DAL.Entities.Timeline;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Base;
 using Xunit;
 using FactEntity = Streetcode.DAL.Entities.Streetcode.TextContent.Fact;
 
@@ -40,30 +41,12 @@ public class GetStreetcodeByFilterHandlerTests
         var requestDto = new StreetcodeFilterRequestDTO { SearchQuery = "test" };
         var query = new GetStreetcodeByFilterQuery(requestDto);
 
-        _mockRepo.Setup(x => x.StreetcodeRepository.GetAllAsync(
-            It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
-            It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>>()))
-            .ReturnsAsync(new List<StreetcodeContent>());
-
-        _mockRepo.Setup(x => x.TextRepository.GetAllAsync(
-            It.IsAny<Expression<Func<Text, bool>>>(),
-            It.IsAny<Func<IQueryable<Text>, IIncludableQueryable<Text, object>>>()))
-            .ReturnsAsync(new List<Text>());
-
-        _mockRepo.Setup(x => x.FactRepository.GetAllAsync(
-            It.IsAny<Expression<Func<FactEntity, bool>>>(),
-            It.IsAny<Func<IQueryable<FactEntity>, IIncludableQueryable<FactEntity, object>>>()))
-            .ReturnsAsync(new List<FactEntity>());
-
-        _mockRepo.Setup(x => x.TimelineRepository.GetAllAsync(
-            It.IsAny<Expression<Func<TimelineItem, bool>>>(),
-            It.IsAny<Func<IQueryable<TimelineItem>, IIncludableQueryable<TimelineItem, object>>>()))
-            .ReturnsAsync(new List<TimelineItem>());
-
-        _mockRepo.Setup(x => x.ArtRepository.GetAllAsync(
-            It.IsAny<Expression<Func<Art, bool>>>(),
-            It.IsAny<Func<IQueryable<Art>, IIncludableQueryable<Art, object>>>()))
-            .ReturnsAsync(new List<Art>());
+        // Перекриваємо специфікації, які впроваджені в PR 56
+        _mockRepo.Setup(x => x.StreetcodeRepository.GetAllAsync(It.IsAny<ISpecification<StreetcodeContent>>())).ReturnsAsync(new List<StreetcodeContent>());
+        _mockRepo.Setup(x => x.TextRepository.GetAllAsync(It.IsAny<ISpecification<Text>>())).ReturnsAsync(new List<Text>());
+        _mockRepo.Setup(x => x.FactRepository.GetAllAsync(It.IsAny<ISpecification<FactEntity>>())).ReturnsAsync(new List<FactEntity>());
+        _mockRepo.Setup(x => x.TimelineRepository.GetAllAsync(It.IsAny<ISpecification<TimelineItem>>())).ReturnsAsync(new List<TimelineItem>());
+        _mockRepo.Setup(x => x.ArtRepository.GetAllAsync(It.IsAny<ISpecification<Art>>())).ReturnsAsync(new List<Art>());
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -76,26 +59,19 @@ public class GetStreetcodeByFilterHandlerTests
     {
         var request = new GetStreetcodeByFilterQuery(new StreetcodeFilterRequestDTO { SearchQuery = "test" });
 
-        _mockRepo.Setup(x => x.StreetcodeRepository.GetAllAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>>()))
-            .ReturnsAsync(new List<StreetcodeContent>());
-        _mockRepo.Setup(x => x.TextRepository.GetAllAsync(It.IsAny<Expression<Func<Text, bool>>>(), It.IsAny<Func<IQueryable<Text>, IIncludableQueryable<Text, object>>>()))
-            .ReturnsAsync(new List<Text>());
-        _mockRepo.Setup(x => x.FactRepository.GetAllAsync(It.IsAny<Expression<Func<FactEntity, bool>>>(), It.IsAny<Func<IQueryable<FactEntity>, IIncludableQueryable<FactEntity, object>>>()))
-            .ReturnsAsync(new List<FactEntity>());
-        _mockRepo.Setup(x => x.TimelineRepository.GetAllAsync(It.IsAny<Expression<Func<TimelineItem, bool>>>(), It.IsAny<Func<IQueryable<TimelineItem>, IIncludableQueryable<TimelineItem, object>>>()))
-            .ReturnsAsync(new List<TimelineItem>());
+        _mockRepo.Setup(x => x.StreetcodeRepository.GetAllAsync(It.IsAny<ISpecification<StreetcodeContent>>())).ReturnsAsync(new List<StreetcodeContent>());
+        _mockRepo.Setup(x => x.TextRepository.GetAllAsync(It.IsAny<ISpecification<Text>>())).ReturnsAsync(new List<Text>());
+        _mockRepo.Setup(x => x.FactRepository.GetAllAsync(It.IsAny<ISpecification<FactEntity>>())).ReturnsAsync(new List<FactEntity>());
+        _mockRepo.Setup(x => x.TimelineRepository.GetAllAsync(It.IsAny<ISpecification<TimelineItem>>())).ReturnsAsync(new List<TimelineItem>());
 
-        _mockRepo.Setup(r => r.ArtRepository.GetAllAsync(
-            It.IsAny<Expression<Func<Art, bool>>>(),
-            It.IsAny<Func<IQueryable<Art>, IIncludableQueryable<Art, object>>>()))
-            .ReturnsAsync(new List<Art> { new() { Id = 1, Description = "test" } });
+        var arts = new List<Art> { new() { Id = 1, Description = "test" } };
+        _mockRepo.Setup(r => r.ArtRepository.GetAllAsync(It.IsAny<Expression<Func<Art, bool>>>(), It.IsAny<Func<IQueryable<Art>, IIncludableQueryable<Art, object>>>())).ReturnsAsync(arts);
+        _mockRepo.Setup(r => r.ArtRepository.GetAllAsync(It.IsAny<Expression<Func<Art, bool>>>(), null)).ReturnsAsync(arts);
+        _mockRepo.Setup(r => r.ArtRepository.GetAllAsync(It.IsAny<ISpecification<Art>>())).ReturnsAsync(arts);
 
         var mockStreetcode = new StreetcodeContent { Id = 1, Title = "Test Art" };
-
-        _mockRepo.Setup(r => r.StreetcodeRepository.GetFirstOrDefaultAsync(
-            It.IsAny<Expression<Func<StreetcodeContent, bool>>>(),
-            null))
-            .ReturnsAsync(mockStreetcode);
+        _mockRepo.Setup(r => r.StreetcodeRepository.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), It.IsAny<Func<IQueryable<StreetcodeContent>, IIncludableQueryable<StreetcodeContent, object>>>())).ReturnsAsync(mockStreetcode);
+        _mockRepo.Setup(r => r.StreetcodeRepository.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null)).ReturnsAsync(mockStreetcode);
 
         var result = await _handler.Handle(request, CancellationToken.None);
 

@@ -1,4 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
@@ -9,6 +14,7 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Media.Image.GetByStreetcodeId;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Xunit;
+
 using ImageEntity = Streetcode.DAL.Entities.Media.Images.Image;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Media.Image.GetByStreetcodeId;
@@ -43,9 +49,15 @@ public class GetImageByStreetcodeIdHandlerTests
         var images = new List<ImageEntity> { new() { BlobName = "test-blob" } };
         var imageDtos = new List<ImageDTO> { new() { BlobName = "test-blob" } };
 
+        // Перекриваємо всі можливі виклики GetAllAsync
         _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(
             It.IsAny<Expression<Func<ImageEntity, bool>>>(),
             It.IsAny<Func<IQueryable<ImageEntity>, IIncludableQueryable<ImageEntity, object>>>()))
+            .ReturnsAsync(images);
+
+        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(
+            It.IsAny<Expression<Func<ImageEntity, bool>>>(),
+            null))
             .ReturnsAsync(images);
 
         _mockMapper.Setup(m => m.Map<IEnumerable<ImageDTO>>(It.IsAny<IEnumerable<ImageEntity>>()))
@@ -68,6 +80,11 @@ public class GetImageByStreetcodeIdHandlerTests
         _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(
             It.IsAny<Expression<Func<ImageEntity, bool>>>(),
             It.IsAny<Func<IQueryable<ImageEntity>, IIncludableQueryable<ImageEntity, object>>>()))
+            .ReturnsAsync(new List<ImageEntity>());
+
+        _mockRepositoryWrapper.Setup(r => r.ImageRepository.GetAllAsync(
+            It.IsAny<Expression<Func<ImageEntity, bool>>>(),
+            null))
             .ReturnsAsync(new List<ImageEntity>());
 
         var result = await _handler.Handle(request, CancellationToken.None);
