@@ -32,13 +32,24 @@ jobs:
         run: dotnet restore ${{ env.SOLUTION_PATH }}
 
       - name: Build solution
-        run: dotnet build ${{ env.SOLUTION_PATH }} --c Release --no-restore
+        run: dotnet build ${{ env.SOLUTION_PATH }} 
+          --configuration Release 
+          --no-restore
 
       - name: Run tests
-        run: dotnet test ${{ env.SOLUTION_PATH }} --c Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+        run: dotnet test ${{ env.SOLUTION_PATH }} 
+          --configuration Release
+          --no-restore
+          --no-build 
+          --verbosity normal 
+          --collect:"XPlat Code Coverage"
 
       - name: Publish application
-        run: dotnet publish ${{ env.API_PROJECT_PATH }} --c Release --no-restore --no-build --o ${{ env.PUBLISH_DIR }}
+        run: dotnet publish ${{ env.API_PROJECT_PATH }} 
+          --configuration Release 
+          --no-restore 
+          --no-build 
+          --property:PublishDir=${{ env.PUBLISH_DIR }}
 
       - name: Publish artifact
         uses: actions/upload-artifact@v4
