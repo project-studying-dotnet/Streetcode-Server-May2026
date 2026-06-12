@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using FluentResults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
 using Streetcode.BLL.DTO.Streetcode.RelatedFigure;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.MediatR.Streetcode.Streetcode.GetByIndex;
 using Streetcode.DAL.Entities.Streetcode.Types;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Streetcode;
 
 namespace Streetcode.BLL.MediatR.Streetcode.RelatedFigure.GetByTagId
 {
@@ -27,12 +27,7 @@ namespace Streetcode.BLL.MediatR.Streetcode.RelatedFigure.GetByTagId
         public async Task<Result<IEnumerable<RelatedFigureDTO>>> Handle(GetRelatedFiguresByTagIdQuery request, CancellationToken cancellationToken)
         {
             var streetcodes = await _repositoryWrapper.StreetcodeRepository
-                .GetAllAsync(
-                predicate: sc => sc.Status == DAL.Enums.StreetcodeStatus.Published &&
-                  sc.Tags.Select(t => t.Id).Any(tag => tag == request.tagId),
-                include: scl => scl
-                    .Include(sc => sc.Images)
-                    .Include(sc => sc.Tags));
+                .GetAllAsync(new StreetcodesByTagIdSpecification(request.tagId));
 
             if (streetcodes is null)
             {

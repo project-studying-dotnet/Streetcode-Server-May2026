@@ -1,14 +1,14 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FluentResults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.Streetcode.RelatedFigure;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Streetcode;
 
 namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.GetAllCatalog
 {
-  public class GetAllStreetcodesCatalogHandler : IRequestHandler<GetAllStreetcodesCatalogQuery,
+    public class GetAllStreetcodesCatalogHandler : IRequestHandler<GetAllStreetcodesCatalogQuery,
         Result<IEnumerable<RelatedFigureDTO>>>
     {
         private readonly IMapper _mapper;
@@ -24,14 +24,12 @@ namespace Streetcode.BLL.MediatR.Streetcode.Streetcode.GetAllCatalog
 
         public async Task<Result<IEnumerable<RelatedFigureDTO>>> Handle(GetAllStreetcodesCatalogQuery request, CancellationToken cancellationToken)
         {
-            var streetcodes = await _repositoryWrapper.StreetcodeRepository.GetAllAsync(
-                predicate: sc => sc.Status == DAL.Enums.StreetcodeStatus.Published,
-                include: src => src.Include(item => item.Tags).Include(item => item.Images));
+            var spec = new StreetcodeForCatalogSpecification(request.page, request.count);
+            var streetcodes = await _repositoryWrapper.StreetcodeRepository.GetAllAsync(spec);
 
             if (streetcodes != null)
             {
-                var skipped = streetcodes.Skip((request.page - 1) * request.count).Take(request.count);
-                return Result.Ok(_mapper.Map<IEnumerable<RelatedFigureDTO>>(skipped));
+                return Result.Ok(_mapper.Map<IEnumerable<RelatedFigureDTO>>(streetcodes));
             }
 
             const string errorMsg = $"Cannot find any subtitles";

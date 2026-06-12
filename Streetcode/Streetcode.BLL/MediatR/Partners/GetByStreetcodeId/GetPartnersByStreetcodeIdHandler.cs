@@ -1,11 +1,11 @@
 using AutoMapper;
 using FluentResults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.DTO.AdditionalContent.Subtitles;
 using Streetcode.BLL.DTO.Partners;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Partners;
 using Streetcode.BLL.Resources;
 
 namespace Streetcode.BLL.MediatR.Partners.GetByStreetcodeId;
@@ -36,9 +36,7 @@ public class GetPartnersByStreetcodeIdHandler : IRequestHandler<GetPartnersByStr
         }
 
         var partners = await _repositoryWrapper.PartnersRepository
-            .GetAllAsync(
-                predicate: p => p.Streetcodes.Any(sc => sc.Id == streetcode.Id) || p.IsVisibleEverywhere,
-                include: p => p.Include(pl => pl.PartnerSourceLinks));
+            .GetAllAsync(new PartnerByStreetcodeIdSpecification(request.StreetcodeId));
 
         if (partners is null)
         {

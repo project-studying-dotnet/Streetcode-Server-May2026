@@ -6,6 +6,7 @@ using Streetcode.DAL.Repositories.Interfaces.Base;
 using Microsoft.EntityFrameworkCore;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.DTO.Media.Art;
+using Streetcode.DAL.Specifications.Media;
 
 namespace Streetcode.BLL.MediatR.Media.Art.GetByStreetcodeId
 {
@@ -38,10 +39,7 @@ namespace Streetcode.BLL.MediatR.Media.Art.GetByStreetcodeId
             }
             */
             var arts = await _repositoryWrapper.ArtRepository
-                .GetAllAsync(
-                predicate: sc => sc.StreetcodeArts.Any(s => s.StreetcodeId == request.StreetcodeId),
-                include: scl => scl
-                    .Include(sc => sc.Image) !);
+                .GetAllAsync(new ArtsByStreetcodeIdSpecification(request.StreetcodeId));
 
             if (arts is null)
             {

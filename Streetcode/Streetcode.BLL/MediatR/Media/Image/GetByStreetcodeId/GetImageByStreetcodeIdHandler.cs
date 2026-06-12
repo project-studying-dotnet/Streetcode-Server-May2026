@@ -6,6 +6,8 @@ using Streetcode.BLL.DTO.Media.Images;
 using Streetcode.BLL.Interfaces.BlobStorage;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Shared;
+using DalImage = Streetcode.DAL.Entities.Media.Images.Image;
 
 namespace Streetcode.BLL.MediatR.Media.Image.GetByStreetcodeId;
 
@@ -27,11 +29,12 @@ public class GetImageByStreetcodeIdHandler : IRequestHandler<GetImageByStreetcod
     public async Task<Result<IEnumerable<ImageDTO>>> Handle(GetImageByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
         var images = (await _repositoryWrapper.ImageRepository
-            .GetAllAsync(
-            f => f.Streetcodes.Any(s => s.Id == request.StreetcodeId),
-            include: q => q.Include(img => img.ImageDetails))).OrderBy(img => img.ImageDetails?.Alt);
+            .GetAllAsync(new ByStreetcodeIdSpecification<DalImage>(
+                request.StreetcodeId,
+                q => q.Include(img => img.ImageDetails!))))
+            .OrderBy(img => img.ImageDetails?.Alt);
 
-        if (images is null || images.Count() == 0)
+        if (!images.Any())
         {
             string errorMsg = $"Cannot find an image with the corresponding streetcode id: {request.StreetcodeId}";
             _logger.LogError(request, errorMsg);

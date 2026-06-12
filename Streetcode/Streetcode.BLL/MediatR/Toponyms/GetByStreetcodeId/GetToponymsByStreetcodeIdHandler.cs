@@ -6,6 +6,7 @@ using Streetcode.BLL.DTO.Toponyms;
 using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.DAL.Entities.Toponyms;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Shared;
 
 namespace Streetcode.BLL.MediatR.Toponyms.GetByStreetcodeId;
 
@@ -17,8 +18,9 @@ public sealed class GetToponymsByStreetcodeIdHandler(
 {
     public async Task<Result<IEnumerable<ToponymDTO>>> Handle(GetToponymsByStreetcodeIdQuery request, CancellationToken cancellationToken)
     {
-        List<Toponym> toponyms = await repositoryWrapper.ToponymRepository.FindAll(
-            sc => sc.Streetcodes.Any(s => s.Id == request.StreetcodeId)).GroupBy(t => t.StreetName)
+        List<Toponym> toponyms = await repositoryWrapper.ToponymRepository
+            .FindAll(new ByStreetcodeIdSpecification<Toponym>(request.StreetcodeId))
+            .GroupBy(t => t.StreetName)
             .Select(g => g.First())
             .ToListAsync(cancellationToken);
 
