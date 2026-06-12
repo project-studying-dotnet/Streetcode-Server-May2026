@@ -42,8 +42,7 @@ jobs:
           --no-restore
           --no-build 
           --verbosity normal 
-          --collect:"XPlat Code Coverage"
-
+          
       - name: Publish application
         run: dotnet publish ${{ env.API_PROJECT_PATH }} 
           --configuration Release 
