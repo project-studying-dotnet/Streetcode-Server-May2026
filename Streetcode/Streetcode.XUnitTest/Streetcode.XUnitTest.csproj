@@ -43,6 +43,7 @@
 
 	<ItemGroup>
 	  <Folder Include="BLL\MediatR\StreetCode\GetByFilter\" />
+	  <Folder Include="WebApi\Controllers\" />
 	</ItemGroup>
 
 </Project>
