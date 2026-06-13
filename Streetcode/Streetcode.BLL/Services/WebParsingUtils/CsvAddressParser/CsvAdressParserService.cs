@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Streetcode.BLL.Interfaces.WebParsingUtils;
 
 namespace Streetcode.BLL.Services.WebParsingUtils;
@@ -15,21 +16,45 @@ public class CsvAddressParserService : ICsvAddressParser
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<CsvAddressParserService> _logger;
-    private const string UkrPoshtaUrl = "https://www.ukrposhta.ua/files/shares/out/houses.zip";
+    private readonly UkrPoshtaParserSettings _settings;
 
-    public CsvAddressParserService(HttpClient httpClient, ILogger<CsvAddressParserService> logger)
+    public CsvAddressParserService(
+        HttpClient httpClient,
+        ILogger<CsvAddressParserService> logger,
+        IOptions<UkrPoshtaParserSettings> options)
     {
         _httpClient = httpClient;
         _logger = logger;
+        _settings = options.Value;
+    }
+
+    private static string OptimizeStreetname(string rawStreetName)
+    {
+        if (string.IsNullOrWhiteSpace(rawStreetName))
+        {
+            return rawStreetName;
+        }
+
+        return rawStreetName
+            .Replace("вул.", "вулиця")
+            .Replace("пр.", "проспект")
+            .Replace("пров.", "провулок")
+            .Replace("пл.", "площа");
     }
 
     public async Task<List<TmpAddressModel>> ParseUkrPoshtaZipAsync(string tempDirectory)
     {
+        if (string.IsNullOrWhiteSpace(_settings.DownloadUrl))
+        {
+            throw new InvalidOperationException("Ukrposhta download URL is not configured in settings.");
+        }
+
         string zipPath = Path.Combine(tempDirectory, "houses.zip");
 
-        _logger.LogInformation("Downloading Ukrposhta archive...");
-        var response = await _httpClient.GetAsync(UkrPoshtaUrl);
+        _logger.LogInformation("Downloading Ukrposhta archive from configuration URL...");
+        var response = await _httpClient.GetAsync(_settings.DownloadUrl);
         response.EnsureSuccessStatusCode();
+
         await using (var fs = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None))
         {
             await response.Content.CopyToAsync(fs);
@@ -38,9 +63,16 @@ public class CsvAddressParserService : ICsvAddressParser
         _logger.LogInformation("Extracting archive...");
         ZipFile.ExtractToDirectory(zipPath, tempDirectory);
 
-        string csvPath = Directory.GetFiles(tempDirectory, "*.csv").FirstOrDefault();
+        if (File.Exists(zipPath))
+        {
+            File.Delete(zipPath);
+        }
+
+        string? csvPath = Directory.GetFiles(tempDirectory, "*.csv").FirstOrDefault();
         if (string.IsNullOrEmpty(csvPath))
+        {
             throw new FileNotFoundException("CSV file not found in the archive.");
+        }
 
         return await ProcessCsvFileAsync(csvPath);
     }
@@ -52,15 +84,23 @@ public class CsvAddressParserService : ICsvAddressParser
         var encoding = Encoding.GetEncoding("windows-1251");
 
         using var reader = new StreamReader(csvPath, encoding);
+
         await reader.ReadLineAsync();
 
-        while (!reader.EndOfStream)
+        string? line;
+
+        while ((line = await reader.ReadLineAsync()) != null)
         {
-            string line = await reader.ReadLineAsync();
-            if (string.IsNullOrWhiteSpace(line)) continue;
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                continue;
+            }
 
             string[] values = line.Split(';');
-            if (values.Length < 6) continue;
+            if (values.Length < 6)
+            {
+                continue;
+            }
 
             list.Add(new TmpAddressModel
             {
@@ -73,12 +113,9 @@ public class CsvAddressParserService : ICsvAddressParser
             });
         }
 
-        return list.GroupBy(x => new { x.Oblast, x.Gromada, x.StreetName }).Select(g => g.First()).ToList();
-    }
-
-    private string OptimizeStreetname(string rawStreetName)
-    {
-        if (string.IsNullOrWhiteSpace(rawStreetName)) return rawStreetName;
-        return rawStreetName.Replace("вул.", "вулиця").Replace("пр.", "проспект").Replace("пров.", "провулок").Replace("пл.", "площа");
+        return list
+            .GroupBy(x => new { x.Oblast, x.Gromada, x.StreetName })
+            .Select(g => g.First())
+            .ToList();
     }
 }

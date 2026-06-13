@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Retry;
 using Streetcode.BLL.Interfaces.WebParsingUtils;
@@ -14,12 +16,16 @@ public class GeocodingService : IGeocoding
     private readonly HttpClient _httpClient;
     private readonly ILogger<GeocodingService> _logger;
     private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
-    private const string NominatimBaseUrl = "https://nominatim.openstreetmap.org/search";
+    private readonly GeocodingSettings _settings;
 
-    public GeocodingService(HttpClient httpClient, ILogger<GeocodingService> logger)
+    public GeocodingService(
+        HttpClient httpClient,
+        ILogger<GeocodingService> logger,
+        IOptions<GeocodingSettings> options)
     {
         _httpClient = httpClient;
         _logger = logger;
+        _settings = options.Value;
 
         _retryPolicy = Policy
             .HandleResult<HttpResponseMessage>(r => r.StatusCode == System.Net.HttpStatusCode.TooManyRequests || !r.IsSuccessStatusCode)
@@ -28,26 +34,37 @@ public class GeocodingService : IGeocoding
 
     public async Task<(decimal Lat, decimal Lon)?> GetCoordinatesAsync(string address)
     {
-        string url = $"{NominatimBaseUrl}?q={Uri.EscapeDataString(address)}&format=json&limit=1";
+        if (string.IsNullOrWhiteSpace(_settings.BaseUrl))
+        {
+            throw new InvalidOperationException("Geocoding base URL is not configured in settings.");
+        }
+
+        string url = $"{_settings.BaseUrl}?q={Uri.EscapeDataString(address)}&format=json&limit=1";
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Add("User-Agent", "Streetcode-Admin-App-v1.0");
+            var response = await _retryPolicy.ExecuteAsync(async () =>
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Add("User-Agent", "Streetcode-Admin-App-v1.0");
+                return await _httpClient.SendAsync(request);
+            });
 
-            var response = await _retryPolicy.ExecuteAsync(() => _httpClient.SendAsync(request));
-            if (!response.IsSuccessStatusCode) return null;
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
 
             string jsonResponse = await response.Content.ReadAsStringAsync();
             return ParseJsonToCoordinateTuple(jsonResponse);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"Failed to geocode '{address}': {ex.Message}");
+            _logger.LogWarning(ex, "Failed to geocode {Address}: {Message}", address, ex.Message);
             return null;
         }
     }
 
-    private (decimal Lat, decimal Lon)? ParseJsonToCoordinateTuple(string jsonResponse)
+    private static (decimal Lat, decimal Lon)? ParseJsonToCoordinateTuple(string jsonResponse)
     {
         using var doc = JsonDocument.Parse(jsonResponse);
         var root = doc.RootElement;
@@ -55,13 +72,13 @@ public class GeocodingService : IGeocoding
         if (root.ValueKind == JsonValueKind.Array && root.GetArrayLength() > 0)
         {
             var firstElement = root[0];
-            if (firstElement.TryGetProperty("lat", out var latProp) && firstElement.TryGetProperty("lon", out var lonProp))
+
+            if (firstElement.TryGetProperty("lat", out var latProp) &&
+                firstElement.TryGetProperty("lon", out var lonProp) &&
+                decimal.TryParse(latProp.GetString(), System.Globalization.CultureInfo.InvariantCulture, out decimal lat) &&
+                decimal.TryParse(lonProp.GetString(), System.Globalization.CultureInfo.InvariantCulture, out decimal lon))
             {
-                if (decimal.TryParse(latProp.GetString(), System.Globalization.CultureInfo.InvariantCulture, out decimal lat) &&
-                    decimal.TryParse(lonProp.GetString(), System.Globalization.CultureInfo.InvariantCulture, out decimal lon))
-                {
-                    return (lat, lon);
-                }
+                return (lat, lon);
             }
         }
         return null;

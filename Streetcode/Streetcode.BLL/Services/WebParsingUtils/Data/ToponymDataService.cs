@@ -37,8 +37,9 @@ public class ToponymDataService : IToponymData
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            _logger.LogError(ex, "Database transaction error. Rolling back changes.");
-            throw;
+            _logger.LogError(ex, "Database transaction error during toponyms update. Rolling back changes.");
+
+            throw new InvalidOperationException("Failed to update toponyms and coordinates in the database during background parsing.", ex);
         }
     }
 }

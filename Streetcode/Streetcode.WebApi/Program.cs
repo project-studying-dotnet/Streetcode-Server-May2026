@@ -33,6 +33,8 @@ builder.Services.AddScoped<ICsvAddressParser, CsvAddressParserService>();
 builder.Services.AddScoped<IGeocoding, GeocodingService>();
 builder.Services.AddScoped<IToponymData, ToponymDataService>();
 builder.Services.AddScoped<IWebParsingUtils, WebParsingUtilsService>();
+builder.Services.Configure<UkrPoshtaParserSettings>(builder.Configuration.GetSection("UkrPoshtaParser"));
+builder.Services.Configure<GeocodingSettings>(builder.Configuration.GetSection("Geocoding"));
 
 var app = builder.Build();
 
