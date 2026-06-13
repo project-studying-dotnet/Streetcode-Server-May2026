@@ -41,4 +41,8 @@
 	  <ProjectReference Include="..\Streetcode.EmailService\Streetcode.EmailService.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="BLL\MediatR\StreetCode\GetByFilter\" />
+	</ItemGroup>
+
 </Project>

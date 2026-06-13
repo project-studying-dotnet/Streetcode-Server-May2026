@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using MimeKit;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Interfaces.Base;
+using Streetcode.DAL.Specifications.Base;
 
 namespace Streetcode.DAL.Repositories.Realizations.Base;
 
@@ -21,6 +22,11 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T>
     public IQueryable<T> FindAll(Expression<Func<T, bool>>? predicate = default)
     {
         return GetQueryable(predicate).AsNoTracking();
+    }
+
+    public IQueryable<T> FindAll(ISpecification<T> spec)
+    {
+        return GetQueryable(spec.Criteria).AsNoTracking();
     }
 
     public T Create(T entity)
@@ -101,6 +107,40 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T>
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default)
     {
         return await GetQueryable(predicate, include).ToListAsync();
+    }
+
+    public async Task<IEnumerable<T>> GetAllAsync(ISpecification<T> spec)
+    {
+        var query = _dbContext.Set<T>().AsNoTracking();
+
+        if (spec.Includes is not null)
+        {
+            query = spec.Includes(query);
+        }
+
+        if (spec.Criteria is not null)
+        {
+            query = query.Where(spec.Criteria);
+        }
+
+        if (spec.OrderBy is not null)
+        {
+            query = spec.IsDescending
+                ? query.OrderByDescending(spec.OrderBy)
+                : query.OrderBy(spec.OrderBy);
+        }
+
+        if (spec.Skip.HasValue)
+        {
+            query = query.Skip(spec.Skip.Value);
+        }
+
+        if (spec.Take.HasValue)
+        {
+            query = query.Take(spec.Take.Value);
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task<IEnumerable<T>?> GetAllAsync(
