@@ -21,8 +21,11 @@ public sealed class CommentController : BaseApiController
     }
 
     [HttpPut]
+    [AuthorizeRoles(UserRole.Administrator)]
     public async Task<IActionResult> Update([FromBody] UpdateCommentDto request, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new UpdateCommentCommand(request), cancellationToken));
+        return base.HandleResult(
+            await base.Mediator.Send(new UpdateCommentCommand(request), cancellationToken)
+        );
     }
 }
