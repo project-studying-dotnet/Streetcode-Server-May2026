@@ -385,20 +385,20 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot save historical context to database.
-        /// </summary>
-        public static string CannotSaveHistoricalContextToDatabase {
-            get {
-                return ResourceManager.GetString("CannotSaveHistoricalContextToDatabase", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cannot save comment to database..
         /// </summary>
         public static string CannotSaveCommentToDatabase {
             get {
                 return ResourceManager.GetString("CannotSaveCommentToDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot save historical context to database.
+        /// </summary>
+        public static string CannotSaveHistoricalContextToDatabase {
+            get {
+                return ResourceManager.GetString("CannotSaveHistoricalContextToDatabase", resourceCulture);
             }
         }
         
@@ -493,20 +493,20 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Content is required..
-        /// </summary>
-        public static string ContentIsRequired {
-            get {
-                return ResourceManager.GetString("ContentIsRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Comment is required..
         /// </summary>
         public static string CommentIsRequired {
             get {
                 return ResourceManager.GetString("CommentIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Content is required..
+        /// </summary>
+        public static string ContentIsRequired {
+            get {
+                return ResourceManager.GetString("ContentIsRequired", resourceCulture);
             }
         }
         
@@ -898,6 +898,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Found result matching null.
+        /// </summary>
+        public static string FoundResultMatchingNull {
+            get {
+                return ResourceManager.GetString("FoundResultMatchingNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Historical contexts collection is required..
         /// </summary>
         public static string HistoricalContextsCollectionIsRequired {
@@ -1204,20 +1213,20 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parent comment with Id {0} not found..
-        /// </summary>
-        public static string ParentCommentNotFound {
-            get {
-                return ResourceManager.GetString("ParentCommentNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Parent comment must belong to the same streetcode..
         /// </summary>
         public static string ParentCommentMustBelongToSameStreetcode {
             get {
                 return ResourceManager.GetString("ParentCommentMustBelongToSameStreetcode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parent comment with Id {0} not found..
+        /// </summary>
+        public static string ParentCommentNotFound {
+            get {
+                return ResourceManager.GetString("ParentCommentNotFound", resourceCulture);
             }
         }
         
@@ -1411,15 +1420,6 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Streetcode with Id {0} does not exist..
-        /// </summary>
-        public static string StreetcodeWithIdNotFound {
-            get {
-                return ResourceManager.GetString("StreetcodeWithIdNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Streetcode was not found.
         /// </summary>
         public static string StreetcodeNotFound {
@@ -1434,6 +1434,15 @@ namespace Streetcode.BLL.Resources {
         public static string StreetcodesRequired {
             get {
                 return ResourceManager.GetString("StreetcodesRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Streetcode with Id {0} does not exist..
+        /// </summary>
+        public static string StreetcodeWithIdNotFound {
+            get {
+                return ResourceManager.GetString("StreetcodeWithIdNotFound", resourceCulture);
             }
         }
         

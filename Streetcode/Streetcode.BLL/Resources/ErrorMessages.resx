@@ -573,36 +573,36 @@
   <data name="AdditionalTextMustNotExceed" xml:space="preserve">
     <value>Additional text must not exceed {0} characters</value>
   </data>
-	<data name="SourceCategoryNotFound" xml:space="preserve">
-  <value>Source category was not found</value>
-</data>
-	<data name="SourceCategoryIdRequired" xml:space="preserve">
-  <value>Source CategoryId is Required</value>
-</data>
-	<data name="CannotSaveSourceCategory" xml:space="preserve">
-  <value>Failed to save source category</value>
-</data>
-	<data name="CannotDeleteSourceCategory" xml:space="preserve">
-  <value>Failed to delete source category</value>
-</data>
-	<data name="CannotUpdateSourceCategory" xml:space="preserve">
-  <value>Failed to update streetcode category</value>
-</data>
-	<data name="StreetcodeNotFound" xml:space="preserve">
-  <value>Streetcode was not found</value>
-</data>
-	<data name="SourceCategoryAlreadyExists" xml:space="preserve">
-  <value>Source category already exists for this streetcode</value>
-</data>
-	<data name="CannotSaveSourceCategoryContent" xml:space="preserve">
-  <value>Failed to save source category content</value>
-</data>
-	<data name="CannotDeleteSourceCategoryСontent" xml:space="preserve">
-  <value>Failed to delete source category content</value>
-</data>
-	<data name="CannotUpdateStreetcodeCategoryContent" xml:space="preserve">
-  <value>Failed to update streetcode category content</value>
-</data>
+  <data name="SourceCategoryNotFound" xml:space="preserve">
+    <value>Source category was not found</value>
+  </data>
+  <data name="SourceCategoryIdRequired" xml:space="preserve">
+    <value>Source CategoryId is Required</value>
+  </data>
+  <data name="CannotSaveSourceCategory" xml:space="preserve">
+    <value>Failed to save source category</value>
+  </data>
+  <data name="CannotDeleteSourceCategory" xml:space="preserve">
+    <value>Failed to delete source category</value>
+  </data>
+  <data name="CannotUpdateSourceCategory" xml:space="preserve">
+    <value>Failed to update streetcode category</value>
+  </data>
+  <data name="StreetcodeNotFound" xml:space="preserve">
+    <value>Streetcode was not found</value>
+  </data>
+  <data name="SourceCategoryAlreadyExists" xml:space="preserve">
+    <value>Source category already exists for this streetcode</value>
+  </data>
+  <data name="CannotSaveSourceCategoryContent" xml:space="preserve">
+    <value>Failed to save source category content</value>
+  </data>
+  <data name="CannotDeleteSourceCategoryСontent" xml:space="preserve">
+    <value>Failed to delete source category content</value>
+  </data>
+  <data name="CannotUpdateStreetcodeCategoryContent" xml:space="preserve">
+    <value>Failed to update streetcode category content</value>
+  </data>
   <data name="EmailMustNotExceedCharacters" xml:space="preserve">
     <value>Email must not exceed {0} characters.</value>
   </data>
@@ -704,5 +704,8 @@
   </data>
   <data name="ParentCommentCannotBeDescendantOfComment" xml:space="preserve">
     <value>Parent comment cannot be a descendant of the comment being updated.</value>
+  </data>
+  <data name="FoundResultMatchingNull" xml:space="preserve">
+    <value>Found result matching null</value>
   </data>
 </root>

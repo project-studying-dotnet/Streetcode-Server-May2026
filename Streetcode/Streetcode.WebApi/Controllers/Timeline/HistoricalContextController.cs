@@ -1,4 +1,5 @@
-﻿using Streetcode.DAL.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Timeline;
 using Streetcode.WebApi.Attributes;
@@ -6,6 +7,7 @@ using Streetcode.BLL.MediatR.Timeline.HistoricalContext;
 
 namespace Streetcode.WebApi.Controllers.Timeline;
 
+[ExcludeFromCodeCoverage]
 public sealed class HistoricalContextController : BaseApiController
 {
     [HttpGet]

@@ -3,10 +3,11 @@ using Streetcode.DAL.Entities.Sources;
 using Streetcode.DAL.Entities.Streetcode;
 using Streetcode.DAL.Entities.Streetcode.TextContent;
 using Streetcode.DAL.Entities.Team;
+using Streetcode.DAL.Specifications.Shared;
 
 namespace Streetcode.DAL.Entities.Media.Images;
 
-public class Image
+public class Image : IHasStreetcodes
 {
     public int Id { get; set; }
     public string? Base64 { get; set; }

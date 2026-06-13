@@ -7,6 +7,13 @@
     <UserSecretsId>c74223ed-c414-48c4-9b8f-3529e95faa61</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\Newss\**" />
+    <Content Remove="Controllers\Newss\**" />
+    <EmbeddedResource Remove="Controllers\Newss\**" />
+    <None Remove="Controllers\Newss\**" />
+  </ItemGroup>
 	<ItemGroup>
      <InternalsVisibleTo Include="Streetcode.XIntegrationTest" />
 </ItemGroup>
@@ -55,7 +62,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Analytics\" />
-    <Folder Include="Controllers\Newss\" />
   </ItemGroup>
 
 </Project>

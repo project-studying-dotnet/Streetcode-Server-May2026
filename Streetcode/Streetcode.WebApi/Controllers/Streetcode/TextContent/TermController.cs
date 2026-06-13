@@ -1,47 +1,59 @@
+using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Streetcode.BLL.DTO.Streetcode.TextContent.Term;
+using Streetcode.WebApi.Attributes;
 using Streetcode.BLL.MediatR.Streetcode.Term.Create;
 using Streetcode.BLL.MediatR.Streetcode.Term.Delete;
 using Streetcode.BLL.MediatR.Streetcode.Term.GetAll;
-using Streetcode.BLL.MediatR.Streetcode.Term.GetById;
 using Streetcode.BLL.MediatR.Streetcode.Term.Update;
-using Streetcode.DAL.Enums;
-using Streetcode.WebApi.Attributes;
+using Streetcode.BLL.MediatR.Streetcode.Term.GetById;
+using Streetcode.BLL.DTO.Streetcode.TextContent.Term;
 
 namespace Streetcode.WebApi.Controllers.Streetcode.TextContent;
 
-public class TermController : BaseApiController
+[ExcludeFromCodeCoverage]
+public sealed class TermController : BaseApiController
 {
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTermDto term)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Create([FromBody] CreateTermDto term, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new CreateTermCommand(term)));
+        return base.HandleResult(
+            await base.Mediator.Send(new CreateTermCommand(term), cancellationToken)
+        );
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllTermsQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllTermsQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetTermByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetTermByIdQuery(id), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] UpdateTermDto term)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Update([FromBody] UpdateTermDto term, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new UpdateTermCommand(term)));
+        return base.HandleResult(
+            await base.Mediator.Send(new UpdateTermCommand(term), cancellationToken)
+        );
     }
 
-    [AuthorizeRoles(UserRole.MainAdministrator)]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new DeleteTermCommand(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new DeleteTermCommand(id), cancellationToken)
+        );
     }
 }
