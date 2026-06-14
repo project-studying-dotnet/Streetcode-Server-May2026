@@ -23,5 +23,5 @@ jobs:
 
       - name: Build and Push ApiGateway Image
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-apigateway:latest -f ./Streetcode.ApiGateway/Dockerfile .
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-apigateway:latest -f ./Streetcode/Streetcode.ApiGateway/Dockerfile ./Streetcode
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-apigateway:latest
