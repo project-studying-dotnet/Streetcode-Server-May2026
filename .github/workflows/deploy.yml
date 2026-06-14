@@ -1,13 +1,14 @@
-name: Backend CI/CD (Docker)
+name: Backend CI/CD (Build & Push to ACR)
 
 on:
   push:
     branches:
       - dev
       - main
+      - feature/257-configure-cicd
 
 jobs:
-  build-push-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -20,14 +21,7 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Build and Push ApiGateway
+      - name: Build and Push ApiGateway Image
         run: |
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-apigateway:latest -f ./Streetcode.ApiGateway/Dockerfile .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-apigateway:latest
-
-      - name: Deploy to DEV App Service
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'streetcode-may2026-backend'
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_DEV }}
-          images: '${{ secrets.ACR_LOGIN_SERVER }}/streetcode-apigateway:latest'
