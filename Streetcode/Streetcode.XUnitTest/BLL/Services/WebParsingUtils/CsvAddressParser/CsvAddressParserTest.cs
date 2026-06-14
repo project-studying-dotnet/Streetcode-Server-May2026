@@ -33,24 +33,7 @@ public class CsvAddressParserServiceTests : IDisposable
         Directory.CreateDirectory(_testTempDirectory);
     }
 
-    public void Dispose()
-    {
-        if (Directory.Exists(_testTempDirectory))
-        {
-            Directory.Delete(_testTempDirectory, true);
-        }
-    }
-
-    private CsvAddressParserService CreateService(string downloadUrl = "https://fake-ukrposhta.com/houses.zip")
-    {
-        var httpClient = new HttpClient(_httpMessageHandlerMock.Object);
-        var settings = new UkrPoshtaParserSettings { DownloadUrl = downloadUrl };
-        var options = Options.Create(settings);
-
-        return new CsvAddressParserService(httpClient, _loggerMock.Object, options);
-    }
-
-    private byte[] CreateMockZipArchive(string csvContent)
+    private static byte[] CreateMockZipArchive(string csvContent)
     {
         using var memoryStream = new MemoryStream();
         using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
@@ -61,6 +44,24 @@ public class CsvAddressParserServiceTests : IDisposable
             writer.Write(csvContent);
         }
         return memoryStream.ToArray();
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_testTempDirectory))
+        {
+            Directory.Delete(_testTempDirectory, true);
+        }
+        GC.SuppressFinalize(this);
+    }
+
+    private CsvAddressParserService CreateService(string downloadUrl = "https://fake-ukrposhta.com/houses.zip")
+    {
+        var httpClient = new HttpClient(_httpMessageHandlerMock.Object);
+        var settings = new UkrPoshtaParserSettings { DownloadUrl = downloadUrl };
+        var options = Options.Create(settings);
+
+        return new CsvAddressParserService(httpClient, _loggerMock.Object, options);
     }
 
     [Fact]
@@ -135,7 +136,9 @@ public class CsvAddressParserServiceTests : IDisposable
         var service = CreateService();
 
         using var memoryStream = new MemoryStream();
-        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true)) { }
+        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+        {
+        }
         var emptyZipBytes = memoryStream.ToArray();
 
         _httpMessageHandlerMock.Protected()

@@ -62,11 +62,18 @@ public class WebParsingUtilsServiceTests
 
         _csvParserMock.Verify(x => x.ParseUkrPoshtaZipAsync(It.IsAny<string>()), Times.Once);
         _geocodingMock.Verify(x => x.GetCoordinatesAsync(It.IsAny<string>()), Times.Once);
-        _toponymDataMock.Verify(x => x.RefreshToponymsInDbAsync(It.Is<List<Toponym>>(list =>
-            list.Count == 1 &&
-            list[0].StreetName == "вулиця Степана Бандери" &&
-            list[0].Coordinate.Latitude == 49.8397m
-        )), Times.Once);
+
+        _toponymDataMock.Verify(
+           x => x.RefreshToponymsInDbAsync(
+              It.Is<List<Toponym>>(
+                  list =>
+                      list.Count == 1 &&
+                      list[0].StreetName == "вулиця Степана Бандери" &&
+                      list[0].Coordinate.Latitude == 49.8397m
+              )
+           ),
+           Times.Once
+        );
     }
 
     [Fact]
@@ -116,10 +123,15 @@ public class WebParsingUtilsServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Critical error in parsing orchestrator.")),
+                It.Is<It.IsAnyType>(
+                    (v, t) =>
+                        v!.ToString()!.Contains("Critical error in parsing orchestrator.")
+                ),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-            Times.Once);
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+                ),
+            Times.Once
+        );
 
         _geocodingMock.Verify(x => x.GetCoordinatesAsync(It.IsAny<string>()), Times.Never);
         _toponymDataMock.Verify(x => x.RefreshToponymsInDbAsync(It.IsAny<List<Toponym>>()), Times.Never);

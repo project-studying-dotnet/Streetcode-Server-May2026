@@ -42,42 +42,7 @@ public class CsvAddressParserService : ICsvAddressParser
             .Replace("пл.", "площа");
     }
 
-    public async Task<List<TmpAddressModel>> ParseUkrPoshtaZipAsync(string tempDirectory)
-    {
-        if (string.IsNullOrWhiteSpace(_settings.DownloadUrl))
-        {
-            throw new InvalidOperationException("Ukrposhta download URL is not configured in settings.");
-        }
-
-        string zipPath = Path.Combine(tempDirectory, "houses.zip");
-
-        _logger.LogInformation("Downloading Ukrposhta archive from configuration URL...");
-        var response = await _httpClient.GetAsync(_settings.DownloadUrl);
-        response.EnsureSuccessStatusCode();
-
-        await using (var fs = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None))
-        {
-            await response.Content.CopyToAsync(fs);
-        }
-
-        _logger.LogInformation("Extracting archive...");
-        ZipFile.ExtractToDirectory(zipPath, tempDirectory);
-
-        if (File.Exists(zipPath))
-        {
-            File.Delete(zipPath);
-        }
-
-        string? csvPath = Directory.GetFiles(tempDirectory, "*.csv").FirstOrDefault();
-        if (string.IsNullOrEmpty(csvPath))
-        {
-            throw new FileNotFoundException("CSV file not found in the archive.");
-        }
-
-        return await ProcessCsvFileAsync(csvPath);
-    }
-
-    private async Task<List<TmpAddressModel>> ProcessCsvFileAsync(string csvPath)
+    private static async Task<List<TmpAddressModel>> ProcessCsvFileAsync(string csvPath)
     {
         var list = new List<TmpAddressModel>();
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -117,5 +82,40 @@ public class CsvAddressParserService : ICsvAddressParser
             .GroupBy(x => new { x.Oblast, x.Gromada, x.StreetName })
             .Select(g => g.First())
             .ToList();
+    }
+
+    public async Task<List<TmpAddressModel>> ParseUkrPoshtaZipAsync(string tempDirectory)
+    {
+        if (string.IsNullOrWhiteSpace(_settings.DownloadUrl))
+        {
+            throw new InvalidOperationException("Ukrposhta download URL is not configured in settings.");
+        }
+
+        string zipPath = Path.Combine(tempDirectory, "houses.zip");
+
+        _logger.LogInformation("Downloading Ukrposhta archive from configuration URL...");
+        var response = await _httpClient.GetAsync(_settings.DownloadUrl);
+        response.EnsureSuccessStatusCode();
+
+        await using (var fs = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None))
+        {
+            await response.Content.CopyToAsync(fs);
+        }
+
+        _logger.LogInformation("Extracting archive...");
+        await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, tempDirectory));
+
+        if (File.Exists(zipPath))
+        {
+            File.Delete(zipPath);
+        }
+
+        string? csvPath = Directory.GetFiles(tempDirectory, "*.csv").FirstOrDefault();
+        if (string.IsNullOrEmpty(csvPath))
+        {
+            throw new FileNotFoundException("CSV file not found in the archive.");
+        }
+
+        return await ProcessCsvFileAsync(csvPath);
     }
 }
