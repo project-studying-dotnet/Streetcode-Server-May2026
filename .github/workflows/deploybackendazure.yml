@@ -58,12 +58,12 @@ jobs:
 
       - name: Build solution
         run: dotnet build ${{ env.SOLUTION_PATH }} 
-          --configuration Release 
+          --configuration Debug 
           --no-restore
 
       - name: Run tests
         run: dotnet test ${{ env.SOLUTION_PATH }} 
-          --configuration Release
+          --configuration Debug
           --no-restore
           --no-build 
           --verbosity normal
@@ -93,7 +93,7 @@ jobs:
           
       - name: Publish application
         run: dotnet publish ${{ env.API_PROJECT_PATH }} 
-          --configuration Release 
+          --configuration Debug 
           --no-restore 
           --no-build 
           --property:PublishDir=${{ env.PUBLISH_DIR }}
