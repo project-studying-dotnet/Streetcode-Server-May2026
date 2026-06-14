@@ -21,7 +21,7 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Build and Push ApiGateway Image
+      - name: Build and Push WebApi Image
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-apigateway:latest -f ./Streetcode/Streetcode.ApiGateway/Dockerfile ./Streetcode
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-apigateway:latest
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-webapi:latest -f ./Streetcode/Dockerfile .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-webapi:latest
