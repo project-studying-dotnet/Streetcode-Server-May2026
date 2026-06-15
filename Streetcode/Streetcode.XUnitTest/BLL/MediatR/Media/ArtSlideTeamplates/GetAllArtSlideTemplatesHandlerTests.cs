@@ -65,7 +65,10 @@ public class GetAllArtSlideTemplatesHandlerTests
 
         // Assert
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle(e => e.Message == ErrorMessages.CannotFindAnyArtSlideTemplates);
-        _loggerMock.Verify(l => l.LogError(It.IsAny<object>(), ErrorMessages.CannotFindAnyArtSlideTemplates), Times.Once);
+        string expectedMessage = ErrorMessages.CannotFindAnyArtSlideTemplates ?? "Cannot find any art slide templates.";
+
+        result.Errors.Should().ContainSingle(e => e.Message == expectedMessage);
+
+        _loggerMock.Verify(l => l.LogError(It.IsAny<object>(), expectedMessage), Times.Once);
     }
 }

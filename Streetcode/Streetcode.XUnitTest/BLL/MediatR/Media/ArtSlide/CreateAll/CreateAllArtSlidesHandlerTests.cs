@@ -51,9 +51,9 @@ public class CreateAllArtSlidesHandlerTests
     {
         // Arrange
         var requestDto = new List<CreateStreetcodeArtSlideDto>
-        {
-            new() { StreetcodeId = 1, ArtSlideItems = new() { new() { ArtId = 1 } } }
-        };
+    {
+        new() { StreetcodeId = 1, ArtSlideItems = new() { new() { ArtId = 1, Index = 0 } } }
+    };
         var command = new CreateAllArtSlidesCommand(requestDto);
 
         _streetcodeRepoMock.Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeContent, bool>>>(), null))
@@ -70,7 +70,10 @@ public class CreateAllArtSlidesHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        _slideRepoMock.Verify(r => r.Create(It.IsAny<StreetcodeArtSlide>()), Times.Once);
+
+        _slideRepoMock.Verify(r => r.CreateAsync(It.IsAny<StreetcodeArtSlide>()), Times.Once);
+        _slideItemRepoMock.Verify(r => r.Create(It.IsAny<ArtSlideItem>()), Times.Once);
+
         _repoWrapperMock.Verify(w => w.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.AtLeast(2));
     }
 }

@@ -58,6 +58,9 @@ public class UpdateArtSlideHandlerTests
         _slideRepoMock.Setup(r => r.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<StreetcodeArtSlide, bool>>>(), null))
             .ReturnsAsync(existingSlide);
 
+        _slideItemRepoMock.Setup(r => r.GetAllAsync(It.IsAny<Expression<Func<ArtSlideItem, bool>>>(), null))
+            .ReturnsAsync(new List<ArtSlideItem>());
+
         _repoWrapperMock.Setup(r => r.BeginTransaction())
             .Returns(new TransactionScope(TransactionScopeAsyncFlowOption.Enabled));
 
@@ -67,13 +70,11 @@ public class UpdateArtSlideHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
 
-        // Проверяем, что обновление состоялось
         existingSlide.Index.Should().Be(5);
         _slideRepoMock.Verify(r => r.Update(It.IsAny<StreetcodeArtSlide>()), Times.Once);
 
-        // Проверяем "пересборку" элементов
         _slideItemRepoMock.Verify(r => r.DeleteRange(It.IsAny<IEnumerable<ArtSlideItem>>()), Times.Once);
-        _slideItemRepoMock.Verify(r => r.Create(It.IsAny<ArtSlideItem>()), Times.Once);
+        _slideItemRepoMock.Verify(r => r.CreateAsync(It.IsAny<ArtSlideItem>()), Times.Once);
         _repoWrapperMock.Verify(w => w.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 

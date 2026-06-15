@@ -70,6 +70,10 @@ public class DeleteArtSlideHandlerTests
 
         // Assert
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle(e => e.Message.Contains(string.Format(ErrorMessages.SlideNotFound, slideId)));
+
+        string errorMessageTemplate = ErrorMessages.SlideNotFound ?? "Slide with ID {0} was not found.";
+        string expectedMessage = string.Format(errorMessageTemplate, slideId);
+
+        result.Errors.Should().ContainSingle(e => e.Message == expectedMessage);
     }
 }

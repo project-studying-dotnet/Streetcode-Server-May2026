@@ -2,7 +2,6 @@
 using FluentResults;
 using MediatR;
 using Streetcode.BLL.DTO.Media.ArtSlides;
-using Streetcode.BLL.MediatR.Media.ArtSlide.Create;
 using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.Media.Images;
 using Streetcode.DAL.Repositories.Interfaces.Base;
@@ -44,7 +43,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
             using (var transaction = _repositoryWrapper.BeginTransaction())
             {
                 var newSlide = _mapper.Map<StreetcodeArtSlide>(request.Dto);
-                _repositoryWrapper.StreetcodeArtSlideRepository.Create(newSlide);
+                await _repositoryWrapper.StreetcodeArtSlideRepository.CreateAsync(newSlide);
                 await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 foreach (var artItem in request.Dto.ArtSlideItems)
