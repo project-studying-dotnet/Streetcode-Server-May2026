@@ -37,6 +37,9 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;
 dotnet user-secrets set "Jwt:Key" "StreetcodeSuperSecretJwtKeyForDevelopmentOnly1234567890" --project Streetcode.Auth
 dotnet user-secrets set "Jwt:Issuer" "Streetcode" --project Streetcode.Auth
 dotnet user-secrets set "Jwt:Audience" "StreetcodeUsers" --project Streetcode.Auth
+
+dotnet user-secrets set "RabbitMq:UserName" "guest" --project Streetcode.Auth
+dotnet user-secrets set "RabbitMq:Password" "guest" --project Streetcode.Aut
 ```
 
 ## 5. Run application
