@@ -18,7 +18,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.GetAllByStreetcodeId
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Result<IEnumerable<StreetcodeArtSlideDto>>> Handle(GetAllArtSlidesByStreetcodeIdQuery request, CancellationToken ct)
+        public async Task<Result<IEnumerable<StreetcodeArtSlideDto>>> Handle(GetAllArtSlidesByStreetcodeIdQuery request, CancellationToken cancellationToken)
         {
             var slides = await _repositoryWrapper.StreetcodeArtSlideRepository.GetAllAsync(
                 predicate: s => s.StreetcodeId == request.StreetcodeId,

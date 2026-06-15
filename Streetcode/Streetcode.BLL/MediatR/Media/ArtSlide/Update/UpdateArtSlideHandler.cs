@@ -9,12 +9,10 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Update
 {
     public class UpdateArtSlideHandler : IRequestHandler<UpdateArtSlideCommand, Result<Unit>>
     {
-        private readonly IMapper _mapper;
         private readonly IRepositoryWrapper _repositoryWrapper;
 
-        public UpdateArtSlideHandler(IMapper mapper, IRepositoryWrapper repositoryWrapper)
+        public UpdateArtSlideHandler( IRepositoryWrapper repositoryWrapper)
         {
-            _mapper = mapper;
             _repositoryWrapper = repositoryWrapper;
         }
 

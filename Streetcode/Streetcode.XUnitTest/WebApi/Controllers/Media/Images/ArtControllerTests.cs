@@ -33,7 +33,7 @@ public class ArtControllerTests
 
         if (field == null)
            {
-            throw new Exception("Cannot find IMediator field in BaseApiController"); 
+            throw new Exception("Cannot find IMediator field in BaseApiController");
            }
 
         field.SetValue(_controller, _mediatorMock.Object);

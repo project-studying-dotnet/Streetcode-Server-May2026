@@ -1,12 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using System.Transactions;
+using AutoMapper;
 using FluentAssertions;
 using MockQueryable.Moq;
 using Moq;
 using Repositories.Interfaces;
 using Streetcode.BLL.DTO.Media.ArtSlides;
-using Streetcode.BLL.Interfaces.Logging;
-using System.Linq.Expressions;
-using System.Transactions;
 using Streetcode.BLL.Mapping.Media.Images;
 using Streetcode.BLL.MediatR.Media.ArtSlide.Create;
 using Streetcode.BLL.Resources;

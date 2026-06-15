@@ -72,7 +72,7 @@ public class CreateAllArtSlidesHandlerTests
         result.IsSuccess.Should().BeTrue();
 
         _slideRepoMock.Verify(r => r.CreateAsync(It.IsAny<StreetcodeArtSlide>()), Times.Once);
-        _slideItemRepoMock.Verify(r => r.Create(It.IsAny<ArtSlideItem>()), Times.Once);
+        _slideItemRepoMock.Verify(r => r.CreateAsync(It.IsAny<ArtSlideItem>()), Times.Once);
 
         _repoWrapperMock.Verify(w => w.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.AtLeast(2));
     }

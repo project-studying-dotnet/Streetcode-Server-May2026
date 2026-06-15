@@ -29,7 +29,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
                 return Result.Fail("ArtSlides list is empty");
             }
 
-            var streetcodeId = request.ArtSlides.First().StreetcodeId;
+            var streetcodeId = request.ArtSlides[0].StreetcodeId;
 
             var streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
                  predicate: s => s.Id == streetcodeId,
@@ -59,7 +59,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
 
                     foreach (var artItem in dto.ArtSlideItems)
                     {
-                        _repositoryWrapper.ArtSlideItemRepository.Create(
+                        await _repositoryWrapper.ArtSlideItemRepository.CreateAsync(
                             new ArtSlideItem
                             {
                                 SlideId = newSlide.Id,
