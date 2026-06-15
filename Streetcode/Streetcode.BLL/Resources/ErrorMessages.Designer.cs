@@ -97,7 +97,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One or more specified arts were not found..
+        ///   Looks up a localized string similar to Arts not found.
         /// </summary>
         public static string ArtsNotFound {
             get {
@@ -187,7 +187,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot find any art slide templates.
+        ///   Looks up a localized string similar to Cannot find any artSlideTemplates.
         /// </summary>
         public static string CannotFindAnyArtSlideTemplates {
             get {
@@ -682,7 +682,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Entity is not found.
+        ///   Looks up a localized string similar to Entity not found .
         /// </summary>
         public static string EntityNotFound {
             get {
@@ -1051,7 +1051,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Id must be greater than 0.
+        ///   Looks up a localized string similar to Invalid Id.
         /// </summary>
         public static string InvalidId {
             get {
@@ -1200,6 +1200,15 @@ namespace Streetcode.BLL.Resources {
         public static string NewsIsRequired {
             get {
                 return ResourceManager.GetString("NewsIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to News with id {0} was not found.
+        /// </summary>
+        public static string NewsWithIdNotFound {
+            get {
+                return ResourceManager.GetString("NewsWithIdNotFound", resourceCulture);
             }
         }
         
@@ -1420,7 +1429,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Request is required..
+        ///   Looks up a localized string similar to Request is required.
         /// </summary>
         public static string RequestIsRequired {
             get {
@@ -1447,7 +1456,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Slide with ID {0} was not found..
+        ///   Looks up a localized string similar to Slide not found.
         /// </summary>
         public static string SlideNotFound {
             get {
