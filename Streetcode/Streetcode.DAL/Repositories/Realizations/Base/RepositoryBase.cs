@@ -9,7 +9,6 @@ using Streetcode.DAL.Specifications.Base;
 
 namespace Streetcode.DAL.Repositories.Realizations.Base;
 
-[ExcludeFromCodeCoverage]
 public abstract class RepositoryBase<T> : IRepositoryBase<T>
     where T : class
 {

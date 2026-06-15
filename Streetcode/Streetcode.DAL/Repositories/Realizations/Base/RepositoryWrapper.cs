@@ -37,7 +37,6 @@ using Streetcode.DAL.Repositories.Realizations.Users;
 
 namespace Streetcode.DAL.Repositories.Realizations.Base;
 
-[ExcludeFromCodeCoverage]
 public class RepositoryWrapper : IRepositoryWrapper
 {
     private readonly StreetcodeDbContext _streetcodeDbContext;
@@ -116,7 +115,7 @@ public class RepositoryWrapper : IRepositoryWrapper
 
     private IStreetcodeArtSlideRepository? _streetcodeArtSlideRepository;
     private IStreetcodeArtSlideTemplateRepository? _streetcodeArtSlideTemplateRepository;
-    private IArtSlideItemRepository _artSlideItemRepository;
+    private IArtSlideItemRepository? _artSlideItemRepository;
 
     public RepositoryWrapper(StreetcodeDbContext streetcodeDbContext)
     {
@@ -629,5 +628,4 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _artSlideItemRepository;
         }
     }
-
 }
