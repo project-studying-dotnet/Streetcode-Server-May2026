@@ -33,18 +33,18 @@ namespace Streetcode.Auth.Services.Services.Logging
             _logger.Debug(msg);
         }
 
-        public void LogError(object request, string erroMsg)
+        public void LogError(object request, string errorMsg)
         {
             if (request == null)
             {
-                _logger.Error($"UnknownRequest handled with the error: {erroMsg}");
+                _logger.Error("UnknownRequest handled with the error: {ErrorMsg}", errorMsg);
                 return;
             }
 
             string requestType = request.GetType().ToString();
             string requestClass = requestType.Substring(requestType.LastIndexOf('.') + 1);
 
-            _logger.Error($"{requestClass} handled with the error: {erroMsg}");
+            _logger.Error("{RequestClass} handled with the error: {ErrorMsg}", requestClass, errorMsg);
         }
     }
 }

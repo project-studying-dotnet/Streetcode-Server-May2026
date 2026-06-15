@@ -13,7 +13,6 @@ namespace Streetcode.Auth.Services.Users
         private readonly IJwtTokenService _jwt;
         private readonly IRefreshTokenService _refresh;
         private readonly IMapper _mapper;
-        private readonly UserManager<User> _userManager;
 
         public AuthService(
             IJwtTokenService jwt,
@@ -24,7 +23,6 @@ namespace Streetcode.Auth.Services.Users
             _jwt = jwt;
             _refresh = refresh;
             _mapper = mapper;
-            _userManager = userManager;
         }
 
         public async Task<AuthResponseDto> CreateLoginResultAsync(User user)

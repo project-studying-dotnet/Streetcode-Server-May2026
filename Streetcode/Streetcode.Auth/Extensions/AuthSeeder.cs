@@ -8,7 +8,7 @@ namespace Streetcode.Auth.Extensions
     {
         public static async Task SeedAsync(UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, IConfiguration configuration)
         {
-            foreach (var roleNameItem in Enum.GetNames(typeof(UserRole)))
+            foreach (var roleNameItem in Enum.GetNames<UserRole>())
             {
                 if (!await roleManager.RoleExistsAsync(roleNameItem))
                 {
@@ -36,7 +36,7 @@ namespace Streetcode.Auth.Extensions
                 if (!result.Succeeded)
                 {
                     var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                    throw new Exception($"Failed to create admin user: {errors}");
+                    throw new InvalidOperationException($"Failed to create admin user: {errors}");
                 }
                 existingAdmin = adminUser;
             }

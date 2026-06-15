@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Streetcode.Auth.Extensions;
 using Streetcode.Auth.Services.Interfaces.Users;
@@ -9,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace Streetcode.XIntegrationTest.Extensions
 {
-
     public class DependencyInjectionTests
     {
         [Fact]
@@ -17,11 +15,13 @@ namespace Streetcode.XIntegrationTest.Extensions
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string?> {
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
                 {"Jwt:Key", "SuperSecretKeyMustBeAtLeast32CharactersLong!"},
                 {"Jwt:Issuer", "TestIssuer"},
                 {"ConnectionStrings:DefaultConnection", "Server=dummy;Database=dummy;Trusted_Connection=True;"}
-                }!)
+                }
+                !)
                 .Build();
 
             services.AddInfrastructure(configuration);

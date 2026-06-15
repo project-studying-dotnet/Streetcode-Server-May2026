@@ -13,7 +13,6 @@ namespace Streetcode.Auth.MediatR.Users.Login
     public class LoginUserHandler : IRequestHandler<LoginUserCommand, Result<AuthResponseDto>>
     {
         private readonly UserManager<User> _userManager;
-        private readonly IMapper _mapper;
         private readonly ILoggerService _logger;
         private readonly IAuthService _authService;
 
@@ -24,7 +23,6 @@ namespace Streetcode.Auth.MediatR.Users.Login
             IAuthService authService)
         {
             _userManager = userManager;
-            _mapper = mapper;
             _logger = logger;
             _authService = authService;
         }

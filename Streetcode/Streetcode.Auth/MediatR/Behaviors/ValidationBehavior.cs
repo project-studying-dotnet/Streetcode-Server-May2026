@@ -30,7 +30,7 @@ public class ValidationBehavior<TRequest, TResponse>
             .Where(f => f != null)
             .ToList();
 
-        if (failures.Any())
+        if (failures.Count > 0)
         {
             throw new Shared.Web.Exceptions.ValidationException(failures);
         }

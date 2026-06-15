@@ -8,116 +8,119 @@ using Streetcode.Auth.Services.Users;
 using Streetcode.Common.Configuration;
 using Xunit;
 
-public class JwtTokenServiceTests
+namespace Streetcode.XUnitTest.AuthService.Services
 {
-    private JwtSettings GetSettings() => new JwtSettings
+    public class JwtTokenServiceTests
     {
-        Key = "THIS_IS_A_VERY_LONG_TEST_SECRET_KEY_123456789",
-        Issuer = "test-issuer",
-        Audience = "test-audience",
-        AccessTokenLifetimeInMinutes = 60
-    };
-
-    private static User GetUser() => new User
-    {
-        Id = 1,
-        UserName = "testuser",
-        Role = Streetcode.Common.Enums.UserRole.Administrator,
-        Name = "Test",
-        Surname = "User"
-    };
-
-    private string WriteToken(JwtSecurityToken token)
-    {
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    private JwtSecurityToken ReadJwt(string token, JwtSettings settings)
-    {
-        var handler = new JwtSecurityTokenHandler();
-
-        var validationParameters = new TokenValidationParameters
+        private static JwtSettings GetSettings() => new JwtSettings
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidateLifetime = false,
-            ValidIssuer = settings.Issuer,
-            ValidAudience = settings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(settings.Key))
+            Key = "THIS_IS_A_VERY_LONG_TEST_SECRET_KEY_123456789",
+            Issuer = "test-issuer",
+            Audience = "test-audience",
+            AccessTokenLifetimeInMinutes = 60
         };
 
-        handler.ValidateToken(token, validationParameters, out var validatedToken);
+        private static User GetUser() => new User
+        {
+            Id = 1,
+            UserName = "testuser",
+            Role = Streetcode.Common.Enums.UserRole.Administrator,
+            Name = "Test",
+            Surname = "User"
+        };
 
-        return (JwtSecurityToken)validatedToken;
-    }
+        private static string WriteToken(JwtSecurityToken token)
+        {
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
 
-    [Fact]
-    public void GenerateToken_ShouldCreateValidJwtToken()
-    {
-        var settings = GetSettings();
-        var service = new JwtTokenService(settings);
-        var user = GetUser();
+        private static JwtSecurityToken ReadJwt(string token, JwtSettings settings)
+        {
+            var handler = new JwtSecurityTokenHandler();
 
-        var token = service.GenerateToken(user);
-        var jwtString = WriteToken(token);
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = false,
+                ValidIssuer = settings.Issuer,
+                ValidAudience = settings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(settings.Key))
+            };
 
-        var handler = new JwtSecurityTokenHandler();
-        var jwt = handler.ReadJwtToken(jwtString);
+            handler.ValidateToken(token, validationParameters, out var validatedToken);
 
-        token.Should().NotBeNull();
-        token.Issuer.Should().Be(settings.Issuer);
+            return (JwtSecurityToken)validatedToken;
+        }
 
-        jwt.Claims.Should().Contain(c =>
-            c.Type == "aud" && c.Value == settings.Audience);
-    }
+        [Fact]
+        public void GenerateToken_ShouldCreateValidJwtToken()
+        {
+            var settings = GetSettings();
+            var service = new JwtTokenService(settings);
+            var user = GetUser();
 
-    [Fact]
-    public void GenerateToken_ShouldContainCorrectClaims()
-    {
-        var settings = GetSettings();
-        var service = new JwtTokenService(settings);
-        var user = GetUser();
+            var token = service.GenerateToken(user);
+            var jwtString = WriteToken(token);
 
-        var token = service.GenerateToken(user);
-        var jwt = new JwtSecurityTokenHandler()
-            .ReadJwtToken(WriteToken(token));
+            var handler = new JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(jwtString);
 
-        jwt.Claims.Should().Contain(c =>
-            c.Type == ClaimTypes.NameIdentifier && c.Value == user.Id.ToString());
+            token.Should().NotBeNull();
+            token.Issuer.Should().Be(settings.Issuer);
 
-        jwt.Claims.Should().Contain(c =>
-            c.Type == ClaimTypes.Name && c.Value == user.UserName);
+            jwt.Claims.Should().Contain(c =>
+                c.Type == "aud" && c.Value == settings.Audience);
+        }
 
-        jwt.Claims.Should().Contain(c =>
-            c.Type == ClaimTypes.Role && c.Value == user.Role.ToString());
-    }
+        [Fact]
+        public void GenerateToken_ShouldContainCorrectClaims()
+        {
+            var settings = GetSettings();
+            var service = new JwtTokenService(settings);
+            var user = GetUser();
 
-    [Fact]
-    public void GenerateToken_ShouldHaveExpiration()
-    {
-        var settings = GetSettings();
-        var service = new JwtTokenService(settings);
-        var user = GetUser();
+            var token = service.GenerateToken(user);
+            var jwt = new JwtSecurityTokenHandler()
+                .ReadJwtToken(WriteToken(token));
 
-        var token = service.GenerateToken(user);
+            jwt.Claims.Should().Contain(c =>
+                c.Type == ClaimTypes.NameIdentifier && c.Value == user.Id.ToString());
 
-        token.ValidTo.Should().BeAfter(DateTime.UtcNow);
-    }
+            jwt.Claims.Should().Contain(c =>
+                c.Type == ClaimTypes.Name && c.Value == user.UserName);
 
-    [Fact]
-    public void GenerateToken_ShouldBeCryptographicallyValid()
-    {
-        var settings = GetSettings();
-        var service = new JwtTokenService(settings);
-        var user = GetUser();
+            jwt.Claims.Should().Contain(c =>
+                c.Type == ClaimTypes.Role && c.Value == user.Role.ToString());
+        }
 
-        var token = service.GenerateToken(user);
+        [Fact]
+        public void GenerateToken_ShouldHaveExpiration()
+        {
+            var settings = GetSettings();
+            var service = new JwtTokenService(settings);
+            var user = GetUser();
 
-        var jwt = ReadJwt(WriteToken(token), settings);
+            var token = service.GenerateToken(user);
 
-        jwt.Should().NotBeNull();
-        jwt.Claims.Should().NotBeEmpty();
+            token.ValidTo.Should().BeAfter(DateTime.UtcNow);
+        }
+
+        [Fact]
+        public void GenerateToken_ShouldBeCryptographicallyValid()
+        {
+            var settings = GetSettings();
+            var service = new JwtTokenService(settings);
+            var user = GetUser();
+
+            var token = service.GenerateToken(user);
+
+            var jwt = ReadJwt(WriteToken(token), settings);
+
+            jwt.Should().NotBeNull();
+            jwt.Claims.Should().NotBeEmpty();
+        }
     }
 }

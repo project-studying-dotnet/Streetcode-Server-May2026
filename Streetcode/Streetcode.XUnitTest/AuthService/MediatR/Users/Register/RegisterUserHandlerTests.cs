@@ -111,14 +111,12 @@ public class RegisterUserHandlerTests
                 "email-queue",
                 It.IsAny<EmailMessageContract>()))
             .Returns(Task.CompletedTask);
-
         // Act
         var result = await _handler.Handle(CreateCommand(dto), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Token.Should().Be("jwt-token");
-
         _rabbitMock.Verify(
             x => x.PublishAsync(
                 "email-queue",

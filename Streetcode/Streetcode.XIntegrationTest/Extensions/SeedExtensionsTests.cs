@@ -38,7 +38,8 @@ namespace Streetcode.XIntegrationTest.Extensions
                 .AddInMemoryCollection(new Dictionary<string, string?> {
                     {"AdminSettings:Email", "admin@test.com"},
                     {"AdminSettings:Password", "Password123!"}
-                }!)
+                }
+                !)
                 .Build();
 
             services.AddSingleton(mockUserMgr.Object);

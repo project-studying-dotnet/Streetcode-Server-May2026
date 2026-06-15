@@ -1,4 +1,5 @@
 ﻿using Streetcode.Auth.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Streetcode.Auth.Services
 {
@@ -37,9 +38,7 @@ namespace Streetcode.Auth.Services
                 var expiredTokens = context.RefreshTokens
                     .Where(t => t.Expires < DateTime.UtcNow);
 
-                var allTokens = context.RefreshTokens.ToList();
-
-                if (expiredTokens.Any())
+                if (await expiredTokens.AnyAsync())
                 {
                     context.RefreshTokens.RemoveRange(expiredTokens);
                     await context.SaveChangesAsync();

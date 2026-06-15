@@ -87,11 +87,12 @@ namespace Streetcode.Auth.Services.Users
             }
         }
 
-        private string ComputeHash(string input)
+        private static string ComputeHash(string input)
         {
-            using var sha = System.Security.Cryptography.SHA256.Create();
-            var bytes = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(input));
-            return Convert.ToBase64String(bytes);
+            var inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
+            var hashBytes = SHA256.HashData(inputBytes);
+
+            return Convert.ToBase64String(hashBytes);
         }
     }
 }

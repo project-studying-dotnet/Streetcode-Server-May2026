@@ -13,9 +13,9 @@ namespace Streetcode.Auth.Extensions
             }
             if (result.IsSuccess)
             {
-                return result.Value == null
-                    ? controller.NotFound()
-                    : controller.Ok(result.Value);
+                return EqualityComparer<T>.Default.Equals(result.Value, default(T))
+                     ? controller.NotFound()
+                     : controller.Ok(result.Value);
             }
 
             var error = result.Errors.FirstOrDefault();

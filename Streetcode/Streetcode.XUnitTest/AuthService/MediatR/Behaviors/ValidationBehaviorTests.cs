@@ -45,7 +45,7 @@ public class ValidationBehaviorTests
             .Setup(v => v.ValidateAsync(
                 It.IsAny<ValidationContext<TestRequest>>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult(new[]
+           .ReturnsAsync(new ValidationResult(new List<ValidationFailure>
             {
             new ValidationFailure("Name", "Required")
             }));

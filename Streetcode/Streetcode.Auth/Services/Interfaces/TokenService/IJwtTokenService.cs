@@ -8,21 +8,5 @@ namespace Streetcode.Auth.Services.Interfaces.Users
     public interface IJwtTokenService
     {
         JwtSecurityToken GenerateToken(User user);
-        
-        //JwtSecurityToken GenerateJWTToken(User user);
-
-        //string GenerateRefreshToken();
-
-        //ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
-
-        //Task<(JwtSecurityToken Jwt, string NewRefreshToken)> RefreshTokenAsync(string token);
-
-        //Task SaveRefreshTokenAsync(int userId, string token);
-
-        //Task RevokeTokenAsync(string token);
-
-        //Task<RefreshResult> RefreshAsync(string refreshToken);
-
-        //Task<AuthResponseDto> CreateLoginResultAsync(User user);
     }
 }
