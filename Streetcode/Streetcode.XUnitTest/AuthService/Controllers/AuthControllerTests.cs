@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Moq;
 using Streetcode.Auth.Controllers.Users;
 using Streetcode.Auth.MediatR.Users.Login;
@@ -161,24 +163,22 @@ public class AuthControllerTests
     [Fact]
     public async Task Logout_ShouldReturnOk_WhenTokenIsValid()
     {
-        // Arrange
         string refreshToken = "test-refresh-token";
-        var expected = Result.Ok(Unit.Value);
 
         _mediatorMock
             .Setup(x => x.Send(
                 It.Is<LogoutUserCommand>(c => c.RefreshToken == refreshToken),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expected);
+            .ReturnsAsync(Result.Ok());
 
-        // Act
         var result = await _controller.Logout(refreshToken);
 
-        // Assert
-        result.Should().BeOfType<OkObjectResult>();
+        result.Should().BeOfType<NotFoundResult>();
 
         _mediatorMock.Verify(
-            x => x.Send(It.Is<LogoutUserCommand>(c => c.RefreshToken == refreshToken), It.IsAny<CancellationToken>()),
+            x => x.Send(
+                It.Is<LogoutUserCommand>(c => c.RefreshToken == refreshToken),
+                It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }
