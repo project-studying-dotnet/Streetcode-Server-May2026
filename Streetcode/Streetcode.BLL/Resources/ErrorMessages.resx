@@ -690,6 +690,21 @@
   <data name="ParentCommentMustBelongToSameStreetcode" xml:space="preserve">
     <value>Parent comment must belong to the same streetcode.</value>
   </data>
+  <data name="CommentWithIdNotFound" xml:space="preserve">
+    <value>Comment with Id {0} not found.</value>
+  </data>
+  <data name="ChangingCommentStreetcodeIdNotAllowed" xml:space="preserve">
+    <value>Changing StreetcodeId for an existing comment is not allowed.</value>
+  </data>
+  <data name="FailedToUpdateComment" xml:space="preserve">
+    <value>Failed to update comment.</value>
+  </data>
+  <data name="CommentCannotBeItsOwnParent" xml:space="preserve">
+    <value>Comment cannot be its own parent.</value>
+  </data>
+  <data name="ParentCommentCannotBeDescendantOfComment" xml:space="preserve">
+    <value>Parent comment cannot be a descendant of the comment being updated.</value>
+  </data>
   <data name="FoundResultMatchingNull" xml:space="preserve">
     <value>Found result matching null</value>
   </data>
