@@ -1,36 +1,43 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using Streetcode.BLL.DTO.AdditionalContent;
-using Streetcode.BLL.DTO.AdditionalContent.Tag;
-using Streetcode.BLL.MediatR.AdditionalContent.Tag.Create;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetAll;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetById;
 using Streetcode.BLL.MediatR.AdditionalContent.Tag.GetByStreetcodeId;
 
 namespace Streetcode.WebApi.Controllers.AdditionalContent;
 
-public class TagController : BaseApiController
+[ExcludeFromCodeCoverage]
+public sealed class TagController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetAllTagsQuery()));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllTagsQuery(), cancellationToken)
+        );
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetTagByIdQuery(id)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetTagByIdQuery(id), cancellationToken)
+        );
     }
 
     [HttpGet("{streetcodeId:int}")]
-    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId)
+    public async Task<IActionResult> GetByStreetcodeId([FromRoute] int streetcodeId, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetTagByStreetcodeIdQuery(streetcodeId)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetTagByStreetcodeIdQuery(streetcodeId), cancellationToken)
+        );
     }
 
     [HttpGet("{title}")]
-    public async Task<IActionResult> GetTagByTitle([FromRoute] string title)
+    public async Task<IActionResult> GetTagByTitle([FromRoute] string title, CancellationToken cancellationToken = default)
     {
-        return HandleResult(await Mediator.Send(new GetTagByTitleQuery(title)));
+        return base.HandleResult(
+            await base.Mediator.Send(new GetTagByTitleQuery(title), cancellationToken)
+        );
     }
 }

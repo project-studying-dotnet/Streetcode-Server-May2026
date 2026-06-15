@@ -9,6 +9,10 @@ public class CommentProfile : Profile
     public CommentProfile()
     {
         CreateMap<CreateCommentDto, Comment>();
-        CreateMap<Comment, CommentDto>();
+        CreateMap<UpdateCommentDto, Comment>();
+        CreateMap<Comment, CommentDto>().ForMember(
+            dest => dest.Replies, 
+            opt => opt.MapFrom(src => src.Replies)
+        );
     }
 }

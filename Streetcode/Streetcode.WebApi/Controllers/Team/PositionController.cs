@@ -1,26 +1,30 @@
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
+using Streetcode.DAL.Enums;
 using Streetcode.BLL.DTO.Team;
+using Microsoft.AspNetCore.Mvc;
+using Streetcode.WebApi.Attributes;
 using Streetcode.BLL.MediatR.Team.Create;
 using Streetcode.BLL.MediatR.Team.Position.GetAll;
-using Streetcode.DAL.Enums;
-using Streetcode.WebApi.Attributes;
 
-namespace Streetcode.WebApi.Controllers.Team
+namespace Streetcode.WebApi.Controllers.Team;
+
+[ExcludeFromCodeCoverage]
+public sealed class PositionController : BaseApiController
 {
-    public class PositionController : BaseApiController
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return HandleResult(await Mediator.Send(new GetAllPositionsQuery()));
-        }
+        return base.HandleResult(
+            await base.Mediator.Send(new GetAllPositionsQuery(), cancellationToken)
+        );
+    }
 
-        [AuthorizeRoles(UserRole.MainAdministrator)]
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PositionDTO position)
-        {
-            return HandleResult(await Mediator.Send(new CreatePositionQuery(position)));
-        }
+    [HttpPost]
+    [AuthorizeRoles(UserRole.MainAdministrator)]
+    public async Task<IActionResult> Create([FromBody] PositionDTO position, CancellationToken cancellationToken = default)
+    {
+        return base.HandleResult(
+            await base.Mediator.Send(new CreatePositionQuery(position), cancellationToken)
+        );
     }
 }

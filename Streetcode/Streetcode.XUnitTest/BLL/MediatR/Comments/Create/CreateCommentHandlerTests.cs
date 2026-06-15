@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using MockQueryable.Moq;
 using Moq;
 using Streetcode.BLL.DTO.Comments;
@@ -103,7 +105,7 @@ public class CreateCommentHandlerTests
         var command = new CreateCommentCommand(dto);
 
         SetupStreetcodeExists(true);
-        SetupComments([]);
+        SetupCommentLookup();
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -120,7 +122,7 @@ public class CreateCommentHandlerTests
         var command = new CreateCommentCommand(dto);
 
         SetupStreetcodeExists(true);
-        SetupComments([new CommentEntity { Id = 1, StreetcodeId = 999, Text = "Parent" }]);
+        SetupCommentLookup(new CommentEntity { Id = 1, StreetcodeId = 999, Text = "Parent" });
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -184,10 +186,17 @@ public class CreateCommentHandlerTests
             .Returns(streetcodes);
     }
 
-    private void SetupComments(IEnumerable<CommentEntity> comments)
+    private void SetupCommentLookup(params CommentEntity[] comments)
     {
         _commentRepositoryMock
-            .Setup(repo => repo.FindAll())
-            .Returns(comments.AsQueryable().BuildMock());
+            .Setup(repo => repo.GetFirstOrDefaultAsync(
+                It.IsAny<Expression<Func<CommentEntity, bool>>>(),
+                null,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((
+                Expression<Func<CommentEntity, bool>> predicate,
+                Func<IQueryable<CommentEntity>, IIncludableQueryable<CommentEntity, object>>? include,
+                CancellationToken cancellationToken) =>
+                comments.FirstOrDefault(predicate.Compile()));
     }
 }

@@ -19,7 +19,7 @@ namespace Streetcode.BLL.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ErrorMessages {
@@ -385,20 +385,20 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot save historical context to database.
-        /// </summary>
-        public static string CannotSaveHistoricalContextToDatabase {
-            get {
-                return ResourceManager.GetString("CannotSaveHistoricalContextToDatabase", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cannot save comment to database..
         /// </summary>
         public static string CannotSaveCommentToDatabase {
             get {
                 return ResourceManager.GetString("CannotSaveCommentToDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot save historical context to database.
+        /// </summary>
+        public static string CannotSaveHistoricalContextToDatabase {
+            get {
+                return ResourceManager.GetString("CannotSaveHistoricalContextToDatabase", resourceCulture);
             }
         }
         
@@ -466,6 +466,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing StreetcodeId for an existing comment is not allowed..
+        /// </summary>
+        public static string ChangingCommentStreetcodeIdNotAllowed {
+            get {
+                return ResourceManager.GetString("ChangingCommentStreetcodeIdNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changing StreetcodeId for an existing Text is not allowed..
         /// </summary>
         public static string ChangingStreetcodeIdNotAllowed {
@@ -484,11 +493,11 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Content is required..
+        ///   Looks up a localized string similar to Comment cannot be its own parent..
         /// </summary>
-        public static string ContentIsRequired {
+        public static string CommentCannotBeItsOwnParent {
             get {
-                return ResourceManager.GetString("ContentIsRequired", resourceCulture);
+                return ResourceManager.GetString("CommentCannotBeItsOwnParent", resourceCulture);
             }
         }
         
@@ -498,6 +507,24 @@ namespace Streetcode.BLL.Resources {
         public static string CommentIsRequired {
             get {
                 return ResourceManager.GetString("CommentIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment with Id {0} not found..
+        /// </summary>
+        public static string CommentWithIdNotFound {
+            get {
+                return ResourceManager.GetString("CommentWithIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Content is required..
+        /// </summary>
+        public static string ContentIsRequired {
+            get {
+                return ResourceManager.GetString("ContentIsRequired", resourceCulture);
             }
         }
         
@@ -781,6 +808,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to update comment..
+        /// </summary>
+        public static string FailedToUpdateComment {
+            get {
+                return ResourceManager.GetString("FailedToUpdateComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to update historical context with id {0}.
         /// </summary>
         public static string FailedToUpdateHistoricalContextWithId {
@@ -858,6 +894,15 @@ namespace Streetcode.BLL.Resources {
         public static string FilterIsRequired {
             get {
                 return ResourceManager.GetString("FilterIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Found result matching null.
+        /// </summary>
+        public static string FoundResultMatchingNull {
+            get {
+                return ResourceManager.GetString("FoundResultMatchingNull", resourceCulture);
             }
         }
         
@@ -1105,6 +1150,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to News with id {0} was not found.
+        /// </summary>
+        public static string NewsWithIdNotFound {
+            get {
+                return ResourceManager.GetString("NewsWithIdNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No existing streetcode with id: {0}.
         /// </summary>
         public static string NoExistingStreetcodeWithId {
@@ -1168,11 +1222,11 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parent comment with Id {0} not found..
+        ///   Looks up a localized string similar to Parent comment cannot be a descendant of the comment being updated..
         /// </summary>
-        public static string ParentCommentNotFound {
+        public static string ParentCommentCannotBeDescendantOfComment {
             get {
-                return ResourceManager.GetString("ParentCommentNotFound", resourceCulture);
+                return ResourceManager.GetString("ParentCommentCannotBeDescendantOfComment", resourceCulture);
             }
         }
         
@@ -1182,6 +1236,15 @@ namespace Streetcode.BLL.Resources {
         public static string ParentCommentMustBelongToSameStreetcode {
             get {
                 return ResourceManager.GetString("ParentCommentMustBelongToSameStreetcode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parent comment with Id {0} not found..
+        /// </summary>
+        public static string ParentCommentNotFound {
+            get {
+                return ResourceManager.GetString("ParentCommentNotFound", resourceCulture);
             }
         }
         
@@ -1366,15 +1429,6 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Streetcode with Id {0} does not exist..
-        /// </summary>
-        public static string StreetcodeWithIdNotFound {
-            get {
-                return ResourceManager.GetString("StreetcodeWithIdNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Streetcode was not found.
         /// </summary>
         public static string StreetcodeNotFound {
@@ -1389,6 +1443,15 @@ namespace Streetcode.BLL.Resources {
         public static string StreetcodesRequired {
             get {
                 return ResourceManager.GetString("StreetcodesRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Streetcode with Id {0} does not exist..
+        /// </summary>
+        public static string StreetcodeWithIdNotFound {
+            get {
+                return ResourceManager.GetString("StreetcodeWithIdNotFound", resourceCulture);
             }
         }
         
