@@ -58,7 +58,7 @@ public sealed class NewsController : BaseApiController
     }
 
     [HttpPost]
-    [AuthorizeRoles(UserRole.Administrator)]
+    [AuthorizeRoles(UserRole.Administrator, UserRole.MainAdministrator)]
     public async Task<IActionResult> Create([FromBody] NewsDTO newsDto, CancellationToken cancellationToken = default)
     {
         return base.HandleResult(
@@ -67,7 +67,7 @@ public sealed class NewsController : BaseApiController
     }
 
     [HttpPut("{id:int}")]
-    [AuthorizeRoles(UserRole.Administrator)]
+    [AuthorizeRoles(UserRole.Administrator, UserRole.MainAdministrator)]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] NewsDTO newsDto, CancellationToken cancellationToken = default)
     {
         newsDto.Id = id;
@@ -77,7 +77,7 @@ public sealed class NewsController : BaseApiController
     }
 
     [HttpDelete("{id:int}")]
-    [AuthorizeRoles(UserRole.Administrator)]
+    [AuthorizeRoles(UserRole.Administrator, UserRole.MainAdministrator)]
     public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken = default)
     {
         return base.HandleResult(
