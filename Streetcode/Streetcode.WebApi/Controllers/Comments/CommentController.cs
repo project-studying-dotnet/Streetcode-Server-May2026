@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Comments;
 using Streetcode.WebApi.Attributes;
 using Streetcode.BLL.MediatR.Comments.Create;
+using Streetcode.BLL.MediatR.Comments.Update;
 
 namespace Streetcode.WebApi.Controllers.Comments;
 
@@ -16,6 +17,15 @@ public sealed class CommentController : BaseApiController
     {
         return base.HandleResult(
             await base.Mediator.Send(new CreateCommentCommand(request), cancellationToken)
+        );
+    }
+
+    [HttpPut]
+    [AuthorizeRoles(UserRole.Administrator)]
+    public async Task<IActionResult> Update([FromBody] UpdateCommentDto request, CancellationToken cancellationToken = default)
+    {
+        return base.HandleResult(
+            await base.Mediator.Send(new UpdateCommentCommand(request), cancellationToken)
         );
     }
 }

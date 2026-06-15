@@ -9,4 +9,5 @@ public class CommentDto
     public int? UserId { get; set; }
     public int StreetcodeId { get; set; }
     public int? ParentCommentId { get; set; }
+    public IEnumerable<CommentDto> Replies { get; set; } = [];
 }
