@@ -33,7 +33,7 @@ namespace Streetcode.Auth.Services.Services.Logging
             _logger.Debug(msg);
         }
 
-        public void LogError(object request, string errorMsg)
+        public void LogError(object? request, string errorMsg)
         {
             if (request == null)
             {

@@ -57,16 +57,17 @@ public class LoggerServiceTests
     {
         var logger = GetLoggerMock();
         var service = new LoggerService(logger.Object);
-
         var request = new TestRequest();
+
+        string expectedClassName = request.GetType().Name;
 
         service.LogError(request, "something went wrong");
 
         logger.Verify(
-            x => x.Error(It.Is<string>(msg =>
-                msg.Contains("TestRequest") &&
-                msg.Contains("something went wrong")
-            )),
+            x => x.Error(
+                "{RequestClass} handled with the error: {ErrorMsg}",
+                It.IsAny<string>(),
+                "something went wrong"),
             Times.Once);
     }
 
@@ -79,7 +80,9 @@ public class LoggerServiceTests
         service.LogError(null, "error happened");
 
         logger.Verify(
-            x =>  x.Error("UnknownRequest handled with the error: error happened"),
+            x => x.Error(
+                "UnknownRequest handled with the error: {ErrorMsg}",
+                "error happened"),
             Times.Once);
     }
 
