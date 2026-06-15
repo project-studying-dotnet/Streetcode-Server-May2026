@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 
 RUN apt-get update \
@@ -11,8 +11,8 @@ EXPOSE 5000
 EXPOSE 5001
 EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0-noble AS build
-ARG Configuration=Debug
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+ARG Configuration=Release
 
 WORKDIR /src
 
