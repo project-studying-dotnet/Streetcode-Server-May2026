@@ -18,10 +18,11 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Update
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Result<Unit>> Handle(UpdateArtSlideCommand request, CancellationToken ct)
+        public async Task<Result<Unit>> Handle(UpdateArtSlideCommand request, CancellationToken cancellationToken)
         {
-            var slide = await _repositoryWrapper.StreetcodeArtSlideRepository
-                .GetFirstOrDefaultAsync(s => s.Id == request.Dto.Id);
+            var slide = await _repositoryWrapper.StreetcodeArtSlideRepository.GetFirstOrDefaultAsync(
+                predicate: s => s.Id == request.Dto.Id,
+                cancellationToken: cancellationToken);
 
             if (slide == null)
             {
@@ -41,7 +42,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Update
 
                 foreach (var item in request.Dto.ArtSlideItems)
                 {
-                    _repositoryWrapper.ArtSlideItemRepository.Create(new ArtSlideItem
+                   await _repositoryWrapper.ArtSlideItemRepository.CreateAsync(new ArtSlideItem
                     {
                         SlideId = slide.Id,
                         ArtId = item.ArtId,
@@ -49,7 +50,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Update
                     });
                 }
 
-                await _repositoryWrapper.SaveChangesAsync(ct);
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
                 transaction.Complete();
             }
 

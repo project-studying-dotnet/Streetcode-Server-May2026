@@ -22,17 +22,18 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
 
         public async Task<Result<IEnumerable<StreetcodeArtSlideDto>>> Handle(
               CreateAllArtSlidesCommand request,
-              CancellationToken ct)
+              CancellationToken cancellationToken)
         {
-            if (request.ArtSlides == null || !request.ArtSlides.Any())
+            if (request.ArtSlides == null || request.ArtSlides.Count == 0)
             {
                 return Result.Fail("ArtSlides list is empty");
             }
 
             var streetcodeId = request.ArtSlides.First().StreetcodeId;
 
-            var streetcode = await _repositoryWrapper.StreetcodeRepository
-                .GetFirstOrDefaultAsync(s => s.Id == streetcodeId);
+            var streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
+                 predicate: s => s.Id == streetcodeId,
+                 cancellationToken: cancellationToken);
 
             if (streetcode == null)
             {
@@ -53,8 +54,8 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
 
                     var newSlide = _mapper.Map<StreetcodeArtSlide>(dto);
 
-                    _repositoryWrapper.StreetcodeArtSlideRepository.Create(newSlide);
-                    await _repositoryWrapper.SaveChangesAsync(ct);
+                    await _repositoryWrapper.StreetcodeArtSlideRepository.CreateAsync(newSlide);
+                    await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                     foreach (var artItem in dto.ArtSlideItems)
                     {
@@ -67,7 +68,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
                             });
                     }
 
-                    await _repositoryWrapper.SaveChangesAsync(ct);
+                    await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                     resultList.Add(_mapper.Map<StreetcodeArtSlideDto>(newSlide));
                 }

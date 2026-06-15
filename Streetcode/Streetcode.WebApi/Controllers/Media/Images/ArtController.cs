@@ -10,7 +10,6 @@ using Streetcode.BLL.MediatR.Media.Art.Update;
 using Streetcode.DAL.Enums;
 using Streetcode.WebApi.Attributes;
 
-
 namespace Streetcode.WebApi.Controllers.Media.Images;
 
 [ExcludeFromCodeCoverage]

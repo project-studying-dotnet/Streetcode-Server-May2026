@@ -14,10 +14,11 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Delete
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Result<Unit>> Handle(DeleteArtSlideCommand request, CancellationToken ct)
+        public async Task<Result<Unit>> Handle(DeleteArtSlideCommand request, CancellationToken cancellationToken)
         {
-            var slide = await _repositoryWrapper.StreetcodeArtSlideRepository
-                .GetFirstOrDefaultAsync(s => s.Id == request.Id);
+            var slide = await _repositoryWrapper.StreetcodeArtSlideRepository.GetFirstOrDefaultAsync(
+                 predicate: s => s.Id == request.Id,
+                 cancellationToken: cancellationToken);
 
             if (slide == null)
             {
@@ -33,7 +34,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Delete
 
                 _repositoryWrapper.StreetcodeArtSlideRepository.Delete(slide);
 
-                await _repositoryWrapper.SaveChangesAsync(ct);
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 transaction.Complete();
             }

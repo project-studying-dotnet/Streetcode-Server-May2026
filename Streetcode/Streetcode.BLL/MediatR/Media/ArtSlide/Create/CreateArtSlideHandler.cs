@@ -20,10 +20,11 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Result<StreetcodeArtSlideDto>> Handle(CreateArtSlideCommand request, CancellationToken ct)
+        public async Task<Result<StreetcodeArtSlideDto>> Handle(CreateArtSlideCommand request, CancellationToken cancellationToken)
         {
-            var streetcode = await _repositoryWrapper.StreetcodeRepository
-                .GetFirstOrDefaultAsync(s => s.Id == request.Dto.StreetcodeId);
+            var streetcode = await _repositoryWrapper.StreetcodeRepository.GetFirstOrDefaultAsync(
+                predicate: s => s.Id == request.Dto.StreetcodeId,
+                cancellationToken: cancellationToken);
 
             if (streetcode == null)
             {
@@ -44,16 +45,19 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
             {
                 var newSlide = _mapper.Map<StreetcodeArtSlide>(request.Dto);
                 _repositoryWrapper.StreetcodeArtSlideRepository.Create(newSlide);
-                await _repositoryWrapper.SaveChangesAsync(ct);
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 foreach (var artItem in request.Dto.ArtSlideItems)
                 {
-                    var artExists = await _repositoryWrapper.ArtRepository.GetFirstOrDefaultAsync(a => a.Id == artItem.ArtId);
+                    var artExists = await _repositoryWrapper.ArtRepository.GetFirstOrDefaultAsync(
+                        predicate: a => a.Id == artItem.ArtId,
+                        cancellationToken: cancellationToken);
+
                     if (artExists == null)
                     {
                         return Result.Fail($"Art with id {artItem.ArtId} does not exist.");
                     }
-                    _repositoryWrapper.ArtSlideItemRepository.Create(new ArtSlideItem
+                    await _repositoryWrapper.ArtSlideItemRepository.CreateAsync(new ArtSlideItem
                     {
                         SlideId = newSlide.Id,
                         ArtId = artItem.ArtId,
@@ -61,7 +65,7 @@ namespace Streetcode.BLL.MediatR.Media.ArtSlide.Create
                     });
                 }
 
-                await _repositoryWrapper.SaveChangesAsync(ct);
+                await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
                 transaction.Complete();
 

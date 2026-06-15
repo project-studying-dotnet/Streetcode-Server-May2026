@@ -18,10 +18,12 @@ namespace Streetcode.BLL.MediatR.Media.Art.Update
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Result<ArtDTO>> Handle(UpdateArtCommand request, CancellationToken ct)
+        public async Task<Result<ArtDTO>> Handle(UpdateArtCommand request, CancellationToken cancellationToken)
         {
-            var art = await _repositoryWrapper.ArtRepository
-                .GetFirstOrDefaultAsync(a => a.Id == request.ArtDto.Id);
+            var art = await _repositoryWrapper.ArtRepository.GetFirstOrDefaultAsync(
+                 predicate: a => a.Id == request.ArtDto.Id,
+                 cancellationToken: cancellationToken
+             );
 
             if (art == null)
             {
@@ -31,7 +33,7 @@ namespace Streetcode.BLL.MediatR.Media.Art.Update
             _mapper.Map(request.ArtDto, art);
 
             _repositoryWrapper.ArtRepository.Update(art);
-            await _repositoryWrapper.SaveChangesAsync(ct);
+            await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(_mapper.Map<ArtDTO>(art));
         }

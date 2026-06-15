@@ -32,7 +32,7 @@ namespace Streetcode.WebApi.Controllers.Media
         }
 
         [HttpPost("CreateAll")]
-        //[AuthorizeRoles(UserRole.MainAdministrator)]
+        [AuthorizeRoles(UserRole.MainAdministrator)]
         public async Task<IActionResult> CreateAll([FromBody] List<CreateStreetcodeArtSlideDto> dtos, CancellationToken cancellationToken = default)
         {
             return base.HandleResult(

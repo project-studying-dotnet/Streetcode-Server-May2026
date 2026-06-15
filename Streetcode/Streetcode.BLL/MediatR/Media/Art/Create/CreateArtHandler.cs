@@ -17,11 +17,11 @@ namespace Streetcode.BLL.MediatR.Media.Art.Create
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Result<ArtDTO>> Handle(CreateArtCommand request, CancellationToken ct)
+        public async Task<Result<ArtDTO>> Handle(CreateArtCommand request, CancellationToken cancellationToken)
         {
             var art = _mapper.Map<DAL.Entities.Media.Images.Art>(request.ArtDto);
             await _repositoryWrapper.ArtRepository.CreateAsync(art);
-            await _repositoryWrapper.SaveChangesAsync();
+            await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(_mapper.Map<ArtDTO>(art));
         }

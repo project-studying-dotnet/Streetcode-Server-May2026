@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using System.Transactions;
+using AutoMapper;
 using FluentAssertions;
 using Moq;
 using Streetcode.BLL.DTO.Media.ArtSlides;
@@ -8,8 +10,6 @@ using Streetcode.BLL.Resources;
 using Streetcode.DAL.Entities.Media.Images;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Interfaces.Media.Images;
-using System.Linq.Expressions;
-using System.Transactions;
 using Xunit;
 
 namespace Streetcode.XUnitTest.BLL.MediatR.Media.ArtSlide.Update;

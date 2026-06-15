@@ -14,10 +14,12 @@ namespace Streetcode.BLL.MediatR.Media.Art.Delete
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Result<Unit>> Handle(DeleteArtCommand request, CancellationToken ct)
+        public async Task<Result<Unit>> Handle(DeleteArtCommand request, CancellationToken cancellationToken)
         {
-            var art = await _repositoryWrapper.ArtRepository
-                .GetFirstOrDefaultAsync(a => a.Id == request.Id);
+            var art = await _repositoryWrapper.ArtRepository.GetFirstOrDefaultAsync(
+                predicate: a => a.Id == request.Id,
+                cancellationToken: cancellationToken
+             );
 
             if (art == null)
             {
@@ -26,7 +28,7 @@ namespace Streetcode.BLL.MediatR.Media.Art.Delete
 
             _repositoryWrapper.ArtRepository.Delete(art);
 
-            await _repositoryWrapper.SaveChangesAsync(ct);
+            await _repositoryWrapper.SaveChangesAsync(cancellationToken);
 
             return Result.Ok(Unit.Value);
         }

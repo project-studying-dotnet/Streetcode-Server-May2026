@@ -26,14 +26,15 @@ public class ArtControllerTests
 
         var type = typeof(BaseApiController);
 
-        // ❗ 1. ИЩЕМ FIELD (реальный источник Mediator)
         var field =
             type.GetField("_mediator", BindingFlags.Instance | BindingFlags.NonPublic)
             ?? type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
                 .FirstOrDefault(f => f.FieldType == typeof(IMediator));
 
         if (field == null)
-            throw new Exception("Cannot find IMediator field in BaseApiController");
+           {
+            throw new Exception("Cannot find IMediator field in BaseApiController"); 
+           }
 
         field.SetValue(_controller, _mediatorMock.Object);
     }
