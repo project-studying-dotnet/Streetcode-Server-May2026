@@ -708,28 +708,7 @@
   <data name="FoundResultMatchingNull" xml:space="preserve">
     <value>Found result matching null</value>
   </data>
-  <data name="CannotFindAnyArtSlideTemplates" xml:space="preserve">
-    <value>Cannot find any art slide templates</value>
-  </data>
-  <data name="ArtsNotFound" xml:space="preserve">
-    <value>One or more specified arts were not found.</value>
-  </data>
-  <data name="SlideNotFound" xml:space="preserve">
-    <value>Slide with ID {0} was not found.</value>
-  </data>
-  <data name="EntityNotFound" xml:space="preserve">
-    <value>Entity is not found</value>
-  </data>
-  <data name="InvalidId" xml:space="preserve">
-    <value>Id must be greater than 0</value>
-  </data>
-  <data name="ArtSlideItemsIsRequired" xml:space="preserve">
-    <value>Art slide items are required.</value>
-  </data>
-  <data name="RequestIsRequired" xml:space="preserve">
-    <value>Request is required.</value>
-  </data>
-  <data name="MaxLengthError" xml:space="preserve">
-    <value>{0} must not exceed {1} characters.</value>
+  <data name="NewsWithIdNotFound" xml:space="preserve">
+    <value>News with id {0} was not found</value>
   </data>
 </root>
