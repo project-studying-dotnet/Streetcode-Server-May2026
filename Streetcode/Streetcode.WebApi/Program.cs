@@ -3,7 +3,8 @@ using Hangfire;
 using Streetcode.BLL.Services.BlobStorageService;
 using Streetcode.BLL.Validators;
 using Streetcode.WebApi.Extensions;
-using Streetcode.WebApi.Utils;
+using Streetcode.BLL.Interfaces.WebParsingUtils;
+using Streetcode.BLL.Services.WebParsingUtils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,14 @@ builder.Services.ConfigureBlob(builder);
 builder.Services.ConfigurePayment(builder);
 builder.Services.ConfigureInstagram(builder);
 builder.Services.ConfigureSerilog(builder);
+builder.Services.AddHttpClient();
 builder.Services.AddValidatorsFromAssembly(typeof(BllAssemblyMarker).Assembly);
+builder.Services.AddScoped<ICsvAddressParser, CsvAddressParserService>();
+builder.Services.AddScoped<IGeocoding, GeocodingService>();
+builder.Services.AddScoped<IToponymData, ToponymDataService>();
+builder.Services.AddScoped<IWebParsingUtils, WebParsingUtilsService>();
+builder.Services.Configure<UkrPoshtaParserSettings>(builder.Configuration.GetSection("UkrPoshtaParser"));
+builder.Services.Configure<GeocodingSettings>(builder.Configuration.GetSection("Geocoding"));
 
 var app = builder.Build();
 
@@ -61,11 +69,11 @@ var shouldRegisterBackgroundJobs =
 
 if (shouldRegisterBackgroundJobs)
 {
-    BackgroundJob.Schedule<WebParsingUtils>(
+    BackgroundJob.Schedule<WebParsingUtilsService>(
         wp => wp.ParseZipFileFromWebAsync(),
         TimeSpan.FromMinutes(1));
 
-    RecurringJob.AddOrUpdate<WebParsingUtils>(
+    RecurringJob.AddOrUpdate<WebParsingUtilsService>(
         recurringJobId: "parse-zip-from-web-monthly",
         wp => wp.ParseZipFileFromWebAsync(),
         Cron.Monthly);

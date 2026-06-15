@@ -42,8 +42,7 @@ public class CreateCommentHandler : IRequestHandler<CreateCommentCommand, Result
         if (request.CreateComment.ParentCommentId is int parentCommentId)
         {
             var parentComment = await _repositoryWrapper.CommentRepository
-                .FindAll()
-                .FirstOrDefaultAsync(c => c.Id == parentCommentId, cancellationToken);
+                .GetFirstOrDefaultAsync(c => c.Id == parentCommentId, cancellationToken: cancellationToken);
 
             if (parentComment is null)
             {
