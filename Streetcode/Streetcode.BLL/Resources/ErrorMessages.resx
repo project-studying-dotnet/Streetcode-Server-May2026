@@ -708,4 +708,7 @@
   <data name="FoundResultMatchingNull" xml:space="preserve">
     <value>Found result matching null</value>
   </data>
+  <data name="NewsWithIdNotFound" xml:space="preserve">
+    <value>News with id {0} was not found</value>
+  </data>
 </root>
