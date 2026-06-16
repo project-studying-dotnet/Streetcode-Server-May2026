@@ -12,10 +12,7 @@ namespace Streetcode.XUnitTest.SharedWebService.Middleware
         public async Task InvokeAsync_ShouldLogRequestAndResponse()
         {
             var loggerMock = new Mock<ILogger<RequestLoggingMiddleware>>();
-
-            loggerMock
-                .Setup(x => x.IsEnabled(LogLevel.Information))
-                .Returns(true);
+            loggerMock.Setup(x => x.IsEnabled(LogLevel.Information)).Returns(true);
 
             var nextMock = new Mock<RequestDelegate>();
             var context = new DefaultHttpContext();
@@ -24,8 +21,7 @@ namespace Streetcode.XUnitTest.SharedWebService.Middleware
 
             await middleware.InvokeAsync(context);
 
-            loggerMock.VerifyLog("Started", LogLevel.Information);
-            loggerMock.VerifyLog("Finished", LogLevel.Information);
+            loggerMock.VerifyLog("with status 200", LogLevel.Information);
         }
 
         [Fact]

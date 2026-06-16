@@ -70,7 +70,7 @@ while (retryCount < 10)
     catch (Exception ex)
     {
         retryCount++;
-        Log.Warning("Failed to connect to database. Attempt {count}/10. Error: {msg}", retryCount, ex.Message);
+        Log.Warning("Failed to connect to database. Attempt {Count}/10. Error: {Msg}", retryCount, ex.Message);
         await Task.Delay(10000); 
     }
 }

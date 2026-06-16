@@ -2,6 +2,7 @@
 using Streetcode.Auth.Models.DTO;
 using Xunit;
 using FluentAssertions;
+using Streetcode.Auth.Validators.Users;
 
 namespace Streetcode.XUnitTest.AuthService.Models.DTO
 {
@@ -10,6 +11,7 @@ namespace Streetcode.XUnitTest.AuthService.Models.DTO
         [Fact]
         public void UserDto_Validation_ShouldFail_WhenNameIsTooLong()
         {
+            var validator = new UserDtoValidator();
             var dto = new UserDto
             {
                 Name = new string('A', 51),
@@ -18,12 +20,10 @@ namespace Streetcode.XUnitTest.AuthService.Models.DTO
                 Login = "login"
             };
 
-            var context = new ValidationContext(dto);
-            var results = new List<ValidationResult>();
-            var isValid = Validator.TryValidateObject(dto, context, results, true);
+            var result = validator.Validate(dto);
 
-            isValid.Should().BeFalse();
-            results.Should().Contain(r => r.MemberNames.Contains("Name"));
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Name");
         }
     }
 }
