@@ -14,32 +14,20 @@ namespace Streetcode.Auth.Validators.Users
             RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.Name)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.NameIsRequired)
-                .MaximumLength(MaxNameLength)
-                .WithMessage(string.Format(ErrorMessages.NameMustNotExceedCharacters, MaxNameLength));
+                .RequiredWithMaxLength(MaxNameLength, ErrorMessages.NameIsRequired, ErrorMessages.NameMustNotExceedCharacters);
 
             RuleFor(x => x.Surname)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.SurnameIsRequired)
-                .MaximumLength(MaxNameLength)
-                .WithMessage(string.Format(ErrorMessages.SurnameMustNotExceedCharacters, MaxNameLength));
+                .RequiredWithMaxLength(MaxNameLength, ErrorMessages.SurnameIsRequired, ErrorMessages.SurnameMustNotExceedCharacters);
 
             RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.EmailIsRequired)
-                .EmailAddress()
-                .WithMessage(ErrorMessages.InvalidEmailFormat);
+                .NotEmpty().WithMessage(ErrorMessages.EmailIsRequired)
+                .EmailAddress().WithMessage(ErrorMessages.InvalidEmailFormat);
 
             RuleFor(x => x.Login)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.LoginIsRequired)
-                .MaximumLength(MaxLoginLength)
-                .WithMessage(string.Format(ErrorMessages.LoginMustNotExceedCharacters, MaxLoginLength));
+                .RequiredWithMaxLength(MaxLoginLength, ErrorMessages.LoginIsRequired, ErrorMessages.LoginMustNotExceedCharacters);
 
             RuleFor(x => x.Role)
-                .IsInEnum()
-                .WithMessage(ErrorMessages.InvalidUserRole);
+                .IsInEnum().WithMessage(ErrorMessages.InvalidUserRole);
         }
     }
 }

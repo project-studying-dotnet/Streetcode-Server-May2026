@@ -4,14 +4,20 @@ namespace Streetcode.Auth.Validators
 {
     public static class ValidationExtensions
     {
+        private static IRuleBuilder<T, string> ApplyBaseRules<T>(
+            this IRuleBuilder<T, string> ruleBuilder,
+            string requiredMessage)
+        {
+            return ruleBuilder.NotEmpty().WithMessage(requiredMessage);
+        }
+
         public static IRuleBuilderOptions<T, string> RequiredWithMaxLength<T>(
             this IRuleBuilder<T, string> ruleBuilder,
             int maxLength,
             string requiredMessage,
             string lengthMessage)
         {
-            return ruleBuilder
-                .NotEmpty().WithMessage(requiredMessage)
+            return ruleBuilder.ApplyBaseRules(requiredMessage)
                 .MaximumLength(maxLength).WithMessage(string.Format(lengthMessage, maxLength));
         }
 
@@ -22,8 +28,7 @@ namespace Streetcode.Auth.Validators
             string formatMessage,
             string lengthMessage)
         {
-            return ruleBuilder
-                .NotEmpty().WithMessage(requiredMessage)
+            return ruleBuilder.ApplyBaseRules(requiredMessage)
                 .EmailAddress().WithMessage(formatMessage)
                 .MaximumLength(maxLength).WithMessage(string.Format(lengthMessage, maxLength));
         }
@@ -36,8 +41,7 @@ namespace Streetcode.Auth.Validators
             string minLengthMessage,
             string maxLengthMessage)
         {
-            return ruleBuilder
-                .NotEmpty().WithMessage(requiredMessage)
+            return ruleBuilder.ApplyBaseRules(requiredMessage)
                 .MinimumLength(minLength).WithMessage(string.Format(minLengthMessage, minLength))
                 .MaximumLength(maxLength).WithMessage(string.Format(maxLengthMessage, maxLength));
         }

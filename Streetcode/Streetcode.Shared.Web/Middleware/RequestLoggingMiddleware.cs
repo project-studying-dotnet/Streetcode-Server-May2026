@@ -17,25 +17,23 @@ namespace Streetcode.Shared.Web.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (!_logger.IsEnabled(LogLevel.Information))
+            var sw = Stopwatch.StartNew();
+            try
             {
                 await _next(context);
-                return;
             }
-
-            var sw = Stopwatch.StartNew();
-            _logger.LogInformation("Started {Method} {Path}", context.Request.Method, context.Request.Path);
-
-            await _next(context);
-
-            sw.Stop();
-
-            _logger.LogInformation(
-                "Finished {Method} {Path} in {Ms}ms with status {Status}",
-                context.Request.Method,
-                context.Request.Path,
-                sw.ElapsedMilliseconds,
-                context.Response.StatusCode);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed {Method} {Path} after {Ms}ms",
+                    context.Request.Method, context.Request.Path, sw.ElapsedMilliseconds);
+                throw;
+            }
+            finally
+            {
+                sw.Stop();
+                _logger.LogInformation("Finished {Method} {Path} in {Ms}ms with status {Status}",
+                    context.Request.Method, context.Request.Path, sw.ElapsedMilliseconds, context.Response.StatusCode);
+            }
         }
     }
 }

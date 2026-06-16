@@ -4,7 +4,7 @@ using Streetcode.Auth.Resources;
 
 namespace Streetcode.Auth.Validators.Users
 {
-    public class UserRegisterDtoValidator : AbstractValidator<UserRegisterDto>
+    public class UserRegisterDtoValidator : BaseUserValidator<UserRegisterDto>
     {
         private const int MaxNameLength = 50;
         private const int MaxEmailLength = 256;
@@ -15,17 +15,16 @@ namespace Streetcode.Auth.Validators.Users
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
 
-            RuleFor(x => x.Name)
-                .RequiredWithMaxLength(MaxNameLength, ErrorMessages.NameIsRequired, ErrorMessages.NameMustNotExceedCharacters);
-
-            RuleFor(x => x.Surname)
-                .RequiredWithMaxLength(MaxNameLength, ErrorMessages.SurnameIsRequired, ErrorMessages.SurnameMustNotExceedCharacters);
+            ApplyStringRules(x => x.Name, MaxNameLength, ErrorMessages.NameIsRequired, ErrorMessages.NameMustNotExceedCharacters);
+            ApplyStringRules(x => x.Surname, MaxNameLength, ErrorMessages.SurnameIsRequired, ErrorMessages.SurnameMustNotExceedCharacters);
 
             RuleFor(x => x.Email)
                 .ValidEmail(MaxEmailLength, ErrorMessages.EmailIsRequired, ErrorMessages.InvalidEmailFormat, ErrorMessages.EmailMustNotExceedCharacters);
 
-            RuleFor(x => x.Password)
-                .ValidPassword(MinPasswordLength, MaxPasswordLength, ErrorMessages.PasswordIsRequired, ErrorMessages.PasswordMustBeAtLeastCharacters, ErrorMessages.PasswordMustNotExceedCharacters);
+            ApplyPasswordRules(x => x.Password, MinPasswordLength, MaxPasswordLength,
+                ErrorMessages.PasswordIsRequired,
+                ErrorMessages.PasswordMustBeAtLeastCharacters,
+                ErrorMessages.PasswordMustNotExceedCharacters);
 
             RuleFor(x => x.PasswordConfirmation)
                 .NotEmpty().WithMessage(ErrorMessages.PasswordConfirmationIsRequired)

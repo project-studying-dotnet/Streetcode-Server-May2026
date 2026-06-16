@@ -6,10 +6,13 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY ["Streetcode.Auth/Streetcode.Auth.csproj", "Streetcode.Auth/"]
 COPY ["Streetcode.Common/Streetcode.Common.csproj", "Streetcode.Common/"]
+COPY ["Streetcode.Shared.Web/Streetcode.Shared.Web.csproj", "Streetcode.Shared.Web/"]
 
 RUN dotnet restore "Streetcode.Auth/Streetcode.Auth.csproj"
 
-COPY . .
+COPY ./Streetcode.Auth ./Streetcode.Auth
+COPY ./Streetcode.Common ./Streetcode.Common
+COPY ./Streetcode.Shared.Web ./Streetcode.Shared.Web
 
 WORKDIR "/src/Streetcode.Auth"
 

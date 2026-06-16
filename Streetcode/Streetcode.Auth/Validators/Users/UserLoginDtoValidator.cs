@@ -4,25 +4,22 @@ using Streetcode.Auth.Resources;
 
 namespace Streetcode.Auth.Validators.Users
 {
-    public class UserLoginDtoValidator : AbstractValidator<UserLoginDto>
+    public class UserLoginDtoValidator : BaseUserValidator<UserLoginDto>
     {
         private const int MaxLoginLength = 20;
         private const int MaxPasswordLength = 20;
+        private const int MinPasswordLength = 8;
+
         public UserLoginDtoValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
 
-            RuleFor(x => x.Login)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.LoginIsRequired)
-                .MaximumLength(MaxLoginLength)
-                .WithMessage(string.Format(ErrorMessages.LoginMustNotExceedCharacters, MaxLoginLength));
+            ApplyLoginRules(x => x.Login, MaxLoginLength);
 
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage(ErrorMessages.PasswordIsRequired)
-                .MaximumLength(MaxPasswordLength)
-                .WithMessage(string.Format(ErrorMessages.PasswordMustNotExceedCharacters, MaxPasswordLength));
+            ApplyPasswordRules(x => x.Password, MinPasswordLength, MaxPasswordLength,
+                 ErrorMessages.PasswordIsRequired,
+                 ErrorMessages.PasswordMustBeAtLeastCharacters,
+                 ErrorMessages.PasswordMustNotExceedCharacters);
         }
     }
 }
