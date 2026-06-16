@@ -1,12 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
-using Microsoft.AspNetCore.Authorization;
 using Streetcode.BLL.MediatR.Users.Login;
+using Streetcode.BLL.MediatR.Users.LoginGoogle;
 using Streetcode.BLL.MediatR.Users.Logout;
-using Streetcode.BLL.MediatR.Users.Register;
 using Streetcode.BLL.MediatR.Users.RefreshToken;
+using Streetcode.BLL.MediatR.Users.Register;
+using Google.Apis.Auth;
 
 namespace Streetcode.WebApi.Controllers.Users;
 
@@ -20,6 +22,35 @@ public sealed class AuthController : BaseApiController
         return base.HandleResult(
             await base.Mediator.Send(new LoginUserCommand(loginRequest), cancellationToken)
         );
+    }
+
+    [HttpPost("google")]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
+    {
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string> { "ВАШ_GOOGLE_CLIENT_ID.apps.googleusercontent.com" }
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
+
+            var loginDto = new GoogleLoginRequestDto
+            {
+                Email = payload.Email,
+                Name = payload.GivenName,
+                Surname = payload.FamilyName
+            };
+
+            return base.HandleResult(
+                await base.Mediator.Send(new GoogleLoginCommand(loginDto))
+            );
+        }
+        catch (Exception)
+        {
+            return Unauthorized("Invalid Google Token");
+        }
     }
 
     [HttpPost("register")]
