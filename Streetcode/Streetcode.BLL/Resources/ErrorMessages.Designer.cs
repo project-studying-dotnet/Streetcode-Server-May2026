@@ -619,6 +619,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid email format..
+        /// </summary>
+        public static string EmailIsInvalid {
+            get {
+                return ResourceManager.GetString("EmailIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is required..
         /// </summary>
         public static string EmailIsRequired {
@@ -1051,7 +1060,7 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid Google token format..
+        ///   Looks up a localized string similar to Invalid Google Token Format..
         /// </summary>
         public static string InvalidTokenFormat {
             get {
