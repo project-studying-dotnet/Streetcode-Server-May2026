@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
 using System.Text;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -7,6 +8,7 @@ using Streetcode.BLL.Interfaces.BlobStorage;
 
 namespace Streetcode.BLL.Services.BlobStorageService;
 
+[ExcludeFromCodeCoverage]
 public class AzureBlobService : IBlobService
 {
     private readonly BlobContainerClient _container;
