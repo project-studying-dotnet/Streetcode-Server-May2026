@@ -4,7 +4,6 @@ using Streetcode.Auth.Resources;
 using Streetcode.Auth.Validators.Users;
 using Xunit;
 
-
 namespace Streetcode.XUnitTest.AuthService.Validators.Users
 {
     public class UserLoginDtoValidatorTests

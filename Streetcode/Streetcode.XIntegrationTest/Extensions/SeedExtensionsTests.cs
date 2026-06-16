@@ -35,7 +35,7 @@ namespace Streetcode.XIntegrationTest.Extensions
             mockUserMgr.Setup(m => m.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
             var config = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string?> 
+                .AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     {"AdminSettings:Email", "admin@test.com"},
                     {"AdminSettings:Password", "Password123!"}

@@ -19,10 +19,9 @@ namespace Streetcode.Auth.Extensions
                      : controller.Ok(result.Value);
             }
 
-            var firstError = result.Errors.FirstOrDefault();
-            if (firstError != null && !string.IsNullOrWhiteSpace(firstError.Message))
+            if (result.Errors.Count > 0 && !string.IsNullOrWhiteSpace(result.Errors[0].Message))
             {
-                return controller.BadRequest(firstError.Message);
+                return controller.BadRequest(result.Errors[0].Message);
             }
 
             return controller.BadRequest("Something went wrong");

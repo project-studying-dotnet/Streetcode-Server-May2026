@@ -119,13 +119,15 @@ public class RegisterUserHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Token.Should().Be("jwt-token");
         _rabbitMock.Verify(
-            x => x.PublishAsync(
-                "email-queue",
-                It.IsAny<EmailMessageContract>()),
+            x =>
+                x.PublishAsync(
+                    "email-queue",
+                    It.IsAny<EmailMessageContract>()),
             Times.Once);
 
         _userManagerMock.Verify(
-            x => x.CreateAsync(It.IsAny<User>(), dto.Password),
+            x =>
+                x.CreateAsync(It.IsAny<User>(), dto.Password),
             Times.Once);
     }
 
@@ -145,7 +147,8 @@ public class RegisterUserHandlerTests
         result.Errors.Should().ContainSingle(e => e.Message == "User already exists");
 
         _rabbitMock.Verify(
-            x => x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
+            x =>
+                x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
             Times.Never);
     }
 
@@ -168,7 +171,8 @@ public class RegisterUserHandlerTests
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().ContainSingle(e => e.Message == "Password too weak");
         _rabbitMock.Verify(
-            x => x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
+            x =>
+                x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
             Times.Never);
     }
 
@@ -195,7 +199,8 @@ public class RegisterUserHandlerTests
         result.Errors.Should().ContainSingle(e => e.Message == "Role assignment error");
 
         _rabbitMock.Verify(
-            x => x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
+            x =>
+                x.PublishAsync(It.IsAny<string>(), It.IsAny<EmailMessageContract>()),
             Times.Never);
     }
 }
