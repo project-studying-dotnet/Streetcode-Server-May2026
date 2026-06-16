@@ -20,6 +20,28 @@ public class AzureBlobService : IBlobService
         _container = client.GetBlobContainerClient(
             options.Value.ContainerName);
     }
+    private static string GenerateHash(string value)
+    {
+        byte[] result = SHA256.HashData(
+            Encoding.UTF8.GetBytes(value));
+
+        return Convert.ToBase64String(result)
+            .Replace('/', '_');
+    }
+
+    private static string GetContentType(string extension)
+    {
+        return extension.ToLowerInvariant() switch
+        {
+            "jpg" or "jpeg" => "image/jpeg",
+            "png" => "image/png",
+            "gif" => "image/gif",
+            "svg" => "image/svg+xml",
+            "mp3" => "audio/mpeg",
+            "wav" => "audio/wav",
+            _ => "application/octet-stream"
+        };
+    }
 
     public string SaveFileInStorage(
         string base64,
@@ -79,14 +101,14 @@ public class AzureBlobService : IBlobService
         string previousBlobName,
         string base64Format,
         string newBlobName,
-        string mimeType)
+        string extension)
     {
         DeleteFileInStorage(previousBlobName);
 
         return SaveFileInStorage(
             base64Format,
             newBlobName,
-            mimeType);
+            extension);
     }
 
     private byte[] DownloadBlob(string blobName)
@@ -102,28 +124,5 @@ public class AzureBlobService : IBlobService
         var response = blobClient.DownloadContent();
 
         return response.Value.Content.ToArray();
-    }
-
-    private static string GenerateHash(string value)
-    {
-        byte[] result = SHA256.HashData(
-            Encoding.UTF8.GetBytes(value));
-
-        return Convert.ToBase64String(result)
-            .Replace('/', '_');
-    }
-
-    private static string GetContentType(string extension)
-    {
-        return extension.ToLowerInvariant() switch
-        {
-            "jpg" or "jpeg" => "image/jpeg",
-            "png" => "image/png",
-            "gif" => "image/gif",
-            "svg" => "image/svg+xml",
-            "mp3" => "audio/mpeg",
-            "wav" => "audio/wav",
-            _ => "application/octet-stream"
-        };
     }
 }
