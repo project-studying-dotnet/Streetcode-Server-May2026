@@ -90,6 +90,6 @@ if (isHangfireEnabled)
 }
 
 app.MapControllers();
-app.MapGet("/health", () => Results.Ok(" OK "));
+app.MapGet("/health", () => Results.Ok("OK"));
 
 app.Run();
