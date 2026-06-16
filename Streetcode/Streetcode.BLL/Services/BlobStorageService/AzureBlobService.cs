@@ -1,9 +1,9 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Options;
 using Streetcode.BLL.Interfaces.BlobStorage;
-using Azure.Storage.Blobs.Models;
 
 namespace Streetcode.BLL.Services.BlobStorageService;
 
@@ -22,9 +22,9 @@ public class AzureBlobService : IBlobService
     }
 
     public string SaveFileInStorage(
-     string base64,
-     string name,
-     string extension)
+        string base64,
+        string name,
+        string mimeType)
     {
         byte[] fileBytes = Convert.FromBase64String(base64);
 
@@ -35,7 +35,7 @@ public class AzureBlobService : IBlobService
 
         string hashName = GenerateHash(generatedName);
 
-        string blobName = $"{hashName}.{extension}";
+        string blobName = $"{hashName}.{mimeType}";
 
         using var stream = new MemoryStream(fileBytes);
 
@@ -47,12 +47,13 @@ public class AzureBlobService : IBlobService
             {
                 HttpHeaders = new BlobHttpHeaders
                 {
-                    ContentType = GetContentType(extension)
+                    ContentType = GetContentType(mimeType)
                 }
             });
-        Console.WriteLine($"Azure Blob URL: {blobClient.Uri}");
-        return hashName;
+
+        return blobName;
     }
+
     public MemoryStream FindFileInStorageAsMemoryStream(string name)
     {
         byte[] content = DownloadBlob(name);
@@ -66,6 +67,28 @@ public class AzureBlobService : IBlobService
 
         return Convert.ToBase64String(content);
     }
+
+    public void DeleteFileInStorage(string name)
+    {
+        var blobClient = _container.GetBlobClient(name);
+
+        blobClient.DeleteIfExists();
+    }
+
+    public string UpdateFileInStorage(
+        string previousBlobName,
+        string base64Format,
+        string newBlobName,
+        string mimeType)
+    {
+        DeleteFileInStorage(previousBlobName);
+
+        return SaveFileInStorage(
+            base64Format,
+            newBlobName,
+            mimeType);
+    }
+
     private byte[] DownloadBlob(string blobName)
     {
         var blobClient = _container.GetBlobClient(blobName);
@@ -79,27 +102,6 @@ public class AzureBlobService : IBlobService
         var response = blobClient.DownloadContent();
 
         return response.Value.Content.ToArray();
-    }
-
-    public void DeleteFileInStorage(string name)
-    {
-        var blobClient = _container.GetBlobClient(name);
-
-        blobClient.DeleteIfExists();
-    }
-
-    public string UpdateFileInStorage(
-    string previousBlobName,
-    string base64Format,
-    string newBlobName,
-    string extension)
-    {
-        DeleteFileInStorage(previousBlobName);
-
-        return SaveFileInStorage(
-            base64Format,
-            newBlobName,
-            extension);
     }
 
     private static string GenerateHash(string value)
