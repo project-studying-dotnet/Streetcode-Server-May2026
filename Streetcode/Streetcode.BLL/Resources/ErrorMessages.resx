@@ -711,4 +711,13 @@
   <data name="NewsWithIdNotFound" xml:space="preserve">
     <value>News with id {0} was not found</value>
   </data>
+  <data name="EmailIsInvalid" xml:space="preserve">
+    <value>Invalid email format.</value>
+  </data>
+  <data name="GoogleIDTokenIsRequired" xml:space="preserve">
+    <value>Google ID Token is required.</value>
+  </data>
+  <data name="InvalidTokenFormat" xml:space="preserve">
+    <value>Invalid Google Token Format.</value>
+  </data>
 </root>

@@ -1,5 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
@@ -8,7 +7,9 @@ using Streetcode.BLL.MediatR.Users.LoginGoogle;
 using Streetcode.BLL.MediatR.Users.Logout;
 using Streetcode.BLL.MediatR.Users.RefreshToken;
 using Streetcode.BLL.MediatR.Users.Register;
-using Google.Apis.Auth;
+using Streetcode.WebApi.Service.Interfaces;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 
 namespace Streetcode.WebApi.Controllers.Users;
 
@@ -16,11 +17,11 @@ namespace Streetcode.WebApi.Controllers.Users;
 [ExcludeFromCodeCoverage]
 public sealed class AuthController : BaseApiController
 {
-    private readonly IConfiguration _configuration;
+    private readonly IGoogleAuthService _googleAuthService;
 
-    public AuthController(IConfiguration configuration)
+    public AuthController(IGoogleAuthService googleAuthService)
     {
-        _configuration = configuration;
+        _googleAuthService = googleAuthService;
     }
 
     [HttpPost("login")]
@@ -36,14 +37,12 @@ public sealed class AuthController : BaseApiController
     {
         try
         {
-            var clientId = _configuration["GoogleAuth:ClientId"];
+            var payload = await _googleAuthService.ValidateTokenAsync(request.IdToken);
 
-            var settings = new GoogleJsonWebSignature.ValidationSettings()
-            {
-                Audience = new List<string> { clientId! }
-            };
-
-            var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
+            if (payload == null)
+               {
+                return Unauthorized("Invalid Google Token");
+            }
 
             var loginDto = new GoogleLoginRequestDto
             {
