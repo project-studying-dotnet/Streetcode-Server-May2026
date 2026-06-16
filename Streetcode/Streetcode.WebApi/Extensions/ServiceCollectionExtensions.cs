@@ -51,7 +51,7 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Streetcode.BLL.MediatR.Behaviors.ValidationBehavior<,>));
 
-        services.AddScoped<IBlobService, BlobService>();
+        services.AddScoped<IBlobService, AzureBlobService>();
         services.AddScoped<ILoggerService, LoggerService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IEmailPublisher, RabbitMqEmailPublisher>();
