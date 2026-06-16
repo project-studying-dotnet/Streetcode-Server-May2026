@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentResults;
+﻿using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Streetcode.Auth.Models.DTO;
@@ -14,59 +13,52 @@ namespace Streetcode.Auth.MediatR.Users.LoginGoogle
     {
         private readonly UserManager<User> _userManager;
         private readonly IAuthService _authService;
-        private readonly IMapper _mapper;
 
         private readonly ILoggerService _logger;
 
         public GoogleLoginHandler(
             UserManager<User> userManager,
             IAuthService authService,
-            ILoggerService logger,
-            IMapper mapper)
+            ILoggerService logger)
         {
             _userManager = userManager;
             _authService = authService;
 
             _logger = logger;
-            _mapper = mapper;
         }
 
         public async Task<Result<AuthResponseDto>> Handle(GoogleLoginCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Google login attempt for {request.googleLoginRequest.Email}");
+            var loginDto = request.googleLoginRequest;
+            _logger.LogInformation($"Google login attempt for {loginDto.Email}");
 
-            var user = await _userManager.FindByEmailAsync(request.googleLoginRequest.Email);
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
             if (user == null)
             {
-                user = new User
-                {
-                    Email = request.googleLoginRequest.Email,
-                    UserName = request.googleLoginRequest.Email,
-                    Name = request.googleLoginRequest.Name,
-                    Surname = request.googleLoginRequest.Surname
-                };
+                user = new User { Email = loginDto.Email, UserName = loginDto.Email, Name = loginDto.Name, Surname = loginDto.Surname };
 
-                var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError(request, $"Failed to create user {request.googleLoginRequest.Email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-                    return Result.Fail<AuthResponseDto>("Failed to create user account.");
-                }
+                var createResult = await _userManager.CreateAsync(user);
+                var errorResult = CheckIdentityResult(createResult, request, $"Failed to create user {loginDto.Email}");
+                if (errorResult != null) return errorResult;
 
                 var roleResult = await _userManager.AddToRoleAsync(user, UserRole.MainAdministrator.ToString());
-                if (!roleResult.Succeeded)
-                {
-                    _logger.LogError(request, $"Failed to add role for user {user.Id}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
-                    return Result.Fail<AuthResponseDto>("User created but failed to assign role.");
-                }
+                errorResult = CheckIdentityResult(roleResult, request, $"Failed to add role for user {user.Id}");
+                if (errorResult != null) return errorResult;
             }
 
-            var registrResult = await _authService.CreateLoginResultAsync(user);
-
+            var authResult = await _authService.CreateLoginResultAsync(user);
             _logger.LogInformation($"User {user.Id} successfully logged in");
+            return Result.Ok(authResult);
+        }
 
-            return Result.Ok(registrResult);
+        private Result<AuthResponseDto> CheckIdentityResult(IdentityResult result, object request, string errorMessage)
+        {
+            if (result.Succeeded) return null!;
+
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            _logger.LogError(request, $"{errorMessage}: {errors}");
+            return Result.Fail<AuthResponseDto>(errorMessage);
         }
     }
 }

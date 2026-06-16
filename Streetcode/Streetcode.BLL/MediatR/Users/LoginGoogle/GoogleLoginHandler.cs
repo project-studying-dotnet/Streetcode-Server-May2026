@@ -16,53 +16,52 @@ namespace Streetcode.BLL.MediatR.Users.LoginGoogle
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
-
         private readonly ILoggerService _logger;
 
-        public GoogleLoginHandler(
-            UserManager<User> userManager,
-            ITokenService tokenService,
-            ILoggerService logger,
-            IMapper mapper)
+        public GoogleLoginHandler(UserManager<User> userManager, ITokenService tokenService, ILoggerService logger, IMapper mapper)
         {
             _userManager = userManager;
             _tokenService = tokenService;
-
             _logger = logger;
             _mapper = mapper;
         }
 
         public async Task<Result<LoginResultDto>> Handle(GoogleLoginCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Google login attempt for {request.googleLoginRequest.Email}");
+            var req = request.googleLoginRequest;
+            _logger.LogInformation($"Google login attempt for {req.Email}");
 
-            var user = await _userManager.FindByEmailAsync(request.googleLoginRequest.Email);
+            var user = await _userManager.FindByEmailAsync(req.Email);
 
             if (user == null)
             {
-                user = new User
-                {
-                    Email = request.googleLoginRequest.Email,
-                    UserName = request.googleLoginRequest.Email,
-                    Name = request.googleLoginRequest.Name,
-                    Surname = request.googleLoginRequest.Surname
-                };
+                user = new User { Email = req.Email, UserName = req.Email, Name = req.Name, Surname = req.Surname };
 
-                var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError(request, $"Failed to create user {request.googleLoginRequest.Email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-                    return Result.Fail<LoginResultDto>("Failed to create user account.");
-                }
+                var createResult = await _userManager.CreateAsync(user);
+                if (IsFailure(createResult, request, $"Failed to create user {req.Email}", out var error)) return error;
 
                 var roleResult = await _userManager.AddToRoleAsync(user, UserRole.MainAdministrator.ToString());
-                if (!roleResult.Succeeded)
-                {
-                    _logger.LogError(request, $"Failed to add role for user {user.Id}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
-                    return Result.Fail<LoginResultDto>("User created but failed to assign role.");
-                }
+                if (IsFailure(roleResult, request, $"Failed to add role for user {user.Id}", out error)) return error;
             }
 
+            return Result.Ok(await GenerateLoginResult(user));
+        }
+
+        private bool IsFailure(IdentityResult result, object request, string message, out Result<LoginResultDto> failure)
+        {
+            failure = null!;
+            if (result.Succeeded)
+            {
+                return false;
+            }
+
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            _logger.LogError(request, $"{message}: {errors}");
+            failure = Result.Fail<LoginResultDto>(message);
+            return true;
+        }
+        private async Task<LoginResultDto> GenerateLoginResult(User user)
+        {
             var jwtToken = _tokenService.GenerateJWTToken(user);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
@@ -72,13 +71,13 @@ namespace Streetcode.BLL.MediatR.Users.LoginGoogle
 
             _logger.LogInformation($"User {user.Id} successfully logged in");
 
-            return Result.Ok(new LoginResultDto
+            return new LoginResultDto
             {
                 User = _mapper.Map<UserDto>(user),
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                 RefreshToken = refreshToken,
                 ExpireAt = jwtToken.ValidTo
-            });
+            };
         }
     }
 }

@@ -12,13 +12,8 @@ namespace Streetcode.BLL.Validators.Users
                 .NotEmpty().WithMessage(ErrorMessages.EmailIsRequired)
                 .EmailAddress().WithMessage(ErrorMessages.InvalidEmailFormat);
 
-            RuleFor(x => x.Name)
-                .NotEmpty().WithMessage(ErrorMessages.NameIsRequired)
-                .MaximumLength(50).WithMessage(string.Format(ErrorMessages.NameMustNotExceedCharacters, 50));
-
-            RuleFor(x => x.Surname)
-                .NotEmpty().WithMessage(ErrorMessages.NameIsRequired)
-                .MaximumLength(50).WithMessage(string.Format(ErrorMessages.NameMustNotExceedCharacters, 50));
+            RuleFor(x => x.Name).MustBeValidName();
+            RuleFor(x => x.Surname).MustBeValidName();
         }
     }
 }

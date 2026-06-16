@@ -9,16 +9,23 @@ namespace Streetcode.Auth.Validators.Users
         public GoogleLoginRequestDtoValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage(ErrorMessages.EmailIsRequired)
-                .EmailAddress().WithMessage(ErrorMessages.InvalidEmailFormat);
+                .ValidEmail(
+                    maxLength: 255,
+                    requiredMessage: ErrorMessages.EmailIsRequired,
+                    formatMessage: ErrorMessages.InvalidEmailFormat,
+                    lengthMessage: ErrorMessages.EmailMustNotExceedCharacters);
 
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage(ErrorMessages.NameIsRequired)
-                .MaximumLength(50).WithMessage(string.Format(ErrorMessages.NameMustNotExceedCharacters, 50));
+                .RequiredWithMaxLength(
+                    maxLength: 50,
+                    requiredMessage: ErrorMessages.NameIsRequired,
+                    lengthMessage: ErrorMessages.NameMustNotExceedCharacters);
 
             RuleFor(x => x.Surname)
-                .NotEmpty().WithMessage(ErrorMessages.NameIsRequired)
-                .MaximumLength(50).WithMessage(string.Format(ErrorMessages.NameMustNotExceedCharacters, 50));
+                .RequiredWithMaxLength(
+                    maxLength: 50,
+                    requiredMessage: ErrorMessages.NameIsRequired,
+                    lengthMessage: ErrorMessages.NameMustNotExceedCharacters);
         }
     }
 }

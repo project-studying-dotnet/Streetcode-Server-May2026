@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Moq;
 using Streetcode.Auth.MediatR.Users.LoginGoogle;
 using Streetcode.Auth.Models.DTO;
@@ -14,7 +13,6 @@ namespace Streetcode.XUnitTest.AuthService.MediatR.Users.LoginGoogle
     {
         private readonly Mock<UserManager<User>> _userManagerMock;
         private readonly Mock<IAuthService> _authServiceMock;
-        private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILoggerService> _loggerMock;
         private readonly GoogleLoginHandler _handler;
 
@@ -24,14 +22,12 @@ namespace Streetcode.XUnitTest.AuthService.MediatR.Users.LoginGoogle
             _userManagerMock = new Mock<UserManager<User>>(store.Object, null!, null!, null!, null!, null!, null!, null!, null!);
 
             _authServiceMock = new Mock<IAuthService>();
-            _mapperMock = new Mock<IMapper>();
             _loggerMock = new Mock<ILoggerService>();
 
             _handler = new GoogleLoginHandler(
                 _userManagerMock.Object,
                 _authServiceMock.Object,
-                _loggerMock.Object,
-                _mapperMock.Object);
+                _loggerMock.Object);
         }
 
         [Fact]
