@@ -100,7 +100,12 @@ public static class ServiceCollectionExtensions
             config.UseSqlServerStorage(connectionString);
         });
 
-        services.AddHangfireServer();
+        var isHangfireEnabled = configuration.GetValue<bool>("Hangfire:Enabled");
+
+        if (isHangfireEnabled)
+        {
+            services.AddHangfireServer();
+        }
 
         var corsConfig = configuration.GetSection("CORS").Get<CorsConfiguration>();
         services.AddCors(opt =>
