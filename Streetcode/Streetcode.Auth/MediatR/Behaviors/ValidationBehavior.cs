@@ -19,7 +19,7 @@ public class ValidationBehavior<TRequest, TResponse>
     RequestHandlerDelegate<TResponse> next,
     CancellationToken cancellationToken)
     {
-        if (!_validators.Any())
+        if (_validators.Count() == 0)
             return await next();
 
         var context = new ValidationContext<TRequest>(request);

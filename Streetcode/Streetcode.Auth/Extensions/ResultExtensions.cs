@@ -11,6 +11,7 @@ namespace Streetcode.Auth.Extensions
             {
                 return controller.StatusCode(500, "The operation returned a null result.");
             }
+
             if (result.IsSuccess)
             {
                 return EqualityComparer<T>.Default.Equals(result.Value, default(T))
@@ -18,9 +19,13 @@ namespace Streetcode.Auth.Extensions
                      : controller.Ok(result.Value);
             }
 
-            var error = result.Errors.FirstOrDefault();
+            var firstError = result.Errors.FirstOrDefault();
+            if (firstError != null && !string.IsNullOrWhiteSpace(firstError.Message))
+            {
+                return controller.BadRequest(firstError.Message);
+            }
 
-            return controller.BadRequest(error?.Message ?? "Something went wrong");
+            return controller.BadRequest("Something went wrong");
         }
     }
 }

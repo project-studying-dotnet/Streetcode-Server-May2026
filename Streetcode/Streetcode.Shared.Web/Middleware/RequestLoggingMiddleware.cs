@@ -4,6 +4,20 @@ using Microsoft.Extensions.Logging;
 
 namespace Streetcode.Shared.Web.Middleware
 {
+    public static class LoggerExtensions
+    {
+        private static readonly Action<ILogger, string, string, long, int, Exception?> _requestFinished =
+            LoggerMessage.Define<string, string, long, int>(
+                LogLevel.Information,
+                new EventId(1, "RequestFinished"),
+                "Finished {Method} {Path} in {Ms}ms with status {Status}");
+
+        public static void LogRequestFinished(this ILogger logger, string method, string path, long ms, int status)
+        {
+            _requestFinished(logger, method, path, ms, status, null);
+        }
+    }
+
     public class RequestLoggingMiddleware
     {
         private readonly RequestDelegate _next;
@@ -18,21 +32,19 @@ namespace Streetcode.Shared.Web.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var sw = Stopwatch.StartNew();
+
             try
             {
                 await _next(context);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed {Method} {Path} after {Ms}ms",
-                    context.Request.Method, context.Request.Path, sw.ElapsedMilliseconds);
-                throw;
-            }
             finally
             {
                 sw.Stop();
-                _logger.LogInformation("Finished {Method} {Path} in {Ms}ms with status {Status}",
-                    context.Request.Method, context.Request.Path, sw.ElapsedMilliseconds, context.Response.StatusCode);
+                _logger.LogRequestFinished(
+                    context.Request.Method,
+                    context.Request.Path,
+                    sw.ElapsedMilliseconds,
+                    context.Response.StatusCode);
             }
         }
     }

@@ -7,59 +7,62 @@ using Streetcode.Auth.Models.Entities;
 using Streetcode.Auth.Services;
 using Xunit;
 
-public class TokenCleanupServiceTests
+namespace Streetcode.XUnitTest.AuthService.Services
 {
-    private ApplicationDbContext CreateDb(string dbName)
+    public class TokenCleanupServiceTests
     {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(dbName)
-            .Options;
-
-        return new ApplicationDbContext(options);
-    }
-
-    [Fact]
-    public async Task DoWork_ShouldRemoveExpiredTokens()
-    {
-        var dbName = Guid.NewGuid().ToString();
-
-        // ARRANGE
-        await using (var context = CreateDb(dbName))
+        private static ApplicationDbContext CreateDb(string dbName)
         {
-            context.RefreshTokens.AddRange(
-                new RefreshToken
-                {
-                    TokenHash = "1",
-                    Expires = DateTime.UtcNow.AddDays(-1)
-                },
-                new RefreshToken
-                {
-                    TokenHash = "2",
-                    Expires = DateTime.UtcNow.AddDays(1)
-                });
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(dbName)
+                .Options;
 
-            await context.SaveChangesAsync();
+            return new ApplicationDbContext(options);
         }
 
-        var services = new ServiceCollection();
-        services.AddDbContext<ApplicationDbContext>(o =>
-            o.UseInMemoryDatabase(dbName));
+        [Fact]
+        public async Task DoWork_ShouldRemoveExpiredTokens()
+        {
+            var dbName = Guid.NewGuid().ToString();
 
-        var provider = services.BuildServiceProvider();
+            // ARRANGE
+            await using (var context = CreateDb(dbName))
+            {
+                context.RefreshTokens.AddRange(
+                    new RefreshToken
+                    {
+                        TokenHash = "1",
+                        Expires = DateTime.UtcNow.AddDays(-1)
+                    },
+                    new RefreshToken
+                    {
+                        TokenHash = "2",
+                        Expires = DateTime.UtcNow.AddDays(1)
+                    });
 
-        var service = new TokenCleanupService(provider);
+                await context.SaveChangesAsync();
+            }
 
-        var method = typeof(TokenCleanupService)
-            .GetMethod("DoWork", BindingFlags.NonPublic | BindingFlags.Instance);
+            var services = new ServiceCollection();
+            services.AddDbContext<ApplicationDbContext>(o =>
+                o.UseInMemoryDatabase(dbName));
 
-        await (Task)method!.Invoke(service, null)!;
+            var provider = services.BuildServiceProvider();
 
-        // ASSERT
-        await using var verifyContext = CreateDb(dbName);
+            var service = new TokenCleanupService(provider);
 
-        var remaining = await verifyContext.RefreshTokens.ToListAsync();
+            var method = typeof(TokenCleanupService)
+                .GetMethod("DoWork", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        remaining.Should().HaveCount(1);
-        remaining.First().TokenHash.Should().Be("2");
+            await (Task)method!.Invoke(service, null)!;
+
+            // ASSERT
+            await using var verifyContext = CreateDb(dbName);
+
+            var remaining = await verifyContext.RefreshTokens.ToListAsync();
+
+            remaining.Should().HaveCount(1);
+            remaining.First().TokenHash.Should().Be("2");
+        }
     }
 }

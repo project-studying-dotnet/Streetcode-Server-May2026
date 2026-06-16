@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Streetcode.Auth.Models.DTO;
+﻿using Streetcode.Auth.Models.DTO;
 using Xunit;
 using FluentAssertions;
 using Streetcode.Auth.Validators.Users;

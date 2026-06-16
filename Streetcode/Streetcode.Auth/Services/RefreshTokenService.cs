@@ -28,7 +28,9 @@ namespace Streetcode.Auth.Services.Users
         {
             var hash = ComputeHash(refreshToken);
 
-            var stored = _context.RefreshTokens.Include(x => x.User).FirstOrDefault(x => x.TokenHash == hash);
+            var stored = await _context.RefreshTokens
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.TokenHash == hash);
 
             if (stored == null || stored.IsRevoked || stored.IsUsed)
                 throw new SecurityTokenException("Invalid refresh token");

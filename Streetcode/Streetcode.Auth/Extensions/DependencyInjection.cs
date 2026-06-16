@@ -17,8 +17,13 @@ namespace Streetcode.Auth.Extensions
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtSettings = configuration.GetSection("Jwt").Get<Common.Configuration.JwtSettings>()
-                              ?? throw new Exception("JwtSettings is missing in configuration!");
+            var jwtSettings = configuration.GetSection("Jwt").Get<Common.Configuration.JwtSettings>();
+
+            if (jwtSettings == null)
+            {
+                throw new InvalidOperationException("JwtSettings section is missing in configuration.");
+            }
+
             services.AddSingleton(jwtSettings);
 
             services.AddDbContext<ApplicationDbContext>(options =>

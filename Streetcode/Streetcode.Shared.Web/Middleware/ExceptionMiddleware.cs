@@ -31,8 +31,7 @@ public class ExceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing request {Path}", context.Request.Path);
-            _logger.LogError(ex, "CRITICAL: ExceptionMiddleware failed to process an exception.");
+            _logger.LogError(ex, "CRITICAL: ExceptionMiddleware caught an unhandled exception during request processing: {Path}", context.Request.Path);
 
             await HandleExceptionAsync(context, ex);
         }

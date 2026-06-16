@@ -43,7 +43,7 @@ namespace Streetcode.XUnitTest.BLL.Validators
 
             result.Errors.Should().NotBeEmpty();
 
-            var error = result.Errors.First();
+            var error = result.Errors[0];
 
             error.Message.Should().Be("Error message");
             error.Metadata["PropertyName"].Should().Be("PropertyName");

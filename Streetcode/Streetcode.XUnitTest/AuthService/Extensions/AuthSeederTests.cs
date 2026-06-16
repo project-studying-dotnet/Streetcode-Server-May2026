@@ -19,10 +19,12 @@ namespace Streetcode.XUnitTest.AuthService.Extensions
             _mockUserMgr = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null!, null!, null!, null!, null!, null!, null!, null!);
             _mockRoleMgr = new Mock<RoleManager<IdentityRole<int>>>(Mock.Of<IRoleStore<IdentityRole<int>>>(), null!, null!, null!, null!);
 
-            _config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?> {
+            _config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?> 
+            {
                 {"AdminSettings:Email", "admin@test.com"},
                 {"AdminSettings:Password", "Password123!"}
-            }!).Build();
+            }
+            !).Build();
         }
 
         [Fact]
