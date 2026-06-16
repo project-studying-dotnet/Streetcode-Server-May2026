@@ -48,27 +48,28 @@ else
     app.UseHsts();
 }
 
-await app.ApplyMigrations();
+var shouldApplyMigrations = builder.Configuration.GetValue<bool>("ApplyMigrations");
+
+if (shouldApplyMigrations)
+{
+    await app.ApplyMigrations();
+}
 
 // await app.SeedDataAsync(); // uncomment for seeding data in local
 app.UseCors();
-
 app.UseCustomMiddlewares();
-
 app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHangfireDashboard("/dash");
+var isHangfireEnabled = builder.Configuration.GetValue<bool>("Hangfire:Enabled");
 
-var shouldRegisterBackgroundJobs =
-    !app.Environment.IsDevelopment() &&
-    app.Environment.EnvironmentName != "Local";
-
-if (shouldRegisterBackgroundJobs)
+if (isHangfireEnabled)
 {
+    app.UseHangfireDashboard("/dash");
+
     BackgroundJob.Schedule<WebParsingUtilsService>(
         wp => wp.ParseZipFileFromWebAsync(),
         TimeSpan.FromMinutes(1));
@@ -85,5 +86,6 @@ if (shouldRegisterBackgroundJobs)
 }
 
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok(" OK "));
 
 app.Run();
