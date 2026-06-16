@@ -5,7 +5,6 @@
     {
         MainAdministrator,
         Administrator,
-        Moderator,
-        Client
+        Moderator
     }
 }

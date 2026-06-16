@@ -16,6 +16,13 @@ namespace Streetcode.WebApi.Controllers.Users;
 [ExcludeFromCodeCoverage]
 public sealed class AuthController : BaseApiController
 {
+    private readonly IConfiguration _configuration;
+
+    public AuthController(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest, CancellationToken cancellationToken = default)
     {
@@ -24,14 +31,16 @@ public sealed class AuthController : BaseApiController
         );
     }
 
-    [HttpPost("google")]
+    [HttpPost("google-login")]
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
     {
         try
         {
+            var clientId = _configuration["GoogleAuth:ClientId"];
+
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
-                Audience = new List<string> { "ВАШ_GOOGLE_CLIENT_ID.apps.googleusercontent.com" }
+                Audience = new List<string> { clientId! }
             };
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);

@@ -55,7 +55,7 @@ namespace Streetcode.BLL.MediatR.Users.LoginGoogle
                     return Result.Fail<LoginResultDto>("Failed to create user account.");
                 }
 
-                var roleResult = await _userManager.AddToRoleAsync(user, UserRole.Client.ToString());
+                var roleResult = await _userManager.AddToRoleAsync(user, UserRole.MainAdministrator.ToString());
                 if (!roleResult.Succeeded)
                 {
                     _logger.LogError(request, $"Failed to add role for user {user.Id}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
