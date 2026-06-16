@@ -4,6 +4,6 @@ namespace Streetcode.Auth.Services.Interfaces.Users
 {
     public interface IGoogleAuthService
     {
-        Task<GoogleJsonWebSignature.Payload> ValidateTokenAsync(string idToken);
+        Task<GoogleJsonWebSignature.Payload?> ValidateTokenAsync(string idToken);
     }
 }

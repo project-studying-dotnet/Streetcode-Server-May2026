@@ -38,10 +38,16 @@ namespace Streetcode.BLL.MediatR.Users.LoginGoogle
                 user = new User { Email = req.Email, UserName = req.Email, Name = req.Name, Surname = req.Surname };
 
                 var createResult = await _userManager.CreateAsync(user);
-                if (IsFailure(createResult, request, $"Failed to create user {req.Email}", out var error)) return error;
+                if (IsFailure(createResult, request, $"Failed to create user {req.Email}", out var error))
+                {
+                    return error;
+                }
 
                 var roleResult = await _userManager.AddToRoleAsync(user, UserRole.MainAdministrator.ToString());
-                if (IsFailure(roleResult, request, $"Failed to add role for user {user.Id}", out error)) return error;
+                if (IsFailure(roleResult, request, $"Failed to add role for user {user.Id}", out error))
+                {
+                    return error;
+                }
             }
 
             return Result.Ok(await GenerateLoginResult(user));
