@@ -4,9 +4,10 @@ using MediatR;
 
 namespace Streetcode.BLL.MediatR.Behaviors;
 
-public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class ValidationBehavior<TRequest, TResponse>
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
-    where TResponse : ResultBase, new()
+    where TResponse : Result<string>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -15,7 +16,10 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         _validators = validators;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
         if (!_validators.Any())
         {
@@ -23,24 +27,29 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         }
 
         var context = new ValidationContext<TRequest>(request);
-        var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
-        var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
 
-        if (failures.Count != 0)
+        var results = await Task.WhenAll(
+            _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+
+        var failures = results
+            .SelectMany(r => r.Errors)
+            .Where(f => f != null)
+            .ToList();
+
+        if (failures.Count > 0)
         {
-            var result = new TResponse();
+            var result = new Result<string>();
 
             foreach (var failure in failures)
             {
-                result.Reasons.Add(
+                result.WithError(
                     new Error(failure.ErrorMessage)
                         .WithMetadata("PropertyName", failure.PropertyName)
                         .WithMetadata("ErrorCode", failure.ErrorCode));
             }
 
-            return result;
+            return (TResponse)(object)result;
         }
-
         return await next();
     }
 }
