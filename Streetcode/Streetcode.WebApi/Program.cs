@@ -1,10 +1,12 @@
 using FluentValidation;
 using Hangfire;
+using Streetcode.BLL.Interfaces.WebParsingUtils;
 using Streetcode.BLL.Services.BlobStorageService;
+using Streetcode.BLL.Services.WebParsingUtils;
 using Streetcode.BLL.Validators;
 using Streetcode.WebApi.Extensions;
-using Streetcode.BLL.Interfaces.WebParsingUtils;
-using Streetcode.BLL.Services.WebParsingUtils;
+using Streetcode.WebApi.Service;
+using Streetcode.WebApi.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,8 @@ builder.Services.AddScoped<IToponymData, ToponymDataService>();
 builder.Services.AddScoped<IWebParsingUtils, WebParsingUtilsService>();
 builder.Services.Configure<UkrPoshtaParserSettings>(builder.Configuration.GetSection("UkrPoshtaParser"));
 builder.Services.Configure<GeocodingSettings>(builder.Configuration.GetSection("Geocoding"));
+
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
 var app = builder.Build();
 

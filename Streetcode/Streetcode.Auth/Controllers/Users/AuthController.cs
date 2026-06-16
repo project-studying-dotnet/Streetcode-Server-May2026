@@ -1,12 +1,15 @@
+using Google.Apis.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.Auth.Extensions;
 using Streetcode.Auth.MediatR.Users.Login;
+using Streetcode.Auth.MediatR.Users.LoginGoogle;
 using Streetcode.Auth.MediatR.Users.Logout;
 using Streetcode.Auth.MediatR.Users.RefreshToken;
 using Streetcode.Auth.MediatR.Users.Register;
 using Streetcode.Auth.Models.DTO;
+using Streetcode.Auth.Services.Interfaces.Users;
 
 namespace Streetcode.Auth.Controllers.Users;
 
@@ -15,10 +18,12 @@ namespace Streetcode.Auth.Controllers.Users;
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IGoogleAuthService _googleAuthService;
 
-    public AuthController(IMediator mediator)
+    public AuthController(IMediator mediator, IGoogleAuthService googleAuthService)
     {
         _mediator = mediator;
+        _googleAuthService = googleAuthService;
     }
 
     [AllowAnonymous]
@@ -27,6 +32,32 @@ public class AuthController : ControllerBase
     {
         var result = await _mediator.Send(new LoginUserCommand(request));
         return this.ToActionResult(result);
+    }
+
+    [HttpPost("google-login")]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
+    {
+        try
+        {
+            var payload = await _googleAuthService.ValidateTokenAsync(request.IdToken);
+
+            if (payload == null)
+                return Unauthorized("Invalid Google Token");
+
+            var loginDto = new GoogleLoginRequestDto
+            {
+                Email = payload.Email,
+                Name = payload.GivenName,
+                Surname = payload.FamilyName
+            };
+
+            var result = await _mediator.Send(new GoogleLoginCommand(loginDto));
+            return this.ToActionResult(result);
+        }
+        catch (Exception)
+        {
+            return Unauthorized("Invalid Google Token");
+        }
     }
 
     [AllowAnonymous]

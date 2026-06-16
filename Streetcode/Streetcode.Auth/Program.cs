@@ -23,6 +23,8 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddSingleton<IRabbitMqConnectionFactory, RabbitMqConnectionFactory>();
 builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

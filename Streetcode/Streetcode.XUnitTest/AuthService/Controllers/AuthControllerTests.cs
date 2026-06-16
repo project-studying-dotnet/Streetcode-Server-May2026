@@ -1,16 +1,18 @@
 ﻿using FluentAssertions;
 using FluentResults;
+using Google.Apis.Auth;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Moq;
 using Streetcode.Auth.Controllers.Users;
 using Streetcode.Auth.MediatR.Users.Login;
+using Streetcode.Auth.MediatR.Users.LoginGoogle;
 using Streetcode.Auth.MediatR.Users.Logout;
 using Streetcode.Auth.MediatR.Users.RefreshToken;
 using Streetcode.Auth.MediatR.Users.Register;
 using Streetcode.Auth.Models.DTO;
+using Streetcode.Auth.Services.Interfaces.Users;
+using Streetcode.Common.Enums;
 using Xunit;
 
 namespace Streetcode.XUnitTest.AuthService.Controllers;
@@ -18,19 +20,21 @@ namespace Streetcode.XUnitTest.AuthService.Controllers;
 public class AuthControllerTests
 {
     private readonly Mock<IMediator> _mediatorMock;
+    private readonly Mock<IGoogleAuthService> _googleAuthServiceMock;
     private readonly AuthController _controller;
 
     public AuthControllerTests()
     {
         _mediatorMock = new Mock<IMediator>();
-        _controller = new AuthController(_mediatorMock.Object);
+        _googleAuthServiceMock = new Mock<IGoogleAuthService>();
+        _controller = new AuthController(_mediatorMock.Object, _googleAuthServiceMock.Object);
     }
 
     [Fact]
     public async Task Login_ShouldReturnOk()
     {
         // Arrange
-        var request = new UserLoginDto
+        var request = new Auth.Models.DTO.UserLoginDto
         {
             Login = "test",
             Password = "123"
@@ -38,7 +42,7 @@ public class AuthControllerTests
 
         var authResult = new AuthResponseDto
         {
-            User = new UserDto
+            User = new Auth.Models.DTO.UserDto
             {
                 Id = 1,
                 Email = "test@mail.com",
@@ -179,6 +183,48 @@ public class AuthControllerTests
             x => x.Send(
                 It.Is<LogoutUserCommand>(c => c.RefreshToken == refreshToken),
                 It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task GoogleLogin_ShouldReturnOk_WhenTokenIsValid()
+    {
+        // Arrange
+        var request = new GoogleLoginRequest { IdToken = "valid-token" };
+        var payload = new GoogleJsonWebSignature.Payload { Email = "test@test.com", GivenName = "John", FamilyName = "Doe" };
+
+        var authResponse = new AuthResponseDto
+        {
+            User = new UserDto
+            {
+                Id = 1,
+                Name = "John",
+                Surname = "Doe",
+                Email = "john@example.com",
+                Login = "johndoe",
+                Role = UserRole.MainAdministrator
+            },
+            Token = "jwt-token",
+            RefreshToken = "refresh-token",
+            ExpireAt = DateTime.UtcNow.AddHours(1)
+        };
+
+        _googleAuthServiceMock.Setup(x => x.ValidateTokenAsync("valid-token"))
+            .ReturnsAsync(payload);
+
+        _mediatorMock.Setup(x => x.Send(It.IsAny<GoogleLoginCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Ok(authResponse));
+
+        var result = await _controller.GoogleLogin(request);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+
+        var okResult = result as OkObjectResult;
+        okResult?.Value.Should().BeEquivalentTo(authResponse);
+
+        _mediatorMock.Verify(
+            x => x.Send(It.IsAny<GoogleLoginCommand>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }
