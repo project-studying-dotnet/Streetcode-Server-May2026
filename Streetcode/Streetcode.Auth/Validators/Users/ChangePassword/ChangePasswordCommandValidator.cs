@@ -12,7 +12,7 @@ namespace Streetcode.Auth.Models.Validators.Users.ChangePassword
         public ChangePasswordCommandValidator()
         {
             RuleFor(x => x.ChangePasswordRequest.CurrentPassword)
-                  .NotEmpty().WithMessage(string.Format(ErrorMessages.FieldIsRequired, "Current password"));
+        .Required("Current password", ErrorMessages.FieldIsRequired);
 
             RuleFor(x => x.ChangePasswordRequest.NewPassword)
                 .ValidPassword(
@@ -25,7 +25,7 @@ namespace Streetcode.Auth.Models.Validators.Users.ChangePassword
                 .WithMessage(ErrorMessages.PasswordCannotBeSameAsCurrent);
 
             RuleFor(x => x.ChangePasswordRequest.ConfirmNewPassword)
-                .NotEmpty().WithMessage(string.Format(ErrorMessages.FieldIsRequired, "Confirmation password"))
+                .Required("Confirmation password", ErrorMessages.FieldIsRequired)
                 .Equal(x => x.ChangePasswordRequest.NewPassword)
                 .WithMessage(ErrorMessages.PasswordsDoNotMatch);
         }

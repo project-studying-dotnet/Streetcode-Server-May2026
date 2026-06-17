@@ -16,20 +16,24 @@ namespace Streetcode.Auth.Models.MediatR.Users.ChangePassword
 
         public async Task<Result<Unit>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
-               {
+            var requestedUser = await _userManager.FindByIdAsync(request.UserId.ToString());
+            if (requestedUser is null)
+            {
                 return Result.Fail("User not found");
             }
 
-            var result = await _userManager.ChangePasswordAsync(
-                user,
+            var passwordUpdateResult = await _userManager.ChangePasswordAsync(
+                requestedUser,
                 request.ChangePasswordRequest.CurrentPassword,
                 request.ChangePasswordRequest.NewPassword);
 
-            return result.Succeeded
-                ? Result.Ok(Unit.Value)
-                : Result.Fail(result.Errors.Select(e => e.Description));
+            if (passwordUpdateResult.Succeeded)
+            {
+                return Result.Ok(Unit.Value);
+            }
+
+            var errorMessages = passwordUpdateResult.Errors.Select(error => error.Description);
+            return Result.Fail(errorMessages);
         }
     }
 }
