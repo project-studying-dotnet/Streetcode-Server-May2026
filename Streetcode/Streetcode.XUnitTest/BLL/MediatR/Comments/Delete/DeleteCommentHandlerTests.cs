@@ -68,7 +68,8 @@ public class DeleteCommentHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
-        _commentRepositoryMock.Verify(r => r.DeleteRange(It.Is<IEnumerable<CommentEntity>>(
+        _commentRepositoryMock.Verify(
+            r => r.DeleteRange(It.Is<IEnumerable<CommentEntity>>(
             list => list.Any(c => c.Id == reply.Id))), Times.Once);
         _commentRepositoryMock.Verify(r => r.Delete(parent), Times.Once);
     }
@@ -90,7 +91,8 @@ public class DeleteCommentHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
-        _commentRepositoryMock.Verify(r => r.DeleteRange(It.Is<IEnumerable<CommentEntity>>(
+        _commentRepositoryMock.Verify(
+            r => r.DeleteRange(It.Is<IEnumerable<CommentEntity>>(
             list => list.Any(c => c.Id == nestedReply.Id) && list.Any(c => c.Id == reply.Id))), Times.Once);
         _commentRepositoryMock.Verify(r => r.Delete(parent), Times.Once);
     }
@@ -113,7 +115,8 @@ public class DeleteCommentHandlerTests
         result.IsSuccess.Should().BeTrue();
         _commentRepositoryMock.Verify(r => r.Delete(commentA), Times.Once);
         _commentRepositoryMock.Verify(r => r.Delete(commentB), Times.Never);
-        _commentRepositoryMock.Verify(r => r.DeleteRange(It.Is<IEnumerable<CommentEntity>>(
+        _commentRepositoryMock.Verify(
+            r => r.DeleteRange(It.Is<IEnumerable<CommentEntity>>(
             list => list.Any(c => c.Id == commentB.Id))), Times.Never);
     }
 

@@ -31,7 +31,7 @@ public sealed class CommentController : BaseApiController
     }
 
     [HttpPost]
-    [AuthorizeRoles([UserRole.Administrator, UserRole.MainAdministrator])]
+    [AuthorizeRoles(UserRole.Administrator, UserRole.MainAdministrator)]
     public async Task<IActionResult> Create([FromBody] CreateCommentDto request, CancellationToken cancellationToken = default)
     {
         return base.HandleResult(
@@ -40,7 +40,7 @@ public sealed class CommentController : BaseApiController
     }
 
     [HttpPut]
-    [AuthorizeRoles([UserRole.Administrator, UserRole.MainAdministrator])]
+    [AuthorizeRoles(UserRole.Administrator, UserRole.MainAdministrator)]
     public async Task<IActionResult> Update([FromBody] UpdateCommentDto request, CancellationToken cancellationToken = default)
     {
         return base.HandleResult(
@@ -49,7 +49,7 @@ public sealed class CommentController : BaseApiController
     }
 
     [HttpDelete("{commentId:int}")]
-    [AuthorizeRoles([UserRole.Administrator, UserRole.MainAdministrator])]
+    [AuthorizeRoles(UserRole.Administrator, UserRole.MainAdministrator)]
     public async Task<IActionResult> Delete([FromRoute] int commentId, CancellationToken cancellationToken = default)
     {
         return base.HandleResult(
