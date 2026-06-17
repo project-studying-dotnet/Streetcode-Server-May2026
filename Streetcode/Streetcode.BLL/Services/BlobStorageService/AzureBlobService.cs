@@ -12,20 +12,21 @@ namespace Streetcode.BLL.Services.BlobStorageService;
 public class AzureBlobService : IBlobService
 {
     private readonly BlobContainerClient _container;
+    private readonly string _keyCrypt;
 
-    public AzureBlobService(
-        IOptions<AzureBlobEnvironmentVariables> options)
+    public AzureBlobService(IOptions<AzureBlobEnvironmentVariables> options)
     {
-        var client = new BlobServiceClient(
-            options.Value.ConnectionString);
+        var client = new BlobServiceClient(options.Value.ConnectionString);
 
-        _container = client.GetBlobContainerClient(
-            options.Value.ContainerName);
+        _container = client.GetBlobContainerClient(options.Value.ContainerName);
+        _container.CreateIfNotExists();
+
+        _keyCrypt = options.Value.BlobStoreKey;
     }
+
     private static string GenerateHash(string value)
     {
-        byte[] result = SHA256.HashData(
-            Encoding.UTF8.GetBytes(value));
+        byte[] result = SHA256.HashData(Encoding.UTF8.GetBytes(value));
 
         return Convert.ToBase64String(result)
             .Replace('/', '_');
@@ -48,7 +49,7 @@ public class AzureBlobService : IBlobService
     public string SaveFileInStorage(
         string base64,
         string name,
-        string mimeType)
+        string extension)
     {
         byte[] fileBytes = Convert.FromBase64String(base64);
 
@@ -58,10 +59,11 @@ public class AzureBlobService : IBlobService
             .Replace(":", "_");
 
         string hashName = GenerateHash(generatedName);
+        string blobName = $"{hashName}.{extension}";
 
-        string blobName = $"{hashName}.{mimeType}";
+        byte[] encryptedBytes = EncryptBytes(fileBytes);
 
-        using var stream = new MemoryStream(fileBytes);
+        using var stream = new MemoryStream(encryptedBytes);
 
         var blobClient = _container.GetBlobClient(blobName);
 
@@ -71,11 +73,13 @@ public class AzureBlobService : IBlobService
             {
                 HttpHeaders = new BlobHttpHeaders
                 {
-                    ContentType = GetContentType(mimeType)
-                }
-            });
+                    ContentType = GetContentType(extension)
+                },
+                Conditions = null
+            },
+            cancellationToken: default);
 
-        return blobName;
+        return hashName;
     }
 
     public MemoryStream FindFileInStorageAsMemoryStream(string name)
@@ -87,6 +91,11 @@ public class AzureBlobService : IBlobService
 
     public string FindFileInStorageAsBase64(string name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            return string.Empty;
+        }
+
         byte[] content = DownloadBlob(name);
 
         return Convert.ToBase64String(content);
@@ -124,7 +133,53 @@ public class AzureBlobService : IBlobService
         }
 
         var response = blobClient.DownloadContent();
+        byte[] encryptedBytes = response.Value.Content.ToArray();
 
-        return response.Value.Content.ToArray();
+        return DecryptBytes(encryptedBytes);
+    }
+
+    private byte[] EncryptBytes(byte[] fileBytes)
+    {
+        byte[] keyBytes = Encoding.UTF8.GetBytes(_keyCrypt);
+
+        using Aes aes = Aes.Create();
+        aes.KeySize = 256;
+        aes.Mode = CipherMode.CBC;
+        aes.Padding = PaddingMode.PKCS7;
+        aes.Key = keyBytes;
+
+        aes.GenerateIV();
+        byte[] iv = aes.IV;
+
+        using ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, iv);
+        byte[] encryptedBytes = encryptor.TransformFinalBlock(fileBytes, 0, fileBytes.Length);
+
+        byte[] encryptedData = new byte[iv.Length + encryptedBytes.Length];
+        Buffer.BlockCopy(iv, 0, encryptedData, 0, iv.Length);
+        Buffer.BlockCopy(encryptedBytes, 0, encryptedData, iv.Length, encryptedBytes.Length);
+
+        return encryptedData;
+    }
+
+    private byte[] DecryptBytes(byte[] encryptedData)
+    {
+        byte[] keyBytes = Encoding.UTF8.GetBytes(_keyCrypt);
+
+        byte[] iv = new byte[16];
+        Buffer.BlockCopy(encryptedData, 0, iv, 0, iv.Length);
+
+        using Aes aes = Aes.Create();
+        aes.KeySize = 256;
+        aes.Mode = CipherMode.CBC;
+        aes.Padding = PaddingMode.PKCS7;
+        aes.Key = keyBytes;
+        aes.IV = iv;
+
+        using ICryptoTransform decryptor = aes.CreateDecryptor();
+
+        return decryptor.TransformFinalBlock(
+            encryptedData,
+            iv.Length,
+            encryptedData.Length - iv.Length);
     }
 }
