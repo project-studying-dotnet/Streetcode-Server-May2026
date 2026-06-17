@@ -1,12 +1,14 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
-using Microsoft.AspNetCore.Authorization;
+using Streetcode.BLL.MediatR.Users.ForgotPassword;
 using Streetcode.BLL.MediatR.Users.Login;
 using Streetcode.BLL.MediatR.Users.Logout;
-using Streetcode.BLL.MediatR.Users.Register;
 using Streetcode.BLL.MediatR.Users.RefreshToken;
+using Streetcode.BLL.MediatR.Users.Register;
+using Streetcode.BLL.MediatR.Users.ResetPassword;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 
 namespace Streetcode.WebApi.Controllers.Users;
 
@@ -50,5 +52,17 @@ public sealed class AuthController : BaseApiController
         return base.HandleResult(
             await base.Mediator.Send(new LogoutUserCommand(user_id), cancellationToken)
         );
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+    {
+        return HandleResult(await Mediator.Send(new ForgotPasswordCommand(forgotPasswordDto)));
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+    {
+        return HandleResult(await Mediator.Send(new ResetPasswordCommand(resetPasswordDto)));
     }
 }
