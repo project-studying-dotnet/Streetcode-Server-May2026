@@ -14,9 +14,12 @@ namespace Streetcode.BLL.Validators.Users.ChangePassword
                 .NotEmpty().WithMessage(string.Format(ErrorMessages.FieldIsRequired, "Current password"));
 
             RuleFor(x => x.ChangePasswordRequest.NewPassword)
-                .NotEmpty().WithMessage(string.Format(ErrorMessages.FieldIsRequired, "New password"))
-                .MinimumLength(MinPasswordLength)
-                .WithMessage(string.Format(ErrorMessages.PasswordTooShort, MinPasswordLength))
+                .ValidPassword(
+                    MinPasswordLength,
+                    MaxPasswordLength,
+                    string.Format(ErrorMessages.FieldIsRequired, "New password"),
+                    ErrorMessages.PasswordTooShort,
+                    "Password must not exceed {0} characters")
                 .NotEqual(x => x.ChangePasswordRequest.CurrentPassword)
                 .WithMessage(ErrorMessages.PasswordCannotBeSameAsCurrent);
 

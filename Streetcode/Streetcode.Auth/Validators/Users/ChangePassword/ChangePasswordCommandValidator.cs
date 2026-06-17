@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Streetcode.Auth.Models.MediatR.Users.ChangePassword;
 using Streetcode.Auth.Resources;
+using Streetcode.Auth.Validators;
 
 namespace Streetcode.Auth.Models.Validators.Users.ChangePassword
 {
@@ -11,12 +12,15 @@ namespace Streetcode.Auth.Models.Validators.Users.ChangePassword
         public ChangePasswordCommandValidator()
         {
             RuleFor(x => x.ChangePasswordRequest.CurrentPassword)
-                .NotEmpty().WithMessage(string.Format(ErrorMessages.FieldIsRequired, "Current password"));
+                  .NotEmpty().WithMessage(string.Format(ErrorMessages.FieldIsRequired, "Current password"));
 
             RuleFor(x => x.ChangePasswordRequest.NewPassword)
-                .NotEmpty().WithMessage(string.Format(ErrorMessages.FieldIsRequired, "New password"))
-                .MinimumLength(MinPasswordLength)
-                .WithMessage(string.Format(ErrorMessages.PasswordTooShort, MinPasswordLength))
+                .ValidPassword(
+                    MinPasswordLength,
+                    MaxPasswordLength,
+                    string.Format(ErrorMessages.FieldIsRequired, "New password"),
+                    ErrorMessages.PasswordTooShort,
+                    "Password must not exceed {0} characters")
                 .NotEqual(x => x.ChangePasswordRequest.CurrentPassword)
                 .WithMessage(ErrorMessages.PasswordCannotBeSameAsCurrent);
 

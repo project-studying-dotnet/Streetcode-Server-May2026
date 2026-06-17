@@ -22,11 +22,6 @@ namespace Streetcode.Auth.Models.MediatR.Users.ChangePassword
                 return Result.Fail("User not found");
             }
 
-            if (request.ChangePasswordRequest.NewPassword != request.ChangePasswordRequest.ConfirmNewPassword)
-                {
-                return Result.Fail("Passwords do not match");
-            }
-
             var result = await _userManager.ChangePasswordAsync(
                 user,
                 request.ChangePasswordRequest.CurrentPassword,
