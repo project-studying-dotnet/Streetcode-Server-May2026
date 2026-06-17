@@ -736,6 +736,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete comment..
+        /// </summary>
+        public static string FailedToDeleteComment {
+            get {
+                return ResourceManager.GetString("FailedToDeleteComment", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Failed to delete an audio.
         /// </summary>
         public static string FailedToDeleteAnAudio {

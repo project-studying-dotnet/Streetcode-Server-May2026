@@ -41,6 +41,7 @@ using Streetcode.WebApi.InitialData.TimelineItemsSeeder;
 using Streetcode.WebApi.InitialData.TransactionLinkSeeder;
 using Streetcode.WebApi.InitialData.UserSeeder;
 using Streetcode.WebApi.InitialData.VideosSeeder;
+using Streetcode.WebApi.Data.CommentsSeeder;
 
 namespace Streetcode.WebApi.Extensions
 {
@@ -167,6 +168,8 @@ namespace Streetcode.WebApi.Extensions
 
                                 await StreetcodeTagIndexSeeder.FillSeedAsync(dbContext);
                             }
+
+                            await CommentsSeeder.FillSeedAsync(dbContext);
                         }
 
                         await dbContext.SaveChangesAsync();
