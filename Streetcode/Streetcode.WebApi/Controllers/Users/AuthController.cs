@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
@@ -6,8 +8,6 @@ using Streetcode.BLL.MediatR.Users.Login;
 using Streetcode.BLL.MediatR.Users.Logout;
 using Streetcode.BLL.MediatR.Users.RefreshToken;
 using Streetcode.BLL.MediatR.Users.Register;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
 
 namespace Streetcode.WebApi.Controllers.Users;
 
