@@ -40,6 +40,7 @@ public class DeleteCommentHandler : IRequestHandler<DeleteCommentCommand, Result
         if (descendants.Count > 0)
         {
             _repositoryWrapper.CommentRepository.DeleteRange(descendants);
+            await _repositoryWrapper.SaveChangesAsync(cancellationToken);
         }
 
         _repositoryWrapper.CommentRepository.Delete(comment);
