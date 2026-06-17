@@ -40,7 +40,7 @@ namespace Streetcode.XUnitTest.AuthService.MediatR.Users.ChangePassword
 
             // Assert
             Assert.True(result.IsFailed);
-            Assert.Equal("User not found", result.Errors.First().Message);
+            Assert.Equal("User not found", result.Errors[0].Message);
         }
 
         [Fact]
