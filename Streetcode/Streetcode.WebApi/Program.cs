@@ -1,10 +1,12 @@
 using FluentValidation;
 using Hangfire;
+using Streetcode.BLL.Interfaces.WebParsingUtils;
 using Streetcode.BLL.Services.BlobStorageService;
+using Streetcode.BLL.Services.WebParsingUtils;
 using Streetcode.BLL.Validators;
 using Streetcode.WebApi.Extensions;
-using Streetcode.BLL.Interfaces.WebParsingUtils;
-using Streetcode.BLL.Services.WebParsingUtils;
+using Streetcode.WebApi.Service;
+using Streetcode.WebApi.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +24,7 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddSwaggerServices();
-builder.Services.AddCustomServices();
+builder.Services.AddCustomServices(builder.Configuration);
 builder.Services.ConfigureBlob(builder);
 builder.Services.ConfigurePayment(builder);
 builder.Services.ConfigureInstagram(builder);
@@ -36,6 +38,8 @@ builder.Services.AddScoped<IWebParsingUtils, WebParsingUtilsService>();
 builder.Services.Configure<UkrPoshtaParserSettings>(builder.Configuration.GetSection("UkrPoshtaParser"));
 builder.Services.Configure<GeocodingSettings>(builder.Configuration.GetSection("Geocoding"));
 
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
@@ -48,27 +52,28 @@ else
     app.UseHsts();
 }
 
-await app.ApplyMigrations();
+var shouldApplyMigrations = builder.Configuration.GetValue<bool>("ApplyMigrations");
+
+if (shouldApplyMigrations)
+{
+    await app.ApplyMigrations();
+}
 
 await app.SeedDataAsync(); // uncomment for seeding data in local
 app.UseCors();
-
 app.UseCustomMiddlewares();
-
 app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHangfireDashboard("/dash");
+var isHangfireEnabled = builder.Configuration.GetValue<bool>("Hangfire:Enabled");
 
-var shouldRegisterBackgroundJobs =
-    !app.Environment.IsDevelopment() &&
-    app.Environment.EnvironmentName != "Local";
-
-if (shouldRegisterBackgroundJobs)
+if (isHangfireEnabled)
 {
+    app.UseHangfireDashboard("/dash");
+
     BackgroundJob.Schedule<WebParsingUtilsService>(
         wp => wp.ParseZipFileFromWebAsync(),
         TimeSpan.FromMinutes(1));
@@ -85,5 +90,6 @@ if (shouldRegisterBackgroundJobs)
 }
 
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok("OK"));
 
 app.Run();

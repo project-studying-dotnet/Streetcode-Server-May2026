@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="12.0.0" />
+		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="coverlet.collector" Version="3.2.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,8 +17,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="FluentAssertions" Version="8.9.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.8" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
 		<PackageReference Include="Moq" Version="4.20.72" />
 		<PackageReference Include="Hangfire.Core" Version="1.7.33" />
@@ -35,15 +35,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Streetcode.Auth\Streetcode.Auth.csproj" />
 	  <ProjectReference Include="..\Streetcode.BLL\Streetcode.BLL.csproj" />
 	  <ProjectReference Include="..\Streetcode.DAL\Streetcode.DAL.csproj" />
+	  <ProjectReference Include="..\Streetcode.Shared.Web\Streetcode.Shared.Web.csproj" />
 	  <ProjectReference Include="..\Streetcode.WebApi\Streetcode.WebApi.csproj" />
 	  <ProjectReference Include="..\Streetcode.EmailService\Streetcode.EmailService.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="BLL\MediatR\StreetCode\GetByFilter\" />
-	  <Folder Include="WebApi\Controllers\" />
 	</ItemGroup>
 
 </Project>

@@ -646,6 +646,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid email format..
+        /// </summary>
+        public static string EmailIsInvalid {
+            get {
+                return ResourceManager.GetString("EmailIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is required..
         /// </summary>
         public static string EmailIsRequired {
@@ -943,6 +952,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Google ID Token is required..
+        /// </summary>
+        public static string GoogleIDTokenIsRequired {
+            get {
+                return ResourceManager.GetString("GoogleIDTokenIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Historical contexts collection is required..
         /// </summary>
         public static string HistoricalContextsCollectionIsRequired {
@@ -1083,6 +1101,15 @@ namespace Streetcode.BLL.Resources {
         public static string InvalidToken {
             get {
                 return ResourceManager.GetString("InvalidToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Google Token Format..
+        /// </summary>
+        public static string InvalidTokenFormat {
+            get {
+                return ResourceManager.GetString("InvalidTokenFormat", resourceCulture);
             }
         }
         
@@ -1321,6 +1348,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New password cannot be the same as the current one..
+        /// </summary>
+        public static string PasswordCannotBeSameAsCurrent {
+            get {
+                return ResourceManager.GetString("PasswordCannotBeSameAsCurrent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password Confirmation is required..
         /// </summary>
         public static string PasswordConfirmationIsRequired {
@@ -1362,6 +1398,15 @@ namespace Streetcode.BLL.Resources {
         public static string PasswordsDoNotMatch {
             get {
                 return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must be at least {0} characters long..
+        /// </summary>
+        public static string PasswordTooShort {
+            get {
+                return ResourceManager.GetString("PasswordTooShort", resourceCulture);
             }
         }
         

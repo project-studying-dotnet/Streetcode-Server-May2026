@@ -66,5 +66,34 @@
       - RabbitMq__QueueName=email-queue
       - ConnectionStrings__HangfireConnection=Server=db;Database=StreetcodeDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
 
+  authservice:
+    build:
+      context: .
+      dockerfile: Streetcode.Auth/Dockerfile
+    container_name: streetcode-auth
+    ports:
+      - "5001:8080"
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ShowExceptionDetails=true
+      - ConnectionStrings__DefaultConnection=Server=db;Database=StreetcodeDb.Auth;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;MultipleActiveResultSets=true
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__UserName=${RABBITMQ_USERNAME}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - MassTransit__LicenseKey=Free
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
+      - Jwt__AccessTokenLifetimeInMinutes=${JWT_ACCESS_TOKEN_LIFETIME_IN_MINUTES}
+      - Jwt__RefreshTokenLifetimeInDays=${JWT_REFRESH_TOKEN_LIFETIME_IN_DAYS}
+      - AdminSettings__Email=${ADMIN_EMAIL}
+      - AdminSettings__Password=${ADMIN_PASSWORD}
+
+
 volumes:
   streetcode_sql_data:

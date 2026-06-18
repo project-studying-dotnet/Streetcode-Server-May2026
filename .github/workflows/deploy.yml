@@ -1,0 +1,28 @@
+name: Backend CI/CD (Build & Push to ACR)
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+      - feature/257-configure-cicd
+      - feature/252-deploy-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and Push WebApi Image
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-webapi:latest -f ./Dockerfile .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/streetcode-webapi:latest
