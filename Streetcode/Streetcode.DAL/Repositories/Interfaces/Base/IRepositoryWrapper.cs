@@ -59,4 +59,8 @@ public interface IRepositoryWrapper
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     public TransactionScope BeginTransaction();
+
+    IStreetcodeArtSlideRepository StreetcodeArtSlideRepository { get; }
+    IStreetcodeArtSlideTemplateRepository StreetcodeArtSlideTemplateRepository { get; }
+    IArtSlideItemRepository ArtSlideItemRepository { get; }
 }

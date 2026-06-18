@@ -13,12 +13,18 @@
   </Project>
   <Project Path="DbUpdate/DbUpdate.csproj" />
   <Project Path="Streetcode.ApiGateway/Streetcode.ApiGateway.csproj" />
-  <Project Path="Streetcode.Auth/Streetcode.Auth.csproj" />
+  <Project Path="Streetcode.Auth/Streetcode.Auth.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="Streetcode.BLL/Streetcode.BLL.csproj" />
-  <Project Path="Streetcode.Common/Streetcode.Common.csproj" />
+  <Project Path="Streetcode.Common/Streetcode.Common.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="Streetcode.DAL/Streetcode.DAL.csproj" />
   <Project Path="Streetcode.EmailService/Streetcode.EmailService.csproj" />
-  <Project Path="Streetcode.Shared.Web/Streetcode.Shared.Web.csproj" Id="c9caa9d9-a535-4e1c-854b-dcef342c98e3" />
+  <Project Path="Streetcode.Shared.Web/Streetcode.Shared.Web.csproj" Id="c9caa9d9-a535-4e1c-854b-dcef342c98e3">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="Streetcode.WebApi/Streetcode.WebApi.csproj" />
   <Project Path="Streetcode.XIntegrationTest/Streetcode.XIntegrationTest.csproj" />
   <Project Path="Streetcode.XUnitTest/Streetcode.XUnitTest.csproj" />

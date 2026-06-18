@@ -16,6 +16,7 @@ using Streetcode.BLL.Interfaces.Logging;
 using Streetcode.BLL.Interfaces.Payment;
 using Streetcode.BLL.Interfaces.Text;
 using Streetcode.BLL.Interfaces.Users;
+using Streetcode.BLL.Resources;
 using Streetcode.BLL.Services.BlobStorageService;
 using Streetcode.BLL.Services.Email;
 using Streetcode.BLL.Services.Instagram;
@@ -29,7 +30,6 @@ using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Interfaces.Base;
 using Streetcode.DAL.Repositories.Realizations.Base;
-using Streetcode.BLL.Resources;
 
 namespace Streetcode.WebApi.Extensions;
 
@@ -41,17 +41,33 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
     }
 
-    public static void AddCustomServices(this IServiceCollection services)
+    public static void AddCustomServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddRepositoryServices();
         services.AddFeatureManagement();
+
         var currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
         services.AddAutoMapper(currentAssemblies);
         services.AddMediatR(currentAssemblies);
 
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Streetcode.BLL.MediatR.Behaviors.ValidationBehavior<,>));
+        services.AddTransient(
+            typeof(IPipelineBehavior<,>),
+            typeof(Streetcode.BLL.MediatR.Behaviors.ValidationBehavior<,>));
 
-        services.AddScoped<IBlobService, AzureBlobService>();
+        var useAzureBlobStorage = configuration.GetValue<bool>("UseAzureBlobStorage");
+
+        if (useAzureBlobStorage)
+        {
+            services.Configure<AzureBlobEnvironmentVariables>(
+                configuration.GetSection("AzureBlob"));
+
+            services.AddScoped<IBlobService, AzureBlobService>();
+        }
+        else
+        {
+            services.AddScoped<IBlobService, BlobService>();
+        }
+
         services.AddScoped<ILoggerService, LoggerService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IEmailPublisher, RabbitMqEmailPublisher>();
@@ -66,6 +82,7 @@ public static class ServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException(ErrorMessages.DefaultConnectionIsMissing);
+
         var emailConfig = configuration
             .GetSection("EmailConfiguration")
             .Get<EmailConfiguration>()
@@ -109,7 +126,6 @@ public static class ServiceCollectionExtensions
             services.AddHangfireServer();
         }
 
-        var corsConfig = configuration.GetSection("CORS").Get<CorsConfiguration>();
         services.AddCors(opt =>
         {
             opt.AddDefaultPolicy(policy =>
@@ -166,6 +182,7 @@ public static class ServiceCollectionExtensions
     public static void AddSwaggerServices(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
+
         services.AddSwaggerGen(opt =>
         {
             opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyApi", Version = "v1" });
