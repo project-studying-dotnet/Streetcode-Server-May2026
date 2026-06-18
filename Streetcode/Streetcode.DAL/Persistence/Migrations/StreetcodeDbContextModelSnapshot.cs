@@ -396,6 +396,32 @@ namespace Streetcode.DAL.Persistence.Migrations
                     b.ToTable("arts", "media");
                 });
 
+            modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.ArtSlideItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ArtId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SlideId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtId");
+
+                    b.HasIndex("SlideId");
+
+                    b.ToTable("ArtSlideItem");
+                });
+
             modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.Image", b =>
                 {
                     b.Property<int>("Id")
@@ -444,6 +470,119 @@ namespace Streetcode.DAL.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("image_details", "media");
+                });
+
+            modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.StreetcodeArtSlide", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StreetcodeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TemplateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StreetcodeId");
+
+                    b.HasIndex("TemplateId");
+
+                    b.ToTable("streetcode_art_slide", "media");
+                });
+
+            modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.StreetcodeArtSlideTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("streetcode_art_slide_template", "media");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Name = "OneToFourAndFiveToSix"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Name = "OneToTwoAndThreeToFourAndFiveToSix"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "OneAndTwoAndThreeAndFourAndFiveAndSix"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "OneToFour"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "OneToTwo"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "OneToTwoAndThreeToFour"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "OneToFourAndFiveAndSix"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "OneAndTwoAndThreeToFour"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "OneAndTwoAndThreeAndFour"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "OneToTwoAndThreeToFourAndFive"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "OneAndTwoAndThreeToFourAndFiveToSix"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "OneAndTwoAndThreeToFourAndFive"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "OneAndTwoAndThreeToFourAndFiveAndSix"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Name = "OneAndTwoAndThreeAndFourAndFive"
+                        });
                 });
 
             modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.StreetcodeImage", b =>
@@ -1409,6 +1548,25 @@ namespace Streetcode.DAL.Persistence.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.ArtSlideItem", b =>
+                {
+                    b.HasOne("Streetcode.DAL.Entities.Media.Images.Art", "Art")
+                        .WithMany()
+                        .HasForeignKey("ArtId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Streetcode.DAL.Entities.Media.Images.StreetcodeArtSlide", "Slide")
+                        .WithMany("ArtSlideItems")
+                        .HasForeignKey("SlideId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Art");
+
+                    b.Navigation("Slide");
+                });
+
             modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.ImageDetails", b =>
                 {
                     b.HasOne("Streetcode.DAL.Entities.Media.Images.Image", "Image")
@@ -1418,6 +1576,23 @@ namespace Streetcode.DAL.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.StreetcodeArtSlide", b =>
+                {
+                    b.HasOne("Streetcode.DAL.Entities.Streetcode.StreetcodeContent", null)
+                        .WithMany()
+                        .HasForeignKey("StreetcodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Streetcode.DAL.Entities.Media.Images.StreetcodeArtSlideTemplate", "Template")
+                        .WithMany()
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.StreetcodeImage", b =>
@@ -1775,6 +1950,11 @@ namespace Streetcode.DAL.Persistence.Migrations
                     b.Navigation("SourceLinkCategories");
 
                     b.Navigation("TeamMember");
+                });
+
+            modelBuilder.Entity("Streetcode.DAL.Entities.Media.Images.StreetcodeArtSlide", b =>
+                {
+                    b.Navigation("ArtSlideItems");
                 });
 
             modelBuilder.Entity("Streetcode.DAL.Entities.Partners.Partner", b =>

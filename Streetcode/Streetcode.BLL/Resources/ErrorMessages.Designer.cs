@@ -88,6 +88,24 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Art slide items are required..
+        /// </summary>
+        public static string ArtSlideItemsIsRequired {
+            get {
+                return ResourceManager.GetString("ArtSlideItemsIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arts not found.
+        /// </summary>
+        public static string ArtsNotFound {
+            get {
+                return ResourceManager.GetString("ArtsNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Audio is required..
         /// </summary>
         public static string AudioIsRequired {
@@ -165,6 +183,15 @@ namespace Streetcode.BLL.Resources {
         public static string CannotFindAnyArts {
             get {
                 return ResourceManager.GetString("CannotFindAnyArts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find any artSlideTemplates.
+        /// </summary>
+        public static string CannotFindAnyArtSlideTemplates {
+            get {
+                return ResourceManager.GetString("CannotFindAnyArtSlideTemplates", resourceCulture);
             }
         }
         
@@ -664,6 +691,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Entity not found .
+        /// </summary>
+        public static string EntityNotFound {
+            get {
+                return ResourceManager.GetString("EntityNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extension is required..
         /// </summary>
         public static string ExtensionIsRequired {
@@ -1033,6 +1069,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid Id.
+        /// </summary>
+        public static string InvalidId {
+            get {
+                return ResourceManager.GetString("InvalidId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided logo type is invalid..
         /// </summary>
         public static string InvalidLogoType {
@@ -1128,6 +1173,15 @@ namespace Streetcode.BLL.Resources {
         public static string LongitudeMustBeBetweenMinus180And180 {
             get {
                 return ResourceManager.GetString("LongitudeMustBeBetweenMinus180And180", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must not exceed {1} characters..
+        /// </summary>
+        public static string MaxLengthError {
+            get {
+                return ResourceManager.GetString("MaxLengthError", resourceCulture);
             }
         }
         
@@ -1420,6 +1474,15 @@ namespace Streetcode.BLL.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Request is required.
+        /// </summary>
+        public static string RequestIsRequired {
+            get {
+                return ResourceManager.GetString("RequestIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search query is required..
         /// </summary>
         public static string SearchQueryIsRequired {
@@ -1434,6 +1497,15 @@ namespace Streetcode.BLL.Resources {
         public static string SearchQueryMustNotExceedCharacters {
             get {
                 return ResourceManager.GetString("SearchQueryMustNotExceedCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slide not found.
+        /// </summary>
+        public static string SlideNotFound {
+            get {
+                return ResourceManager.GetString("SlideNotFound", resourceCulture);
             }
         }
         

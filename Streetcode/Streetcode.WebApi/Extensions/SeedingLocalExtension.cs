@@ -101,74 +101,69 @@ namespace Streetcode.WebApi.Extensions
 
                             await TeamMemberLinksSeeder.FillSeedAsync(dbContext);
                         }
+                        await PersonStreetcodeSeeder.FillSeedAsync(dbContext);
 
-                        if (!await dbContext.Audios.AnyAsync() && !await dbContext.Streetcodes.AnyAsync())
+                        await SubtitlesSeeder.FillSeedAsync(dbContext);
+
+                        await StreetcodeCoordinatesSeeder.FillSeedAsync(dbContext);
+
+                        await VideosSeeder.FillSeedAsync(dbContext);
+
+                        if (!await dbContext.Partners.AnyAsync())
                         {
-                            await PersonStreetcodeSeeder.FillSeedAsync(dbContext);
+                            await PartnersSeeder.FillSeedAsync(dbContext);
 
-                            await SubtitlesSeeder.FillSeedAsync(dbContext);
+                            await PartnerSourceLinksSeeder.FillSeedAsync(dbContext);
 
-                            await StreetcodeCoordinatesSeeder.FillSeedAsync(dbContext);
+                            await StreetcodePartnersSeeder.FillSeedAsync(dbContext);
+                        }
 
-                            await VideosSeeder.FillSeedAsync(dbContext);
+                        if (!await dbContext.Arts.AnyAsync())
+                        {
+                            await ArtsSeeder.FillSeedAsync(dbContext);
 
-                            if (!await dbContext.Partners.AnyAsync())
+                            await StreetcodeArtsSeeder.FillSeedAsync(dbContext);
+                        }
+
+                        await TextsSeeder.FillSeedAsync(dbContext);
+
+                        if (!await dbContext.TimelineItems.AnyAsync())
+                        {
+                            await TimelineItemsSeeder.FillSeedAsync(dbContext);
+
+                            if (!await dbContext.HistoricalContexts.AnyAsync())
                             {
-                                await PartnersSeeder.FillSeedAsync(dbContext);
+                                await HistoricalContextsSeeder.FillSeedAsync(dbContext);
 
-                                await PartnerSourceLinksSeeder.FillSeedAsync(dbContext);
-
-                                await StreetcodePartnersSeeder.FillSeedAsync(dbContext);
-                            }
-
-                            if (!await dbContext.Arts.AnyAsync())
-                            {
-                                await ArtsSeeder.FillSeedAsync(dbContext);
-
-                                await StreetcodeArtsSeeder.FillSeedAsync(dbContext);
-                            }
-
-                            await TextsSeeder.FillSeedAsync(dbContext);
-
-                            if (!await dbContext.TimelineItems.AnyAsync())
-                            {
-                                await TimelineItemsSeeder.FillSeedAsync(dbContext);
-
-                                if (!await dbContext.HistoricalContexts.AnyAsync())
-                                {
-                                    await HistoricalContextsSeeder.FillSeedAsync(dbContext);
-
-                                    await HistoricalContextsTimelinesSeeder.FillSeedAsync(dbContext);
-                                }
-                            }
-
-                            await TransactionLinkSeeder.FillSeedAsync(dbContext);
-
-                            if (!await dbContext.Facts.AnyAsync())
-                            {
-                                await FactsSeeder.FillSeedAsync(dbContext);
-                                await ImageDetailsesSeeder.FillSeedAsync(dbContext);
-                            }
-
-                            if (!await dbContext.SourceLinks.AnyAsync())
-                            {
-                                await SourceLinkCategorySeeder.FillSeedAsync(dbContext);
-
-                                await StreetcodeCategoryContentSeeder.FillSeedAsync(dbContext);
-                            }
-
-                            await RelatedFiguresSeeder.FillSeedAsync(dbContext);
-
-                            await StreetcodeImagesSeeder.FillSeedAsync(dbContext);
-
-                            if (!await dbContext.Tags.AnyAsync())
-                            {
-                                await TagsSeeder.FillSeedAsync(dbContext);
-
-                                await StreetcodeTagIndexSeeder.FillSeedAsync(dbContext);
+                                await HistoricalContextsTimelinesSeeder.FillSeedAsync(dbContext);
                             }
                         }
 
+                        await TransactionLinkSeeder.FillSeedAsync(dbContext);
+
+                        if (!await dbContext.Facts.AnyAsync())
+                        {
+                            await FactsSeeder.FillSeedAsync(dbContext);
+                            await ImageDetailsesSeeder.FillSeedAsync(dbContext);
+                        }
+
+                        if (!await dbContext.SourceLinks.AnyAsync())
+                        {
+                            await SourceLinkCategorySeeder.FillSeedAsync(dbContext);
+
+                            await StreetcodeCategoryContentSeeder.FillSeedAsync(dbContext);
+                        }
+
+                        await RelatedFiguresSeeder.FillSeedAsync(dbContext);
+
+                        await StreetcodeImagesSeeder.FillSeedAsync(dbContext);
+
+                        if (!await dbContext.Tags.AnyAsync())
+                        {
+                            await TagsSeeder.FillSeedAsync(dbContext);
+
+                            await StreetcodeTagIndexSeeder.FillSeedAsync(dbContext);
+                        }
                         await dbContext.SaveChangesAsync();
                     }
                 }

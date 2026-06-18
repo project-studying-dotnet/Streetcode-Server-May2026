@@ -10,5 +10,9 @@ public class ArtProfile : Profile
     public ArtProfile()
     {
         CreateMap<Art, ArtDTO>().ReverseMap();
+        CreateMap<ArtCreateDto, DAL.Entities.Media.Images.Art>()
+            .ForMember(dest => dest.ImageId, opt => opt.MapFrom(src => src.ImageId))
+            .ForMember(dest => dest.Image, opt => opt.Ignore());
+        CreateMap<ArtUpdateDto, Art>();
     }
 }

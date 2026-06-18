@@ -69,6 +69,8 @@ public class StreetcodeDbContext : IdentityDbContext<User, IdentityRole<int>, in
     public DbSet<HistoricalContextTimeline> HistoricalContextsTimelines { get; set; } = null!;
     public DbSet<StreetcodePartner> StreetcodePartners { get; set; } = null!;
     public DbSet<TeamMemberPositions> TeamMemberPosition { get; set; } = null!;
+    public DbSet<StreetcodeArtSlide> StreetcodeArtSlides { get; set; } = null!;
+    public DbSet<StreetcodeArtSlideTemplate> StreetcodeArtSlideTemplateConfiguration { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -115,5 +117,7 @@ public class StreetcodeDbContext : IdentityDbContext<User, IdentityRole<int>, in
         builder.ApplyConfiguration(new ResponseConfiguration());
         builder.ApplyConfiguration(new ArtConfiguration());
         builder.ApplyConfiguration(new CommentConfiguration());
+        builder.ApplyConfiguration(new StreetcodeArtSlideTemplateConfiguration());
+        builder.ApplyConfiguration(new StreetcodeArtSlideConfiguration());
     }
 }
