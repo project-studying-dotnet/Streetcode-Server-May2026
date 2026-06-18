@@ -33,6 +33,14 @@ namespace Streetcode.Auth.Validators
                 .MaximumLength(maxLength).WithMessage(string.Format(lengthMessage, maxLength));
         }
 
+        public static IRuleBuilderOptions<T, string> Required<T>(
+        this IRuleBuilder<T, string> ruleBuilder,
+        string fieldName,
+        string messageTemplate)
+        {
+            return ruleBuilder.NotEmpty().WithMessage(string.Format(messageTemplate, fieldName));
+        }
+
         public static IRuleBuilderOptions<T, string> ValidPassword<T>(
             this IRuleBuilder<T, string> ruleBuilder,
             int minLength,

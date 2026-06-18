@@ -1,3 +1,4 @@
+using FluentResults;
 using Google.Apis.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,10 @@ using Streetcode.Auth.MediatR.Users.Logout;
 using Streetcode.Auth.MediatR.Users.RefreshToken;
 using Streetcode.Auth.MediatR.Users.Register;
 using Streetcode.Auth.Models.DTO;
+using Streetcode.Auth.Models.DTO.Users;
+using Streetcode.Auth.Models.MediatR.Users.ChangePassword;
 using Streetcode.Auth.Services.Interfaces.Users;
+using System.Security.Claims;
 
 namespace Streetcode.Auth.Controllers.Users;
 
@@ -87,4 +91,17 @@ public class AuthController : ControllerBase
         return this.ToActionResult(result);
     }
 
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request, CancellationToken cancellationToken = default)
+    {
+        string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+        {
+            return Unauthorized();
+        }
+
+        var result = await _mediator.Send(new ChangePasswordCommand(userId, request), cancellationToken);
+        return this.ToActionResult(result);
+    }
 }

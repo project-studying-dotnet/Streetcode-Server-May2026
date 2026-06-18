@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
+using Streetcode.BLL.MediatR.Users.ChangePassword;
 using Streetcode.BLL.MediatR.Users.Login;
 using Streetcode.BLL.MediatR.Users.LoginGoogle;
 using Streetcode.BLL.MediatR.Users.Logout;
@@ -87,6 +88,21 @@ public sealed class AuthController : BaseApiController
         }
         return base.HandleResult(
             await base.Mediator.Send(new LogoutUserCommand(user_id), cancellationToken)
+        );
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request, CancellationToken cancellationToken = default)
+    {
+        string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+        {
+            return Unauthorized();
+        }
+
+        return base.HandleResult(
+            await base.Mediator.Send(new ChangePasswordCommand(userId, request), cancellationToken)
         );
     }
 }
