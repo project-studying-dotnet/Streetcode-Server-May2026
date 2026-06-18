@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Mail;
 using Streetcode.BLL.Contracts;
 using Streetcode.BLL.Interfaces.Email;
@@ -6,6 +7,7 @@ using Streetcode.DAL.Entities.AdditionalContent.Email;
 
 namespace Streetcode.BLL.Services.Email
 {
+    [ExcludeFromCodeCoverage]
     public class LocalEmailPublisher : ILocalEmailPublisher
     {
         private readonly EmailConfiguration _config;
