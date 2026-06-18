@@ -711,16 +711,43 @@
   <data name="NewsWithIdNotFound" xml:space="preserve">
     <value>News with id {0} was not found</value>
   </data>
-  <data name="PasswordMinimumLength" xml:space="preserve">
+  <data name="EntityNotFound" xml:space="preserve">
+    <value>Entity not found </value>
+  </data>
+  <data name="InvalidId" xml:space="preserve">
+    <value>Invalid Id</value>
+  </data>
+  <data name="MaxLengthError" xml:space="preserve">
+    <value>{0} must not exceed {1} characters.</value>
+  </data>
+  <data name="RequestIsRequired" xml:space="preserve">
+    <value>Request is required</value>
+  </data>
+  <data name="ArtSlideItemsIsRequired" xml:space="preserve">
+    <value>Art slide items are required.</value>
+  </data>
+  <data name="SlideNotFound" xml:space="preserve">
+    <value>Slide not found</value>
+  </data>
+  <data name="CannotFindAnyArtSlideTemplates" xml:space="preserve">
+    <value>Cannot find any artSlideTemplates</value>
+  </data>
+  <data name="ArtsNotFound" xml:space="preserve">
+    <value>Arts not found</value>
+  </data>
+  <data name="PasswordTooShort" xml:space="preserve">
     <value>Password must be at least {0} characters long.</value>
   </data>
-  <data name="PasswordUppercaseRequired" xml:space="preserve">
-    <value>Password must contain at least one uppercase letter.</value>
+  <data name="PasswordCannotBeSameAsCurrent" xml:space="preserve">
+    <value>New password cannot be the same as the current one.</value>
   </data>
-  <data name="PasswordLowercaseRequired" xml:space="preserve">
-    <value>Password must contain at least one lowercase letter.</value>
+  <data name="EmailIsInvalid" xml:space="preserve">
+    <value>Invalid email format.</value>
   </data>
-  <data name="PasswordNumberRequired" xml:space="preserve">
-    <value>Password must contain at least one number.</value>
+  <data name="GoogleIDTokenIsRequired" xml:space="preserve">
+    <value>Google ID Token is required.</value>
+  </data>
+  <data name="InvalidTokenFormat" xml:space="preserve">
+    <value>Invalid Google Token Format.</value>
   </data>
 </root>
