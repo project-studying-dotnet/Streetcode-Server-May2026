@@ -24,7 +24,7 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddSwaggerServices();
-builder.Services.AddCustomServices();
+builder.Services.AddCustomServices(builder.Configuration);
 builder.Services.ConfigureBlob(builder);
 builder.Services.ConfigurePayment(builder);
 builder.Services.ConfigureInstagram(builder);
