@@ -162,7 +162,7 @@
   <data name="PasswordsDoNotMatch" xml:space="preserve">
     <value>Passwords did not match.</value>
   </data>
-  <data name="PasswordTooShort" xml:space="preserve">
+<data name="PasswordTooShort" xml:space="preserve">
     <value>Password must be at least {0} characters long.</value>
   </data>
   <data name="PasswordCannotBeSameAsCurrent" xml:space="preserve">
@@ -170,5 +170,11 @@
   </data>
   <data name="FieldIsRequired" xml:space="preserve">
     <value>{0} is required.</value>
+  </data>
+  <data name="GoogleIDTokenIsRequired" xml:space="preserve">
+    <value>Google ID Token is required.</value>
+  </data>
+  <data name="InvalidTokenFormat" xml:space="preserve">
+    <value>Invalid Google Token Format.</value>
   </data>
 </root>

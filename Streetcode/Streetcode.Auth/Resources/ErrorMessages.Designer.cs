@@ -88,11 +88,29 @@ namespace Streetcode.Auth.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Google ID Token is required..
+        /// </summary>
+        public static string GoogleIDTokenIsRequired {
+            get {
+                return ResourceManager.GetString("GoogleIDTokenIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid email format..
         /// </summary>
         public static string InvalidEmailFormat {
             get {
                 return ResourceManager.GetString("InvalidEmailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Google Token Format..
+        /// </summary>
+        public static string InvalidTokenFormat {
+            get {
+                return ResourceManager.GetString("InvalidTokenFormat", resourceCulture);
             }
         }
         
