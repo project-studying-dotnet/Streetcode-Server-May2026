@@ -15,7 +15,7 @@ namespace Streetcode.BLL.Services.Email
             _config = config;
         }
 
-        public async Task PublishAsync(EmailMessageContract message, CancellationToken ct = default)
+        public async Task PublishAsync(EmailMessageContract message, CancellationToken cancellationToken = default)
         {
             using var client = new SmtpClient();
 
@@ -26,14 +26,14 @@ namespace Streetcode.BLL.Services.Email
 
             try
             {
-                using var mailMessage = new MailMessage(_config.From, message.To.First())
+                using var mailMessage = new MailMessage(_config.From, message.To[0])
                 {
                     Subject = message.Subject,
                     Body = message.Content,
                     IsBodyHtml = true
                 };
 
-                await client.SendMailAsync(mailMessage);
+                await client.SendMailAsync(mailMessage, cancellationToken);
             }
             catch (Exception ex)
             {

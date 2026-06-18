@@ -1,11 +1,10 @@
-﻿using FluentResults;
+﻿using System.Web;
+using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Streetcode.BLL.Contracts;
 using Streetcode.BLL.Interfaces.Email;
 using Streetcode.DAL.Entities.Users;
-using System.Net.Mail;
-using System.Web;
 
 namespace Streetcode.BLL.MediatR.Users.ForgotPassword
 {
@@ -25,7 +24,7 @@ namespace Streetcode.BLL.MediatR.Users.ForgotPassword
             _localPublisher = localPublisher;
         }
 
-        public async Task<Result<Unit>> Handle(ForgotPasswordCommand request, CancellationToken ct)
+        public async Task<Result<Unit>> Handle(ForgotPasswordCommand request, CancellationToken сancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.ForgotPasswordDto.Email);
 
@@ -62,11 +61,11 @@ namespace Streetcode.BLL.MediatR.Users.ForgotPassword
 
             try
             {
-                await _rabbitPublisher.PublishAsync(emailMessage, ct);
+                await _rabbitPublisher.PublishAsync(emailMessage, сancellationToken);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await _localPublisher.PublishAsync(emailMessage, ct);
+                await _localPublisher.PublishAsync(emailMessage, сancellationToken);
             }
 
             return Result.Ok(Unit.Value);

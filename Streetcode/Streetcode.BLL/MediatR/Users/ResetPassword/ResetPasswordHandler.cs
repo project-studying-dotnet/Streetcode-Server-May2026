@@ -14,7 +14,7 @@ namespace Streetcode.BLL.MediatR.Users.ResetPassword
             _userManager = userManager;
         }
 
-        public async Task<Result<Unit>> Handle(ResetPasswordCommand request, CancellationToken ct)
+        public async Task<Result<Unit>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.ResetPasswordDTO.Email);
             if (user == null)
