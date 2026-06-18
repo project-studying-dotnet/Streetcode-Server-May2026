@@ -116,7 +116,7 @@ public class UpdateArtHandlerTests
         Assert.True(result.IsFailed);
         Assert.Equal(
             string.Format(ErrorMessages.EntityNotFound, artId),
-            result.Errors.First().Message);
+            result.Errors[0].Message);
 
         _mockArtRepository.Verify(
             r => r.Update(It.IsAny<ArtEntity>()),

@@ -86,7 +86,7 @@ public class DeleteArtHandlerTests
         Assert.True(result.IsFailed);
         Assert.Equal(
             string.Format(ErrorMessages.EntityNotFound, artId),
-            result.Errors.First().Message);
+            result.Errors[0].Message);
 
         _mockArtRepository.Verify(
             r => r.Delete(It.IsAny<ArtEntity>()),
