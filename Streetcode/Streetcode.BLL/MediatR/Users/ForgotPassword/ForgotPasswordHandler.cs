@@ -24,7 +24,7 @@ namespace Streetcode.BLL.MediatR.Users.ForgotPassword
             _localPublisher = localPublisher;
         }
 
-        public async Task<Result<Unit>> Handle(ForgotPasswordCommand request, CancellationToken сancellationToken)
+        public async Task<Result<Unit>> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.ForgotPasswordDto.Email);
 
@@ -61,11 +61,11 @@ namespace Streetcode.BLL.MediatR.Users.ForgotPassword
 
             try
             {
-                await _rabbitPublisher.PublishAsync(emailMessage, сancellationToken);
+                await _rabbitPublisher.PublishAsync(emailMessage, cancellationToken);
             }
             catch (Exception)
             {
-                await _localPublisher.PublishAsync(emailMessage, сancellationToken);
+                await _localPublisher.PublishAsync(emailMessage, cancellationToken);
             }
 
             return Result.Ok(Unit.Value);
