@@ -3,6 +3,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetcode.BLL.DTO.Users;
+using Streetcode.BLL.MediatR.Users.ForgotPassword;
+using Streetcode.BLL.MediatR.Users.ResetPassword;
 using Streetcode.BLL.MediatR.Users.ChangePassword;
 using Streetcode.BLL.MediatR.Users.Login;
 using Streetcode.BLL.MediatR.Users.LoginGoogle;
@@ -89,6 +91,18 @@ public sealed class AuthController : BaseApiController
         return base.HandleResult(
             await base.Mediator.Send(new LogoutUserCommand(user_id), cancellationToken)
         );
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+    {
+        return HandleResult(await Mediator.Send(new ForgotPasswordCommand(forgotPasswordDto)));
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+    {
+        return HandleResult(await Mediator.Send(new ResetPasswordCommand(resetPasswordDto)));
     }
 
     [Authorize]

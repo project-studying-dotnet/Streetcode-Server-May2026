@@ -750,4 +750,16 @@
   <data name="InvalidTokenFormat" xml:space="preserve">
     <value>Invalid Google Token Format.</value>
   </data>
+  <data name="PasswordMinimumLength" xml:space="preserve">
+    <value>Password must be at least {0} characters long.</value>
+  </data>
+  <data name="PasswordUppercaseRequired" xml:space="preserve">
+    <value>Password must contain at least one uppercase letter.</value>
+  </data>
+  <data name="PasswordLowercaseRequired" xml:space="preserve">
+    <value>Password must contain at least one lowercase letter.</value>
+  </data>
+  <data name="PasswordNumberRequired" xml:space="preserve">
+    <value>Password must contain at least one number.</value>
+  </data>
 </root>
