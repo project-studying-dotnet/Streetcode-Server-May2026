@@ -1,4 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Interfaces.AdditionalContent;
@@ -20,6 +22,7 @@ using Streetcode.DAL.Repositories.Realizations.AdditionalContent;
 using Streetcode.DAL.Repositories.Realizations.Analytics;
 using Streetcode.DAL.Repositories.Realizations.Comments;
 using Streetcode.DAL.Repositories.Realizations.Media;
+using Streetcode.DAL.Repositories.Realizations.Media.Art;
 using Streetcode.DAL.Repositories.Realizations.Media.Images;
 using Streetcode.DAL.Repositories.Realizations.Newss;
 using Streetcode.DAL.Repositories.Realizations.Partners;
@@ -109,6 +112,10 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IStreetcodeImageRepository? _streetcodeImageRepository;
 
     private ICommentRepository? _commentRepository;
+
+    private IStreetcodeArtSlideRepository? _streetcodeArtSlideRepository;
+    private IStreetcodeArtSlideTemplateRepository? _streetcodeArtSlideTemplateRepository;
+    private IArtSlideItemRepository? _artSlideItemRepository;
 
     public RepositoryWrapper(StreetcodeDbContext streetcodeDbContext)
     {
@@ -585,5 +592,40 @@ public class RepositoryWrapper : IRepositoryWrapper
     public TransactionScope BeginTransaction()
     {
         return new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+    }
+
+    public IStreetcodeArtSlideRepository StreetcodeArtSlideRepository
+    {
+        get
+        {
+            if (_streetcodeArtSlideRepository is null)
+            {
+                _streetcodeArtSlideRepository = new StreetcodeArtSlideRepository(_streetcodeDbContext);
+            }
+            return _streetcodeArtSlideRepository;
+        }
+    }
+
+    public IStreetcodeArtSlideTemplateRepository StreetcodeArtSlideTemplateRepository
+    {
+        get
+        {
+            if (_streetcodeArtSlideTemplateRepository is null)
+            {
+                _streetcodeArtSlideTemplateRepository = new StreetcodeArtSlideTemplateRepository(_streetcodeDbContext);
+            }
+            return _streetcodeArtSlideTemplateRepository;
+        }
+    }
+    public IArtSlideItemRepository ArtSlideItemRepository
+    {
+        get
+        {
+            if (_artSlideItemRepository is null)
+            {
+                _artSlideItemRepository = new ArtSlideItemRepository(_streetcodeDbContext);
+            }
+            return _artSlideItemRepository;
+        }
     }
 }

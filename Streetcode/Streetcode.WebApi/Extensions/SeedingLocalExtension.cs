@@ -43,8 +43,6 @@ using Streetcode.WebApi.InitialData.TransactionLinkSeeder;
 using Streetcode.WebApi.InitialData.UserSeeder;
 using Streetcode.WebApi.InitialData.VideosSeeder;
 
-// ... інші using ...
-
 namespace Streetcode.WebApi.Extensions
 {
     [ExcludeFromCodeCoverage]
@@ -70,17 +68,14 @@ namespace Streetcode.WebApi.Extensions
             string initialDataImagePath = "../Streetcode.DAL/InitialData/images.json";
             string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
 
-            // 1. Base Users & Roles
             await RoleSeeder.FillSeedAsync(roleManager);
             await UserSeeder.FillSeedAsync(userManager, configuration);
 
-            // 2. Positions
             if (!await dbContext.Positions.AnyAsync())
             {
                 await PositionsSeeder.FillSeedAsync(dbContext);
             }
 
-            // 3. Media
             await SeedingHelper.SeedFilesAsync<Image>(dbContext, blobService, initialDataImagePath, blobPath, i => i.BlobName ?? string.Empty, i => i.Base64 ?? string.Empty, list => dbContext.Images.AddRange(list));
 
             if (!await dbContext.Audios.AnyAsync())
@@ -88,7 +83,6 @@ namespace Streetcode.WebApi.Extensions
                 await SeedingHelper.SeedFilesAsync<Audio>(dbContext, blobService, initialDataAudioPath, blobPath, a => a.BlobName ?? string.Empty, a => a.Base64 ?? string.Empty, list => dbContext.Audios.AddRange(list));
             }
 
-            // 4. Standalone entities
             await ResponsesSeeder.FillSeedAsync(dbContext);
             await NewsSeeder.FillSeedAsync(dbContext);
 
@@ -98,7 +92,6 @@ namespace Streetcode.WebApi.Extensions
                 await RelatedTerms.FillSeedAsync(dbContext);
             }
 
-            // 5. Team Members (Залежать від Positions)
             if (!await dbContext.TeamMembers.AnyAsync())
             {
                 await TeamMembersSeeder.FillSeedAsync(dbContext);
@@ -106,7 +99,6 @@ namespace Streetcode.WebApi.Extensions
                 await TeamMemberLinksSeeder.FillSeedAsync(dbContext);
             }
 
-            // 6. Streetcodes (Основний блок)
             if (!await dbContext.Streetcodes.AnyAsync())
             {
                 await PersonStreetcodeSeeder.FillSeedAsync(dbContext);
@@ -163,7 +155,6 @@ namespace Streetcode.WebApi.Extensions
 
             await CommentsSeeder.FillSeedAsync(dbContext);
 
-            // Збереження даних
             await dbContext.SaveChangesAsync();
         }
     }

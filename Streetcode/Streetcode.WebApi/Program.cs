@@ -1,10 +1,12 @@
 using FluentValidation;
 using Hangfire;
+using Streetcode.BLL.Interfaces.WebParsingUtils;
 using Streetcode.BLL.Services.BlobStorageService;
+using Streetcode.BLL.Services.WebParsingUtils;
 using Streetcode.BLL.Validators;
 using Streetcode.WebApi.Extensions;
-using Streetcode.BLL.Interfaces.WebParsingUtils;
-using Streetcode.BLL.Services.WebParsingUtils;
+using Streetcode.WebApi.Service;
+using Streetcode.WebApi.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,8 @@ builder.Services.AddScoped<IWebParsingUtils, WebParsingUtilsService>();
 builder.Services.Configure<UkrPoshtaParserSettings>(builder.Configuration.GetSection("UkrPoshtaParser"));
 builder.Services.Configure<GeocodingSettings>(builder.Configuration.GetSection("Geocoding"));
 
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
@@ -55,7 +59,7 @@ if (shouldApplyMigrations)
     await app.ApplyMigrations();
 }
 
-// await app.SeedDataAsync(); // uncomment for seeding data in local
+await app.SeedDataAsync(); // uncomment for seeding data in local
 app.UseCors();
 app.UseCustomMiddlewares();
 app.UseHttpsRedirection();

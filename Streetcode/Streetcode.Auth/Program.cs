@@ -5,6 +5,8 @@ using Streetcode.Auth.Extensions;
 using Streetcode.Auth.MediatR.Behaviors;
 using Streetcode.Auth.Services;
 using Streetcode.Auth.Services.Interfaces;
+using Streetcode.Auth.Services.Interfaces.Users;
+using Streetcode.Auth.Services.Users;
 using Streetcode.Common.Models;
 using Streetcode.Shared.Web.Middleware;
 using System.Reflection;
@@ -22,6 +24,8 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddSingleton<IRabbitMqConnectionFactory, RabbitMqConnectionFactory>();
 builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
+
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
