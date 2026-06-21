@@ -8,6 +8,7 @@ using Streetcode.DAL.Entities.Media.Images;
 using Streetcode.DAL.Entities.Users;
 using Streetcode.DAL.Persistence;
 using Streetcode.DAL.Repositories.Realizations.Base;
+using Streetcode.WebApi.Data.CommentsSeeder;
 using Streetcode.WebApi.Data.RoleSeeder;
 using Streetcode.WebApi.Data.TeamMembersSeeder;
 using Streetcode.WebApi.InitialData.ArtsSeeder;
@@ -49,125 +50,112 @@ namespace Streetcode.WebApi.Extensions
     {
         public static async Task SeedDataAsync(this WebApplication app)
         {
-            using (var scope = app.Services.CreateScope())
+            using var scope = app.Services.CreateScope();
+
+            var configuration = app.Services.GetRequiredService<IConfiguration>();
+            string blobPath = configuration.GetValue<string>("Blob:BlobStorePath")
+                ?? throw new InvalidOperationException("Critical error: Path not specified 'Blob:BlobStorePath' in configuration.");
+
+            Directory.CreateDirectory(blobPath);
+
+            var dbContext = scope.ServiceProvider.GetRequiredService<StreetcodeDbContext>();
+            var blobOptions = app.Services.GetRequiredService<IOptions<BlobEnvironmentVariables>>();
+            var repo = new RepositoryWrapper(dbContext);
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var blobService = new BlobService(blobOptions, repo);
+
+            string initialDataImagePath = "../Streetcode.DAL/InitialData/images.json";
+            string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
+
+            await RoleSeeder.FillSeedAsync(roleManager);
+            await UserSeeder.FillSeedAsync(userManager, configuration);
+
+            if (!await dbContext.Positions.AnyAsync())
             {
-                string blobPath = app.Configuration.GetValue<string>("Blob:BlobStorePath")
-                    ?? throw new InvalidOperationException("Critical error: Path not specified 'Blob:BlobStorePath' in configuration.");
-
-                Directory.CreateDirectory(blobPath);
-                var dbContext = scope.ServiceProvider.GetRequiredService<StreetcodeDbContext>();
-                var blobOptions = app.Services.GetRequiredService<IOptions<BlobEnvironmentVariables>>();
-                var repo = new RepositoryWrapper(dbContext);
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-                IConfiguration configuration = app.Services.GetRequiredService<IConfiguration>();
-                var blobService = new BlobService(blobOptions, repo);
-                string initialDataImagePath = "../Streetcode.DAL/InitialData/images.json";
-                string initialDataAudioPath = "../Streetcode.DAL/InitialData/audios.json";
-
-                await RoleSeeder.FillSeedAsync(roleManager);
-                await UserSeeder.FillSeedAsync(userManager, configuration);
                 await PositionsSeeder.FillSeedAsync(dbContext);
+            }
 
-                if (!await dbContext.Images.AnyAsync())
+            await SeedingHelper.SeedFilesAsync<Image>(dbContext, blobService, initialDataImagePath, blobPath, i => i.BlobName ?? string.Empty, i => i.Base64 ?? string.Empty, list => dbContext.Images.AddRange(list));
+
+            if (!await dbContext.Audios.AnyAsync())
+            {
+                await SeedingHelper.SeedFilesAsync<Audio>(dbContext, blobService, initialDataAudioPath, blobPath, a => a.BlobName ?? string.Empty, a => a.Base64 ?? string.Empty, list => dbContext.Audios.AddRange(list));
+            }
+
+            await ResponsesSeeder.FillSeedAsync(dbContext);
+            await NewsSeeder.FillSeedAsync(dbContext);
+
+            if (!await dbContext.Terms.AnyAsync())
+            {
+                await TermsSeeder.FillSeedAsync(dbContext);
+                await RelatedTerms.FillSeedAsync(dbContext);
+            }
+
+            if (!await dbContext.TeamMembers.AnyAsync())
+            {
+                await TeamMembersSeeder.FillSeedAsync(dbContext);
+                await TeamMemberPositionSeeder.FillSeedAsync(dbContext);
+                await TeamMemberLinksSeeder.FillSeedAsync(dbContext);
+            }
+
+            if (!await dbContext.Streetcodes.AnyAsync())
+            {
+                await PersonStreetcodeSeeder.FillSeedAsync(dbContext);
+                await SubtitlesSeeder.FillSeedAsync(dbContext);
+                await StreetcodeCoordinatesSeeder.FillSeedAsync(dbContext);
+                await VideosSeeder.FillSeedAsync(dbContext);
+                await TextsSeeder.FillSeedAsync(dbContext);
+                await TransactionLinkSeeder.FillSeedAsync(dbContext);
+                await RelatedFiguresSeeder.FillSeedAsync(dbContext);
+                await StreetcodeImagesSeeder.FillSeedAsync(dbContext);
+
+                if (!await dbContext.Partners.AnyAsync())
                 {
-                    await SeedingHelper.SeedFilesAsync<Image>(dbContext, blobService, initialDataImagePath, blobPath, i => i.BlobName ?? string.Empty, i => i.Base64 ?? string.Empty, list => dbContext.Images.AddRange(list));
+                    await PartnersSeeder.FillSeedAsync(dbContext);
+                    await PartnerSourceLinksSeeder.FillSeedAsync(dbContext);
+                    await StreetcodePartnersSeeder.FillSeedAsync(dbContext);
+                }
 
-                    if (!await dbContext.Audios.AnyAsync())
+                if (!await dbContext.Arts.AnyAsync())
+                {
+                    await ArtsSeeder.FillSeedAsync(dbContext);
+                    await StreetcodeArtsSeeder.FillSeedAsync(dbContext);
+                }
+
+                if (!await dbContext.TimelineItems.AnyAsync())
+                {
+                    await TimelineItemsSeeder.FillSeedAsync(dbContext);
+
+                    if (!await dbContext.HistoricalContexts.AnyAsync())
                     {
-                        await SeedingHelper.SeedFilesAsync<Audio>(dbContext, blobService, initialDataAudioPath, blobPath, a => a.BlobName ?? string.Empty, a => a.Base64 ?? string.Empty, list => dbContext.Audios.AddRange(list));
-                    }
-
-                    await ResponsesSeeder.FillSeedAsync(dbContext);
-
-                    await NewsSeeder.FillSeedAsync(dbContext);
-
-                    if (!await dbContext.Terms.AnyAsync())
-                    {
-                        await TermsSeeder.FillSeedAsync(dbContext);
-
-                        await RelatedTerms.FillSeedAsync(dbContext);
-                    }
-
-                    if (!await dbContext.TeamMembers.AnyAsync())
-                    {
-                        await TeamMembersSeeder.FillSeedAsync(dbContext);
-
-                        if (!await dbContext.Positions.AnyAsync())
-                        {
-                            await PositionsSeeder.FillSeedAsync(dbContext);
-
-                            await TeamMemberPositionSeeder.FillSeedAsync(dbContext);
-
-                            await TeamMemberLinksSeeder.FillSeedAsync(dbContext);
-                        }
-                        await PersonStreetcodeSeeder.FillSeedAsync(dbContext);
-
-                        await SubtitlesSeeder.FillSeedAsync(dbContext);
-
-                        await StreetcodeCoordinatesSeeder.FillSeedAsync(dbContext);
-
-                        await VideosSeeder.FillSeedAsync(dbContext);
-
-                        if (!await dbContext.Partners.AnyAsync())
-                        {
-                            await PartnersSeeder.FillSeedAsync(dbContext);
-
-                            await PartnerSourceLinksSeeder.FillSeedAsync(dbContext);
-
-                            await StreetcodePartnersSeeder.FillSeedAsync(dbContext);
-                        }
-
-                        if (!await dbContext.Arts.AnyAsync())
-                        {
-                            await ArtsSeeder.FillSeedAsync(dbContext);
-
-                            await StreetcodeArtsSeeder.FillSeedAsync(dbContext);
-                        }
-
-                        await TextsSeeder.FillSeedAsync(dbContext);
-
-                        if (!await dbContext.TimelineItems.AnyAsync())
-                        {
-                            await TimelineItemsSeeder.FillSeedAsync(dbContext);
-
-                            if (!await dbContext.HistoricalContexts.AnyAsync())
-                            {
-                                await HistoricalContextsSeeder.FillSeedAsync(dbContext);
-
-                                await HistoricalContextsTimelinesSeeder.FillSeedAsync(dbContext);
-                            }
-                        }
-
-                        await TransactionLinkSeeder.FillSeedAsync(dbContext);
-
-                        if (!await dbContext.Facts.AnyAsync())
-                        {
-                            await FactsSeeder.FillSeedAsync(dbContext);
-                            await ImageDetailsesSeeder.FillSeedAsync(dbContext);
-                        }
-
-                        if (!await dbContext.SourceLinks.AnyAsync())
-                        {
-                            await SourceLinkCategorySeeder.FillSeedAsync(dbContext);
-
-                            await StreetcodeCategoryContentSeeder.FillSeedAsync(dbContext);
-                        }
-
-                        await RelatedFiguresSeeder.FillSeedAsync(dbContext);
-
-                        await StreetcodeImagesSeeder.FillSeedAsync(dbContext);
-
-                        if (!await dbContext.Tags.AnyAsync())
-                        {
-                            await TagsSeeder.FillSeedAsync(dbContext);
-
-                            await StreetcodeTagIndexSeeder.FillSeedAsync(dbContext);
-                        }
-                        await dbContext.SaveChangesAsync();
+                        await HistoricalContextsSeeder.FillSeedAsync(dbContext);
+                        await HistoricalContextsTimelinesSeeder.FillSeedAsync(dbContext);
                     }
                 }
+
+                if (!await dbContext.Facts.AnyAsync())
+                {
+                    await FactsSeeder.FillSeedAsync(dbContext);
+                    await ImageDetailsesSeeder.FillSeedAsync(dbContext);
+                }
+
+                if (!await dbContext.SourceLinks.AnyAsync())
+                {
+                    await SourceLinkCategorySeeder.FillSeedAsync(dbContext);
+                    await StreetcodeCategoryContentSeeder.FillSeedAsync(dbContext);
+                }
+
+                if (!await dbContext.Tags.AnyAsync())
+                {
+                    await TagsSeeder.FillSeedAsync(dbContext);
+                    await StreetcodeTagIndexSeeder.FillSeedAsync(dbContext);
+                }
             }
+
+            await CommentsSeeder.FillSeedAsync(dbContext);
+
+            await dbContext.SaveChangesAsync();
         }
     }
 }
